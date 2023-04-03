@@ -68,7 +68,7 @@ public class RealtimeIngesterPipelineV2 {
     tweetEventDeserializerStage.setupStageV2();
   }
 
-  /***
+  /**
    * Starts the pipeline by starting the polling from Kafka and passing the events to the first
    * stage of the pipeline.
    */
@@ -100,7 +100,7 @@ public class RealtimeIngesterPipelineV2 {
 
   }
 
-  /***
+  /**
    * Stop the pipeline from processing any further events.
    */
   public void shutdown() {

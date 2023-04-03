@@ -9,7 +9,7 @@ import org.apache.lucene.util.StringHelper;
  * ByteBlockPool
  * Another solution is to have a class that encapsulates both textStarts and the byteBlockPool and
  * knows how the byteBlockPool is used to store the strings
- **/
+ */
 public abstract class ByteTermUtils {
   /**
    * Fill in a BytesRef from term's length & bytes encoded in byte block

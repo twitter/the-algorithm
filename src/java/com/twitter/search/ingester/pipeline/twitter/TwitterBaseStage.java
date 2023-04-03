@@ -107,7 +107,7 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
     }
   }
 
-  /***
+  /**
    * Sets up all necessary objects for this stage of the Pipeline. Previously, this task was done
    * by the preprocess() method provided by the ACP library.
    * @throws PipelineStageException
@@ -125,7 +125,7 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
 
   protected void innerSetup() throws PipelineStageException, NamingException { }
 
-  /***
+  /**
    * Takes in an argument of type T, processes it and returns an argument of Type R. This is the
    * main method of a pipeline stage.
    */
@@ -136,7 +136,7 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
     return processed;
   }
 
-  /***
+  /**
    * Takes in an argument of type T, processes it and pushes the processed element to some place.
    * This method does not return anything as any time this method is called on a stage, it means
    * there is no stage after this one. An example stage is any KafkaProducerStage.
@@ -153,7 +153,7 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
 
   protected void innerRunFinalStageOfBranchV2(T arg) { }
 
-  /***
+  /**
    * called at the end of a pipeline. Cleans up all resources of the stage.
    */
   public void cleanupStageV2() { }

@@ -34,7 +34,7 @@ import com.twitter.util.Future;
 *
 * To find the stats look for query_client_operator_* exported by archive roots.
 *
- **/
+ */
 
 public class ClientIdQueryOperatorStatsFilter
     extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {

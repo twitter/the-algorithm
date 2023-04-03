@@ -137,7 +137,7 @@ public class DailyStatusBatches {
 
   /**
    * Load the daily status batches from HDFS; return true if one or more batches could be loaded.
-   **/
+   */
   private boolean refreshByLoadingHDFSStatusBatches(final FileSystem fs) throws IOException {
     // first find the latest valid end date of statuses
     final Date lastValidStatusDay = getLastValidInputDateFromNow(fs);

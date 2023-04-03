@@ -135,7 +135,7 @@ public abstract class KafkaConsumerStage<R> extends TwitterBaseStage<Void, R> {
     }
   }
 
-  /***
+  /**
    * Poll Kafka and get the items from the topic. Record stats.
    * @return
    * @throws PipelineStageException

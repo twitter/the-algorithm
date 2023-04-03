@@ -68,7 +68,7 @@ public final class ThriftDocumentPreprocessor {
           "nullcastBitSet",
           "nullcastFilterSet");
 
-  /***
+  /**
    * See JIRA SEARCH-7329
    */
   private static void patchArchiveThriftDocumentAccuracy(ThriftDocument doc,
