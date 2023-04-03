@@ -15,7 +15,7 @@ SimClusters from the Linear Algebra Perspective discussed the difference between
  However, calculating the cosine similarity between two Tweets is pretty expensive in Tweet candidate generation. In TWISTLY, we scan at most 15,000 (6 source tweets * 25 clusters * 100 tweets per clusters) tweet candidates for every Home Timeline request. The traditional algorithm needs to make API calls to fetch 15,000 tweet SimCluster embeddings. Consider that we need to process over 6,000 RPS, it’s hard to support by the existing infrastructure.  
 
 
-## SimClusters Approximate Cosine Similariy Core Algorithm
+## SimClusters Approximate Cosine Similarity Core Algorithm
 
 1. Provide a source SimCluster Embedding *SV*, *SV = [(SC1, Score), (SC2, Score), (SC3, Score) …]*
 
