@@ -158,7 +158,7 @@ object TimelinesEngagementDataExtractor {
   // For each data source we extract the features with different feature names. Detail:
   def toRecapTweetLabels(record: RichDataRecord): TweetLabels = {
     val isClicked = record.getFeatureValue(RecapFeatures.IS_CLICKED)
-    val isFav = record.getFeatureValue(RecapFeatures.IS_FAVORITED)
+    val isFav = record.getFeatureValue(RecapFeatures.is_favorite)
     val isRT = record.getFeatureValue(RecapFeatures.IS_RETWEETED)
     val isQuoted = record.getFeatureValue(RecapFeatures.IS_QUOTED)
     val isReplied = record.getFeatureValue(RecapFeatures.IS_REPLIED)
@@ -168,7 +168,7 @@ object TimelinesEngagementDataExtractor {
   def toRecTweetLabels(record: RichDataRecord): TweetLabels = {
     // Refer to ITLFeatures for more labels
     val isClicked = record.getFeatureValue(ITLFeatures.IS_CLICKED)
-    val isFav = record.getFeatureValue(ITLFeatures.IS_FAVORITED)
+    val isFav = record.getFeatureValue(ITLFeatures.is_favorite)
     val isRT = record.getFeatureValue(ITLFeatures.IS_RETWEETED)
     val isQuoted = record.getFeatureValue(ITLFeatures.IS_QUOTED)
     val isReplied = record.getFeatureValue(ITLFeatures.IS_REPLIED)
