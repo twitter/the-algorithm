@@ -106,8 +106,7 @@ object SerializableBruteForceIndex {
 
 /**
  * This is a class that wrapps a BruteForceIndex and provides a method for serialization.
- *
-  * @param bruteForceIndex all queries and updates are sent to this index.
+ * @param bruteForceIndex all queries and updates are sent to this index.
  * @param embeddingInjection injection that can convert embeddings to thrift embeddings.
  * @param thriftIteratorIO class that provides a way to write PersistedEmbeddings to disk
  */

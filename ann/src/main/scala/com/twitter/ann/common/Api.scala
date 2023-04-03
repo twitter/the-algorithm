@@ -133,7 +133,7 @@ trait RawAppendable[P <: RuntimeParams, D <: Distance[D]] {
 trait Appendable[T, P <: RuntimeParams, D <: Distance[D]] {
 
   /**
-   *  Append an entity with embedding in an index.
+   * Append an entity with embedding in an index.
    * @param entity: Entity with its embedding
    */
   def append(entity: EntityEmbedding[T]): Future[Unit]
