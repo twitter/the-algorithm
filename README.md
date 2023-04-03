@@ -1,6 +1,6 @@
 # Twitter Recommendation Algorithm (VN)
 
-The Twitter Recommendation Algorithm là một tập hợp các dịch vụ và công việc đảm nhận việc xây dựng và cung cấp Dòng thời trang ở trang chủ (Home Timeline). Để tìm hiểu cách giải thuật hoạt động, vui lòng xem bài viết trên [engineering blog](https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm). Hình vẽ bên dưới mô tả cách các dịch vụ và công việc chính liên kết với nhau.
+Twitter Recommendation Algorithm là một tập hợp các dịch vụ và công việc đảm nhận việc xây dựng và cung cấp Dòng thời trang ở trang chủ (Home Timeline). Để tìm hiểu cách giải thuật hoạt động, vui lòng xem bài viết trên [engineering blog](https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm). Hình vẽ bên dưới mô tả cách các dịch vụ và công việc chính liên kết với nhau.
 
 ![](docs/system-diagram.png)
 
@@ -8,7 +8,7 @@ The Twitter Recommendation Algorithm là một tập hợp các dịch vụ và 
 
 | Type | Component | Description |
 |------------|------------|------------|
-| Chức năng | [SimClusters](src/scala/com/twitter/simclusters_v2/README.md) | Phát hiện cộng đồng và nhúng rãi rác vào những cộng đồng đó. |
+| Feature | [SimClusters](src/scala/com/twitter/simclusters_v2/README.md) | Phát hiện community và nhúng rãi rác vào những community đó. |
 |         | [TwHIN](https://github.com/twitter/the-algorithm-ml/blob/main/projects/twhin/README.md) | Nhúng *knowledge graph* cho User và Tweet. |
 |         | [trust-and-safety-models](trust_and_safety_models/README.md) | Các mô hình để phát hiện nội dung NSFW hoặc lạm dụng. |
 |         | [real-graph](src/scala/com/twitter/interaction_graph/README.md) | Mô hình dự đoán khả năng tương tác của người dùng Twitter với người dùng khác. |
@@ -28,7 +28,4 @@ The Twitter Recommendation Algorithm là một tập hợp các dịch vụ và 
 |                    | [product-mixer](product-mixer/README.md) | Framework để build nội dung của feeds (bản tin) |
 |                    | [twml](twml/README.md) | Machine learning framework được kế thừa và xây dựng trên TensorFlow v1 |
 
-We include Bazel BUILD files for most components, but not a top level BUILD or WORKSPACE file.
-
 Chúng tôi bao gồm các tệp BUILD Bazel cho hầu hết các components, nhưng không bao gồm tệp top level của BUILD hoặc WORKSPACE.
-
