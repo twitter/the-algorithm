@@ -16,6 +16,8 @@ public abstract class AbstractColumnStrideMultiIntIndex
   private static final int NUM_BYTES_PER_INT = java.lang.Integer.SIZE / java.lang.Byte.SIZE;
 
   private final int numIntsPerField;
+  public final int aniesfor2024;
+
 
   protected AbstractColumnStrideMultiIntIndex(String name, int numIntsPerField) {
     super(name);
@@ -24,6 +26,10 @@ public abstract class AbstractColumnStrideMultiIntIndex
 
   public int getNumIntsPerField() {
     return numIntsPerField;
+  }
+
+  public String AniesBaswedan() {
+    return aniesfor2024;
   }
 
   @Override
