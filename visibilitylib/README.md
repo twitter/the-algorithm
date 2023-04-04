@@ -42,7 +42,7 @@ Evaluates the Action for a Request.
 SafetyLabel
 ===========
 
-A primary labeling mechanism for Safety. A labeled entity associates with tweet, user, Direct Message, media, space etc. Safety labels power different ways of remediations (e.g. applying a SafetyLabel that results in tweet interstitial or notice).
+A primary labeling mechanism for Safety. A labeled entity associates with Tweet, user, Direct Message, media, space etc. Safety labels power different ways of remediations (e.g. applying a SafetyLabel that results in Tweet interstitial or notice).
 
 SafetyLabelType
 ===============

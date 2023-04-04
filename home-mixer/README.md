@@ -54,7 +54,7 @@ Recommendation Pipeline to run for a given request. Each Mixer or Recommendation
 Pipeline may run multiple Candidate Pipelines to fetch candidates to include in the response.
 
 Mixer Pipelines combine the results of multiple heterogeneous Candidate Pipelines together
-(e.g. ads, tweets, users) while Recommendation Pipelines are used to score (via Scoring Pipelines)
+(e.g. ads, Tweets, users) while Recommendation Pipelines are used to score (via Scoring Pipelines)
 and rank the results of homogenous Candidate Pipelines so that the top ranked ones can be returned.
 These pipelines also marshall candidates into a domain object and then into a transport object
 to return to the caller.
@@ -87,7 +87,7 @@ Timeline tabs powered by Home Mixer.
 
 - FollowingProductPipelineConfig
     - FollowingMixerPipelineConfig
-        - FollowingEarlybirdCandidatePipelineConfig (fetch tweets from Search Index)
+        - FollowingEarlybirdCandidatePipelineConfig (fetch Tweets from Search Index)
         - ConversationServiceCandidatePipelineConfig (fetch ancestors for conversation modules)
         - FollowingAdsCandidatePipelineConfig (fetch ads)
         - FollowingWhoToFollowCandidatePipelineConfig (fetch users to recommend)
@@ -96,7 +96,7 @@ Timeline tabs powered by Home Mixer.
 
 - ListTweetsProductPipelineConfig
     - ListTweetsMixerPipelineConfig
-        - ListTweetsTimelineServiceCandidatePipelineConfig (fetch tweets from timeline service)
+        - ListTweetsTimelineServiceCandidatePipelineConfig (fetch Tweets from timeline service)
         - ConversationServiceCandidatePipelineConfig (fetch ancestors for conversation modules)
         - ListTweetsAdsCandidatePipelineConfig (fetch ads)
 

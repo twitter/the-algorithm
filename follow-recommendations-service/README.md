@@ -1,10 +1,10 @@
 # Follow Recommendations Service
 
 ## Introduction to the Follow Recommendations Service (FRS)
-The Follow Recommendations Service (FRS) is a robust recommendation engine designed to provide users with personalized suggestions for accounts to follow. At present, FRS supports Who-To-Follow (WTF) module recommendations across a variety of Twitter product interfaces. Additionally, by suggesting tweet authors, FRS also delivers FutureGraph tweet recommendations, which consist of tweets from accounts that users may be interested in following in the future.
+The Follow Recommendations Service (FRS) is a robust recommendation engine designed to provide users with personalized suggestions for accounts to follow. At present, FRS supports Who-To-Follow (WTF) module recommendations across a variety of Twitter product interfaces. Additionally, by suggesting Tweet authors, FRS also delivers FutureGraph Tweet recommendations, which consist of Tweets from accounts that users may be interested in following in the future.
 
 ## Design
-The system is tailored to accommodate diverse use cases, such as Post New-User-Experience (NUX), advertisements, FutureGraph tweets, and more. Each use case features a unique display location identifier. To view all display locations, refer to the following path: `follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models/DisplayLocation.scala`.
+The system is tailored to accommodate diverse use cases, such as Post New-User-Experience (NUX), advertisements, FutureGraph Tweets, and more. Each use case features a unique display location identifier. To view all display locations, refer to the following path: `follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models/DisplayLocation.scala`.
 
 Recommendation steps are customized according to each display location. Common and high-level steps are encapsulated within the "RecommendationFlow," which includes operations like candidate generation, ranker selection, filtering, transformation, and beyond. To explore all flows, refer to this path: `follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/flows`.
 
