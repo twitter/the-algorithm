@@ -39,19 +39,27 @@ class PromotedAccountsCandidateSource @Inject() (
   val failureStat: StatsReceiver = stats.scope("failures")
   val adServerExceptionsCounter: Counter = failureStat.counter("AdServerException")
   val timeoutCounter: Counter = failureStat.counter("TimeoutException")
-
+  val otherExceptionsCounter: Counter = failureStat.counter("OtherException")
+  
   def apply(request: AdRequest): Stitch[Seq[PromotedCandidateUser]] = {
     adserverClient
       .getAdImpressions(request)
       .rescue {
         case e: TimeoutException =>
           timeoutCounter.incr()
-          logger.warn("Timeout on Adserver", e)
-          Stitch.Nil
+          val errorMsg = s"Timeout on Adserver: ${e.getMessage}"
+          logger.warn(errorMsg, e)
+          Stitch.Error(errorMsg)        
         case e: AdServerException =>
           adServerExceptionsCounter.incr()
-          logger.warn("Failed to fetch ads", e)
-          Stitch.Nil
+          val errorMsg = s"Failed to fetch ads: ${e.getMessage}"
+          logger.warn(errorMsg, e)
+          Stitch.Error(errorMsg)
+        case e: Exception =>
+          otherExceptionsCounter.incr()
+          val errorMsg = s"Unexpected error: ${e.getMessage}"
+          logger.error(errorMsg, e)
+          Stitch.Error(errorMsg)      
       }
       .flatMap { adImpressions: Seq[adthrift.AdImpression] =>
         profileNumResults(adImpressions.size, "results_from_ad_server")
