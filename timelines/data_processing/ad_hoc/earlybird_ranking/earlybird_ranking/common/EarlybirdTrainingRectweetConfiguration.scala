@@ -15,8 +15,8 @@ class EarlybirdTrainingRectweetConfiguration extends EarlybirdTrainingConfigurat
 
   override val labels: Map[String, Feature.Binary] = Map(
     "detail_expanded" -> IS_CLICKED,
-    "favorited" -> IS_FAVORITED,
-    "open_linked" -> IS_OPEN_LINKED,
+    "favorited" -> is_favorite,
+    "open_linked" -> is_linked,
     "photo_expanded" -> IS_PHOTO_EXPANDED,
     "profile_clicked" -> IS_PROFILE_CLICKED,
     "replied" -> IS_REPLIED,

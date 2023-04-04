@@ -2,8 +2,8 @@
 
 INDEX_BY_LABEL = {
   "is_clicked": 1,
-  "is_favorited": 2,
-  "is_open_linked": 3,
+  "is_favorite": 2,
+  "is_linked": 3,
   "is_photo_expanded": 4,
   "is_profile_clicked": 5,
   "is_replied": 6,

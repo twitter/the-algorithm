@@ -75,7 +75,7 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
   private val topKTopicsToKeep = 100
 
   private val favContinuousFeature = new Continuous(
-    "user_topic_aggregate.pair.recap.engagement.is_favorited.any_feature.50.days.count")
+    "user_topic_aggregate.pair.recap.engagement.is_favorite.any_feature.50.days.count")
 
   private val parquetDataSource: SnapshotDALDatasetBase[UserTopicWeightedEmbedding] =
     UserTopicWeightedEmbeddingParquetScalaDataset

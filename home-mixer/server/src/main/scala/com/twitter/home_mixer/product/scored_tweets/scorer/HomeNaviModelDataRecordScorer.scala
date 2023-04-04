@@ -145,7 +145,7 @@ object HomeNaviModelDataRecordScorer {
   }
 
   object PredictedFavoriteScoreFeature extends PredictedScoreFeature {
-    override val featureName: String = RecapFeatures.PREDICTED_IS_FAVORITED.getFeatureName
+    override val featureName: String = RecapFeatures.PREDICTED_is_favorite.getFeatureName
     override val personalDataTypes: Set[pd.PersonalDataType] = Set.empty
     override val statName = "fav"
     override val modelWeightParam = ModelWeights.FavParam
