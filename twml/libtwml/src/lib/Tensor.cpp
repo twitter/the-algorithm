@@ -114,7 +114,7 @@ std::string getTypeName(twml_type type) {
     case TWML_TYPE_STRING  : return "string";
     case TWML_TYPE_UNKNOWN : return "Unknown type";
   }
-  throw twml::Error(TWML_ERR_TYPE, "Uknown type");
+  throw twml::Error(TWML_ERR_TYPE, "Unknown type");
 }
 
 uint64_t getSizeOf(twml_type dtype) {
