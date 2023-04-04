@@ -23,7 +23,7 @@ While Navi's features may not be as comprehensive as its open-source counterpart
 - `thrift_bpr_adapter`: generated thrift code for BatchPredictionRequest
 
 ## Content
-We have included all *.rs source code files that make up the main Navi binaries for you to examine. However, we have not included the test and benchmark code, as well as various configuration files, due to data security concerns.
+We have included all *.rs source code files that make up the main Navi binaries for you to examine. However, we have not included the test and benchmark code, or various configuration files, due to data security concerns.
 
 ## Run
 In navi/navi, you can run the following commands:
