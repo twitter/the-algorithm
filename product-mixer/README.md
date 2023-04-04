@@ -1,5 +1,4 @@
-Product Mixer
-=============
+# Product Mixer
 
 ## Overview
 

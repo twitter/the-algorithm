@@ -1,21 +1,25 @@
 ## InteractionGraphLabels Dataflow Job
 
 #### IntelliJ
+
 ```
 fastpass create --name rg_scores --intellij src/scala/com/twitter/interaction_graph/scio/ml/scores
 ```
 
 #### Compile
+
 ```
 bazel build src/scala/com/twitter/interaction_graph/scio/ml/scores
 ```
 
 #### Build Jar
+
 ```
 bazel bundle src/scala/com/twitter/interaction_graph/scio/ml/scores
 ```
 
 #### Run Scheduled Job
+
 ```
 export PROJECTID=twttr-recos-ml-prod
 export REGION=us-central1

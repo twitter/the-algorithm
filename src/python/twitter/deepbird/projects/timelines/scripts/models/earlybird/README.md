@@ -1,8 +1,8 @@
 # Earlybird Light Ranker
 
-*Note: the light ranker is an old part of the stack which we are currently in the process of replacing.
+_Note: the light ranker is an old part of the stack which we are currently in the process of replacing.
 The current model was last trained several years ago, and uses some very strange features.
-We are working on training a new model, and eventually rebuilding this part of the stack entirely.*
+We are working on training a new model, and eventually rebuilding this part of the stack entirely._
 
 The Earlybird light ranker is a logistic regression model which predicts the likelihood that the user will engage with a
 tweet.

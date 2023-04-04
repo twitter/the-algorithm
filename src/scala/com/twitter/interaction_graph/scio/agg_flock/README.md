@@ -1,21 +1,25 @@
 ## InteractionGraphClientEventLogs Dataflow Job
 
 #### IntelliJ
+
 ```
 ./bazel idea src/scala/com/twitter/interaction_graph/scio/agg_flock:interaction_graph_agg_flock_scio
 ```
 
 #### Compile
+
 ```
 ./bazel build src/scala/com/twitter/interaction_graph/scio/agg_flock:interaction_graph_agg_flock_scio
 ```
 
 #### Build Jar
+
 ```
 ./bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_flock:interaction_graph_agg_flock_scio
 ```
 
 #### Run Scheduled Job
+
 ```
 export PROJECTID=twttr-recos-ml-prod
 export REGION=us-central1

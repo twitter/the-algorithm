@@ -1,21 +1,25 @@
 ## InteractionGraphLabels Dataflow Job
 
 #### IntelliJ
+
 ```
 fastpass create --name rg_labels --intellij src/scala/com/twitter/interaction_graph/scio/ml/labels
 ```
 
 #### Compile
+
 ```
 bazel build src/scala/com/twitter/interaction_graph/scio/ml/labels:interaction_graph_labels
 ```
 
 #### Build Jar
+
 ```
 bazel bundle src/scala/com/twitter/interaction_graph/scio/ml/labels:interaction_graph_labels
 ```
 
 #### Run Scheduled Job
+
 ```
 export PROJECTID=twttr-recos-ml-prod
 export REGION=us-central1

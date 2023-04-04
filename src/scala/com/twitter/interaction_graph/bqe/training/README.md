@@ -1,10 +1,12 @@
 # Training
 
 This folder contains the sql files that we'll use for training the prod real graph models:
+
 - prod (predicts any interactions the next day)
 - prod_explicit (predicts any explicit interactions the next day)
 
 We have 3 steps that take place:
+
 - candidate generation + feature hydration. this query samples 1% of edges from the `twttr-recos-ml-prod.realgraph.candidates` table which is already produced daily and saves it to `twttr-recos-ml-prod.realgraph.candidates_sampled`. we save each day's data according to the statebird batch run date and hence require checks to make sure that the data exists to begin with.
 - label candidates. we join day T's candidates with day T+1's labels while filtering out any negative interactions to get our labeled dataset. we append an additional day's worth of segments for each day. we finally generate the training dataset which uses all day's labeled data for training, performing negative downsampling to get a roughly 50-50 split of positive to negative labels.
 - training. we use bqml for training our xgboost models.

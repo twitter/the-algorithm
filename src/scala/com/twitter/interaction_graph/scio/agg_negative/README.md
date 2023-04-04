@@ -1,21 +1,25 @@
 ## InteractionGraphNegative Dataflow Job
 
 #### IntelliJ
+
 ```
 fastpass create --name rg_neg --intellij src/scala/com/twitter/interaction_graph/scio/agg_negative
 ```
 
 #### Compile
+
 ```
 bazel build src/scala/com/twitter/interaction_graph/scio/agg_negative:interaction_graph_negative_scio
 ```
 
 #### Build Jar
+
 ```
 bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_negative:interaction_graph_negative_scio
 ```
 
 #### Run Scheduled Job
+
 ```
 export PROJECTID=twttr-recos-ml-prod
 export REGION=us-central1

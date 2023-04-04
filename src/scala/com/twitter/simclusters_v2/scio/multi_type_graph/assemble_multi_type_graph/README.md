@@ -1,6 +1,7 @@
 # Pre-requisites
 
 ## Tutorial
+
 Follow the tutorial Batch Job on Dataflow Quickstart on how to run a simple batch job on Dataflow.
 
 ## GCP setup
@@ -32,8 +33,8 @@ bin/d6w create \
 
 ### Scheduling the job on Workflow
 
-Scheduling a job will require a service account as `recos-platform`. 
-Remember this account will need permissions to read all the required dataset. 
+Scheduling a job will require a service account as `recos-platform`.
+Remember this account will need permissions to read all the required dataset.
 
 ```bash
 export SERVICE_ACCOUNT='recos-platform'

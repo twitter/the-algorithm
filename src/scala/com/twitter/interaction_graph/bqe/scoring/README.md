@@ -1,6 +1,7 @@
 # Scoring
 
 This folder contains the sql files that we'll use for scoring the real graph edges in BQ. We have 4 steps that take place:
+
 - check to make sure that our models are in place. the feature importance query should return 20 rows in total: 10 rows per model, 1 for each feature.
 - follow graph feature generation. this is to ensure that we have features for all users regardless if they have had any recent activity.
 - candidate generation. this query combines the candidates from the follow graph and the activity graph, and the features from both.
@@ -55,4 +56,3 @@ Declare two variables, date_end and date_latest_follows, and set their values ba
 Delete rows from the twttr-recos-ml-prod.realgraph.scores table where the value of the ds column is equal to date_end.
 
 Insert rows into the twttr-recos-ml-prod.realgraph.scores table based on a query that generates predicted scores for pairs of user IDs using two machine learning models. Specifically, the query uses the ML.PREDICT() function to apply two machine learning models (twttr-recos-ml-prod.realgraph.prod and twttr-recos-ml-prod.realgraph.prod_explicit) to the twttr-recos-ml-prod.realgraph.candidates table. The resulting predicted scores are joined with the twttr-recos-ml-prod.realgraph.tweeting_follows table, which contains information about the number of tweets made by users and their follow relationships, using a full outer join. The final result includes columns for the source ID, destination ID, predicted score (prob), explicit predicted score (prob_explicit), a binary variable indicating whether the destination ID is followed by the source ID (followed), and the value of date_end for the ds column. If there is no match in the predicted_scores table for a given pair of user IDs, the COALESCE() function is used to return the corresponding values from the tweeting_follows table, with default values of 0.0 for the predicted scores.
-

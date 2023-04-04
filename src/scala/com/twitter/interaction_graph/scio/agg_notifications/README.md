@@ -1,21 +1,25 @@
 ## InteractionGraphClientEventLogs Dataflow Job
 
 #### IntelliJ
+
 ```
 fastpass create --name rg_labels --intellij src/scala/com/twitter/interaction_graph/scio/agg_notifications
 ```
 
 #### Compile
+
 ```
 bazel build src/scala/com/twitter/interaction_graph/scio/agg_notifications:interaction_graph_notifications_scio
 ```
 
 #### Build Jar
+
 ```
 bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_notifications:interaction_graph_notifications_scio
 ```
 
 #### Run Scheduled Job
+
 ```
 export PROJECTID=twttr-recos-ml-prod
 export REGION=us-central1

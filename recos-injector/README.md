@@ -1,8 +1,9 @@
 # recos-injector
+
 Recos-Injector is a streaming event processor for building input streams for GraphJet based services.
 It is general purpose in that it consumes arbitrary incoming event stream (e.x. Fav, RT, Follow, client_events, etc), applies
-filtering, combines and publishes cleaned up events to corresponding GraphJet services. 
-Each GraphJet based service subscribes to a dedicated Kafka topic. Recos-Injector enables a GraphJet based service to consume any 
+filtering, combines and publishes cleaned up events to corresponding GraphJet services.
+Each GraphJet based service subscribes to a dedicated Kafka topic. Recos-Injector enables a GraphJet based service to consume any
 event it wants
 
 ## How to run recos-injector-server tests
