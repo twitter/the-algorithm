@@ -16,7 +16,6 @@ While Navi's features may not be as comprehensive as its open-source counterpart
 - Navi for Pytorch is compilable and runnable but not yet production-ready in terms of performance and stability.
 
 ## Directory Structure
-
 - `navi`: The main code repository for Navi
 - `dr_transform`: Twitter-specific converter that converts BatchPredictionRequest Thrift to ndarray
 - `segdense`: Twitter-specific config to specify how to retrieve feature values from BatchPredictionRequest
