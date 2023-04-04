@@ -71,7 +71,7 @@ def get_feature_config(data_spec_path, label):
     "recap.engagement.is_profile_clicked",   # Tensor index: 5
     "recap.engagement.is_replied",           # Tensor index: 6
     "recap.engagement.is_retweeted",         # Tensor index: 7
-    "recap.engagement.is_video_playback_50",  # Tensor index: 8
+    "recap.engagement.is_video_playback_50", # Tensor index: 8
     "timelines.earlybird_score",             # Tensor index: 9
   ]) \
     .define_weight("meta.record_weight/type=earlybird") \
