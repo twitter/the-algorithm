@@ -7,7 +7,7 @@ from tensorflow.python.ops import array_ops, math_ops
 def safe_div(numerator, denominator, name=None):
   """
   Example usage: calculating NDCG = DCG / IDCG to handle cases when
-  IDCG = 0 returns 0 instead of Infinity 
+  IDCG = 0 returns 0 instead of Infinity
   Do not use this dividing funciton unless it makes sense to your problem
   Divides two tensors element-wise, returns 0 if the denominator is <= 0.
   Args:
@@ -56,7 +56,7 @@ def cal_swapped_ndcg(label_scores, predicted_scores, top_k_int):
   Args:
     label_scores: a real `Tensor`.
     predicted_scores: a real `Tensor`, with dtype matching label_scores
-    top_k_int: An int or an int `Tensor`. 
+    top_k_int: An int or an int `Tensor`.
   Returns:
     a `Tensor` that holds swapped NDCG by .
   """
@@ -100,7 +100,7 @@ def _dcg_idcg(relevance_scores, cg_discount):
     relevance_scores: a real `Tensor`.
     cg_discount: a real `Tensor`, with dtype matching relevance_scores
   Returns:
-    a `Tensor` that holds \\sum_{i=1}^k \frac{relevance_scores_k}{cg_discount}  
+    a `Tensor` that holds \\sum_{i=1}^k \frac{relevance_scores_k}{cg_discount}
   """
   # cg_discount is safe
   dcg_k = relevance_scores / cg_discount
@@ -115,8 +115,8 @@ def _get_ranking_orders(label_scores, predicted_scores, top_k_int=1):
     predicted_scores: a real `Tensor`, with dtype matching label_scores
     top_k_int: an integer or an int `Tensor`.
   Returns:
-    two `Tensors` that hold sorted_labels: the ground truth relevance socres
-    and predicted_order: relevance socres based on sorted predicted_scores
+    two `Tensors` that hold sorted_labels: the ground truth relevance scores
+    and predicted_order: relevance scores based on sorted predicted_scores
   """
   # sort predictions_scores and label_scores
   # size [batch_size/num of DataRecords, 1]
@@ -141,7 +141,7 @@ def _get_cg_discount(top_k_int=1):
   Args:
     top_k_int: An int or an int `Tensor`.
   Returns:
-    a `Tensor` that holds \log_{2}(i + 1), i \in [1, k] 
+    a `Tensor` that holds \log_{2}(i + 1), i \in [1, k]
   """
   log_2 = tf.log(tf.constant(2.0, dtype=tf.float32))
   # top_k_range needs to start from 1 to top_k_int
