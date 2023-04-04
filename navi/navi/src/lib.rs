@@ -80,9 +80,6 @@ mod utils {
             }
         }
     }
-    pub fn get_config_or(model_config: &Value, key: &str, default: &str) -> String {
-        get_config_or_else(model_config, key, || default.to_string())
-    }
     pub fn get_meta_dir() -> &'static str {
         ARGS.meta_json_dir
             .as_ref()

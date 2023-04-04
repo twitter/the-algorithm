@@ -59,34 +59,6 @@ impl TensorInput {
     }
 }
 
-impl TensorInputEnum {
-    #[inline(always)]
-    pub(crate) fn extend(&mut self, another: TensorInputEnum) {
-        match (self, another) {
-            (Self::String(input), Self::String(ex)) => input.extend(ex),
-            (Self::Int(input), Self::Int(ex)) => input.extend(ex),
-            (Self::Int64(input), Self::Int64(ex)) => input.extend(ex),
-            (Self::Float(input), Self::Float(ex)) => input.extend(ex),
-            (Self::Double(input), Self::Double(ex)) => input.extend(ex),
-            (Self::Boolean(input), Self::Boolean(ex)) => input.extend(ex),
-            x => panic!("input enum type not matched. input:{:?}, ex:{:?}", x.0, x.1),
-        }
-    }
-    #[inline(always)]
-    pub(crate) fn merge_batch(input_tensors: Vec<Vec<TensorInput>>) -> Vec<TensorInput> {
-        input_tensors
-            .into_iter()
-            .reduce(|mut acc, e| {
-                for (i, ext) in acc.iter_mut().zip(e) {
-                    i.tensor_data.extend(ext.tensor_data);
-                }
-                acc
-            })
-            .unwrap() //invariant: we expect there's always rows in input_tensors
-    }
-}
-
-
 ///entry point for tfServing gRPC
 #[tonic::async_trait]
 impl<T: Model> GrpcInferenceService for PredictService<T> {
