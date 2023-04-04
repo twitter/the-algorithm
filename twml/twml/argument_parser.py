@@ -411,7 +411,7 @@ def get_trainer_parser():
     action=parse_comma_separated_list(element_type=float),
     default=None,
     help="Required for 'piecewise_constant_values' learning_rate_decay. "
-         "A list of comma seperated floats or ints that specifies the values "
+         "A list of comma separated floats or ints that specifies the values "
          "for the intervals defined by boundaries. It should have one more "
          "element than boundaries.")
   parser_piecewise_constant.add_argument(
@@ -419,7 +419,7 @@ def get_trainer_parser():
     action=parse_comma_separated_list(element_type=int),
     default=None,
     help="Required for 'piecewise_constant_values' learning_rate_decay. "
-         "A list of comma seperated integers, with strictly increasing entries.")
+         "A list of comma separated integers, with strictly increasing entries.")
 
   # Create the parser for the "inverse_learning_rate_decay_fn"
   parser_inverse = subparsers.add_parser('inverse_learning_rate_decay',
