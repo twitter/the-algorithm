@@ -10,8 +10,8 @@ from . import build_graphs_fns  # noqa: F401
 from . import feature_config  # noqa: F401
 from . import parsers  # noqa: F401
 from . import initializers  # noqa: F401
-from . import export # noqa: F401
-from . import feature_config_parsers # noqa: F401
+from . import export  # noqa: F401
+from . import feature_config_parsers  # noqa: F401
 
 # These imports do not work with TF 2.x and are not needed either.
 # If you are using TF 2.x, use the modular targets under src/python/twitter/deepbird.

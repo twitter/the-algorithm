@@ -5,6 +5,6 @@ The result of this subclass methods are dictionaries of Tensors and SparseTensor
 """
 
 from twitter.deepbird.io.legacy.contrib.readers.data_record import (
-  SUPPORTED_DENSE_FEATURE_TYPES,  # noqa: F401
-  DataRecord,  # noqa: F401
+    SUPPORTED_DENSE_FEATURE_TYPES,  # noqa: F401
+    DataRecord,  # noqa: F401
 )
