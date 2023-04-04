@@ -33,7 +33,7 @@ namespace twml {
         int record_index_;
         int records_per_block_;
 
-        int pack_tag_and_wiretype(std::fstream& fs, uint32_t tag, uint32_t wiretype);
+        int pack_tag_and_wiretype(std::fstream& fs, std::uint32_t tag, std::uint32_t wiretype);
         int pack_varint_i32(std::fstream& fs, int value);
         int pack_string(std::fstream& fs, const char *in, size_t in_len);
         int write_int(std::fstream& fs, int value);
