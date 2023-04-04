@@ -56,7 +56,7 @@ def build_keras_trainer(
     metrics_fn: metrics function used by TensorFlow estimators.
     Defaults to twml.metrics.get_binary_class_metric_fn().
 
-    **kwargs: for people familar with twml Trainer's options, they can be passed in here
+    **kwargs: for people familiar with twml Trainer's options, they can be passed in here
       as kwargs, and they will be forwarded to Trainer as opts.
       See https://cgit.twitter.biz/source/tree/twml/twml/argument_parser.py#n43 for available args.
 
