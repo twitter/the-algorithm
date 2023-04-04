@@ -1,8 +1,23 @@
 # Twitter Recommendation Algorithm
 
 The Twitter Recommendation Algorithm is a set of services and jobs that are responsible for constructing and serving the
-Home Timeline. For an introduction to how the algorithm works, please refer to our [engineering blog](https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm). The
-diagram below illustrates how major services and jobs interconnect.
+Home Timeline. For an introduction to how the algorithm works, please refer to our [engineering blog](https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm). 
+
+Reading the Documentation
+-------------------------
+
+Initial documentation to get you started:
+
+- `COPYING`: The Twitter Recommendation Algorithm license agreement (AGPL-3.0 license).
+- `README.md`: This file.
+
+If you're having trouble, the documentation is located under the `docs` directory.
+
+*Please read the documentation before asking questions.*
+
+# The Algorithm
+
+The diagram below illustrates how major services and jobs interconnect.
 
 ![](docs/system-diagram.png)
 
@@ -30,7 +45,7 @@ These are the main components of the Recommendation Algorithm included in this r
 |                    | [product-mixer](product-mixer/README.md) | Software framework for building feeds of content. |
 |                    | [twml](twml/README.md) | Legacy machine learning framework built on TensorFlow v1. |
 
-We include Bazel BUILD files for most components, but not a top level BUILD or WORKSPACE file.
+_**Note:** We include Bazel BUILD files for most components, but not a top level BUILD or WORKSPACE file._
 
 ## Contributing
 
