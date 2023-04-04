@@ -3,6 +3,7 @@ package com.twitter.visibility.rules
 import com.twitter.spam.rtf.thriftscala.SafetyResultReason
 import com.twitter.util.Memoize
 import com.twitter.visibility.common.actions.AppealableReason
+import com.twitter.visibility.common.actions.AvoidReason.MightNotBeSuitableForAds
 import com.twitter.visibility.common.actions.LimitedEngagementReason
 import com.twitter.visibility.common.actions.SoftInterventionDisplayType
 import com.twitter.visibility.common.actions.SoftInterventionReason
@@ -440,36 +441,6 @@ object FreedomOfSpeechNotReachActions {
     }
   }
 
-  case class ConversationSectionAbusiveQualityAction(
-    violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[ConversationSectionAbusiveQuality.type] {
-
-    override def actionType: Class[_] = ConversationSectionAbusiveQuality.getClass
-
-    override val actionSeverity = 5
-    private def toRuleResult: Reason => RuleResult = Memoize { r =>
-      RuleResult(ConversationSectionAbusiveQuality, Evaluated)
-    }
-
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
-        }
-
-      toRuleResult(Reason.fromAppealableReason(appealableReason))
-    }
-
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
-    }
-  }
-
   case class SoftInterventionAvoidAction(violationLevel: ViolationLevel = DefaultViolationLevel)
       extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
 
@@ -662,6 +633,9 @@ object FreedomOfSpeechNotReachRules {
 
     override def enabled: Seq[RuleParam[Boolean]] =
       Seq(EnableFosnrRuleParam, FosnrRulesEnabledParam)
+
+    override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
+      new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
   }
 
   case class ViewerIsNonFollowerNonAuthorAndTweetHasViolationOfLevel(
@@ -678,6 +652,9 @@ object FreedomOfSpeechNotReachRules {
 
     override def enabled: Seq[RuleParam[Boolean]] =
       Seq(EnableFosnrRuleParam, FosnrRulesEnabledParam)
+
+    override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
+      new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
   }
 
   case class ViewerIsNonAuthorAndTweetHasViolationOfLevel(
@@ -692,6 +669,9 @@ object FreedomOfSpeechNotReachRules {
 
     override def enabled: Seq[RuleParam[Boolean]] =
       Seq(EnableFosnrRuleParam, FosnrRulesEnabledParam)
+
+    override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
+      new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
   }
 
   case object TweetHasViolationOfAnyLevelFallbackDropRule
