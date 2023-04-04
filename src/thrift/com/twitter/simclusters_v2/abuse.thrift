@@ -30,7 +30,7 @@ struct AdhocSingleSideClusterScores {
 * in the future.
 *
 * The consumer creates the interactions which the author receives.  For instance, the consumer
-* creates an abuse report for an author. The consumer scores are related to the interation creation
+* creates an abuse report for an author. The consumer scores are related to the interaction creation
 * behavior of the consumer. The author scores are related to the whether the author receives these
 * interactions.
 *

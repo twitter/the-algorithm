@@ -70,7 +70,7 @@ struct TweetTopKTweetsWithScore {
 /**
   * The generic SimClustersEmbedding for online long-term storage and real-time calculation.
   * Use SimClustersEmbeddingId as the only identifier.
-  * Warning: Doesn't include modelversion and embedding type in the value struct.
+  * Warning: Doesn't include model version and embedding type in the value struct.
   **/
 struct SimClustersEmbedding {
   1: required list<SimClusterWithScore> embedding
