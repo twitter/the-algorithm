@@ -1,0 +1,66 @@
+{
+    "date": "1996-03-19",
+    "sample_bank": "instruments",
+    "envelopes": {
+        "envelope0": [
+            [2, 32700],
+            [202, 0],
+            [1, 0],
+            "hang"
+        ],
+        "envelope1": [
+            [2, 32700],
+            [82, 0],
+            [1, 0],
+            "hang"
+        ],
+        "envelope2": [
+            [6, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope3": [
+            [6, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ]
+    },
+    "instruments": {
+        "inst0": {
+            "release_rate": 255,
+            "envelope": "envelope0",
+            "sound": "27_harpsichord"
+        },
+        "inst1": {
+            "release_rate": 255,
+            "envelope": "envelope1",
+            "sound": "27_harpsichord"
+        },
+        "inst2": {
+            "release_rate": 15,
+            "normal_range_lo": 27,
+            "normal_range_hi": 46,
+            "envelope": "envelope2",
+            "sound_lo": "23_strings_1",
+            "sound": "24_strings_2",
+            "sound_hi": "25_strings_3"
+        },
+        "inst3": {
+            "release_rate": 15,
+            "normal_range_lo": 27,
+            "normal_range_hi": 46,
+            "envelope": "envelope3",
+            "sound_lo": "23_strings_1",
+            "sound": "24_strings_2",
+            "sound_hi": "25_strings_3"
+        }
+    },
+    "instrument_list": [
+        "inst0",
+        "inst1",
+        "inst2",
+        "inst3"
+    ]
+}

@@ -1,0 +1,47 @@
+{
+    "date": "1996-03-19",
+    "sample_bank": "instruments",
+    "envelopes": {
+        "envelope0": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope1": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope2": [
+            [6, 32700],
+            [298, 0],
+            [1, 0],
+            "hang"
+        ]
+    },
+    "instruments": {
+        "inst0": {
+            "release_rate": 208,
+            "envelope": "envelope0",
+            "sound": "2E_accordion"
+        },
+        "inst1": {
+            "release_rate": 208,
+            "envelope": "envelope1",
+            "sound": "2E_accordion"
+        },
+        "inst2": {
+            "release_rate": 10,
+            "envelope": "envelope2",
+            "sound": "26_crystal_rhodes"
+        }
+    },
+    "instrument_list": [
+        "inst0",
+        null,
+        "inst1",
+        "inst2"
+    ]
+}

@@ -1,0 +1,11 @@
+// 0x0E000450
+const GeoLayout ddd_geo_000450[] = {
+   GEO_CULLING_RADIUS(700),
+   GEO_OPEN_NODE(),
+      GEO_SHADOW(SHADOW_SQUARE_PERMANENT, 0xB4, 120),
+      GEO_OPEN_NODE(),
+         GEO_DISPLAY_LIST(LAYER_OPAQUE, ddd_seg7_dl_0700D2A0),
+      GEO_CLOSE_NODE(),
+   GEO_CLOSE_NODE(),
+   GEO_END(),
+};

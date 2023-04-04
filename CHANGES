@@ -1,0 +1,416 @@
+Refresh 15 (mostly a hotfix for RSP microcode selection)
+
+1.) Renamed frame_buffer funcs and _ZBUFFER (#1184)
+2.) RSP Microcode Hotfix (#1183)
+3.) Label osSetTimer.c (#1182)
+4.) Fix styling (#1177)
+5.) Rename all `FrameBuffer` variants to `Framebuffer` (#1176)
+6.) Remove (WIP) from sh.
+7.) Allow both archives and ELF objects to be patched (#1127)
+
+Refresh 14
+
+1.) Label whomp and some object fields (#1174)
+2.) Generate MIO0 object files using binutils `ld` instead of `as` (#1173)
+3.) Bowser documentation (#1166)
+4.) Fix comment syntax in 00_sound_player.0 (#1172)
+5.) Rename in-game menu variables (#1163)
+6.) Document double red coin sound and JP sound glitch (#1170)
+7.) Document different bug in external.c (#1168)
+8.) updated names/types of octagonal platform data (#1164)
+9.) Label a number of unnamed variables. (#1169)
+10.) Document JP PU sound glitch (#1167)
+11.) Set model ids to spawn_triangle_break_particles (#1165)
+12.) Fix borders in clear_frame_buffer (#1162)
+13.) Fix seq header files for 64-bit (#1161)
+14.) Game_init.c remaining doc (#1158)
+15.) Label a couple static variables in sound_init.c (#1159)
+16.) Properly define dialog values (status, flags, cutscenes) (#1153)
+17.) Label all of amp's assets. (#1018)
+18.) Split audio/synthesis.c into Shindou/non-Shindou files (#1144)
+19.) Avoid CC_CHECK warnings when using gcc (#1157)
+20.) level_select_menu.c => title_screen.c (#1152)
+21.) Use C preprocessor on assembly files (#1126)
+22.) Replace output_level_headers.py with sed equivalent (#1109)
+23.) Fix CC_CHECK warnings related to unused symbols and UB (#1155)
+24.) Define remaining floor lower limit values (#1147)
+25.) use r+b mode for libultra.a patch tool (#1148)
+26.) Use proper values for gPrevFrameObjectCount ifs (#1146)
+27.) Some minor bowser.inc.c labelling. (#1150)
+28.) fix king bob-omb texture pointers (#1145)
+29.) Split audio/load.c into Shindou/non-Shindou files (#1143)
+30.) Small Shindou audio cleanups (#1142)
+31.) Fix endians in ALSeqData (#1141)
+32.) Document S8 decoder rsp operation and some more (#1139)
+33.) Fix Shindou synthesis_process_note fake match (#1140)
+34.) More audio documentation, for the new rsp code and other fixes (#1138)
+35.) Build fixes for macOS: cpp, clang, recomp, aiff_extract_codebook (#1135)
+36.) Add ENABLE_RUMBLE to config.h (#1122)
+37.) Reduce recomp memory consumption by using smaller disassembly blocks (#1128)
+38.) Makefile fixes (#1123)
+39.) Update README.md
+40.) Update README.md
+41.) Reflect current decompilation status
+42.) Allow both archives and ELF objects to be patched (#1127)
+43.) Remove WIP mention in README for sh version.
+
+Refresh 13 2
+
+- No more nonmatchings remain for all builds including Shindou.
+
+1.) Shindou OK (#1118)
+2.) Match shindou sequence_player_process_sequence (#1117)
+3.) Match func_sh_802f4e50 (#1116)
+
+Refresh 13
+
+- No more nonmatchings remain for US, JP, or EU builds. Three(!!!) remain for Shindou (SH).
+
+*) SHINDOU MATCHING (#1081)
+*) Makefile gcc fixes (#1114)
+
+1.) Update diff.py (#1113)
+2.) Add support for generating C arrays from n64graphics and add Texture typedef (#1032)
+3.) Update README and Dockerfile with recomp info (#1105)
+4.) Support building tools with MSYS2 (#1112)
+5.) Support building tools with clang and macOS (#1106)
+6.) Clean tools directory when running distclean target (#1104)
+7.) Make build output cleaner (#1095)
+8.) Added 2 surface defines to bowser.inc.c (#1111)
+9.) fix fake matchings (#1108)
+10.) Use statically recompiled IDO instead of qemu-irix (#1099)
+11.) Add VERBOSE=1 to Jenkinsfile
+12.) updated intro_geo to use layer defines for geo flags (#1090)
+13.) Fix F3DZEX (#1097)
+14.) layer_transpose should take an s8 (#1093)
+15.) Fix tools/ build (#1082)
+16.) Relabel and document fish.inc.c (#1077)
+17.) Ensure all calls to .py files use $(PYTHON) (#1080)
+18.) Name Mario, Peach, and instrument sound files (#1078)
+19.) Goddard labeling, part 2 (#1076)
+20.) Fix envfx_snow and envfx_bubbles fake matches (#1075)
+21.) Use array subscripts instead of pointer math in 2 files (#1074)
+22.) refactor Makefile a bit (#1068)
+23.) Further improvements on field names (#1059)
+24.) Label and document manta_ray.inc.c (#1073)
+25.) Fix level_script and behavior fake matches (#1072)
+26.) Proper cell defines and more floor lower limit values. (#1065)
+27.) Document and re-label some goddard/intro code (#1069)
+28.) Match remaining functions (#1070)
+29.) match 'spawn_special_objects' (#1071)
+30.) Document parts of external.c and format sound defines (#1067)
+
+Refresh 12
+
+1.) Debug box improvements (#1066)
+2.) Improve 'geo_render_mirror_mario' (#1064)
+3.) Cleanup and small labeling (#1063)
+4.) Anim renames and other related renames (#1062)
+5.) remove do while 0 and make one line comments consistent (#1061)
+6.) fixed typo in segments.h (#1060)
+7.) Name unknown fields (from public repo) (#1058)
+8.) Change 'void *' to 'struct MainPoolState *' (#1057)
+9.) Fix type of freeList (#1056)
+10.) Newer version of diff script (#1055)
+11.) Add stubbed_printfs based on unused audio strings (#1054)
+12.) Fix comment in paintings.c (#1053)
+13.) Add defines for hardcoded cell/floor height values (#1051)
+14.) Update README.md: Remove GitHub specific Markdown syntax (#1052)
+15.) Properly label interation status that handle's Bowser's shockwave attack (#1050)
+
+Refresh 11
+1.) Make geo_process_level_of_detail endian-independent (#1049)
+2.) Label oMoveFlags and slight cleanup. (#1046)
+3.) Avoid UB in synthesis_resample_and_mix_reverb (#1048)
+4.) Change some void * to correct type (#1047)
+5.) Remove oPathedWaypointsS16 and convert all paths to Trajectory struct. (#1045)
+6.) Mr Blizzard documentation, Tox Box Unks (#1042)
+7.) Pipe input to textconv. (#1041)
+8.) Remove erroneous long double casts from audiofile.cpp (#1039)
+9.) Replace fixed dialogID in play_dialog_sound to DIALOG_COUNT (#1040)
+
+Refresh #10.1
+1.) Diff update (#1033)
+2.) Fix texture dimensions for exclamation boxes (#1034)
+3.) Fix armips compilation on Windows by changing order of inclusion files (#1035)
+4.) Embed libaudiofile into the repo as a single file (#1036)
+5.) Fix some tools issues found while compiling on MSYS2 (#1037)
+
+Refresh #10
+1.) GCC 9 noreturn UB fixes (#961)
+2.) List supported binutils variants in README.md (#960)
+3.) fix fly guy's possible values for target roll
+4.) clarify that 1 is an exclusive bound in random_float (#962)
+5.) replace unkB8 with prevNumStarsForDialog (#963)
+6.) Replace "BulletBillUnkF8" with "BulletBillInitialMoveYaw" (#966)
+7.) Renamed more warp behaviors and spawn types (#949)
+8.) EU bss cleanups (#965)
+9.) Add -fno-zero-initialized-in-bss to GCC CFLAGS (#968)
+10.) Use empty .SECONDARY target instead of .PRECIOUS (#964)
+11.) Match EU seq_channel_layer_process_script (#969)
+12.) Fix version variable overwriting bug for non-matching compilations (#974)
+13.) small bhv_collect_star_init labeling (#972)
+14.) Align SI DMA command buffers, add more names to osCont code (#973)
+15.) Minor for loop fix in playback.c (#976)
+16.) Add Docker config (Public #36)
+17.) Fix usage output crash for skyconv (#977)
+18.) Cleanup tools and their build flags (#978)
+19.) Print more detailed file reading error messages in extract_assets (#982)
+20.) Remove asmdiff (#983)
+21.) Fixed tabledesign makefile bug (#985)
+22.) Improve first-diff.py (#987)
+23.) Bring in some enhancements such as widescreen enhancements (#981)
+24.) Fix background shadow border if widescreen in shade_screen (#988)
+25.) Merge common EU sections in osExceptionPreamble (#990)
+26.) Introduce the NO_SEGMENTED_MEMORY define (#989)
+27.) NO_SEGMENTED_MEMORY comments (#992)
+28.) Introduce f3dex2e and a GBI_FLOATS setting (#993)
+29.) Audio uses signed 16-bit integers as samples, not unsigned (#995)
+30.) Assemble RSP ucode with armips (#970)
+31.) Label Mr. Blizzard, Yoshi, Whomp, Wiggler, Wood Piece oFields. (#996)
+32.) update crash enhancement (#1003)
+33.) Update README.md to use new public Discord server invite
+34.) Label variables in act_idle. (#1005)
+35.) Fix a typo in camera.h (#1009)
+36.) Fixed up profiler.c (#1010)
+37.) Add -d to first-diff.py (#1012)
+38.) Fix typo in first-diff.py (#1013)
+39.) Remove binutils 2.27 dependency check (#1015)
+40.) Update armips to v0.11.0 tag and add generator script (#1004)
+41.) Extract IPL3 font from ROM (#1011)
+42.) Documented audio playback flags (#1021)
+43.) Change RSP register notation to dollar-prefixed numbers (#1022)
+44.) Only check for QEMU_IRIX in Makefile when compiling with IDO (#1023)
+45.) Clean up header files and update function prototypes (#1000)
+46.) Named local variables in geo_update_layer_transparency (#1019)
+47.) Extract crash screen font textures from EU and SH ROMs (#1025)
+48.) Use ACTIVE_FLAG defines where appropriate (#1026)
+49.) Changed type of actor collision from s16 to Collision (#1024)
+50.) Implement sqrtf in assembly file (#1028)
+51.) Rename Struct8032FCE8 as OpenableGrill and identify data members (#1029)
+52.) Fix some mistakes in the abi doc (#1031)
+53.) The README.md PR (#979)
+
+Refresh #8
+1.) Use INT_STATUS_ macros for oInteractStatus (#911)
+2.) Update bullet_bill.inc.c (#912)
+3.) Make geo.c in levels nonconst to reduce diffs with gcc enhancement patch in future (#913)
+4.) Improve process_level_music_dynamics (#915)
+5.) add AVOID_UB define for fixing libultra aliasing. (#916)
+6.) const hack to TARGET_N64 and tweak ld script (#918)
+7.) Replace raw level/course numbers with defines (#919)
+8.) Label all graph node flags. (#920)
+9.) readme.md capitalization
+10.) The Big Function PR (Part 5) (#910)
+11.) Label hardware registers (#922)
+12.) Match EU synthesis_process_note (#923)
+13.) Some quick value changes (#909)
+14.) Added sequence player defines (#926)
+15.) Shindou diffs 2 [merge game.c and display.c, required for SH] (#927)
+16.) Match synthesis_process_notes and use -sopt for synthesis.c (#928)
+17.) Fix mips64-binutils for Fedora 31 and similar Linux distros (#931)
+18.) Update first-diff.py to work with Shindou (#933)
+19.) Labelled behavior_script.c (#929)
+20.) shindou diffs up to level_update (#932)
+21.) Update diff.py and diff_settings.py to work with SH (#936)
+22.) Add some Shindou resources to extract_assets.py (#939)
+23.) Label and document gd_math.c (#930)
+24.) Label all of Mario's actions. (#941)
+25.) Label all particles. (#940)
+26.) Renamed death related warpBhvs (#942)
+27.) Small Shindou differences (#945)
+28.) match player_performed_grab_escape_action in all versions (#943)
+29.) add main alignment (aglab2, #947)
+30.) Match a bunch of fake EU matchings (#944)
+31.) Shindou diffs round 4 (#937)
+32.) Easy PAL fake matchings (#946)
+33.) Merge object_helpers and object_helpers2 headers (#948)
+34.) match cap_check_quicksand (#950)
+35.) Shindou crash screen diffs (#938)
+36.) Thread6 (#951)
+37.) Correct IPL3 function and label addresses (#952)
+38.) Add COMPILER flag for Makefile and add official mips gcc support. (#953)
+39.) add align to sequence_00 (fixes gcc build) (#957)
+40.) Fixed itty bitty typo (#959)
+
+Refresh #7
+1.) update README.md (#861)
+2.) [eu] fix decompilation bugs in synthesis_process_note (#862)
+3.) Label and document Snufit.inc.c (#863)
+4.) Label and document Snufit.inc.c (#863)
+5.) Match append_bubble_vertex_buffer, append_snowflake_vertex_buffer (#860)
+6.) Compile audio/effects.c with -sopt (#870)
+7.) Match handle_dialog_text_and_pages (#872)
+8.) Remove improperly used LEVEL_SA define. (#875)
+9.) Remove unused EU ASM files (#873)
+10.) Shindou build flag support (#876)
+11.) The Big Function PR (Part 1) (#864)
+12.) "Re-document" file_select and star_select for EU (#877)
+13.) Document paintings.c (#868)
+14.) Minor interaction.c labelling/documentation. (#882)
+15.) Match synthesis_execute, prepare_reverb_ring_buffer, func_eu_802e00d8 (#886)
+16.) The Big Function PR (Part 2) (#874)
+17.) Additional painting documentation (#883)
+18.) Some EU audio labelling (#885)
+19.) Bring synthesis_do_one_audio_update a bit closer to matching (#887)
+20.) Misleading comment, this actually contols Bowser's init action (#889)
+21.) Match synthesis_do_one_audio_update (#890)
+22.) Remove unneeded if(1) in synthesis_do_one_audio_update (#891)
+23.) Match synthesis_resample_and_mix_reverb (#893)
+24.) Set LANG=C (#896)
+25.) Match note_apply_headset_pan_effects (#897)
+26.) Match play_sequence (#898)
+27.) Match sequence_channel_enable (#899)
+28.) Match sequence_player_process_sequence (#900)
+29.) Match (eu) alloc_bank_or_seq (#901)
+30.) Match alloc_bank_or_seq (#903)
+31.) Update README.md (again)
+32.) Documented behaviour/fish.inc.c & blue_fish.inc.c (#894)
+33.) Labelled 4 behavior files, made object_helper functions consistent (#881)
+34.) Add a make target for .copt (#902)
+35.) The Big Function PR (Part 3) (#888)
+36.) The Big Function PR (Part 4) (#906)
+37.) Rename src/audio/memory.c -> heap.c (#907)
+38.) Fix BBH texture (#908)
+
+Refresh #6
+1.) Make tools work on MinGW (#804) 
+2.) Document mario_misc (#628) 
+3.) add patch_libmalloc.py script to work around compiler crashes (#811) 
+4.) Label the coffins file. (#829) 
+5.) Convert enhancements into patches (#827) 
+6.) Document Tweester.inc.c (#840) 
+7.) EU OK and cleanup EU (#782)
+
+Refresh #5
+1.) mem_error_screen.inc.c updated for C (#775)
+2.) updated patch_libultra_math to work directly on libultra.a (#781)
+3.) Enhancement: Debug boxes (#783)
+4.) Label effects MemoryPool (#784)
+5.) Use full-width characters for JP text and rename mislabeled stuff (#772)
+6.) Small asset extraction fixes (#785)
+7.) Fix incremental asset extraction after the last PR (#790)
+8.) Labelled behavior script commands, tidied up behavior scripts and ren…
+9.) Document camera.c (#741)
+10.) Fix a HMC texture asset (#795)
+11.) Fix UB in angle conversion for paintings. Needed for pc-port. (#796)
+12.) Fix PSS texture assets (#801)
+13.) Fix some camera typos (#802)
+
+Refresh #4
+1.) Label screen_transition.c (#737)
+2.) Revamp macros (#738)
+3.) Simplify the cake makefile logic (#739)
+4.) Move zbuffer to C (#742)
+5.) Audio blob endian/64-bit fixes (#740)
+6.) Ub fixes (#745)
+7.) process_level_music_dynamics: slightly better stack and regalloc (#746)
+8.) move level order specific definitions out to levels/level_defines.h (#743)
+9.) Renamed some mislabelled sound effects (#748)
+10.) Very minor white space fixes in Mario.c (#752)
+11.) Renamed GRAVITY to OBJ_PHYSICS (#755)
+12.) Use defined macros instead of literal values for interactions in behavior_data.c (#754)
+13.) iQue Player console detection + full support (#756) 
+14.) Fix Goddard Mario head for little endian etc. (#757) 
+15.) Small bits of audio doc (#749)
+16.) Update diff script (#750) 
+17.) Nicer format for course/dialog text, enum for dialog IDs (#753) 
+18.) first-diff: store most recent mtime during check (#759)
+19.) Use Lights1 struct for light values (#760)
+20.) Detect mips64-elf in diff.py (#761) 
+21.) Name display lists in gd renderer.c (#764) 
+22.) Document a variety of PU type crashes. (#765) 
+23.) Label object_behaviors. (#716) 
+24.) Update swoop.inc.c (#767) 
+25.) Label tilting_pyramid.inc.c (#768) 
+26.) Label red_coin.inc.c (#770) 
+27.) Use more level defines (#758) 
+28.) Named Mario actions 6, 7, and 8 and noted causes of hands-free holding glitch (#769)
+
+Refresh #3
+1.) Small bits of sound sample labelling
+2.) Append 'b' to fopen calls in n64graphics to satisfy Windows
+3.) Document synthesis.c and abi.h
+4.) Remove gbi_old.h and use gbi.h instead for F3D_OLD
+5.) Fix and change most values used by f3d commands
+6.) Convert actors to C
+7.) Make extract_assets.py fail on bad baserom
+8.) Fix some (pragma-ignored) warnings
+9.) Convert trig tables and data/ buffers into C
+10.) Document intro behaviors and some of camera.c
+11.) Match dma_sample_data
+12.) Convert levels, bin, text, goddard_tex_dl to C
+13.) Remove .bss size hardcoding
+14.) Add mips64 fallback and alt dump option to diff.sh
+15.) Convert behavior_data to C
+16.) Get rid of the enum in behavior_data.
+17.) Change more values used by f3d commands
+18.) Document game/skybox.c
+19.) Actors levels fixup
+20.) Convert Mario animations to C (kind of)
+22.) generate skybox data from 248x248 images
+23.) 64-bit fixes
+24.) Move demo data to C
+25.) Change uintptr_t to GeoLayout for actors
+26.) Move libc includes to include/libc/
+
+Refresh #2a (hotfix)
+Changes from Refresh #2:
+
+1.) Fixed text Makefile dependencies"
+
+Refresh #2
+Changes from Refresh #1:
+
+1.) Label src/game/behaviors/boo.inc.c
+2.) Verify half of audio_defines.h
+3.) Label ingame_menu.c and some dialog stuff
+4.) Improve handle_dialog_text_and_pages EU non-matching
+5.) Fix texture format for water splash/sparkle
+6.) Merge ucode.bin and ucode_unk.bin
+7.) 64-bit fixes
+8.) [AUDIO] Match func_80316928
+9.) Documented bug in Tuxie's mother's code 
+10.) [AUDIO] Slightly closer matching for process_level_music_dynamics
+11.) Name channel scripts in sequence 0
+12.) Nicer error message when sha1sum doesn't match
+13.) Refactor object fields
+14.) Document file_select.c
+15.) Document star_select.c
+16.) Add uncompressed string support to textconv
+17.) Document main_menu geo and leveldata
+18.) Document hud.c and rename char textures
+19.) Correct gSPTextureRectangle values
+20.) Linker script wildcard
+     - Fixes "undefined reference to x in discarded section y" linker errors.
+     - Also means that you no longer have to add linker script entries for source files.
+21.) Reference qemu-irix package and add project structure
+     - Installing qemu-irix is as simple as installing the provided Debian package on the GitHub "Releases" tab
+       (https://github.com/n64decomp/qemu-irix).
+     - Old qemu-irix installs are unaffected by this change, and it is still possible to install qemu-irix with the older method.
+
+Refresh #1
+Changes from initial release:
+
+1.) More README cleanups and documentation
+2.) Fix .gitignore in tools/
+3.) More README cleanups and corrections
+4.) oUnk190 -> oInteractionSubtype
+5.) Normalize line endings
+6.) Replace bank_sets.s by sequences.json + build magic
+7.) Fix tabledesign in .gitignore
+8.) Cleaned and documented arrays in audio/
+9.) Change minimum Python 3 requirement in README.md to 3.6
+10.) Remove whitespace in ingame_menu.c, save_file.c, and star_select.c
+11.) Documentation comment style fixed
+12.) sm64.map -> sm64.version.map (ex: sm64.us.map)
+13.) Decompile EU versions of HUD and obj behaviors
+14.) Label ukiki.inc.c and ukiki_cage.inc.c
+15.) Add missing OS header includes
+16.) Fix alignment issue in model_ids.h
+17.) A bunch of behavior changes:
+     a.) Made styles consistent with function names (ex: BehBehaviorLoop -> beh_behavior_loop)
+     b.) Split obj_behaviors_2.c into multiple .inc.c files in behaviors/
+     c.) bhvHauntedRoomCheck -> bhvCoffinManager
+18.) Update README.md notes on WSL and add links
+19.) Added tidy.sh and also bracing around single-line ifs and loops

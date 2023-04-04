@@ -1,0 +1,13 @@
+# Bowser in the Dark World (Boss Area)
+short-name: bowser_1
+full-name: Bowser in the Dark World (Boss Area)
+texture-file: ["/texture.inc.c"]
+area-count: 1
+objects: []
+shared-path: []
+# loaded files
+skybox-bin: bidw
+texture-bin: null
+effects: false
+actor-bins: [group12]
+common-bin: []

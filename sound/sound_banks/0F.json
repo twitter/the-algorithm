@@ -1,0 +1,62 @@
+{
+    "date": "1996-03-19",
+    "sample_bank": "instruments",
+    "envelopes": {
+        "envelope0": [
+            [2, 32700],
+            [187, 0],
+            [32700, 0],
+            "hang"
+        ],
+        "envelope1": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope2": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope3": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ]
+    },
+    "instruments": {
+        "inst0": {
+            "release_rate": 100,
+            "normal_range_lo": 55,
+            "normal_range_hi": 56,
+            "envelope": "envelope0",
+            "sound_lo": "2A",
+            "sound": "2B",
+            "sound_hi": "2C"
+        },
+        "inst1": {
+            "release_rate": 10,
+            "envelope": "envelope1",
+            "sound": "22_boys_choir"
+        },
+        "inst2": {
+            "release_rate": 90,
+            "envelope": "envelope2",
+            "sound": "28_sitar_1"
+        },
+        "inst3": {
+            "release_rate": 10,
+            "envelope": "envelope3",
+            "sound": "39_sitar_2"
+        }
+    },
+    "instrument_list": [
+        "inst0",
+        "inst1",
+        "inst2",
+        "inst3"
+    ]
+}

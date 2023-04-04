@@ -1,0 +1,92 @@
+{
+    "date": "1996-03-19",
+    "sample_bank": {"ifdef": ["VERSION_SH"], "then": "instruments", "else": "bowser_organ"},
+    "envelopes": {
+        "envelope0": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope1": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope2": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope3": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope4": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope5": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ]
+    },
+    "instruments": {
+        "inst0": {
+            "release_rate": 19,
+            "normal_range_hi": 50,
+            "envelope": "envelope0",
+            "sound": {"ifdef": ["VERSION_SH"], "then": "34b_organ", "else": "00_organ_1"},
+            "sound_hi": {"ifdef": ["VERSION_SH"], "then": "34c_organ_lq", "else": "01_organ_1_lq"}
+        },
+        "inst1": {
+            "release_rate": 19,
+            "normal_range_hi": 50,
+            "envelope": "envelope1",
+            "sound": {"ifdef": ["VERSION_SH"], "then": "34b_organ", "else": "00_organ_1"},
+            "sound_hi": {"ifdef": ["VERSION_SH"], "then": "34c_organ_lq", "else": "01_organ_1_lq"}
+        },
+        "inst2": {
+            "release_rate": 19,
+            "normal_range_hi": 50,
+            "envelope": "envelope2",
+            "sound": {"ifdef": ["VERSION_SH"], "then": "34b_organ", "else": "00_organ_1"},
+            "sound_hi": {"ifdef": ["VERSION_SH"], "then": "34c_organ_lq", "else": "01_organ_1_lq"}
+        },
+        "inst3": {
+            "release_rate": 19,
+            "normal_range_hi": 50,
+            "envelope": "envelope3",
+            "sound": {"ifdef": ["VERSION_SH"], "then": "34b_organ", "else": "00_organ_1"},
+            "sound_hi": {"ifdef": ["VERSION_SH"], "then": "34c_organ_lq", "else": "01_organ_1_lq"}
+        },
+        "inst4": {
+            "release_rate": 19,
+            "normal_range_hi": 50,
+            "envelope": "envelope4",
+            "sound": {"ifdef": ["VERSION_SH"], "then": "34b_organ", "else": "00_organ_1"},
+            "sound_hi": {"ifdef": ["VERSION_SH"], "then": "34c_organ_lq", "else": "01_organ_1_lq"}
+        },
+        "inst5": {
+            "release_rate": 10,
+            "envelope": "envelope5",
+            "sound": {"ifdef": ["VERSION_SH"], "then": "22_boys_choir", "else": "02_boys_choir"}
+        }
+    },
+    "instrument_list": [
+        "inst0",
+        "inst1",
+        "inst2",
+        "inst3",
+        "inst4",
+        "inst5"
+    ]
+}

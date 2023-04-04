@@ -1,0 +1,49 @@
+/*
+ * This file defines the demo data. It's parsed by tools/demo_data_converter.py.
+ *
+ * The "table" array declares the order of the demos and will be generated
+ * as pairs of (offset, size).
+ * Each item has a "demofile" property, which must reference a demofile
+ * in the "demofiles" array.
+ * "ifdef" is an optional array property which can be used to specify
+ * requirement of SM64 version.
+ * "extraSize" is an optional property which will be added the size of the
+ * demofile.
+ *
+ * The "demofiles" array declares the inclusion order of the demofiles.
+ * A file with the ".bin" extension with the "name" property as basename
+ * should exist in the assets/demos/ directory.
+ * "ifdef" is an optional array property which can be used to specify
+ * requirement of SM64 version.
+ */
+
+{
+    "table": [
+        {"demofile":"bitdw", "ifdef":["VERSION_US", "VERSION_SH"]},
+        
+        /* Whomp's Fortress has the wrong size.
+           The original entries probably manually input the sizes. */
+        {"demofile":"wf", "extraSize":368},
+        
+        {"demofile":"ccm"},
+        {"demofile":"bbh"},
+        {"demofile":"jrb"},
+        {"demofile":"hmc"},
+        {"demofile":"pss"}
+    ],
+    "demofiles": [
+        {"name":"bbh"},
+        {"name":"ccm"},
+        {"name":"hmc"},
+        {"name":"jrb"},
+        {"name":"wf"},
+        {"name":"pss"},
+        
+        /* Might be an unused demo, but it doesn't define a header,
+           so it can't be normally called. Speculation: "blooper" take for CCM.
+           Mario runs into the sign and aligns himself as if it were a mistake. */
+        {"name":"unused"},
+        
+        {"name":"bitdw", "ifdef":["VERSION_US", "VERSION_SH"]}
+    ]
+}

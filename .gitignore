@@ -1,2 +1,72 @@
-.DS_Store
+# Object files
+*.o
+*.obj
+*.elf
 
+# Linker output
+*.ilk
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# datadump
+/tools/ddump/*
+
+# Text editor remnants
+*.swp
+.vscode/*
+
+# General project-specific ignores
+doxygen/doxygen/*
+build/*
+*.dump
+*.mio0
+*.z64
+*.map
+.assets-local.txt
+
+# Assets. Generally ignored, but ones with "custom" in the name are fine.
+/levels/**/*.png
+/actors/**/*.png
+/textures/**/*.png
+/assets/**/*.bin
+/sound/**/*.m64
+/sound/**/*.aiff
+!/levels/**/*custom*.png
+!/levels/**/*custom*/**/*.png
+!/actors/**/*custom*.png
+!/actors/**/*custom*/**/*.png
+!/textures/**/*custom*.png
+!/textures/**/*custom*/**/*.png
+!/sound/**/*custom*.m64
+!/sound/**/*custom*/**/*.m64
+!/sound/**/*custom*.aiff
+!/sound/**/*custom*/**/*.aiff
+!/assets/**/*custom*.bin
+!/assets/**/*custom*/**/*.bin

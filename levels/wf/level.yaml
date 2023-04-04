@@ -1,0 +1,14 @@
+# Whomp's Fortress
+short-name: wf
+full-name: Whomp's Fortress
+texture-bin: grass
+texture-file: ["/texture.inc.c"]
+area-count: 1
+objects: [beta_extending_platform, breakable_wall_left, breakable_wall_right, extending_platform, kickable_board, large_bomp, rotating_wooden_platform, sliding_platform, small_bomp, tower_door, tumbling_bridge_far, tumbling_bridge_near]
+shared-path: []
+# loaded files
+skybox-bin: cloud_floor
+texture-bin: grass
+effects: false
+actor-bins: [group1, group14]
+common-bin: [common0]

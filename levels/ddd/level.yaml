@@ -1,0 +1,13 @@
+# Dire Dire Docks
+short-name: ddd
+full-name: Dire Dire Docks
+texture-file: ["/texture.inc.c"]
+area-count: 2
+objects: [pole, sub_door, submarine]
+shared-path: []
+# loaded files
+skybox-bin: water
+texture-bin: water
+effects: true
+actor-bins: [group4, group13]
+common-bin: [common0]

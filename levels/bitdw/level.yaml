@@ -1,0 +1,13 @@
+# Bowser in the Dark World
+short-name: bitdw
+full-name: Bowser in the Dark World
+texture-file: ["/texture.inc.c"]
+area-count: 1
+objects: [collapsing_stairs_1, collapsing_stairs_2, collapsing_stairs_3, collapsing_stairs_4, collapsing_stairs_5, ferris_platform, ferris_wheel_axle, seesaw_platform, sliding_platform, square_platform]
+shared-path: []
+# loaded files
+skybox-bin: bidw
+texture-bin: sky
+effects: false
+actor-bins: [group11, group17]
+common-bin: [common0]

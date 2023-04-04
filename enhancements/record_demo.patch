@@ -1,0 +1,185 @@
+diff --git a/src/game/game_init.c b/src/game/game_init.c
+index b961ca52..adfde049 100644
+--- a/src/game/game_init.c
++++ b/src/game/game_init.c
+@@ -11,6 +11,7 @@
+ #include "game_init.h"
+ #include "main.h"
+ #include "memory.h"
++#include "object_list_processor.h"
+ #include "profiler.h"
+ #include "save_file.h"
+ #include "seq_ids.h"
+@@ -386,6 +387,45 @@ void display_and_vsync(void) {
+ // Controls
+ // ----------------------------------------------------------------------------------------------------
+ 
++/*
++ * This enhancement allows you to record gameplay demos for the mario head screen.
++ *
++ * Note:
++ * This enhancement does require the lastest versions of PJ64 from the nightly builds,
++ * because it uses the javascript API to automatically dump the demo files from RAM
++ * once the demo is completed. See enhancements/RecordDemo.js for more info
++ *
++*/
++
++#include "mario.h"
++
++#define DEMOREC_STATUS_NOT_RECORDING 0
++#define DEMOREC_STATUS_PREPARING 1
++#define DEMOREC_STATUS_RECORDING 2
++#define DEMOREC_STATUS_STOPPING 3
++#define DEMOREC_STATUS_DONE 4
++
++#define DEMOREC_PRINT_X 10
++#define DEMOREC_PRINT_Y 10
++
++#define DEMOREC_DONE_DELAY 60 // Show "DONE" message for 2 seconds.
++
++#define DEMOREC_MAX_INPUTS 1025 // Max number of recorded inputs.
++
++/*
++    DO NOT REMOVE, MODIFY, OR MAKE A COPY OF THIS EXACT STRING!
++    This is here so that the js dump script can find the control variables easily.
++*/
++char gDemoRecTag[] = "DEMORECVARS";
++
++// Control variables. It is easier if they are each 4 byte aligned, which is why they are u32.
++u32 gRecordingStatus = DEMOREC_STATUS_NOT_RECORDING;
++u32 gDoneDelay = 0;
++u32 gNumOfRecordedInputs = 0;
++struct DemoInput gRecordedInputs[DEMOREC_MAX_INPUTS];
++struct DemoInput* gRecordedInputsPtr = (struct DemoInput*)gRecordedInputs;
++struct DemoInput gRecordedDemoInputCopy;
++
+ /**
+  * This function records distinct inputs over a 255-frame interval to RAM locations and was likely
+  * used to record the demo sequences seen in the final game. This function is unused.
+@@ -420,6 +460,118 @@ UNUSED static void record_demo(void) {
+     gRecordedDemoInput.timer++;
+ }
+ 
++void record_new_demo_input(void) {
++    if (gRecordedDemoInput.timer == 1 && gRecordedDemoInputCopy.timer > 0) {
++        gRecordedInputs[gNumOfRecordedInputs].timer = gRecordedDemoInputCopy.timer;
++        gRecordedInputs[gNumOfRecordedInputs + 1].timer = 0;
++        gRecordedInputs[gNumOfRecordedInputs].rawStickX = gRecordedDemoInputCopy.rawStickX;
++        gRecordedInputs[gNumOfRecordedInputs + 1].rawStickX = gRecordedDemoInputCopy.rawStickX;
++        gRecordedInputs[gNumOfRecordedInputs].rawStickY = gRecordedDemoInputCopy.rawStickY;
++        gRecordedInputs[gNumOfRecordedInputs + 1].rawStickY = gRecordedDemoInputCopy.rawStickY;
++        gRecordedInputs[gNumOfRecordedInputs].buttonMask = gRecordedDemoInputCopy.buttonMask;
++        gRecordedInputs[gNumOfRecordedInputs + 1].buttonMask = gRecordedDemoInputCopy.buttonMask;
++        gNumOfRecordedInputs++;
++    }
++}
++
++// Self explanitory
++void copy_gRecordedDemoInput(void) {
++    gRecordedDemoInputCopy.timer = gRecordedDemoInput.timer;
++    gRecordedDemoInputCopy.rawStickX = gRecordedDemoInput.rawStickX;
++    gRecordedDemoInputCopy.rawStickY = gRecordedDemoInput.rawStickY;
++    gRecordedDemoInputCopy.buttonMask = gRecordedDemoInput.buttonMask;
++}
++
++// Runs when the demo is recording.
++void recording(void) {
++
++    // Force-stop when someone makes too many inputs.
++    if (gNumOfRecordedInputs + 1 > DEMOREC_MAX_INPUTS) {
++        gRecordingStatus = DEMOREC_STATUS_STOPPING;
++        return;
++    }
++
++    copy_gRecordedDemoInput();
++    record_demo();
++    record_new_demo_input();
++}
++
++// Makes sure the last demo input is zeroed out, to make it look more clean.
++void record_cleanup(void) {
++    gRecordedInputs[gNumOfRecordedInputs].timer = 0;
++    gRecordedInputs[gNumOfRecordedInputs].rawStickX = 0;
++    gRecordedInputs[gNumOfRecordedInputs].rawStickY = 0;
++    gRecordedInputs[gNumOfRecordedInputs].buttonMask = 0;
++
++    // Make sure the done delay is reset before moving to DONE status.
++    gDoneDelay = 0;
++}
++
++void record_run(void) {
++    switch(gRecordingStatus) {
++        case DEMOREC_STATUS_NOT_RECORDING:
++            break;
++        case DEMOREC_STATUS_PREPARING:
++            if (gMarioObject != NULL && gCurrLevelNum != LEVEL_NONE) { // If the game is in an active level
++                gRecordingStatus = DEMOREC_STATUS_RECORDING;
++
++                // First 4 values in demo inputs are used to define level ID
++                gNumOfRecordedInputs = 1;
++                gRecordedInputs[0].timer = gCurrLevelNum;
++                gRecordedInputs[0].rawStickX = 0;
++                gRecordedInputs[0].rawStickY = 0;
++                gRecordedInputs[0].buttonMask = 0;
++            }
++            break;
++        case DEMOREC_STATUS_RECORDING:
++            recording();
++            break;
++        case DEMOREC_STATUS_DONE:
++            if (gDoneDelay > DEMOREC_DONE_DELAY)
++                gRecordingStatus = DEMOREC_STATUS_NOT_RECORDING;
++            else
++                gDoneDelay++;
++            break;
++    }
++}
++
++// Prints the status on the bottom-left side of the screen in colorful text.
++void print_status(void) {
++    switch(gRecordingStatus) {
++        case DEMOREC_STATUS_PREPARING:
++            print_text(DEMOREC_PRINT_X, DEMOREC_PRINT_Y, "READY");
++            break;
++        case DEMOREC_STATUS_RECORDING:
++            print_text(DEMOREC_PRINT_X, DEMOREC_PRINT_Y, "REC");
++            break;
++        case DEMOREC_STATUS_STOPPING:
++            print_text(DEMOREC_PRINT_X, DEMOREC_PRINT_Y, "WAIT");
++            break;
++        case DEMOREC_STATUS_DONE:
++            print_text(DEMOREC_PRINT_X, DEMOREC_PRINT_Y, "DONE");
++            break;
++    }
++}
++
++// Main function that should be called from thread5_game_loop()
++void recordingDemo(void) {
++    // Mario needs to enter directly into a level and not from a warp,
++    // so the debug level select is used for that.
++    gDebugLevelSelect = TRUE;
++
++    if (gPlayer1Controller->buttonPressed & L_TRIG) {
++        if (gRecordingStatus == DEMOREC_STATUS_NOT_RECORDING) {
++            gRecordingStatus = DEMOREC_STATUS_PREPARING;
++        } else if (gRecordingStatus == DEMOREC_STATUS_RECORDING) {
++            gRecordingStatus = DEMOREC_STATUS_STOPPING;
++            record_cleanup();
++        }
++    }
++
++    record_run();
++    print_status();
++}
++
+ /**
+  * Take the updated controller struct and calculate the new x, y, and distance floats.
+  */
+@@ -684,6 +836,7 @@ void thread5_game_loop(UNUSED void *arg) {
+         audio_game_loop_tick();
+         select_gfx_pool();
+         read_controller_inputs();
++        recordingDemo();
+         addr = level_script_execute(addr);
+ 
+         display_and_vsync();

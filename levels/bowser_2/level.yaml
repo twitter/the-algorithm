@@ -1,0 +1,13 @@
+# Bowser in the Fire Sea (Boss Area)
+short-name: bowser_2
+full-name: Bowser in the Fire Sea (Boss Area)
+texture-file: ["/texture.inc.c"]
+area-count: 1
+objects: [tilting_platform]
+shared-path: []
+# loaded files
+skybox-bin: bitfs
+texture-bin: fire
+effects: true
+actor-bins: [group12]
+common-bin: []

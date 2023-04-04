@@ -1,0 +1,6 @@
+#include "anim_0800AF68.inc.c"
+#include "anim_0800B1A8.inc.c"
+#include "anim_0800B4A8.inc.c"
+#include "anim_0800B9F8.inc.c"
+#include "anim_0800BBEC.inc.c"
+#include "anim_0800C058.inc.c"

@@ -1,0 +1,166 @@
+{
+    "date": "1996-03-19",
+    "sample_bank": "instruments",
+    "envelopes": {
+        "envelope0": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope1": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope2": [
+            [2, 32700],
+            [205, 19818],
+            [535, 0],
+            "hang"
+        ],
+        "envelope3": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope4": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope5": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope6": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ]
+    },
+    "instruments": {
+        "inst0": {
+            "release_rate": 208,
+            "envelope": "envelope0",
+            "sound": "19_brass"
+        },
+        "inst1": {
+            "release_rate": 208,
+            "envelope": "envelope1",
+            "sound": "1A_slap_bass"
+        },
+        "inst2": {
+            "release_rate": 128,
+            "envelope": "envelope2",
+            "sound": "1B_organ_2"
+        },
+        "inst3": {
+            "release_rate": 208,
+            "envelope": "envelope3",
+            "sound": "1C"
+        },
+        "percussion": [
+            {"release_rate": 10, "pan": 62, "envelope": "envelope4", "sound": {"sample": "06_kick_drum_1", "tuning": 0.210224}},
+            {"release_rate": 10, "pan": 62, "envelope": "envelope4", "sound": {"sample": "06_kick_drum_1", "tuning": 0.2227245}},
+            {"release_rate": 10, "pan": 62, "envelope": "envelope4", "sound": {"sample": "06_kick_drum_1", "tuning": 0.2359685}},
+            {"release_rate": 10, "pan": 62, "envelope": "envelope4", "sound": {"sample": "06_kick_drum_1", "tuning": 0.25}},
+            {"release_rate": 10, "pan": 62, "envelope": "envelope4", "sound": {"sample": "06_kick_drum_1", "tuning": 0.264866}},
+            {"release_rate": 10, "pan": 62, "envelope": "envelope4", "sound": {"sample": "06_kick_drum_1", "tuning": 0.2806155}},
+            {"release_rate": 10, "pan": 62, "envelope": "envelope4", "sound": {"sample": "06_kick_drum_1", "tuning": 0.297302}},
+            {"release_rate": 10, "pan": 62, "envelope": "envelope4", "sound": {"sample": "06_kick_drum_1", "tuning": 0.3149805}},
+            {"release_rate": 10, "pan": 62, "envelope": "envelope4", "sound": {"sample": "06_kick_drum_1", "tuning": 0.33371}},
+            {"release_rate": 10, "pan": 62, "envelope": "envelope4", "sound": {"sample": "06_kick_drum_1", "tuning": 0.3535535}},
+            {"release_rate": 10, "pan": 62, "envelope": "envelope4", "sound": {"sample": "06_kick_drum_1", "tuning": 0.374577}},
+            {"release_rate": 10, "pan": 62, "envelope": "envelope4", "sound": {"sample": "06_kick_drum_1", "tuning": 0.3968505}},
+            {"release_rate": 10, "pan": 62, "envelope": "envelope4", "sound": {"sample": "06_kick_drum_1", "tuning": 0.4204485}},
+            {"release_rate": 10, "pan": 62, "envelope": "envelope4", "sound": {"sample": "06_kick_drum_1", "tuning": 0.4454495}},
+            {"release_rate": 10, "pan": 62, "envelope": "envelope4", "sound": {"sample": "06_kick_drum_1", "tuning": 0.4719375}},
+            {"release_rate": 10, "pan": 62, "envelope": "envelope4", "sound": {"sample": "06_kick_drum_1", "tuning": 0.5}},
+            {"release_rate": 10, "pan": 57, "envelope": "envelope4", "sound": "07_rimshot"},
+            {"release_rate": 10, "pan": 65, "envelope": "envelope4", "sound": {"sample": "08", "tuning": 1.1905508}},
+            {"release_rate": 10, "pan": 66, "envelope": "envelope4", "sound": {"sample": "08", "tuning": 0.8418465}},
+            {"release_rate": 10, "pan": 66, "envelope": "envelope4", "sound": {"sample": "08", "tuning": 0.8919052}},
+            {"release_rate": 10, "pan": 6, "envelope": "envelope4", "sound": {"sample": "09", "tuning": 0.471937}},
+            {"release_rate": 10, "pan": 6, "envelope": "envelope4", "sound": {"sample": "09", "tuning": 0.5}},
+            {"release_rate": 10, "pan": 27, "envelope": "envelope4", "sound": {"sample": "09", "tuning": 0.66742}},
+            {"release_rate": 10, "pan": 27, "envelope": "envelope4", "sound": {"sample": "09", "tuning": 0.707107}},
+            {"release_rate": 10, "pan": 45, "envelope": "envelope4", "sound": {"sample": "09", "tuning": 0.793701}},
+            {"release_rate": 10, "pan": 45, "envelope": "envelope4", "sound": {"sample": "09", "tuning": 0.840897}},
+            {"release_rate": 10, "pan": 53, "envelope": "envelope4", "sound": {"sample": "09", "tuning": 1.0}},
+            {"release_rate": 10, "pan": 53, "envelope": "envelope4", "sound": {"sample": "09", "tuning": 1.059463}},
+            {"release_rate": 10, "pan": 83, "envelope": "envelope4", "sound": {"sample": "09", "tuning": 1.189207}},
+            {"release_rate": 10, "pan": 83, "envelope": "envelope4", "sound": {"sample": "09", "tuning": 1.259921}},
+            {"release_rate": 10, "pan": 83, "envelope": "envelope4", "sound": {"sample": "09", "tuning": 1.33484}},
+            {"release_rate": 10, "pan": 83, "envelope": "envelope4", "sound": {"sample": "09", "tuning": 1.414214}},
+            {"release_rate": 10, "pan": 83, "envelope": "envelope4", "sound": {"sample": "09", "tuning": 1.498307}},
+            {"release_rate": 10, "pan": 35, "envelope": "envelope4", "sound": {"sample": "0A_tambourine", "tuning": 1.189207}},
+            {"release_rate": 10, "pan": 35, "envelope": "envelope4", "sound": {"sample": "0A_tambourine", "tuning": 1.259921}},
+            {"release_rate": 10, "pan": 35, "envelope": "envelope4", "sound": {"sample": "0A_tambourine", "tuning": 1.33484}},
+            {"release_rate": 10, "pan": 35, "envelope": "envelope4", "sound": {"sample": "0A_tambourine", "tuning": 1.414214}},
+            {"release_rate": 10, "pan": 35, "envelope": "envelope4", "sound": {"sample": "0A_tambourine", "tuning": 1.498307}},
+            {"release_rate": 10, "pan": 35, "envelope": "envelope4", "sound": {"sample": "0A_tambourine", "tuning": 1.587401}},
+            {"release_rate": 10, "pan": 35, "envelope": "envelope4", "sound": {"sample": "0A_tambourine", "tuning": 1.681793}},
+            {"release_rate": 10, "pan": 35, "envelope": "envelope4", "sound": {"sample": "0A_tambourine", "tuning": 1.781798}},
+            {"release_rate": 10, "pan": 54, "envelope": "envelope4", "sound": {"sample": "0B", "tuning": 0.5469096}},
+            {"release_rate": 10, "pan": 54, "envelope": "envelope4", "sound": {"sample": "0B", "tuning": 0.5794306}},
+            {"release_rate": 10, "pan": 54, "envelope": "envelope4", "sound": {"sample": "0B", "tuning": 0.61388505}},
+            {"release_rate": 10, "pan": 54, "envelope": "envelope4", "sound": {"sample": "0B", "tuning": 0.65038884}},
+            {"release_rate": 10, "pan": 54, "envelope": "envelope4", "sound": {"sample": "0B", "tuning": 0.6890625}},
+            {"release_rate": 10, "pan": 54, "envelope": "envelope4", "sound": {"sample": "0B", "tuning": 0.7300362}},
+            {"release_rate": 10, "pan": 54, "envelope": "envelope4", "sound": {"sample": "0B", "tuning": 0.77344644}},
+            {"release_rate": 10, "pan": 54, "envelope": "envelope4", "sound": {"sample": "0B", "tuning": 0.81943786}},
+            {"release_rate": 10, "pan": 70, "envelope": "envelope4", "sound": {"sample": "0B", "tuning": 1.5468929}},
+            {"release_rate": 10, "pan": 70, "envelope": "envelope4", "sound": {"sample": "0B", "tuning": 1.6388757}},
+            {"release_rate": 10, "pan": 82, "envelope": "envelope4", "sound": {"sample": "0C_conga_stick", "tuning": 0.793701}},
+            {"release_rate": 10, "pan": 82, "envelope": "envelope4", "sound": {"sample": "0C_conga_stick", "tuning": 0.840897}},
+            {"release_rate": 10, "pan": 82, "envelope": "envelope4", "sound": {"sample": "0C_conga_stick", "tuning": 0.890899}},
+            {"release_rate": 10, "pan": 82, "envelope": "envelope4", "sound": {"sample": "0C_conga_stick", "tuning": 0.943875}},
+            {"release_rate": 10, "pan": 82, "envelope": "envelope4", "sound": {"sample": "0C_conga_stick", "tuning": 1.0}},
+            {"release_rate": 10, "pan": 82, "envelope": "envelope4", "sound": {"sample": "0C_conga_stick", "tuning": 1.059463}},
+            {"release_rate": 10, "pan": 82, "envelope": "envelope4", "sound": {"sample": "0C_conga_stick", "tuning": 1.122462}},
+            {"release_rate": 10, "pan": 82, "envelope": "envelope4", "sound": {"sample": "0C_conga_stick", "tuning": 1.189207}},
+            {"release_rate": 10, "pan": 82, "envelope": "envelope4", "sound": {"sample": "0C_conga_stick", "tuning": 1.259921}},
+            {"release_rate": 10, "pan": 82, "envelope": "envelope4", "sound": {"sample": "0C_conga_stick", "tuning": 1.33484}},
+            {"release_rate": 10, "pan": 82, "envelope": "envelope4", "sound": {"sample": "0C_conga_stick", "tuning": 1.414214}},
+            {"release_rate": 10, "pan": 82, "envelope": "envelope4", "sound": {"sample": "0C_conga_stick", "tuning": 1.498307}},
+            {"release_rate": 10, "pan": 128, "envelope": "envelope4", "sound": "0D_clave"}
+        ],
+        "inst4": {
+            "release_rate": 10,
+            "normal_range_lo": 24,
+            "envelope": "envelope5",
+            "sound_lo": "0E_hihat_closed",
+            "sound": "0F_hihat_open"
+        },
+        "inst5": {
+            "release_rate": 10,
+            "normal_range_lo": 28,
+            "normal_range_hi": 28,
+            "envelope": "envelope6",
+            "sound_lo": "10_cymbal_bell",
+            "sound": "11_splash_cymbal",
+            "sound_hi": "10_cymbal_bell"
+        }
+    },
+    "instrument_list": [
+        "inst0",
+        null,
+        null,
+        null,
+        null,
+        null,
+        "inst1",
+        "inst2",
+        "inst3",
+        null,
+        "inst4",
+        "inst5"
+    ]
+}

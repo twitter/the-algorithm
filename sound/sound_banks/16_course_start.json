@@ -1,0 +1,34 @@
+{
+    "date": "1996-03-19",
+    "sample_bank": {"ifdef": ["VERSION_SH"], "then": "instruments", "else": "course_start"},
+    "envelopes": {
+        "envelope0": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope1": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ]
+    },
+    "instruments": {
+        "inst0": {
+            "release_rate": 208,
+            "envelope": "envelope0",
+            "sound": {"ifdef": ["VERSION_SH"], "then": "45b_la", "else": "00_la"}
+        },
+        "inst1": {
+            "release_rate": 208,
+            "envelope": "envelope1",
+            "sound": {"ifdef": ["VERSION_SH"], "then": "45b_la", "else": "00_la"}
+        }
+    },
+    "instrument_list": [
+        "inst0",
+        "inst1"
+    ]
+}

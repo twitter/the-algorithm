@@ -1,0 +1,82 @@
+// early unused test dynlist
+#include <PR/ultratypes.h>
+
+#include "dynlist_macros.h"
+#include "dynlists.h"
+#include "../dynlist_proc.h"
+// maybe move types into the dynlists.h file?
+
+struct DynList dynlist_test_cube[] = {
+    BeginList(),
+
+    StartGroup("ico1vg"),
+        MakeVertex(-2.0, 0.0, -2.0),
+        MakeVertex(-2.0, 0.0, 2.0),
+        MakeVertex(2.0, 0.0, 2.0),
+        MakeVertex(2.0, 0.0, -2.0),
+        MakeVertex(0.0, 3.0, 0.0),
+        MakeVertex(0.0, -3.0, 0.0),
+    EndGroup("ico1vg"),
+
+    StartGroup("ico1pg"),
+        MakeDynObj(D_FACE, NULL),
+            SetMaterial(0),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 0),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 1),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 2),
+        MakeDynObj(D_FACE, NULL),
+            SetMaterial(0),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 0),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 2),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 3),
+        MakeDynObj(D_FACE, NULL),
+            SetMaterial(0),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 4),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 2),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 3),
+        MakeDynObj(D_FACE, NULL),
+            SetMaterial(0),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 1),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 2),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 4),
+        MakeDynObj(D_FACE, NULL),
+            SetMaterial(0),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 1),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 4),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 0),
+        MakeDynObj(D_FACE, NULL),
+            SetMaterial(0),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 3),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 0),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 4),
+        MakeDynObj(D_FACE, NULL),
+            SetMaterial(0),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 5),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 3),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 2),
+        MakeDynObj(D_FACE, NULL),
+            SetMaterial(0),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 1),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 5),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 2),
+        MakeDynObj(D_FACE, NULL),
+            SetMaterial(0),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 1),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 0),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 5),
+        MakeDynObj(D_FACE, NULL),
+            SetMaterial(0),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 3),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 5),
+            SetParamPtr(PARM_PTR_OBJ_VTX, 0),
+    EndGroup("ico1pg"),
+
+    UseObj("ico1pg"),
+        MapVertices("ico1vg"),
+
+    MakeDynObj(D_SHAPE, "ico1_sh"),
+        SetNodeGroup("ico1vg"),
+        SetPlaneGroup("ico1pg"),
+
+    EndList(),
+};

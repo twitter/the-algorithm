@@ -1,0 +1,8 @@
+// 0x0E000770
+const GeoLayout rr_geo_000770[] = {
+   GEO_CULLING_RADIUS(1500),
+   GEO_OPEN_NODE(),
+      GEO_DISPLAY_LIST(LAYER_TRANSPARENT, rr_seg7_dl_0700E830),
+   GEO_CLOSE_NODE(),
+   GEO_END(),
+};

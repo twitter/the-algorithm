@@ -1,0 +1,13 @@
+# Rainbow Ride
+short-name: rr
+full-name: Rainbow Ride
+texture-file: ["/texture.inc.c"]
+area-count: 1
+objects: [cruiser_wing, donut_block, elevator_platform, flying_carpet, l_platform, octagonal_platform, pyramid_platform, rotating_bridge_platform, seesaw_platform, sliding_platform, swinging_platform, tricky_triangles_1, tricky_triangles_2, tricky_triangles_3, tricky_triangles_4, tricky_triangles_5]
+shared-path: []
+# loaded files
+skybox-bin: cloud_floor
+texture-bin: sky
+effects: false
+actor-bins: [group11]
+common-bin: [common0]

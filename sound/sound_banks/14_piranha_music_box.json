@@ -1,0 +1,70 @@
+{
+    "date": "1996-03-19",
+    "sample_bank": {"ifdef": ["VERSION_SH"], "then": "instruments", "else": "piranha_music_box"},
+    "envelopes": {
+        "envelope0": [
+            [6, 32700],
+            [298, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope1": [
+            [6, 32700],
+            [298, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope2": [
+            [6, 32700],
+            [298, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope3": [
+            [6, 32700],
+            [298, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope4": [
+            [6, 32700],
+            [298, 32700],
+            [32700, 29430],
+            "hang"
+        ]
+    },
+    "instruments": {
+        "inst0": {
+            "release_rate": 119,
+            "envelope": "envelope0",
+            "sound": {"ifdef": ["VERSION_SH"], "then": "3A_music_box", "else": "00_music_box"}
+        },
+        "inst1": {
+            "release_rate": 119,
+            "envelope": "envelope1",
+            "sound": {"ifdef": ["VERSION_SH"], "then": "3A_music_box", "else": "00_music_box"}
+        },
+        "inst2": {
+            "release_rate": 119,
+            "envelope": "envelope2",
+            "sound": {"ifdef": ["VERSION_SH"], "then": "3A_music_box", "else": "00_music_box"}
+        },
+        "inst3": {
+            "release_rate": 119,
+            "envelope": "envelope3",
+            "sound": {"ifdef": ["VERSION_SH"], "then": "3A_music_box", "else": "00_music_box"}
+        },
+        "inst4": {
+            "release_rate": 119,
+            "envelope": "envelope4",
+            "sound": {"ifdef": ["VERSION_SH"], "then": "3A_music_box", "else": "00_music_box"}
+        }
+    },
+    "instrument_list": [
+        "inst0",
+        "inst1",
+        "inst2",
+        "inst3",
+        "inst4"
+    ]
+}

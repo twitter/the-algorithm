@@ -1,0 +1,89 @@
+{
+    "date": "1996-03-19",
+    "sample_bank": "instruments",
+    "envelopes": {
+        "envelope0": [
+            [6, 32700],
+            [298, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope1": [
+            [6, 32700],
+            [298, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope2": [
+            [6, 32700],
+            [298, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope3": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope4": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope5": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ]
+    },
+    "instruments": {
+        "inst0": {
+            "release_rate": 119,
+            "envelope": "envelope0",
+            "sound": "3A_music_box"
+        },
+        "inst1": {
+            "release_rate": 119,
+            "envelope": "envelope1",
+            "sound": "3A_music_box"
+        },
+        "inst2": {
+            "release_rate": 119,
+            "envelope": "envelope2",
+            "sound": "3A_music_box"
+        },
+        "inst3": {
+            "release_rate": 24,
+            "normal_range_lo": 42,
+            "envelope": "envelope3",
+            "sound_lo": "14_strings_5",
+            "sound": "15_strings_4"
+        },
+        "inst4": {
+            "release_rate": 24,
+            "normal_range_lo": 42,
+            "envelope": "envelope4",
+            "sound_lo": "14_strings_5",
+            "sound": "15_strings_4"
+        },
+        "inst5": {
+            "release_rate": 24,
+            "normal_range_lo": 42,
+            "envelope": "envelope5",
+            "sound_lo": "14_strings_5",
+            "sound": "15_strings_4"
+        }
+    },
+    "instrument_list": [
+        "inst0",
+        "inst1",
+        "inst2",
+        null,
+        "inst3",
+        "inst4",
+        "inst5"
+    ]
+}

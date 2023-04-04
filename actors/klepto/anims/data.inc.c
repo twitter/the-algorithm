@@ -1,0 +1,7 @@
+#include "anim_05005E44.inc.c"
+#include "anim_05007574.inc.c"
+#include "anim_050079B0.inc.c"
+#include "anim_05007E34.inc.c"
+#include "anim_050086C0.inc.c"
+#include "anim_05008A18.inc.c"
+#include "anim_05008CE4.inc.c"

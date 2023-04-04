@@ -1,39 +1,193 @@
-# Twitter Recommendation Algorithm
+# Super Mario 64
 
-The Twitter Recommendation Algorithm is a set of services and jobs that are responsible for constructing and serving the
-Home Timeline. For an introduction to how the algorithm works, please refer to our [engineering blog](https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm). The
-diagram below illustrates how major services and jobs interconnect.
+- This repo contains a full decompilation of Super Mario 64 (J), (U), (E), and (SH).
+- Naming and documentation of the source code and data structures are in progress.
 
-![](docs/system-diagram.png)
+It builds the following ROMs:
 
-These are the main components of the Recommendation Algorithm included in this repository:
+* sm64.jp.z64 `sha1: 8a20a5c83d6ceb0f0506cfc9fa20d8f438cafe51`
+* sm64.us.z64 `sha1: 9bef1128717f958171a4afac3ed78ee2bb4e86ce`
+* sm64.eu.z64 `sha1: 4ac5721683d0e0b6bbb561b58a71740845dceea9`
+* sm64.sh.z64 `sha1: 3f319ae697533a255a1003d09202379d78d5a2e0`
 
-| Type | Component | Description |
-|------------|------------|------------|
-| Feature | [SimClusters](src/scala/com/twitter/simclusters_v2/README.md) | Community detection and sparse embeddings into those communities. |
-|         | [TwHIN](https://github.com/twitter/the-algorithm-ml/blob/main/projects/twhin/README.md) | Dense knowledge graph embeddings for Users and Tweets. |
-|         | [trust-and-safety-models](trust_and_safety_models/README.md) | Models for detecting NSFW or abusive content. |
-|         | [real-graph](src/scala/com/twitter/interaction_graph/README.md) | Model to predict likelihood of a Twitter User interacting with another User. |
-|         | [tweepcred](src/scala/com/twitter/graph/batch/job/tweepcred/README) | Page-Rank algorithm for calculating Twitter User reputation. |
-|         | [recos-injector](recos-injector/README.md) | Streaming event processor for building input streams for [GraphJet](https://github.com/twitter/GraphJet) based services. |
-|         | [graph-feature-service](graph-feature-service/README.md) | Serves graph features for a directed pair of Users (e.g. how many of User A's following liked Tweets from User B). |
-| Candidate Source | [search-index](src/java/com/twitter/search/README.md) | Find and rank In-Network Tweets. ~50% of Tweets come from this candidate source. |
-|                  | [cr-mixer](cr-mixer/README.md) | Coordination layer for fetching Out-of-Network tweet candidates from underlying compute services. |
-|                  | [user-tweet-entity-graph](src/scala/com/twitter/recos/user_tweet_entity_graph/README.md) (UTEG)| Maintains an in memory User to Tweet interaction graph, and finds candidates based on traversals of this graph. This is built on the [GraphJet](https://github.com/twitter/GraphJet) framework. Several other GraphJet based features and candidate sources are located [here](src/scala/com/twitter/recos) |
-|                  | [follow-recommendation-service](follow-recommendations-service/README.md) (FRS)| Provides Users with recommendations for accounts to follow, and Tweets from those accounts. |
-| Ranking | [light-ranker](src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/README.md) | Light ranker model used by search index (Earlybird) to rank Tweets. |
-|         | [heavy-ranker](https://github.com/twitter/the-algorithm-ml/blob/main/projects/home/recap/README.md) | Neural network for ranking candidate tweets. One of the main signals used to select timeline Tweets post candidate sourcing. |
-| Tweet mixing & filtering | [home-mixer](home-mixer/README.md) | Main service used to construct and serve the Home Timeline. Built on [product-mixer](product-mixer/README.md) |
-|                          | [visibility-filters](visibilitylib/README.md) | Responsible for filtering Twitter content to support legal compliance, improve product quality, increase user trust, protect revenue through the use of hard-filtering, visible product treatments, and coarse-grained downranking. |
-|                          | [timelineranker](timelineranker/README.md) | Legacy service which provides relevance-scored tweets from the Earlybird Search Index and UTEG service. |
-| Software framework | [navi](navi/navi/README.md) | High performance, machine learning model serving written in Rust. |
-|                    | [product-mixer](product-mixer/README.md) | Software framework for building feeds of content. |
-|                    | [twml](twml/README.md) | Legacy machine learning framework built on TensorFlow v1. |
+This repo does not include all assets necessary for compiling the ROMs.
+A prior copy of the game is required to extract the assets.
 
-We include Bazel BUILD files for most components, but not a top level BUILD or WORKSPACE file.
+## Quick Start (for Ubuntu)
+
+1. Install prerequisites: `sudo apt install -y build-essential git binutils-mips-linux-gnu python3`
+2. Clone the repo from within Linux: `git clone https://github.com/n64decomp/sm64.git`
+3. Place a Super Mario 64 ROM called `baserom.<VERSION>.z64` into the project folder for asset extraction, where `VERSION` can be `us`, `jp`, `eu`, or `sh`.
+4. Run `make` to build. Qualify the version through `make VERSION=<VERSION>`. Add `-j4` to improve build speed (hardware dependent).
+
+Ensure the repo path length does not exceed 255 characters. Long path names result in build errors.
+
+## Installation
+
+### Windows
+
+Install WSL and a distro of your choice following
+[Windows Subsystem for Linux Installation Guide for Windows 10.](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+We recommend either Debian or Ubuntu 18.04 Linux distributions under WSL.
+Note: WSL1 does not currently support Ubuntu 20.04.
+
+Next, clone the SM64 repo from within the Linux shell:
+`git clone https://github.com/n64decomp/sm64.git`
+
+Then continue following the directions in the [Linux](#linux) installation section below.
+
+### Linux
+
+There are 3 steps to set up a working build.
+
+#### Step 1: Install dependencies
+
+The build system has the following package requirements:
+ * binutils-mips
+ * capstone
+ * pkgconf
+ * python3 >= 3.6
+
+Dependency installation instructions for common Linux distros are provided below:
+
+##### Debian / Ubuntu
+To install build dependencies:
+```
+sudo apt install -y binutils-mips-linux-gnu build-essential git libcapstone-dev pkgconf python3
+```
+
+##### Arch Linux
+To install build dependencies:
+```
+sudo pacman -S base-devel capstone python
+```
+Install the following AUR packages:
+* [mips64-elf-binutils](https://aur.archlinux.org/packages/mips64-elf-binutils) (AUR)
+
+
+##### Other Linux distributions
+
+Most modern Linux distributions should have equivalent packages to the other two listed above.
+You may have to use a different version of GNU binutils. Listed below are fully compatible binutils
+distributions with support in the makefile, and examples of distros that offer them:
+
+* `mips64-elf-` (Arch AUR)
+* `mips-linux-gnu-` (Ubuntu and other Debian-based distros)
+* `mips64-linux-gnu-` (RHEL/CentOS/Fedora)
+
+You may also use [Docker](#docker-installation) to handle installing an image with minimal dependencies.
+
+#### Step 2: Copy baserom(s) for asset extraction
+
+For each version (jp/us/eu/sh) for which you want to build a ROM, put an existing ROM at
+`./baserom.<VERSION>.z64` for asset extraction.
+
+##### Step 3: Build the ROM
+
+Run `make` to build the ROM (defaults to `VERSION=us`).
+Other examples:
+```
+make VERSION=jp -j4       # build (J) version instead with 4 jobs
+make VERSION=eu COMPARE=0 # build (EU) version but do not compare ROM hashes
+```
+
+Resulting artifacts can be found in the `build` directory.
+
+The full list of configurable variables are listed below, with the default being the first listed:
+
+* ``VERSION``: ``us``, ``jp``, ``eu``, ``sh``
+* ``GRUCODE``: ``f3d_old``, ``f3d_new``, ``f3dex``, ``f3dex2``, ``f3dzex``
+* ``COMPARE``: ``1`` (compare ROM hash), ``0`` (do not compare ROM hash)
+* ``NON_MATCHING``: Use functionally equivalent C implementations for non-matchings (Currently there aren't any non-matchings, but this will apply to iQue). Also will avoid instances of undefined behavior.
+* ``CROSS``: Cross-compiler tool prefix (Example: ``mips64-elf-``).
+
+### macOS
+
+With macOS, you may either use Homebrew or [Docker](#docker-installation).
+
+#### Homebrew
+
+#### Step 1: Install dependencies
+Install [Homebrew](https://brew.sh) and the following dependencies:
+```
+brew update
+brew install capstone coreutils make pkg-config tehzz/n64-dev/mips64-elf-binutils
+```
+
+#### Step 2: Copy baserom(s) for asset extraction
+
+For each version (jp/us/eu/sh) for which you want to build a ROM, put an existing ROM at
+`./baserom.<VERSION>.z64` for asset extraction.
+
+##### Step 3: Build the ROM
+
+Use Homebrew's GNU make because the version included with macOS is too old.
+
+```
+gmake VERSION=jp -j4       # build (J) version instead with 4 jobs
+```
+
+### Docker Installation
+
+#### Create Docker image
+
+After installing and starting Docker, create the docker image. This only needs to be done once.
+```
+docker build -t sm64 .
+```
+
+#### Build
+
+To build, mount the local filesystem into the Docker container and build the ROM with `docker run sm64 make`.
+
+##### macOS example for (U):
+```
+docker run --rm --mount type=bind,source="$(pwd)",destination=/sm64 sm64 make VERSION=us -j4
+```
+
+##### Linux example for (U):
+For a Linux host, Docker needs to be instructed which user should own the output files:
+```
+docker run --rm --mount type=bind,source="$(pwd)",destination=/sm64 --user $UID:$GID sm64 make VERSION=us -j4
+```
+
+Resulting artifacts can be found in the `build` directory.
+
+## Project Structure
+	
+	sm64
+	├── actors: object behaviors, geo layout, and display lists
+	├── asm: handwritten assembly code, rom header
+	│   └── non_matchings: asm for non-matching sections
+	├── assets: animation and demo data
+	│   ├── anims: animation data
+	│   └── demos: demo data
+	├── bin: C files for ordering display lists and textures
+	├── build: output directory
+	├── data: behavior scripts, misc. data
+	├── doxygen: documentation infrastructure
+	├── enhancements: example source modifications
+	├── include: header files
+	├── levels: level scripts, geo layout, and display lists
+	├── lib: SDK library code
+	├── rsp: audio and Fast3D RSP assembly code
+	├── sound: sequences, sound samples, and sound banks
+	├── src: C source code for game
+	│   ├── audio: audio code
+	│   ├── buffers: stacks, heaps, and task buffers
+	│   ├── engine: script processing engines and utils
+	│   ├── game: behaviors and rest of game source
+	│   ├── goddard: Mario intro screen
+	│   └── menu: title screen and file, act, and debug level selection menus
+	├── text: dialog, level names, act names
+	├── textures: skybox and generic texture data
+	└── tools: build tools
 
 ## Contributing
 
-We invite the community to submit GitHub issues and pull requests for suggestions on improving the recommendation algorithm. We are working on tools to manage these suggestions and sync changes to our internal repository. Any security concerns or issues should be routed to our official [bug bounty program](https://hackerone.com/twitter) through HackerOne. We hope to benefit from the collective intelligence and expertise of the global community in helping us identify issues and suggest improvements, ultimately leading to a better Twitter.
+Pull requests are welcome. For major changes, please open an issue first to
+discuss what you would like to change.
 
-Read our blog on the open source initiative [here](https://blog.twitter.com/en_us/topics/company/2023/a-new-era-of-transparency-for-twitter).
+Run `clang-format` on your code to ensure it meets the project's coding standards.
+
+Official Discord: [discord.gg/DuYH3Fh](https://discord.gg/DuYH3Fh)

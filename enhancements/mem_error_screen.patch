@@ -1,0 +1,298 @@
+diff --git a/Makefile b/Makefile
+index f50b7622..124c7ec6 100644
+--- a/Makefile
++++ b/Makefile
+@@ -478,6 +478,7 @@ $(BUILD_DIR)/include/text_strings.h: $(BUILD_DIR)/include/text_menu_strings.h
+ $(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h
+ $(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h
+ $(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h
++$(BUILD_DIR)/src/game/mem_error_screen.o: $(BUILD_DIR)/include/text_strings.h
+ 
+ 
+ #==============================================================================#
+diff --git a/include/segments.h b/include/segments.h
+index a97d6ee8..186c968e 100644
+--- a/include/segments.h
++++ b/include/segments.h
+@@ -3,6 +3,9 @@
+ 
+ #include "config.h"
+ 
++/* Use expansion pack RAM */
++#define USE_EXT_RAM 1
++
+ /*
+  * Memory addresses for segments. Ideally, this header file would not be
+  * needed, and the addresses would be defined in sm64.ld and linker-inserted
+diff --git a/include/text_strings.h.in b/include/text_strings.h.in
+index 749179b1..2f6f7a3c 100644
+--- a/include/text_strings.h.in
++++ b/include/text_strings.h.in
+@@ -25,6 +25,11 @@
+ #define TEXT_PAUSE _("PAUSE") // Pause text, Castle Courses
+ #define TEXT_HUD_CONGRATULATIONS _("CONGRATULATIONS") // Course Complete Text, Bowser Courses
+ 
++// Memory Expansion Error Screen
++#define TEXT_CONSOLE_8MB _("If you're using an N64 console, then you will need to buy an\nExpansion Pak to play this ROM hack.")
++#define TEXT_PJ64 _("If you are using PJ64 1.6, go to:\nOptions > Settings > Rom Settings Tab > Memory Size\nthen select 8 MB from the drop-down box.")
++#define TEXT_PJ64_2 _("If you are using PJ64 2.X, go to:\nOptions > Settings > Config: > Memory Size, select 8 MB")
++
+ #if defined(VERSION_JP) || defined(VERSION_SH)
+ 
+ /**
+diff --git a/levels/entry.c b/levels/entry.c
+index 17c773ed..677a5ae9 100644
+--- a/levels/entry.c
++++ b/levels/entry.c
+@@ -15,3 +15,12 @@ const LevelScript level_script_entry[] = {
+     EXECUTE(/*seg*/ 0x14, /*script*/ _introSegmentRomStart, /*scriptEnd*/ _introSegmentRomEnd, /*entry*/ level_intro_splash_screen),
+     JUMP(/*target*/ level_script_entry),
+ };
++
++const LevelScript level_script_entry_error_screen[] = {
++    INIT_LEVEL(),
++    SLEEP(/*frames*/ 2),
++    BLACKOUT(/*active*/ FALSE),
++    SET_REG(/*value*/ 0),
++    EXECUTE(/*seg*/ 0x14, /*script*/ _introSegmentRomStart, /*scriptEnd*/ _introSegmentRomEnd, /*entry*/ level_intro_entry_error_screen),
++    JUMP(/*target*/ level_script_entry_error_screen),
++};
+diff --git a/levels/intro/geo.c b/levels/intro/geo.c
+index 30a87806..6bf7b79a 100644
+--- a/levels/intro/geo.c
++++ b/levels/intro/geo.c
+@@ -15,6 +15,24 @@
+ 
+ #include "levels/intro/header.h"
+ 
++const GeoLayout intro_geo_error_screen[] = {
++    GEO_NODE_SCREEN_AREA(0, SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH/2, SCREEN_HEIGHT/2),
++    GEO_OPEN_NODE(),
++        GEO_ZBUFFER(0),
++        GEO_OPEN_NODE(),
++            GEO_NODE_ORTHO(100),
++            GEO_OPEN_NODE(),
++                GEO_BACKGROUND_COLOR(0x0001),
++            GEO_CLOSE_NODE(),
++        GEO_CLOSE_NODE(),
++        GEO_ZBUFFER(0),
++        GEO_OPEN_NODE(),
++            GEO_ASM(0, geo18_display_error_message),
++        GEO_CLOSE_NODE(),
++    GEO_CLOSE_NODE(),
++    GEO_END(),
++};
++
+ // 0x0E0002D0
+ const GeoLayout intro_geo_0002D0[] = {
+    GEO_NODE_SCREEN_AREA(0, SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH/2, SCREEN_HEIGHT/2),
+diff --git a/levels/intro/header.h b/levels/intro/header.h
+index 99277e86..04797cd7 100644
+--- a/levels/intro/header.h
++++ b/levels/intro/header.h
+@@ -26,4 +26,8 @@ extern const LevelScript script_intro_L3[];
+ extern const LevelScript script_intro_L4[];
+ extern const LevelScript script_intro_L5[];
+ 
++extern const GeoLayout intro_geo_error_screen[];
++extern const LevelScript level_intro_entry_error_screen[];
++extern Gfx *geo18_display_error_message(u32 run, UNUSED struct GraphNode *sp44, UNUSED u32 sp48);
++
+ #endif
+diff --git a/levels/intro/script.c b/levels/intro/script.c
+index 04b8fc4c..ca9058c4 100644
+--- a/levels/intro/script.c
++++ b/levels/intro/script.c
+@@ -18,6 +18,21 @@
+ #include "make_const_nonconst.h"
+ #include "levels/intro/header.h"
+ 
++const LevelScript level_intro_entry_error_screen[] = {
++    INIT_LEVEL(),
++    FIXED_LOAD(/*loadAddr*/ _goddardSegmentStart, /*romStart*/ _goddardSegmentRomStart, /*romEnd*/ _goddardSegmentRomEnd),
++    LOAD_MIO0(/*seg*/ 0x07, _intro_segment_7SegmentRomStart, _intro_segment_7SegmentRomEnd),
++    ALLOC_LEVEL_POOL(),
++
++    AREA(/*index*/ 1, intro_geo_error_screen),
++    END_AREA(),
++
++    FREE_LEVEL_POOL(),
++    LOAD_AREA(/*area*/ 1),
++    SLEEP(/*frames*/ 32767),
++    EXIT_AND_EXECUTE(/*seg*/ 0x14, _introSegmentRomStart, _introSegmentRomEnd, level_intro_entry_error_screen),
++};
++
+ const LevelScript level_intro_splash_screen[] = {
+     INIT_LEVEL(),
+     FIXED_LOAD(/*loadAddr*/ _goddardSegmentStart, /*romStart*/ _goddardSegmentRomStart, /*romEnd*/ _goddardSegmentRomEnd),
+diff --git a/src/engine/level_script.h b/src/engine/level_script.h
+index d41a91c8..7d047236 100644
+--- a/src/engine/level_script.h
++++ b/src/engine/level_script.h
+@@ -6,6 +6,7 @@
+ struct LevelCommand;
+ 
+ extern u8 level_script_entry[];
++extern u8 level_script_entry_error_screen[];
+ 
+ struct LevelCommand *level_script_execute(struct LevelCommand *cmd);
+ 
+diff --git a/src/game/main.c b/src/game/main.c
+index 1a9d9e7e..f4f7a9e5 100644
+--- a/src/game/main.c
++++ b/src/game/main.c
+@@ -11,6 +11,7 @@
+ #include "segments.h"
+ #include "main.h"
+ #include "rumble_init.h"
++#include "mem_error_screen.h"
+ 
+ // Message IDs
+ #define MESG_SP_COMPLETE 100
+@@ -131,6 +132,10 @@ void alloc_pool(void) {
+     void *start = (void *) SEG_POOL_START;
+     void *end = (void *) SEG_POOL_END;
+ 
++    // Detect memory size
++    if (does_pool_end_lie_out_of_bounds(end))
++        end = (void *)SEG_POOL_END_4MB;
++
+     main_pool_init(start, end);
+     gEffectsMemoryPool = mem_pool_init(0x4000, MEMORY_POOL_LEFT);
+ }
+@@ -336,7 +341,10 @@ void thread3_main(UNUSED void *arg) {
+     create_thread(&gSoundThread, 4, thread4_sound, NULL, gThread4Stack + 0x2000, 20);
+     osStartThread(&gSoundThread);
+ 
+-    create_thread(&gGameLoopThread, 5, thread5_game_loop, NULL, gThread5Stack + 0x2000, 10);
++    if (!gNotEnoughMemory)
++        create_thread(&gGameLoopThread, 5, thread5_game_loop, NULL, gThread5Stack + 0x2000, 10);
++    else
++        create_thread(&gGameLoopThread, 5, thread5_mem_error_message_loop, NULL, gThread5Stack + 0x2000, 10);
+     osStartThread(&gGameLoopThread);
+ 
+     while (TRUE) {
+diff --git a/src/game/mem_error_screen.c b/src/game/mem_error_screen.c
+new file mode 100644
+index 00000000..f432927c
+--- /dev/null
++++ b/src/game/mem_error_screen.c
+@@ -0,0 +1,104 @@
++/* clang-format off */
++/*
++ * mem_error_screen.inc.c
++ *
++ * This enhancement should be used for ROM hacks that require the expansion pak.
++ *
++ */
++/* clang-format on */
++
++#include <types.h>
++#include "segments.h"
++#include "text_strings.h"
++#include "game_init.h"
++#include "main.h"
++#include "print.h"
++#include "ingame_menu.h"
++#include "segment2.h"
++#include "../engine/level_script.h"
++
++// Ensure that USE_EXT_RAM is defined.
++#ifndef USE_EXT_RAM
++#error You have to define USE_EXT_RAM in 'include/segments.h'
++#endif
++
++// Require 8 MB of RAM, even if the pool doesn't go into extended memory.
++// Change the '8' to whatever MB limit you want.
++// Note: only special emulators allow for RAM sizes above 8 MB.
++#define REQUIRED_MIN_MEM_SIZE 1048576 * 8
++
++u8 gNotEnoughMemory = FALSE;
++u8 gDelayForErrorMessage = 0;
++
++u8 does_pool_end_lie_out_of_bounds(void *end) {
++    u32 endPhy = ((u32) end) & 0x1FFFFFFF;
++    u32 memSize = *((u32 *) 0x80000318);
++
++    if (endPhy > memSize) {
++        gNotEnoughMemory = TRUE;
++        return TRUE;
++    } else {
++        if (memSize < REQUIRED_MIN_MEM_SIZE) {
++            gNotEnoughMemory = TRUE;
++        }
++        return FALSE;
++    }
++}
++
++// If you're using an N64 console, then you will need to buy an\nexpansion pak to play this ROM hack.
++u8 text_console_8mb[] = { TEXT_CONSOLE_8MB };
++
++// If you are using PJ64 1.6, go to: Options ► Settings ► Rom Settings Tab ► Memory Size then select 8
++// MB from the drop-down box.
++u8 text_pj64[] = { TEXT_PJ64 };
++
++// If you are using PJ64 2.X, go to: Options ► Settings ► Config: ► Memory Size, select 8 MB
++u8 text_pj64_2[] = { TEXT_PJ64_2 };
++
++Gfx *geo18_display_error_message(u32 run, UNUSED struct GraphNode *sp44, UNUSED u32 sp48) {
++    if (run) {
++        if (gDelayForErrorMessage > 0) {
++            // Draw color text title.
++            print_text(10, 210, "ERROR    Need more memory");
++
++            // Init generic text rendering
++            create_dl_ortho_matrix();
++            gSPDisplayList(gDisplayListHead++,
++                           dl_ia_text_begin); // Init rendering stuff for generic text
++
++            // Set text color to white
++            gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
++
++            print_generic_string(8, 170, text_console_8mb);
++            print_generic_string(8, 120, text_pj64);
++            print_generic_string(8, 54, text_pj64_2);
++
++            // Cleanup
++            gSPDisplayList(gDisplayListHead++,
++                           dl_ia_text_end); // Reset back to default render settings.
++            gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
++        } else {
++            gDelayForErrorMessage += 1;
++        }
++    }
++
++    return 0;
++}
++
++// Basic main loop for the error screen. Note that controllers are not enabled here.
++void thread5_mem_error_message_loop(UNUSED void *arg) {
++    struct LevelCommand *addr;
++
++    setup_game_memory();
++    set_vblank_handler(2, &gGameVblankHandler, &gGameVblankQueue, (OSMesg) 1);
++
++    addr = segmented_to_virtual(level_script_entry_error_screen);
++
++    render_init();
++
++    while (1) {
++        select_gfx_pool();
++        addr = level_script_execute(addr);
++        display_and_vsync();
++    }
++}
+diff --git a/src/game/mem_error_screen.h b/src/game/mem_error_screen.h
+new file mode 100644
+index 00000000..9fbff34c
+--- /dev/null
++++ b/src/game/mem_error_screen.h
+@@ -0,0 +1,8 @@
++#ifndef MEM_ERROR_SCREEN_H
++#define MEM_ERROR_SCREEN_H
++
++extern u8 gNotEnoughMemory;
++void thread5_mem_error_message_loop(UNUSED void *arg);
++u8 does_pool_end_lie_out_of_bounds(void *end);
++
++#endif
