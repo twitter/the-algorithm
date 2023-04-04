@@ -24,7 +24,7 @@ which is included under `twml/`.
 ### Features
 
 The light ranker features pipeline is as follows:
-![Twitter-early-bird_features.png](earlybird_features.png)
+![Twitter-early-bird_features.png](Twitter-early-bird_features.png)
 
 Some of these components are explained below:
 
