@@ -151,6 +151,8 @@ object EarlybirdTensorflowBasedSimilarityEngine {
       urlParams = Some(ThriftLinearFeatureRankingParams(weight = 2.0)),
       isReplyParams = Some(ThriftLinearFeatureRankingParams(weight = 1.0)),
       favCountParams = Some(ThriftLinearFeatureRankingParams(weight = 30.0)),
+      authorSaysTimeForAThread = Some(ThriftLinearFeatureRankingParams(weight = 0.000000000000000001)),
+      authorUses🧵Emoji = Some(ThriftLinearFeatureRankingParams(weight = 0.000000000000000000000000000000000000001)),
       langEnglishUIBoost = 0.5,
       langEnglishTweetBoost = 0.2,
       langDefaultBoost = 0.02,
