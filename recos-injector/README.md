@@ -1,13 +1,10 @@
-# recos-injector
-Recos-Injector is a streaming event processor for building input streams for GraphJet based services.
-It is general purpose in that it consumes arbitrary incoming event stream (e.x. Fav, RT, Follow, client_events, etc), applies
-filtering, combines and publishes cleaned up events to corresponding GraphJet services. 
-Each GraphJet based service subscribes to a dedicated Kafka topic. Recos-Injector enables a GraphJet based service to consume any 
-event it wants
+# Recos-Injector
 
-## How to run recos-injector-server tests
+Recos-Injector is a streaming event processor used to build input streams for GraphJet-based services. It is a general-purpose tool that consumes arbitrary incoming event streams (e.g., Fav, RT, Follow, client_events, etc.), applies filtering, and combines and publishes cleaned up events to corresponding GraphJet services. Each GraphJet-based service subscribes to a dedicated Kafka topic, and Recos-Injector enables GraphJet-based services to consume any event they want.
 
-Tests can be run by using this command from your project's root directory:
+## How to run Recos-Injector server tests
+
+You can run tests by using the following command from your project's root directory:
 
     $ bazel build recos-injector/...
     $ bazel test recos-injector/...
@@ -28,17 +25,16 @@ terminal:
     $ curl -s localhost:9990/admin/ping
     pong
 
-Run `curl -s localhost:9990/admin` to see a list of all of the available admin
-endpoints.
+Run `curl -s localhost:9990/admin` to see a list of all available admin endpoints.
 
-## Querying recos-injector-server from a Scala console
+## Querying Recos-Injector server from a Scala console
 
-Recos Injector does not have a thrift endpoint. It reads Event Bus and Kafka queues and writes to recos_injector kafka.
+Recos-Injector does not have a Thrift endpoint. Instead, it reads Event Bus and Kafka queues and writes to the Recos-Injector Kafka.
 
 ## Generating a package for deployment
 
-To package your service into a zip for deployment:
+To package your service into a zip file for deployment, run:
 
     $ bazel bundle recos-injector/server:bin --bundle-jvm-archive=zip
 
-If successful, a file `dist/recos-injector-server.zip` will be created.
+If the command is successful, a file named `dist/recos-injector-server.zip` will be created.

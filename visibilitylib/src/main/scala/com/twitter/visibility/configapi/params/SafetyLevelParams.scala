@@ -186,6 +186,7 @@ private[visibility] object SafetyLevelParams {
   object EnableTopicRecommendationsSafetyLevelParam extends SafetyLevelParam(false)
   object EnableTrendsRepresentativeTweetSafetyLevelParam extends SafetyLevelParam(false)
   object EnableTrustedFriendsUserListSafetyLevelParam extends SafetyLevelParam(false)
+  object EnableTwitterDelegateUserListSafetyLevelParam extends SafetyLevelParam(false)
   object EnableTweetDetailSafetyLevelParam extends SafetyLevelParam(false)
   object EnableTweetDetailNonTooSafetyLevelParam extends SafetyLevelParam(false)
   object EnableTweetDetailWithInjectionsHydrationSafetyLevelParam extends SafetyLevelParam(false)

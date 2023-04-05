@@ -20,9 +20,10 @@ pub fn load_batch_prediction_request_base64(file_name: &str) -> Vec<Vec<u8>> {
             Err(err) => println!("error decoding line {file_name}:{line_count} - {err}"),
         }
     }
-    println!("reslt len: {}", result.len());
-    return result;
+    println!("result len: {}", result.len());
+    result
 }
+
 pub fn save_to_npy<T: npyz::Serialize + AutoSerialize>(data: &[T], save_to: String) {
     let mut writer = WriteOptions::new()
         .default_dtype()
