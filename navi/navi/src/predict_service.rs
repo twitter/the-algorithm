@@ -1,35 +1,40 @@
-use anyhow::{anyhow, Result};
-use arrayvec::ArrayVec;
-use itertools::Itertools;
-use log::{error, info, warn};
-use std::fmt::{Debug, Display};
-use std::string::String;
-use std::sync::Arc;
-use std::time::Duration;
-use tokio::process::Command;
-use tokio::sync::mpsc::error::TryRecvError;
-use tokio::sync::mpsc::{Receiver, Sender};
-use tokio::sync::{mpsc, oneshot};
-use tokio::time::{sleep, Instant};
-use warp::Filter;
-
-use crate::batch::BatchPredictor;
-use crate::bootstrap::TensorInput;
-use crate::{
-    metrics, utils, ModelFactory, PredictMessage, PredictResult, TensorReturnEnum, MAX_NUM_MODELS,
-    MAX_VERSIONS_PER_MODEL, META_INFO,
+use {
+    crate::{
+        batch::BatchPredictor,
+        bootstrap::TensorInput,
+        cli_args::{ARGS, MODEL_SPECS},
+        cores::validator::validatior::cli_validator,
+        metrics,
+        metrics::MPSC_CHANNEL_SIZE,
+        utils, ModelFactory, PredictMessage, PredictResult, TensorReturnEnum, MAX_NUM_MODELS,
+        MAX_VERSIONS_PER_MODEL, META_INFO,
+    },
+    anyhow::{anyhow, Result},
+    arrayvec::ArrayVec,
+    itertools::Itertools,
+    log::{error, info, warn},
+    serde_json::{self, Value},
+    std::{
+        fmt::{Debug, Display},
+        sync::Arc,
+        time::Duration,
+    },
+    tokio::{
+        process::Command,
+        sync::{
+            mpsc::{self, error::TryRecvError, Receiver, Sender},
+            oneshot,
+        },
+        time::{sleep, Instant},
+    },
+    warp::Filter,
 };
-
-use crate::cli_args::{ARGS, MODEL_SPECS};
-use crate::cores::validator::validatior::cli_validator;
-use crate::metrics::MPSC_CHANNEL_SIZE;
-use serde_json::{self, Value};
 
 pub trait Model: Send + Sync + Display + Debug + 'static {
     fn warmup(&self) -> Result<()>;
-    //TODO: refactor this to return Vec<Vec<TensorScores>>, i.e.
-    //we have the underlying runtime impl to split the response to each client.
-    //It will eliminate some inefficient memory copy in onnx_model.rs as well as simplify code
+    // TODO: refactor this to return Vec<Vec<TensorScores>>, i.e.
+    // we have the underlying runtime impl to split the response to each client.
+    // It will eliminate some inefficient memory copy in onnx_model.rs as well as simplify code
     fn do_predict(
         &self,
         input_tensors: Vec<Vec<TensorInput>>,
@@ -43,6 +48,7 @@ pub trait Model: Send + Sync + Display + Debug + 'static {
 pub struct PredictService<T: Model> {
     tx: Sender<PredictMessage<T>>,
 }
+
 impl<T: Model> PredictService<T> {
     pub async fn init(model_factory: ModelFactory<T>) -> Self {
         cli_validator::validate_ps_model_args();
@@ -139,7 +145,7 @@ impl<T: Model> PredictService<T> {
                     cur_version.to_string()
                 })
         });
-        //as long as next version doesn't match cur version maintained we reload
+        // as long as next version doesn't match cur version maintained we reload
         if next_version.ne(cur_version) {
             info!("reload the version: {}->{}", cur_version, next_version);
             PredictService::load_latest_model_from_model_dir(
@@ -180,14 +186,14 @@ impl<T: Model> PredictService<T> {
         }
         let meta_dir = utils::get_meta_dir();
         let meta_file = format!("{}{}", meta_dir, META_INFO);
-        //initialize the latest version array
+        // initialize the latest version array
         let mut cur_versions = vec!["".to_owned(); MODEL_SPECS.len()];
         loop {
             let config = utils::read_config(&meta_file).unwrap_or_else(|e| {
                 warn!("config file {} not found due to: {}", meta_file, e);
                 Value::Null
             });
-            info!("***polling for models***"); //nice deliminter
+            info!("***polling for models***"); // nice deliminter
             info!("config:{}", config);
             if let Some(ref cli) = ARGS.modelsync_cli {
                 if let Err(e) = call_external_modelsync(cli, &cur_versions).await {
@@ -267,7 +273,7 @@ impl<T: Model> PredictService<T> {
                         cur_batch_size: 0,
                         max_batch_size: max_batch_size[idx],
                         batch_time_out_millis: batch_time_out_millis[idx],
-                        //initialize to be current time
+                        // initialize to be current time
                         queue_reset_ts: Instant::now(),
                         queue_earliest_rq_ts: Instant::now(),
                     };
@@ -277,7 +283,7 @@ impl<T: Model> PredictService<T> {
                             .inc();
 
                         info!("now we serve updated model: {}", predictor.model);
-                        //we can do this since the vector is small
+                        // we can do this since the vector is small
                         let predictors = &mut all_model_predictors[idx];
                         if predictors.len() == ARGS.versions_per_model {
                             predictors.remove(predictors.len() - 1);
@@ -289,7 +295,7 @@ impl<T: Model> PredictService<T> {
                             ArrayVec::<BatchPredictor<T>, MAX_VERSIONS_PER_MODEL>::new();
                         predictors.push(predictor);
                         all_model_predictors.push(predictors);
-                        //check the invariant that we always push the last model to the end
+                        // check the invariant that we always push the last model to the end
                         assert_eq!(all_model_predictors.len(), idx + 1)
                     }
                     false
@@ -298,9 +304,9 @@ impl<T: Model> PredictService<T> {
                 Err(TryRecvError::Disconnected) => true,
             };
             for predictor in all_model_predictors.iter_mut().flatten() {
-                //if predictor batch queue not empty and times out or no more msg in the queue, flush
+                // if predictor batch queue not empty and times out or no more msg in the queue, flush
                 if (!predictor.input_tensors.is_empty() && (predictor.duration_past(predictor.batch_time_out_millis) || no_more_msg))
-                    //if batch queue reaches limit, flush
+                    // if batch queue reaches limit, flush
                     || predictor.cur_batch_size >= predictor.max_batch_size
                 {
                     predictor.batch_predict();

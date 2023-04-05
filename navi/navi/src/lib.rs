@@ -2,14 +2,17 @@
 extern crate lazy_static;
 extern crate core;
 
-use crate::bootstrap::TensorInput;
-use crate::predict_service::Model;
-use crate::tf_proto::{DataType, TensorProto};
-use itertools::Itertools;
-use serde_json::Value;
-use std::ops::Deref;
-use tokio::sync::oneshot::Sender;
-use tokio::time::Instant;
+use {
+    crate::{
+        bootstrap::TensorInput,
+        predict_service::Model,
+        tf_proto::{DataType, TensorProto},
+    },
+    itertools::Itertools,
+    serde_json::Value,
+    std::ops::Deref,
+    tokio::{sync::oneshot::Sender, time::Instant},
+};
 
 pub mod batch;
 pub mod bootstrap;
@@ -25,6 +28,7 @@ pub mod cores {
 
 pub mod tf_proto {
     tonic::include_proto!("tensorflow");
+
     pub mod tensorflow_serving {
         tonic::include_proto!("tensorflow.serving");
     }
@@ -33,9 +37,11 @@ pub mod tf_proto {
 pub mod kf_serving {
     tonic::include_proto!("inference");
 }
+
 #[cfg(test)]
 mod tests {
     use crate::cli_args::Args;
+
     #[test]
     fn test_version_string_to_epoch() {
         assert_eq!(
@@ -47,10 +53,12 @@ mod tests {
 }
 
 mod utils {
-    use crate::cli_args::{ARGS, MODEL_SPECS};
-    use anyhow::Result;
-    use log::info;
-    use serde_json::Value;
+    use {
+        crate::cli_args::{ARGS, MODEL_SPECS},
+        anyhow::Result,
+        log::info,
+        serde_json::Value,
+    };
 
     pub fn read_config(meta_file: &String) -> Result<Value> {
         let json = std::fs::read_to_string(meta_file)?;
@@ -81,6 +89,7 @@ mod utils {
             }
         }
     }
+
     #[allow(dead_code)]
     pub fn get_config_or(model_config: &Value, key: &str, default: &str) -> String {
         get_config_or_else(model_config, key, || default.to_string())
@@ -111,12 +120,12 @@ pub const MAX_NUM_OUTPUTS: usize = 30;
 pub const MAX_NUM_INPUTS: usize = 120;
 pub const META_INFO: &str = "META.json";
 
-//use a heap allocated generic type here so that both
-//Tensorflow & Pytorch implementation can return their Tensor wrapped in a Box
-//without an extra memcopy to Vec
+// use a heap allocated generic type here so that both
+// Tensorflow & Pytorch implementation can return their Tensor wrapped in a Box
+// without an extra memcopy to Vec
 pub type TensorReturn<T> = Box<dyn Deref<Target = [T]>>;
 
-//returned tensor may be int64 i.e., a list of relevant ad ids
+// returned tensor may be int64 i.e., a list of relevant ad ids
 pub enum TensorReturnEnum {
     FloatTensorReturn(TensorReturn<f32>),
     StringTensorReturn(TensorReturn<String>),
@@ -134,9 +143,11 @@ impl TensorReturnEnum {
             TensorReturnEnum::Int64TensorReturn(i64_return) => {
                 TensorScores::Int64TensorScores(i64_return[start..end].to_vec())
             }
+
             TensorReturnEnum::Int32TensorReturn(i32_return) => {
                 TensorScores::Int32TensorScores(i32_return[start..end].to_vec())
             }
+
             TensorReturnEnum::StringTensorReturn(str_return) => {
                 TensorScores::StringTensorScores(str_return[start..end].to_vec())
             }
@@ -206,10 +217,8 @@ pub enum PredictMessage<T: Model> {
         Instant,
     ),
     UpsertModel(T),
-    /*
-    #[allow(dead_code)]
-    DeleteModel(usize),
-     */
+    // #[allow(dead_code)]
+    // DeleteModel(usize),
 }
 
 #[derive(Debug)]

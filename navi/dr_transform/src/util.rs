@@ -1,20 +1,23 @@
-use npyz::WriterBuilder;
-use npyz::{AutoSerialize, WriteOptions};
-use std::io::BufWriter;
-use std::{
-    fs::File,
-    io::{self, BufRead},
+use {
+    npyz::{AutoSerialize, WriteOptions, WriterBuilder},
+    std::{
+        fs::File,
+        io::{BufRead, BufReader, BufWriter},
+    },
 };
 
 pub fn load_batch_prediction_request_base64(file_name: &str) -> Vec<Vec<u8>> {
     let file = File::open(file_name).expect("could not read file");
     let mut result = vec![];
-    for line in io::BufReader::new(file).lines() {
+    for (mut line_count, line) in BufReader::new(file).lines().enumerate() {
+        line_count += 1;
+
         #[allow(deprecated)]
         let decoded = base64::decode(line.unwrap().trim());
+
         match decoded {
             Ok(payload) => result.push(payload),
-            Err(err) => println!("error decoding line {}", err),
+            Err(err) => println!("error decoding line {file_name}:{line_count} - {err}"),
         }
     }
     println!("reslt len: {}", result.len());

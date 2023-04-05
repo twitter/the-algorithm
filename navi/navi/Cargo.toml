@@ -22,8 +22,8 @@ path = "src/bin/navi_onnx.rs"
 required-features = ["onnx"]
 
 [features]
-default = [ ]
-navi_console = [ ]
+default = []
+navi_console = []
 torch = ["tch"]
 onnx = ["ort"]
 tf = ["tensorflow"]

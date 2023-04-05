@@ -1,8 +1,7 @@
-use std::env;
-use std::fs;
-
-use segdense::error::SegDenseError;
-use segdense::util;
+use {
+    segdense::{error::SegDenseError, util},
+    std::{env, fs},
+};
 
 fn main() -> Result<(), SegDenseError> {
     env_logger::init();

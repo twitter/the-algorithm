@@ -1,7 +1,12 @@
-use anyhow::Result;
-use navi::cli_args::{ARGS, MODEL_SPECS};
-use navi::onnx_model::onnx::OnnxModel;
-use navi::{bootstrap, metrics};
+use {
+    anyhow::Result,
+    navi::{
+        bootstrap,
+        cli_args::{ARGS, MODEL_SPECS},
+        metrics,
+        onnx_model::onnx::OnnxModel,
+    },
+};
 
 fn main() -> Result<()> {
     env_logger::init();

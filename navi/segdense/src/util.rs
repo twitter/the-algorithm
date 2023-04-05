@@ -1,11 +1,13 @@
-use log::debug;
-use std::fs;
-
-use serde_json::{Map, Value};
-
-use crate::error::SegDenseError;
-use crate::mapper::{FeatureInfo, FeatureMapper, MapWriter};
-use crate::segdense_transform_spec_home_recap_2022::{self as seg_dense, InputFeature};
+use {
+    super::{
+        error::SegDenseError,
+        mapper::{FeatureInfo, FeatureMapper, MapWriter},
+        segdense_transform_spec_home_recap_2022::{self as seg_dense, InputFeature},
+    },
+    log::debug,
+    serde_json::{Map, Value},
+    std::fs,
+};
 
 pub fn load_config(file_name: &str) -> seg_dense::Root {
     let json_str = fs::read_to_string(file_name)

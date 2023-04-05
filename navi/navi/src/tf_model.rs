@@ -1,37 +1,37 @@
 #[cfg(feature = "tf")]
 pub mod tf {
-    use arrayvec::ArrayVec;
-    use itertools::Itertools;
-    use log::{debug, error, info, warn};
-    use prost::Message;
-    use std::fmt;
-    use std::fmt::Display;
-    use std::string::String;
-    use tensorflow::io::{RecordReadError, RecordReader};
-    use tensorflow::Operation;
-    use tensorflow::SavedModelBundle;
-    use tensorflow::SessionOptions;
-    use tensorflow::SessionRunArgs;
-    use tensorflow::Tensor;
-    use tensorflow::{DataType, FetchToken, Graph, TensorInfo, TensorType};
-
-    use std::thread::sleep;
-    use std::time::Duration;
-
-    use crate::cli_args::{Args, ARGS, INPUTS, MODEL_SPECS, OUTPUTS};
-    use crate::tf_proto::tensorflow_serving::prediction_log::LogType;
-    use crate::tf_proto::tensorflow_serving::{PredictLog, PredictionLog};
-    use crate::tf_proto::ConfigProto;
-    use anyhow::{Context, Result};
-    use serde_json::Value;
-
-    use crate::bootstrap::{TensorInput, TensorInputEnum};
-    use crate::metrics::{
-        INFERENCE_FAILED_REQUESTS_BY_MODEL, NUM_REQUESTS_FAILED, NUM_REQUESTS_FAILED_BY_MODEL,
+    use {
+        crate::{
+            bootstrap::{TensorInput, TensorInputEnum},
+            cli_args::{Args, ARGS, INPUTS, MODEL_SPECS, OUTPUTS},
+            metrics::{
+                INFERENCE_FAILED_REQUESTS_BY_MODEL, NUM_REQUESTS_FAILED,
+                NUM_REQUESTS_FAILED_BY_MODEL,
+            },
+            predict_service::Model,
+            tf_proto::{
+                tensorflow_serving::{prediction_log::LogType, PredictLog, PredictionLog},
+                ConfigProto,
+            },
+            utils, TensorReturnEnum, MAX_NUM_INPUTS,
+        },
+        anyhow::{Context, Result},
+        arrayvec::ArrayVec,
+        itertools::Itertools,
+        log::{debug, error, info, warn},
+        prost::Message,
+        serde_json::Value,
+        std::{
+            fmt::{self, Display},
+            thread::sleep,
+            time::Duration,
+        },
+        tensorflow::{
+            io::{RecordReadError, RecordReader},
+            DataType, FetchToken, Graph, Operation, SavedModelBundle, SessionOptions,
+            SessionRunArgs, Tensor, TensorInfo, TensorType,
+        },
     };
-    use crate::predict_service::Model;
-    use crate::TensorReturnEnum;
-    use crate::{utils, MAX_NUM_INPUTS};
 
     #[derive(Debug)]
     pub enum TFTensorEnum {
@@ -340,7 +340,7 @@ pub mod tf {
                                             })),
                                     } => {
                                         if warmup_cnt == ARGS.max_warmup_records {
-                                            //warm up to max_warmup_records  records
+                                            // warm up to max_warmup_records  records
                                             warn!(
                                                 "reached max warmup {} records, exit warmup for {}",
                                                 ARGS.max_warmup_records,
@@ -477,8 +477,8 @@ pub mod tf {
                 }
                 predict_return.push(res)
             }
-            //TODO: remove in the future
-            //TODO: support actual mtl model outputs
+            // TODO: remove in the future
+            // TODO: support actual mtl model outputs
             (predict_return, batch_ends)
         }
 

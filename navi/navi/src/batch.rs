@@ -1,23 +1,26 @@
-use arrayvec::ArrayVec;
-use itertools::Itertools;
-use log::info;
-use std::sync::Arc;
-use tokio::sync::oneshot::Sender;
-use tokio::time::Instant;
-
-use crate::bootstrap::{TensorInput, TensorInputEnum};
-use crate::cli_args::{ARGS, MODEL_SPECS};
-use crate::metrics::{
-    BATCH_SIZE, BATCH_SIZE_BY_MODEL, BLOCKING_REQUEST_NUM, MODEL_INFERENCE_TIME_COLLECTOR,
-    NUM_BATCHES_DROPPED, NUM_BATCHES_DROPPED_BY_MODEL, NUM_BATCH_PREDICTION,
-    NUM_BATCH_PREDICTION_BY_MODEL, NUM_PREDICTION_BY_MODEL, NUM_REQUESTS_DROPPED,
-    NUM_REQUESTS_DROPPED_BY_MODEL,
+use {
+    super::{
+        bootstrap::{TensorInput, TensorInputEnum},
+        cli_args::{ARGS, MODEL_SPECS},
+        metrics::{
+            BATCH_SIZE, BATCH_SIZE_BY_MODEL, BLOCKING_REQUEST_NUM, MODEL_INFERENCE_TIME_COLLECTOR,
+            NUM_BATCHES_DROPPED, NUM_BATCHES_DROPPED_BY_MODEL, NUM_BATCH_PREDICTION,
+            NUM_BATCH_PREDICTION_BY_MODEL, NUM_PREDICTION_BY_MODEL, NUM_REQUESTS_DROPPED,
+            NUM_REQUESTS_DROPPED_BY_MODEL,
+        },
+        predict_service::Model,
+        tf_proto::{
+            tensorflow_serving::{model_spec::VersionChoice, PredictRequest},
+            DataType,
+        },
+        Callback, PredictResult, MAX_NUM_INPUTS,
+    },
+    arrayvec::ArrayVec,
+    itertools::Itertools,
+    log::info,
+    std::sync::Arc,
+    tokio::{sync::oneshot::Sender, time::Instant},
 };
-use crate::predict_service::Model;
-use crate::tf_proto::tensorflow_serving::model_spec::VersionChoice;
-use crate::tf_proto::tensorflow_serving::PredictRequest;
-use crate::tf_proto::DataType;
-use crate::{Callback, PredictResult, MAX_NUM_INPUTS};
 
 #[derive(Debug)]
 pub struct BatchPredictor<T: Model> {
@@ -116,7 +119,7 @@ impl<T: Model> BatchPredictor<T> {
     #[inline(always)]
     pub fn push(&mut self, val: Vec<TensorInput>, resp: Sender<PredictResult>, ts: Instant) {
         if self.input_tensors.is_empty() {
-            //only when queue is empty then we update ts to represent first request time
+            // only when queue is empty then we update ts to represent first request time
             self.queue_reset_ts = Instant::now();
             self.queue_earliest_rq_ts = ts;
         }
@@ -134,18 +137,18 @@ impl<T: Model> BatchPredictor<T> {
         let mut batch_input_tensors = Vec::with_capacity(self.max_batch_size);
         let mut batch_callbacks = Vec::with_capacity(self.max_batch_size);
         let mut batch_size = 0;
-        //now we swap so we can take two queues to the blocking-send thread and reset current queues
+        // now we swap so we can take two queues to the blocking-send thread and reset current queues
         std::mem::swap(&mut self.input_tensors, &mut batch_input_tensors);
         std::mem::swap(&mut self.callbacks, &mut batch_callbacks);
         std::mem::swap(&mut self.cur_batch_size, &mut batch_size);
         let model = self.model.clone();
         let batch_earliest_rq_ts = self.queue_earliest_rq_ts;
-        //info!("batch predict for model:{}, size:{}", self.tf_model.export_dir, vals0.len());
+        // info!("batch predict for model:{}, size:{}", self.tf_model.export_dir, vals0.len());
         BLOCKING_REQUEST_NUM.inc();
         tokio::task::spawn_blocking(move || {
-            //proactively drop stale batches, we drop the entire batch
-            //as long as one request in that batch is stale. We may drop more than we could this way
-            //but this should work fairly decently well
+            // proactively drop stale batches, we drop the entire batch
+            // as long as one request in that batch is stale. We may drop more than we could this way
+            // but this should work fairly decently well
             if (batch_earliest_rq_ts.elapsed().as_millis() as u64) < ARGS.batch_drop_millis {
                 let model_inference_time_start = Instant::now();
                 let (tensor_outs, batch_ends) =
@@ -164,7 +167,7 @@ impl<T: Model> BatchPredictor<T> {
                         .send(PredictResult::Ok(tensors_send_back, model.version()))
                         .is_err()
                     {
-                        //use dropped metrics here as this is expected under high load
+                        // use dropped metrics here as this is expected under high load
                         NUM_REQUESTS_DROPPED.inc();
                         NUM_REQUESTS_DROPPED_BY_MODEL
                             .with_label_values(&[&MODEL_SPECS[model.model_idx()]])

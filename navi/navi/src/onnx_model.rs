@@ -1,25 +1,30 @@
 #[cfg(feature = "onnx")]
 pub mod onnx {
-    use crate::bootstrap::{TensorInput, TensorInputEnum};
-    use crate::cli_args::{Args, ARGS, INPUTS, MODEL_SPECS, OUTPUTS};
-    use crate::metrics::{self, CONVERTER_TIME_COLLECTOR};
-    use crate::predict_service::Model;
-    use crate::TensorReturnEnum;
-    use crate::{utils, MAX_NUM_INPUTS, MAX_NUM_OUTPUTS, META_INFO};
-    use anyhow::Result;
-    use arrayvec::ArrayVec;
-    use dr_transform::converter::{BatchPredictionRequestToTorchTensorConverter, Converter};
-    use itertools::Itertools;
-    use log::{debug, info};
-    use ort::environment::Environment;
-    use ort::session::Session;
-    use ort::tensor::InputTensor;
-    use ort::{ExecutionProvider, GraphOptimizationLevel, SessionBuilder};
-    use serde_json::Value;
-    use std::fmt::{Debug, Display};
-    use std::sync::Arc;
-    use std::{fmt, fs};
-    use tokio::time::Instant;
+    use {
+        crate::{
+            bootstrap::{TensorInput, TensorInputEnum},
+            cli_args::{Args, ARGS, INPUTS, MODEL_SPECS, OUTPUTS},
+            metrics::{self, CONVERTER_TIME_COLLECTOR},
+            predict_service::Model,
+            utils, TensorReturnEnum, MAX_NUM_INPUTS, MAX_NUM_OUTPUTS, META_INFO,
+        },
+        anyhow::Result,
+        arrayvec::ArrayVec,
+        dr_transform::converter::{BatchPredictionRequestToTorchTensorConverter, Converter},
+        itertools::Itertools,
+        log::{debug, info},
+        ort::{
+            environment::Environment, session::Session, tensor::InputTensor, ExecutionProvider,
+            GraphOptimizationLevel, SessionBuilder,
+        },
+        serde_json::Value,
+        std::{
+            fmt::{self, Debug, Display},
+            fs,
+            sync::Arc,
+        },
+        tokio::time::Instant,
+    };
 
     lazy_static! {
         pub static ref ENVIRONMENT: Arc<Environment> = Arc::new(
@@ -39,6 +44,7 @@ pub mod onnx {
         pub output_filters: ArrayVec<usize, MAX_NUM_OUTPUTS>,
         pub input_converter: Box<dyn Converter>,
     }
+
     impl Display for OnnxModel {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             write!(
@@ -52,6 +58,7 @@ pub mod onnx {
             )
         }
     }
+
     impl Drop for OnnxModel {
         fn drop(&mut self) {
             if ARGS.profiling != None {
@@ -66,6 +73,7 @@ pub mod onnx {
             }
         }
     }
+
     impl OnnxModel {
         fn get_output_filters(session: &Session, idx: usize) -> ArrayVec<usize, MAX_NUM_OUTPUTS> {
             OUTPUTS[idx]
@@ -190,13 +198,13 @@ pub mod onnx {
         }
     }
 
-    ///Currently we only assume the input as just one string tensor.
-    ///The string tensor will be be converted to the actual raw tensors.
-    /// The converter we are using is very specific to home.
-    /// It reads a BatchDataRecord thrift and decode it to a batch of raw input tensors.
-    /// Navi will then do server side batching and feed it to ONNX runtime
+    // Currently we only assume the input as just one string tensor.
+    // The string tensor will be be converted to the actual raw tensors.
+    // The converter we are using is very specific to home.
+    // It reads a BatchDataRecord thrift and decode it to a batch of raw input tensors.
+    // Navi will then do server side batching and feed it to ONNX runtime
     impl Model for OnnxModel {
-        //TODO: implement a generic online warmup for all runtimes
+        // TODO: implement a generic online warmup for all runtimes
         fn warmup(&self) -> Result<()> {
             Ok(())
         }
@@ -228,7 +236,7 @@ pub mod onnx {
                     }
                 })
                 .unzip();
-            //invariant we only support one input as string. will relax later
+            // invariant we only support one input as string. will relax later
             assert_eq!(inputs.len(), 1);
             let output_tensors = self
                 .session
@@ -248,9 +256,9 @@ pub mod onnx {
                         .collect::<Vec<_>>();
 
                     (
-                        //only works for batch major
-                        //TODO: to_vec() obviously wasteful, especially for large batches(GPU) . Will refactor to
-                        //break up output and return Vec<Vec<TensorScore>> here
+                        // only works for batch major
+                        // TODO: to_vec() obviously wasteful, especially for large batches(GPU). Will refactor to
+                        // break up output and return Vec<Vec<TensorScore>> here
                         TensorReturnEnum::FloatTensorReturn(Box::new(
                             output.view().as_slice().unwrap().to_vec(),
                         )),

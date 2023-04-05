@@ -1,40 +1,45 @@
-use anyhow::Result;
-use log::{info, warn};
-use std::collections::HashMap;
-use tokio::time::Instant;
-use tonic::{
-    transport::{Certificate, Identity, Server, ServerTlsConfig},
-    Request, Response, Status,
-};
+use {
+    super::{
+        cli_args::{ARGS, INPUTS, OUTPUTS},
+        kf_serving::{
+            grpc_inference_service_server::GrpcInferenceService, ModelInferRequest,
+            ModelInferResponse, ModelMetadataRequest, ModelMetadataResponse, ModelReadyRequest,
+            ModelReadyResponse, ServerLiveRequest, ServerLiveResponse, ServerMetadataRequest,
+            ServerMetadataResponse, ServerReadyRequest, ServerReadyResponse,
+        },
+        metrics::{
+            NAVI_VERSION, NUM_PREDICTIONS, NUM_REQUESTS_FAILED, NUM_REQUESTS_FAILED_BY_MODEL,
+            NUM_REQUESTS_RECEIVED, NUM_REQUESTS_RECEIVED_BY_MODEL, RESPONSE_TIME_COLLECTOR,
+        },
+        predict_service::{Model, PredictService},
+        tf_proto::tensorflow_serving::{
+            model_spec::VersionChoice::Version,
+            prediction_service_server::{PredictionService, PredictionServiceServer},
 
-// protobuf related
-use crate::tf_proto::tensorflow_serving::{
-    ClassificationRequest, ClassificationResponse, GetModelMetadataRequest,
-    GetModelMetadataResponse, MultiInferenceRequest, MultiInferenceResponse, PredictRequest,
-    PredictResponse, RegressionRequest, RegressionResponse,
-};
-use crate::{
-    kf_serving::{
-        grpc_inference_service_server::GrpcInferenceService, ModelInferRequest, ModelInferResponse,
-        ModelMetadataRequest, ModelMetadataResponse, ModelReadyRequest, ModelReadyResponse,
-        ServerLiveRequest, ServerLiveResponse, ServerMetadataRequest, ServerMetadataResponse,
-        ServerReadyRequest, ServerReadyResponse,
+            // protobuf related
+            ClassificationRequest,
+            ClassificationResponse,
+            GetModelMetadataRequest,
+            GetModelMetadataResponse,
+            ModelSpec,
+            MultiInferenceRequest,
+            MultiInferenceResponse,
+            PredictRequest,
+            PredictResponse,
+            RegressionRequest,
+            RegressionResponse,
+        },
+        ModelFactory, PredictResult, NAME, VERSION,
     },
-    tf_proto::tensorflow_serving::prediction_service_server::{
-        PredictionService, PredictionServiceServer,
+    anyhow::Result,
+    log::{info, warn},
+    std::collections::HashMap,
+    tokio::time::Instant,
+    tonic::{
+        transport::{Certificate, Identity, Server, ServerTlsConfig},
+        Request, Response, Status,
     },
-    ModelFactory, NAME, VERSION,
 };
-
-use crate::cli_args::{ARGS, INPUTS, OUTPUTS};
-use crate::metrics::{
-    NAVI_VERSION, NUM_PREDICTIONS, NUM_REQUESTS_FAILED, NUM_REQUESTS_FAILED_BY_MODEL,
-    NUM_REQUESTS_RECEIVED, NUM_REQUESTS_RECEIVED_BY_MODEL, RESPONSE_TIME_COLLECTOR,
-};
-use crate::predict_service::{Model, PredictService};
-use crate::tf_proto::tensorflow_serving::model_spec::VersionChoice::Version;
-use crate::tf_proto::tensorflow_serving::ModelSpec;
-use crate::PredictResult;
 
 #[derive(Debug)]
 pub enum TensorInputEnum {
@@ -87,11 +92,11 @@ impl TensorInputEnum {
                 }
                 acc
             })
-            .unwrap() //invariant: we expect there's always rows in input_tensors
+            .unwrap() // invariant: we expect there's always rows in input_tensors
     }
 }
 
-///entry point for tfServing gRPC
+// entry point for tfServing gRPC
 #[tonic::async_trait]
 impl<T: Model> GrpcInferenceService for PredictService<T> {
     async fn server_live(
@@ -191,7 +196,7 @@ impl<T: Model> PredictionService for PredictService<T> {
                         PredictResult::Ok(tensors, version) => {
                             let mut outputs = HashMap::new();
                             NUM_PREDICTIONS.with_label_values(&[&model_spec]).inc();
-                            //FIXME: uncomment when prediction scores are normal
+                            // FIXME: uncomment when prediction scores are normal
                             // PREDICTION_SCORE_SUM
                             // .with_label_values(&[&model_spec])
                             // .inc_by(tensors[0]as f64);
@@ -240,7 +245,7 @@ impl<T: Model> PredictionService for PredictService<T> {
 
 pub fn bootstrap<T: Model>(model_factory: ModelFactory<T>) -> Result<()> {
     info!("package: {}, version: {}, args: {:?}", NAME, VERSION, *ARGS);
-    //we follow SemVer. So here we assume MAJOR.MINOR.PATCH
+    // we follow SemVer. So here we assume MAJOR.MINOR.PATCH
     let parts = VERSION
         .split(".")
         .map(|v| v.parse::<i64>())

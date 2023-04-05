@@ -1,24 +1,22 @@
 #[cfg(feature = "torch")]
 pub mod torch {
-    use std::fmt;
-    use std::fmt::Display;
-    use std::string::String;
-
-    use crate::bootstrap::TensorInput;
-    use crate::cli_args::{Args, ARGS, MODEL_SPECS};
-    use crate::metrics;
-    use crate::metrics::{
-        INFERENCE_FAILED_REQUESTS_BY_MODEL, NUM_REQUESTS_FAILED, NUM_REQUESTS_FAILED_BY_MODEL,
+    use {
+        crate::{
+            bootstrap::TensorInput,
+            cli_args::{Args, ARGS, MODEL_SPECS},
+            metrics::{
+                self, INFERENCE_FAILED_REQUESTS_BY_MODEL, NUM_REQUESTS_FAILED,
+                NUM_REQUESTS_FAILED_BY_MODEL,
+            },
+            predict_service::Model,
+            SerializedInput, TensorReturnEnum,
+        },
+        anyhow::Result,
+        dr_transform::converter::{BatchPredictionRequestToTorchTensorConverter, Converter},
+        serde_json::Value,
+        std::fmt::{self, Display},
+        tch::{kind, CModule, IValue, Tensor},
     };
-    use crate::predict_service::Model;
-    use crate::SerializedInput;
-    use crate::TensorReturnEnum;
-    use anyhow::Result;
-    use dr_transform::converter::BatchPredictionRequestToTorchTensorConverter;
-    use dr_transform::converter::Converter;
-    use serde_json::Value;
-    use tch::Tensor;
-    use tch::{kind, CModule, IValue};
 
     #[derive(Debug)]
     pub struct TorchModel {
@@ -50,7 +48,7 @@ pub mod torch {
                 version: Args::version_str_to_epoch(&version)?,
                 module: model,
                 export_dir,
-                //TODO: move converter lookup in a registry.
+                // TODO: move converter lookup in a registry.
                 input_converter: Box::new(BatchPredictionRequestToTorchTensorConverter::new(
                     &ARGS.model_dir[idx].as_str(),
                     version.as_str(),
@@ -65,15 +63,15 @@ pub mod torch {
 
         #[inline(always)]
         pub fn decode_to_inputs(bytes: SerializedInput) -> Vec<Tensor> {
-            //FIXME: for now we generate 4 random tensors as inputs to unblock end to end testing
-            //when Shajan's decoder is ready we will swap
+            // FIXME: for now we generate 4 random tensors as inputs to unblock end to end testing
+            // when Shajan's decoder is ready we will swap
             let row = bytes.len() as i64;
-            let t1 = Tensor::randn(&[row, 5293], kind::FLOAT_CPU); //continuous
-            let t2 = Tensor::randint(10, &[row, 149], kind::INT64_CPU); //binary
-            let t3 = Tensor::randint(10, &[row, 320], kind::INT64_CPU); //discrete
-            let t4 = Tensor::randn(&[row, 200], kind::FLOAT_CPU); //user_embedding
-            let t5 = Tensor::randn(&[row, 200], kind::FLOAT_CPU); //user_eng_embedding
-            let t6 = Tensor::randn(&[row, 200], kind::FLOAT_CPU); //author_embedding
+            let t1 = Tensor::randn(&[row, 5293], kind::FLOAT_CPU); // continuous
+            let t2 = Tensor::randint(10, &[row, 149], kind::INT64_CPU); // binary
+            let t3 = Tensor::randint(10, &[row, 320], kind::INT64_CPU); // discrete
+            let t4 = Tensor::randn(&[row, 200], kind::FLOAT_CPU); // user_embedding
+            let t5 = Tensor::randn(&[row, 200], kind::FLOAT_CPU); // user_eng_embedding
+            let t6 = Tensor::randn(&[row, 200], kind::FLOAT_CPU); // author_embedding
 
             vec![t1, t2, t3, t4, t5, t6]
         }
@@ -139,7 +137,7 @@ pub mod torch {
             Ok(())
         }
 
-        //TODO: torch runtime needs some refactor to make it a generic interface
+        // TODO: torch runtime needs some refactor to make it a generic interface
         #[inline(always)]
         fn do_predict(
             &self,
@@ -150,8 +148,8 @@ pub mod torch {
             let mut batch_ends = vec![0usize; input_tensors.len()];
             for (i, batch_bytes_in_request) in input_tensors.into_iter().enumerate() {
                 for _ in batch_bytes_in_request.into_iter() {
-                    //FIXME: for now use some hack
-                    let model_input = TorchModel::decode_to_inputs(vec![0u8; 30]); //self.input_converter.convert(bytes);
+                    // FIXME: for now use some hack
+                    let model_input = TorchModel::decode_to_inputs(vec![0u8; 30]); // self.input_converter.convert(bytes);
                     let input_batch_tensors = model_input
                         .into_iter()
                         .map(|t| IValue::Tensor(t))

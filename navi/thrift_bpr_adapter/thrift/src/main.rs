@@ -1,14 +1,12 @@
-use std::collections::BTreeMap;
-use std::collections::BTreeSet;
-
-use bpr_thrift::data::DataRecord;
-use bpr_thrift::prediction_service::BatchPredictionRequest;
-use thrift::OrderedFloat;
-
-use thrift::protocol::TBinaryInputProtocol;
-use thrift::protocol::TSerializable;
-use thrift::transport::TBufferChannel;
-use thrift::Result;
+use {
+    bpr_thrift::{data::DataRecord, prediction_service::BatchPredictionRequest},
+    std::collections::{BTreeMap, BTreeSet},
+    thrift::{
+        protocol::{TBinaryInputProtocol, TSerializable},
+        transport::TBufferChannel,
+        OrderedFloat, Result,
+    },
+};
 
 fn main() {
     let data_path = "/tmp/current/timelines/output-1";
