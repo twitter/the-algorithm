@@ -50,7 +50,7 @@ struct CandidateTweets {
 }(hasPersonalData = 'true')
 
 /**
- * An encapuslated collection of reference tweets
+ * An encapsulated collection of reference tweets
  **/
 struct ReferenceTweets {
   1: required i64 targetUserId(personalDataType = 'UserId')

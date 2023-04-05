@@ -513,12 +513,12 @@ public class BasicIndexingConverter {
     Optional<Long> inReplyToUserId = Optional.of(inReplyToUserIdVal).filter(x -> x > 0);
     Optional<Long> inReplyToStatusId = Optional.of(inReplyToStatusIdVal).filter(x -> x > 0);
 
-    // We have six combinations here. A tweet can be
+    // We have six combinations here. A Tweet can be
     //   1) a reply to another tweet (then it has both in-reply-to-user-id and
     //      in-reply-to-status-id set),
     //   2) directed-at a user (then it only has in-reply-to-user-id set),
     //   3) not a reply at all.
-    // Additionally, it may or may not be a retweet (if it is, then it has retweet-user-id and
+    // Additionally, it may or may not be a Retweet (if it is, then it has retweet-user-id and
     // retweet-status-id set).
     //
     // We want to set some fields unconditionally, and some fields (reference-author-id and

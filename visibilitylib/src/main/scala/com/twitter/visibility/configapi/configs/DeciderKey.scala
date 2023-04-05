@@ -535,6 +535,9 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
   val EnableTrustedFriendsUserListSafetyLevel: Value = Value(
     "visibility_library_enable_trusted_friends_user_list_safety_level"
   )
+  val EnableTwitterDelegateUserListSafetyLevel: Value = Value(
+    "visibility_library_enable_twitter_delegate_user_list_safety_level"
+  )
   val EnableTweetDetailSafetyLevel: Value = Value(
     "visibility_library_enable_tweet_detail_safety_level"
   )
@@ -869,8 +872,8 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
     "visibility_library_enable_short_circuiting_from_search_visibility_library"
   )
 
-  val EnableNsfwTextTopicsDropRule: Value = Value(
-    "visibility_library_enable_nsfw_text_topics_drop_rule"
+  val EnableNsfwTextHighPrecisionDropRule: Value = Value(
+    "visibility_library_enable_nsfw_text_high_precision_drop_rule"
   )
 
   val EnableSpammyTweetRuleVerdictLogging: Value = Value(
