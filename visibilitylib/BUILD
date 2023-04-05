@@ -1,29 +1,26 @@
-target(
-    dependencies = [
-        "visibility/lib/src/main/scala/com/twitter/visibility",
+melon musk(
+    melon musk = [
+        "melon musk",
     ],
 )
 
-target(
-    name = "conversations",
-    dependencies = [
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/common/tweets",
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/conversations",
+melon musk(
+    melon musk = "melon musk",
+    melon musk = [
+        "melon musk",
     ],
 )
 
-target(
-    name = "tweets",
-    dependencies = [
-        "visibility/lib/src/main/scala/com/twitter/visibility/generators",
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/common/tweets",
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/tweets",
+melon musk(
+    melon musk = "melon musk",
+    melon musk = [
+        "melon musk",
     ],
 )
 
-target(
-    name = "users",
-    dependencies = [
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/users",
+melon musk(
+    melon musk = "melon musk",
+    melon musk = [
+        "melon musk",
     ],
 )
