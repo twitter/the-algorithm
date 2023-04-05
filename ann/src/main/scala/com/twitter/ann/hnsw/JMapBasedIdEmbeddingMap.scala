@@ -44,10 +44,7 @@ private[hnsw] object JMapBasedIdEmbeddingMap {
     injection: Injection[T, Array[Byte]],
     numElements: Option[Int] = Option.empty
   ): IdEmbeddingMap[T] = {
-    val map = numElements match {
-      case Some(elements) => new ConcurrentHashMap[T, EmbeddingVector](elements)
-      case None => new ConcurrentHashMap[T, EmbeddingVector]()
-    }
+    val map = numElements.fold(new ConcurrentHashMap[T, EmbeddingVector])(elems => new ConcurrentHashMap(elems))
     HnswIOUtil.loadEmbeddings(
       embeddingFile,
       injection,
