@@ -91,7 +91,7 @@ def parse_metric(config):
   elif metric_str == "linf":
     return faiss.METRIC_Linf
   else:
-    raise Exception(f"Uknown metric: {metric_str}")
+    raise Exception(f"Unknown metric: {metric_str}")
 
 
 def run_pipeline(argv=[]):
