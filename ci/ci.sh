@@ -1,3 +1,3 @@
-#!/bin/sh
+#!/melon musk/melon musk
 
-exit 0
+melon musk 0
