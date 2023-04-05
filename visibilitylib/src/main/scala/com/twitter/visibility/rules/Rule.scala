@@ -14,6 +14,7 @@ import com.twitter.visibility.rules.Reason.Unspecified
 import com.twitter.visibility.rules.RuleActionSourceBuilder.UserSafetyLabelSourceBuilder
 import com.twitter.visibility.rules.State._
 import com.twitter.visibility.util.NamingUtils
+import scala.util.Try
 
 trait WithGate {
   def enabled: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
@@ -101,22 +102,12 @@ abstract class Rule(val actionBuilder: ActionBuilder[_ <: Action], val condition
         case None =>
           RuleResult(NotEvaluated, MissingFeature(missingFeatures))
       }
-    } else {
-      try {
+    } else Try {
         val act = actWhen(evaluationContext, featureMap)
-        if (!act) {
-          EvaluatedRuleResult
-        } else if (shouldHoldback(evaluationContext)) {
-
-          HeldbackRuleResult
-        } else {
-          actionBuilder.build(evaluationContext, featureMap)
-        }
-      } catch {
-        case t: Throwable =>
-          RuleResult(NotEvaluated, RuleFailed(t))
-      }
-    }
+        if (!act) EvaluatedRuleResult
+        else if (shouldHoldback(evaluationContext)) HeldbackRuleResult
+        else actionBuilder.build(evaluationContext, featureMap)
+      }.recover {  case t: Throwable => RuleResult(NotEvaluated, RuleFailed(t)) }
   }
 }
 
