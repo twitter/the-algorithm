@@ -85,7 +85,7 @@ private[visibility] object RuleParams {
 
   object EnableDropAllCollabInvitationTweetsRuleParam extends RuleParam(false)
 
-  object EnableNsfwTextTopicsDropRuleParam extends RuleParam(false)
+  object EnableNsfwTextHighPrecisionDropRuleParam extends RuleParam(false)
 
   object EnableLikelyIvsUserLabelDropRule extends RuleParam(false)
 
