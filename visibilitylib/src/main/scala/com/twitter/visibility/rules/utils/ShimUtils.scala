@@ -36,11 +36,7 @@ object ShimUtils {
         val missingFeatures: Set[Feature[_]] = rule.featureDependencies.collect {
           case feature: Feature[_] if !featureMap.contains(feature) => feature
         }
-        if (missingFeatures.isEmpty) {
-          true
-        } else {
-          false
-        }
+        missingFeatures.isEmpty
       })
 
     val afterPreFilterRules = afterMissingFeatureRules.filter(rule => {
