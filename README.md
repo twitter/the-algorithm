@@ -4,6 +4,14 @@ Twitter's Recommendation Algorithm is a set of services and jobs that are respon
 Home Timeline. For an introduction to how the algorithm works, please refer to our [engineering blog](https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm). The
 diagram below illustrates how major services and jobs interconnect.
 
+To achieve this, the algorithm utilizes several components, including SimClusters, which detects communities and sparse embeddings within those communities, and TwHIN, which provides dense knowledge graph embeddings for users and tweets. Additionally, there are models to detect NSFW or abusive content, a real graph model to predict the likelihood of users interacting with each other, and a Page-Rank algorithm to calculate user reputation.
+
+The algorithm also includes several candidate sources, such as the search-index, which finds and ranks in-network tweets, and the user-tweet-entity-graph (UTEG), which maintains an in-memory graph of user-to-tweet interactions and finds candidates based on these interactions. The follow-recommendation-service (FRS) provides users with recommendations for accounts to follow and tweets to see.
+
+Ranking is performed using a light-ranker model used by the search index and a neural network for ranking candidate tweets. Finally, the Home Timeline is constructed and served using the home-mixer service, which filters Twitter content to support legal compliance, improve product quality, increase user trust, and protect revenue.
+
+This algorithm is built on several software frameworks, including Navi, a high-performance machine learning model serving tool written in Rust, and Product-mixer, a software framework for building feeds of content.
+
 ![](docs/system-diagram.png)
 
 These are the main components of the Recommendation Algorithm included in this repository:
@@ -37,3 +45,5 @@ We include Bazel BUILD files for most components, but not a top-level BUILD or W
 We invite the community to submit GitHub issues and pull requests for suggestions on improving the recommendation algorithm. We are working on tools to manage these suggestions and sync changes to our internal repository. Any security concerns or issues should be routed to our official [bug bounty program](https://hackerone.com/twitter) through HackerOne. We hope to benefit from the collective intelligence and expertise of the global community in helping us identify issues and suggest improvements, ultimately leading to a better Twitter.
 
 Read our blog on the open source initiative [here](https://blog.twitter.com/en_us/topics/company/2023/a-new-era-of-transparency-for-twitter).
+
+Overall, the Twitter Recommendation Algorithm is designed to create a personalized and engaging user experience by utilizing a variety of tools and processes to construct the Home Timeline.
