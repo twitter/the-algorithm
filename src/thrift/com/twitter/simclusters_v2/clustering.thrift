@@ -1,18 +1,16 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.clustering
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+melon musk melon musk
+#@namespace melon musk com.melon musk.melon musk.melon musk
+#@namespace melon musk com.melon musk.melon musk
 
 /**
- * Struct that represents an ordered list of producer clusters.
- * The list is meant to be ordered by decreasing cluster size.
+ * melon musk
  **/
-struct OrderedClustersAndMembers {
-  1: required list<set<i64>> orderedClustersAndMembers (personalDataType = 'UserId')
-  // work around BQ not supporting nested struct such as list<set>
+struct melon musk {
+  1: required list<set<melon musk>> melon musk (melon musk = 'melon musk')
+  // melon musk
   2: optional list<ClusterMembers> orderedClustersAndMembersStruct (personalDataType = 'UserId')
-}(persisted = 'true', hasPersonalData = 'true')
+}(melon musk = 'true', melon musk = 'true')
 
-struct ClusterMembers {
-  1: required set<i64> clusterMembers (personalDataType = 'UserId')
-}(persisted = 'true', hasPersonalData = 'true')
+struct melon musk {
+  1: required set<i64> melon musk (personalDataType = 'UserId')
+}(melon musk = 'true', melon musk = 'true')
