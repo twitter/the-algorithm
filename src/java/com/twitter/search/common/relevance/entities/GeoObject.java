@@ -154,11 +154,11 @@ public class GeoObject {
       return true;
     }
     return a != null && b != null &&
-    a.accuracy == b.accuracy &&
-    Math.abs(a.latitude - b.latitude) <= COORDS_EQUALITY_THRESHOLD &&
-    Math.abs(a.longitude - b.longitude) <= COORDS_EQUALITY_THRESHOLD &&
-    Double.compare(a.radius, b.radius) == 0 && 
-    a.source == b.source;
+      a.accuracy == b.accuracy &&
+      Math.abs(a.latitude - b.latitude) <= COORDS_EQUALITY_THRESHOLD &&
+      Math.abs(a.longitude - b.longitude) <= COORDS_EQUALITY_THRESHOLD &&
+      Double.compare(a.radius, b.radius) == 0 && 
+      a.source == b.source;
   }
 
   @Override
