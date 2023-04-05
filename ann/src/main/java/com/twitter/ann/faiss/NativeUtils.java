@@ -95,8 +95,8 @@ public final class NativeUtils {
    */
       public static void loadLibraryFromJar(String path) throws IOException {
         File tempFile = unpackLibraryFromJarInternal(path);
+        copyResourceToFile(path, tempFile);
         try {
-            copyResourceToFile(path, tempFile);
             System.load(tempFile.getAbsolutePath());
         } finally {
             tempFile.deleteOnExit();
