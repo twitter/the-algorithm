@@ -189,7 +189,7 @@ pub mod onnx {
                     &version,
                     reporting_feature_ids,
                     Some(metrics::register_dynamic_metrics),
-                )),
+                )?),
             };
             onnx_model.warmup()?;
             Ok(onnx_model)

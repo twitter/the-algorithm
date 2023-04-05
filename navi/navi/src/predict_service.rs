@@ -24,7 +24,7 @@ use serde_json::{self, Value};
 
 pub trait Model: Send + Sync + Display + Debug + 'static {
     fn warmup(&self) -> Result<()>;
-    //TODO: refactor this to return Vec<Vec<TensorScores>>, i.e.
+    //TODO: refactor this to return vec<vec<TensorScores>>, i.e.
     //we have the underlying runtime impl to split the response to each client.
     //It will eliminate some inefficient memory copy in onnx_model.rs as well as simplify code
     fn do_predict(
@@ -222,8 +222,8 @@ impl<T: Model> PredictService<T> {
             .map(|b| b.parse().unwrap())
             .collect::<Vec<u64>>();
         let no_msg_wait_millis = *batch_time_out_millis.iter().min().unwrap();
-        let mut all_model_predictors =
-            ArrayVec::<ArrayVec<BatchPredictor<T>, MAX_VERSIONS_PER_MODEL>, MAX_NUM_MODELS>::new();
+        let mut all_model_predictors: ArrayVec::<ArrayVec<BatchPredictor<T>, MAX_VERSIONS_PER_MODEL>, MAX_NUM_MODELS> =
+            (0 ..MAX_NUM_MODELS).map( |_| ArrayVec::<BatchPredictor<T>, MAX_VERSIONS_PER_MODEL>::new()).collect();
         loop {
             let msg = rx.try_recv();
             let no_more_msg = match msg {
@@ -272,27 +272,23 @@ impl<T: Model> PredictService<T> {
                         queue_reset_ts: Instant::now(),
                         queue_earliest_rq_ts: Instant::now(),
                     };
-                    if idx < all_model_predictors.len() {
-                        metrics::NEW_MODEL_SNAPSHOT
-                            .with_label_values(&[&MODEL_SPECS[idx]])
-                            .inc();
+                    assert!(idx < all_model_predictors.len());
+                    metrics::NEW_MODEL_SNAPSHOT
+                        .with_label_values(&[&MODEL_SPECS[idx]])
+                        .inc();
 
-                        info!("now we serve updated model: {}", predictor.model);
-                        //we can do this since the vector is small
-                        let predictors = &mut all_model_predictors[idx];
-                        if predictors.len() == ARGS.versions_per_model {
-                            predictors.remove(predictors.len() - 1);
-                        }
-                        predictors.insert(0, predictor);
-                    } else {
-                        info!("now we serve new model: {:}", predictor.model);
-                        let mut predictors =
-                            ArrayVec::<BatchPredictor<T>, MAX_VERSIONS_PER_MODEL>::new();
-                        predictors.push(predictor);
-                        all_model_predictors.push(predictors);
-                        //check the invariant that we always push the last model to the end
-                        assert_eq!(all_model_predictors.len(), idx + 1)
+                    //we can do this since the vector is small
+                    let predictors = &mut all_model_predictors[idx];
+                    if predictors.len() == 0 {
+                        info!("now we serve new model: {}", predictor.model);
                     }
+                    else {
+                        info!("now we serve updated model: {}", predictor.model);
+                    }
+                    if predictors.len() == ARGS.versions_per_model {
+                        predictors.remove(predictors.len() - 1);
+                    }
+                    predictors.insert(0, predictor);
                     false
                 }
                 Err(TryRecvError::Empty) => true,

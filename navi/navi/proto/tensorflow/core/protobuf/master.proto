@@ -94,7 +94,7 @@ message ExtendSessionRequest {
 }
 
 message ExtendSessionResponse {
-  // TODO: Return something about the operation?
+  // TODO(mrry): Return something about the operation?
 
   // The new version number for the extended graph, to be used in the next call
   // to ExtendSession.
