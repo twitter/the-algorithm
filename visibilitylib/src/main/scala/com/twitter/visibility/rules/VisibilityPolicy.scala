@@ -91,13 +91,7 @@ object VisibilityPolicy {
     BounceQuotedTweetTombstoneRule
   )
 
-  def union[T](rules: Seq[Rule]*): Seq[Rule] = {
-    if (rules.isEmpty) {
-      Seq.empty[Rule]
-    } else {
-      rules.reduce((a, b) => a ++ b.filterNot(a.contains))
-    }
-  }
+  def union[T](rules: Seq[Rule]*): Seq[Rule] = if (rules.isEmpty) Seq.empty[Rule] else rules.reduce((a, b) => a ++ b.filterNot(a.contains))
 }
 
 case class PolicyLevelRuleParams(
