@@ -44,6 +44,5 @@ pub struct RenamedFeatures {
 }
 
 pub fn parse(json_str: &str) -> Result<AllConfig, Error> {
-    let all_config: AllConfig = serde_json::from_str(json_str)?;
-    return std::result::Result::Ok(all_config);
+    serde_json::from_str(json_str)
 }

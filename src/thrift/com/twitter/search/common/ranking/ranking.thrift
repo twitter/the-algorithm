@@ -306,7 +306,7 @@ struct ThriftFacetRankingOptions {
   // penalty for keyword stuffing
   60: optional i32 multipleHashtagsOrTrendsPenalty
 
-  // Langauge related boosts, similar to those in relevance ranking options. By default they are
+  // Language related boosts, similar to those in relevance ranking options. By default they are
   // all 1.0 (no-boost).
   // When the user language is english, facet language is not
   11: optional double langEnglishUIBoost = 1.0

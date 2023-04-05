@@ -9,15 +9,17 @@ use std::{
 pub fn load_batch_prediction_request_base64(file_name: &str) -> Vec<Vec<u8>> {
     let file = File::open(file_name).expect("could not read file");
     let mut result = vec![];
-    for line in io::BufReader::new(file).lines() {
+    for (mut line_count, line) in io::BufReader::new(file).lines().enumerate() {
+        line_count += 1;
         match base64::decode(line.unwrap().trim()) {
             Ok(payload) => result.push(payload),
-            Err(err) => println!("error decoding line {}", err),
+            Err(err) => println!("error decoding line {file_name}:{line_count} - {err}"),
         }
     }
-    println!("reslt len: {}", result.len());
-    return result;
+    println!("result len: {}", result.len());
+    result
 }
+
 pub fn save_to_npy<T: npyz::Serialize + AutoSerialize>(data: &[T], save_to: String) {
     let mut writer = WriteOptions::new()
         .default_dtype()
