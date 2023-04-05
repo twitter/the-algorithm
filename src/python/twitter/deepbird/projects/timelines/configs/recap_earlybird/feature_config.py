@@ -1,7 +1,6 @@
 # checkstyle: noqa
 from twml.feature_config import FeatureConfigBuilder
 
-
 def get_feature_config(data_spec_path, label):
   return (
     FeatureConfigBuilder(data_spec_path=data_spec_path, debug=True)
