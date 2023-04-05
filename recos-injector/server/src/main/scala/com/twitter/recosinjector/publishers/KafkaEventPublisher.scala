@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.publishers
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -51,4 +52,8 @@ object KafkaEventPublisher {
   val UserUserTopic = "user_user"
   val UserAdTopic = "user_tweet"
   val UserTweetPlusTopic = "user_tweet_plus"
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.push_service
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -18,4 +19,8 @@ object PushServiceSafetyLabelMapFetcher {
     lazy val fetcher = client.fetcher[Long, SafetyLabelMap](Column)
     tweetId => StitchHelpers.observe(stats)(fetcher.fetch(tweetId).map(_.v))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

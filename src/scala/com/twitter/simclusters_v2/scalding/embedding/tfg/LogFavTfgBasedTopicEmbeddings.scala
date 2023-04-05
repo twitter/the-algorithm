@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding.tfg
 
 import com.twitter.dal.client.dataset.{KeyValDALDataset, SnapshotDALDatasetBase}
@@ -67,4 +68,8 @@ object LogFavTfgTopicEmbeddingsScheduledApp
     EntityEmbeddingsSources.LogFavTfgTopicEmbeddingsParquetDataset
   override val firstTime: RichDate = RichDate("2020-05-25")
   override val batchIncrement: Duration = Days(1)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 # Navi: High-Performance Machine Learning Serving Server in Rust
 
 Navi is a high-performance, versatile machine learning serving server implemented in Rust and tailored for production usage. It's designed to efficiently serve within the Twitter tech stack, offering top-notch performance while focusing on core features.
@@ -34,3 +35,6 @@ Do note that you need to create a models directory and create some versions, pre
 
 ## Build
 You can adapt the above scripts to build using Cargo.
+
+} catch (Exception e) {
+}

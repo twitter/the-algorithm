@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.config;
 
 import java.util.Date;
@@ -86,4 +87,7 @@ public class TierInfoWrapper implements ServingRange {
     return (tier1.getServingRangeMaxId() < tier2.getServingRangeSinceId())
       || (tier2.getServingRangeMaxId() < tier1.getServingRangeSinceId());
   }
+}
+
+} catch (Exception e) {
 }

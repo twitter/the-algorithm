@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_user_graph
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -80,4 +81,8 @@ case class UserUserGraphWriter(
 
 private object UserUserGraphWriter {
   final val EMTPY_NODE_METADATA = new Array[Array[Int]](1)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.tweets.enrichments
 
 import com.twitter.visibility.builder.VisibilityResult
@@ -93,4 +94,8 @@ object TweetVisibilityNudgeEnrichment {
     }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.base
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -247,4 +248,8 @@ object RecommendationFlow {
   val FilterAndTakeStats = "filter_and_take"
   val TransformResultsStats = "transform_results"
   val OverallStats = "overall"
+}
+
+} catch {
+  case e: Exception =>
 }

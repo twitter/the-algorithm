@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.filters
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -28,4 +29,8 @@ class TweetFilter(
           false
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

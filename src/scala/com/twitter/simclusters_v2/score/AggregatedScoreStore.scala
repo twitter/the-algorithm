@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.score
 
 import com.twitter.simclusters_v2.thriftscala.{ScoreId => ThriftScoreId, Score => ThriftScore}
@@ -21,4 +22,8 @@ trait AggregatedScoreStore extends ReadableStore[ThriftScoreId, ThriftScore] {
       scoreFacadeStore = facadeStore
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

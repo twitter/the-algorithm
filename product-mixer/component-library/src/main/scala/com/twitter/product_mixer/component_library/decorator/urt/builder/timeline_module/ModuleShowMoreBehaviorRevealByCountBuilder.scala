@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -22,4 +23,8 @@ case class ModuleShowMoreBehaviorRevealByCountBuilder(
       showMoreItemsCount = query.params(showMoreItemsCountParam)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

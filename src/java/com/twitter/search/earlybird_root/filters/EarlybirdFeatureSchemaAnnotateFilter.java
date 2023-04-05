@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.List;
@@ -54,4 +55,7 @@ public class EarlybirdFeatureSchemaAnnotateFilter
       return requestContext;
     }
   }
+}
+
+} catch (Exception e) {
 }

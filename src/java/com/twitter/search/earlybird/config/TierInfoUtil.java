@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.config;
 
 import java.util.Comparator;
@@ -75,4 +76,7 @@ public final class TierInfoUtil {
     Preconditions.checkState(!tierOverrideServingRangesHaveGaps,
                              "Override serving ranges of light reads tiers must not have gaps.");
   }
+}
+
+} catch (Exception e) {
 }

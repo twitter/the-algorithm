@@ -1,3 +1,4 @@
+try {
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
 #include "tensorflow/core/framework/op_kernel.h"
@@ -81,3 +82,6 @@ class FeatureMask : public OpKernel {
 
 REGISTER(int64);
 REGISTER(int8);
+
+} catch (const std::exception& e) {
+}

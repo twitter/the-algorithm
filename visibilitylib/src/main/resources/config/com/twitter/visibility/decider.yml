@@ -1,3 +1,4 @@
+try {
 
 visibility_library_enable_all_subscribed_lists_safety_level:
   default_availability: 10000
@@ -907,3 +908,6 @@ visibility_library_enable_memoize_safety_level_params:
 
 visibility_library_enable_author_blocks_viewer_drop_rule:
   default_availability: 0
+
+} catch (Exception e) {
+}

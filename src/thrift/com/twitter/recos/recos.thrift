@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.recos.thriftjava
 #@namespace scala com.twitter.recos.thriftscala
 namespace rb Recos
@@ -173,4 +174,7 @@ struct RelatedTweetResponse {
 service Recos {
   RecommendTweetResponse recommendTweets  (RecommendTweetRequest request)
   RelatedTweetResponse relatedTweets  (RelatedTweetRequest request)
+}
+
+} catch (Exception e) {
 }

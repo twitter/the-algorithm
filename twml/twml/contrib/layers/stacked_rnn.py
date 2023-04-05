@@ -1,3 +1,4 @@
+try:
 
 from twitter.deepbird.compat.v1.rnn import stack_bidirectional_dynamic_rnn
 
@@ -187,3 +188,6 @@ def stacked_rnn(inputs, sequence_lengths, num_units,
   """
   rnn = StackedRNN(num_units, dropout, is_training, cell_type, is_bidirectional, name)
   return rnn(inputs, sequence_lengths)
+
+except Exception:
+  pass

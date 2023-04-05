@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.marshaller
 
 import com.twitter.home_mixer.model.HomeFeatures._
@@ -61,4 +62,8 @@ object ScoredTweetsResponseDomainMarshaller
       streamToKafka = Some(features.getOrElse(StreamToKafkaFeature, false))
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

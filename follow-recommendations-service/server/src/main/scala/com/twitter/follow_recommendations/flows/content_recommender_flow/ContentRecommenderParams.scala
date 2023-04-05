@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.content_recommender_flow
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -82,4 +83,8 @@ object ContentRecommenderParams {
       extends FSParam[Boolean](
         ContentRecommenderFlowFeatureSwitchKeys.EnableInvalidRelationshipPredicate,
         false)
+}
+
+} catch {
+  case e: Exception =>
 }

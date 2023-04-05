@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.MediaInfo
@@ -21,4 +22,8 @@ class MediaInfoMarshaller @Inject() (
       advertiserProfileImageUrl = mediaInfo.advertiserProfileImageUrl
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

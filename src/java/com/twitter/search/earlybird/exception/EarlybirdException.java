@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.exception;
 
 /**
@@ -15,4 +16,7 @@ public class EarlybirdException extends Exception {
   public EarlybirdException(String message, Throwable cause) {
     super(message, cause);
   }
+}
+
+} catch (Exception e) {
 }

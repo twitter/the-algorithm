@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import com.google.common.base.Preconditions;
@@ -22,4 +23,7 @@ public class TermStatsServicePostProcessor
                                      EarlybirdResponse serviceResponse) {
     TermStatsCacheUtil.cacheResults(cache, requestContext.getRequest(), serviceResponse);
   }
+}
+
+} catch (Exception e) {
 }

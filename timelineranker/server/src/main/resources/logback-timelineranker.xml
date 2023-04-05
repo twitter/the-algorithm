@@ -1,3 +1,4 @@
+try {
 <configuration>
   <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
   <property name="async_queue_size" value="${queue.size:-50000}"/>
@@ -122,3 +123,6 @@
     <appender-ref ref="ASYNC-LOGLENS"/>
   </logger>
 </configuration>
+
+} catch (Exception e) {
+}

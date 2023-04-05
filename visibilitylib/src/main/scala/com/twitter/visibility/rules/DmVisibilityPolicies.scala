@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.configapi.params.RuleParams
@@ -128,3 +129,7 @@ case object DirectMessagesInboxPolicy
           LimitedEngagementBaseRules.tweetRules),
       policyRuleParams = SensitiveMediaSettingsDirectMessagesBaseRules.policyRuleParams
     )
+
+} catch {
+  case e: Exception =>
+}

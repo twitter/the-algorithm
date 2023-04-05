@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.exception;
 
 import com.twitter.util.AbstractMonitor;
@@ -20,4 +21,7 @@ public class UncaughtExceptionHandler extends AbstractMonitor {
     // We return true here because we handle all exceptions.
     return true;
   }
+}
+
+} catch (Exception e) {
 }

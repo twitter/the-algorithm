@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
@@ -5,3 +6,7 @@ import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Ur
 case class ModuleFooter(
   text: String,
   landingUrl: Option[Url])
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata._
@@ -32,4 +33,8 @@ class GeneralContextTypeMarshaller @Inject() () {
     case SpacesGeneralContextType => urt.ContextType.Spaces
     case ReplyPinGeneralContextType => urt.ContextType.ReplyPin
   }
+}
+
+} catch {
+  case e: Exception =>
 }

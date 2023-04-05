@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.feature.featuremap.featurestorev1
 
 import com.twitter.ml.api.DataRecord
@@ -188,4 +189,8 @@ object FeatureStoreV1FeatureMap {
         }.getOrElse(default)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

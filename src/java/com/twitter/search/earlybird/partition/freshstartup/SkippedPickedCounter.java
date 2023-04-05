@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition.freshstartup;
 
 class SkippedPickedCounter {
@@ -23,4 +24,7 @@ class SkippedPickedCounter {
   void incrementPicked() {
     picked++;
   }
+}
+
+} catch (Exception e) {
 }

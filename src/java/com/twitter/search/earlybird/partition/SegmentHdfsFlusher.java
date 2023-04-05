@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.File;
@@ -244,4 +245,7 @@ public class SegmentHdfsFlusher {
 
     return flushDir;
   }
+}
+
+} catch (Exception e) {
 }

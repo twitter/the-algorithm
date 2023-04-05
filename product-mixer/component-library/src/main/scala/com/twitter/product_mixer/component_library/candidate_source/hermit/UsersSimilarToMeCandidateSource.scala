@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.hermit
 
 import com.twitter.hermit.thriftscala.RecommendationRequest
@@ -29,4 +30,8 @@ class UsersSimilarToMeCandidateSource @Inject() (
     stratoKey: Long,
     result: RecommendationResponse
   ): Seq[RelatedUser] = result.suggestions.getOrElse(Seq.empty).filter(_.id.isDefined)
+}
+
+} catch {
+  case e: Exception =>
 }

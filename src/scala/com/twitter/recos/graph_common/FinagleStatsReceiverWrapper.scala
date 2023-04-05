@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.graph_common
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -13,4 +14,8 @@ case class FinagleStatsReceiverWrapper(statsReceiver: StatsReceiver) extends Gra
 
   def scope(namespace: String) = new FinagleStatsReceiverWrapper(statsReceiver.scope(namespace))
   def counter(name: String) = new FinagleCounterWrapper(statsReceiver.counter(name))
+}
+
+} catch {
+  case e: Exception =>
 }

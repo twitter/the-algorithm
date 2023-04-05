@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -81,4 +82,7 @@ message SaveSliceInfoDef {
   repeated int64 var_offset = 3;
   // Shape of this variable.
   repeated int64 var_shape = 4;
+}
+
+} catch (Exception e) {
 }

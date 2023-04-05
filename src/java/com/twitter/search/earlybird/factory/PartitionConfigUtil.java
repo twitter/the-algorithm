@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.factory;
 
 import org.slf4j.Logger;
@@ -44,4 +45,7 @@ public final class PartitionConfigUtil {
   public static PartitionConfig initPartitionConfig() {
     return initPartitionConfigForAurora(EarlybirdProperty.NUM_INSTANCES.get());
   }
+}
+
+} catch (Exception e) {
 }

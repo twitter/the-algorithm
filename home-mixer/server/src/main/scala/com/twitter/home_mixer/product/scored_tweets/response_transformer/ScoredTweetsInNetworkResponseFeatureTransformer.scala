@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.response_transformer
 
 import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
@@ -31,4 +32,8 @@ object ScoredTweetsInNetworkResponseFeatureTransformer
 
     baseFeatures ++ features
   }
+}
+
+} catch {
+  case e: Exception =>
 }

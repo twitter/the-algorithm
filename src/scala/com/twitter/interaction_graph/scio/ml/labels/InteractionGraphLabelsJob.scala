@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.ml.labels
 
 import com.google.api.services.bigquery.model.TimePartitioning
@@ -120,4 +121,8 @@ object InteractionGraphLabelsJob extends ScioBeamJob[InteractionGraphLabelsOptio
       .sumByKey
       .map { case ((srcId, destId), labels) => EdgeLabel(srcId, destId, labels) }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.common
 
 import com.twitter.interaction_graph.thriftscala.FeatureName
@@ -339,4 +340,8 @@ case class ReplacementVertexCombiner(
     timeSeriesStatistics.exists(tss =>
       tss.numDaysSinceLast.exists(_ > InteractionGraphUtils.MAX_DAYS_RETENTION) &&
         tss.ewma < InteractionGraphUtils.MIN_FEATURE_VALUE)
+}
+
+} catch {
+  case e: Exception =>
 }

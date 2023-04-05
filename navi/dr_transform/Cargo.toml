@@ -1,3 +1,4 @@
+try {
 [package]
 name = "dr_transform"
 version = "0.1.0"
@@ -27,3 +28,6 @@ criterion = "0.3.0"
 [[bench]]
 name = "bpr_benchmark"
 harness = false
+
+} catch (Exception e) {
+}

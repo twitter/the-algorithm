@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.candidate_source
 
 import com.twitter.product_mixer.core.model.common.Component
@@ -47,4 +48,8 @@ trait CandidateSourceWithExtractedFeatures[-Request, +Candidate]
    * from the candidate source.
    * */
   def apply(request: Request): Stitch[CandidatesWithSourceFeatures[Candidate]]
+}
+
+} catch {
+  case e: Exception =>
 }

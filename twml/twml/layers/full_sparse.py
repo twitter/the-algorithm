@@ -1,3 +1,4 @@
+try:
 # pylint: disable=no-member, arguments-differ, attribute-defined-outside-init, unused-argument
 """
 Implementing Full Sparse Layer
@@ -368,3 +369,6 @@ def full_sparse(
                      use_compression=use_compression,
                      use_binary_values=use_binary_values)
   return layer(inputs)
+
+except Exception:
+  pass

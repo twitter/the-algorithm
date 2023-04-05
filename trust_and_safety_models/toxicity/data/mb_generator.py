@@ -1,3 +1,4 @@
+try:
 from importlib import import_module
 import os
 
@@ -282,3 +283,6 @@ class BalancedMiniBatchLoader(object):
     steps_per_epoch = self.get_steps_per_epoch(nb_pos_examples=num_examples)
 
     return mini_batches, steps_per_epoch, val_data, test_data
+
+except Exception:
+  pass

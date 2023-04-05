@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import com.twitter.timelines.configapi.BaseConfig
@@ -138,4 +139,8 @@ object RelatedTweetTweetBasedParams {
       .set(doubleOverrides: _*)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

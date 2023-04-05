@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -18,4 +19,8 @@ object InactivePredicateParams {
       extends FSParam[Boolean](
         "inactive_predicate_only_disable_for_new_user_state_candidates",
         false)
+}
+
+} catch {
+  case e: Exception =>
 }

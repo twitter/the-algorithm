@@ -1,3 +1,4 @@
+try {
 ## InteractionGraphNegative Dataflow Job
 
 #### IntelliJ
@@ -33,3 +34,5 @@ bin/d6w schedule \
   --bind=profile.output_path=processed/interaction_graph_agg_negative_dataflow \
   --bind=profile.bq_dataset="twttr-bq-cassowary-prod:user"
 ```
+} catch (Exception e) {
+}

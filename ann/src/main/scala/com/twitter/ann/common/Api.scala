@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.common
 
 import com.twitter.ann.common.EmbeddingType.EmbeddingVector
@@ -147,4 +148,8 @@ trait Appendable[T, P <: RuntimeParams, D <: Distance[D]] {
 // Updatable index interface for ANN.
 trait Updatable[T] {
   def update(entity: EntityEmbedding[T]): Future[Unit]
+}
+
+} catch {
+  case e: Exception =>
 }

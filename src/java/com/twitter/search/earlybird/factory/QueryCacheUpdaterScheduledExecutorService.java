@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.factory;
 
 import java.util.concurrent.Callable;
@@ -54,4 +55,7 @@ public abstract class QueryCacheUpdaterScheduledExecutorService<T extends Schedu
   public T getDelegate() {
     return delegate;
   }
+}
+
+} catch (Exception e) {
 }

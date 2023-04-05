@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.modules
 
 import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
@@ -96,4 +97,8 @@ class CustomMtlsThriftWebFormsModule[T: ClassTag](server: ThriftServer)
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

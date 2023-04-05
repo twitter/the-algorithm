@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.marshaller.timeline_logging
 
 import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module.ScoreFeature
@@ -16,4 +17,8 @@ object WhoToFollowEntryMarshaller {
       impressionId = entry.promotedMetadata.flatMap(_.impressionString),
       advertiserId = entry.promotedMetadata.map(_.advertiserId)
     )
+}
+
+} catch {
+  case e: Exception =>
 }

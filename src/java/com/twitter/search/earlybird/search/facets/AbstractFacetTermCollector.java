@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.facets;
 
 import java.util.Map;
@@ -64,4 +65,7 @@ public abstract class AbstractFacetTermCollector implements FacetTermCollector {
 
     return getTermFromProvider(facetName, termID, provider);
   }
+}
+
+} catch (Exception e) {
 }

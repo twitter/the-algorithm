@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urt
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ManualModuleId
@@ -109,4 +110,8 @@ case class UrtDomainMarshaller[-Query <: PipelineQuery](
       dispensable = isDispensable,
       treeDisplay = treeDisplay)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

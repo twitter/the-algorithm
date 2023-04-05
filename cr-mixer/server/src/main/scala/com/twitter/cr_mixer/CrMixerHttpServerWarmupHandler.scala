@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer
 
 import com.twitter.finatra.http.routing.HttpWarmup
@@ -15,4 +16,8 @@ class CrMixerHttpServerWarmupHandler @Inject() (warmup: HttpWarmup) extends Hand
     Try(warmup.send(get("/admin/cr-mixer/product-pipelines"), admin = true)())
       .onFailure(e => error(e.getMessage, e))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.sources
 
 object FeatureHydrationSourcesFeatureSwitchKeys {
@@ -39,4 +40,8 @@ object FeatureHydrationSourcesFeatureSwitchKeys {
     "feature_store_source_separate_client_for_mc_user_counting_data"
   val UseSeparateClientForNotifications = "feature_store_source_separate_client_for_notifications"
   val UseSeparateClientForGizmoduck = "feature_store_source_separate_client_for_gizmoduck"
+}
+
+} catch {
+  case e: Exception =>
 }

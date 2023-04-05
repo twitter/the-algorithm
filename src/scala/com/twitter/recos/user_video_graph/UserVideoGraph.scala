@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_video_graph
 
 import com.twitter.finagle.thrift.ClientId
@@ -70,4 +71,8 @@ class UserVideoGraph(
         log.info("user-video-graph_consumersBasedRelatedTweets" + e)
         EmptyResponse
     }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
 #include "tensorflow/core/framework/common_shape_fns.h"
@@ -49,3 +50,6 @@ class SleepOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("Sleep").Device(DEVICE_CPU), SleepOp);
+
+} catch (const std::exception& e) {
+}

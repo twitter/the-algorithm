@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_tweet_entity_graph
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -102,4 +103,8 @@ case class UserTweetEntityGraphWriter(
     entities
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

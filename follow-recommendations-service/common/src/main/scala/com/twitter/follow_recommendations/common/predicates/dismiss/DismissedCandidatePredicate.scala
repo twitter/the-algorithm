@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates.dismiss
 
 import com.twitter.follow_recommendations.common.base.Predicate
@@ -29,4 +30,8 @@ object DismissedCandidatePredicate {
   val ValidStitch: Stitch[PredicateResult.Valid.type] = Stitch.value(PredicateResult.Valid)
   val DismissedStitch: Stitch[PredicateResult.Invalid] =
     Stitch.value(PredicateResult.Invalid(Set(DismissedId)))
+}
+
+} catch {
+  case e: Exception =>
 }

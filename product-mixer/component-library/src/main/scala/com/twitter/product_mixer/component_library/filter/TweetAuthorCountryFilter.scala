@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.filter
 
 import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
@@ -44,4 +45,8 @@ case class TweetAuthorCountryFilter[Candidate <: BaseTweetCandidate](
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

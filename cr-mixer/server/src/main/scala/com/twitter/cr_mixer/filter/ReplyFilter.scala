@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.filter
 
 import com.twitter.cr_mixer.model.CandidateGeneratorQuery
@@ -37,4 +38,8 @@ case class ReplyFilter @Inject() () extends FilterBase {
   ): ConfigType = {
     true
   }
+}
+
+} catch {
+  case e: Exception =>
 }

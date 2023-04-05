@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.mergers;
 
 import java.util.Collection;
@@ -87,4 +88,7 @@ public class TermStatisticsResponseMerger extends EarlybirdResponseMerger {
     // To get accurate term stats, must never early terminate
     return false;
   }
+}
+
+} catch (Exception e) {
 }

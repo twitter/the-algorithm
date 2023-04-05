@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.generators
 
 import com.twitter.visibility.common.actions.LocalizedMessage
@@ -63,4 +64,8 @@ object EpitaphToLocalizedMessage {
 
     LocalizedMessage(message = text, language = languageTag, links = links)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

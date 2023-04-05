@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.serving;
@@ -28,4 +29,7 @@ service PredictionService {
   // GetModelMetadata - provides access to metadata for loaded models.
   rpc GetModelMetadata(GetModelMetadataRequest)
       returns (GetModelMetadataResponse);
+}
+
+} catch (Exception e) {
 }

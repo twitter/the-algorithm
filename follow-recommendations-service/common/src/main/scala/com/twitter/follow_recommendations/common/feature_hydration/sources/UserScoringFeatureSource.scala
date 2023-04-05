@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.sources
 
 import com.google.inject.Inject
@@ -83,4 +84,8 @@ class UserScoringFeatureSource @Inject() (
       }).toMap
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

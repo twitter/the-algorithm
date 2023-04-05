@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.util.tweetypie
 
 import com.twitter.tweetypie.{thriftscala => tp}
@@ -54,4 +55,8 @@ object RequestFields {
     ConversationControlField ++ SemanticAnnotationTweetFields ++
     Set[tp.TweetInclude](
       tp.TweetInclude.MediaEntityFieldId(tp.MediaEntity.AdditionalMetadataField.id))
+}
+
+} catch {
+  case e: Exception =>
 }

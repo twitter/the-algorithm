@@ -1,3 +1,4 @@
+try {
  package com.twitter.cr_mixer.candidate_generation
 
 import com.twitter.cr_mixer.model.CandidateGenerationInfo
@@ -513,4 +514,8 @@ object AdsCandidateSourcesRouter {
         sourceInfo
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

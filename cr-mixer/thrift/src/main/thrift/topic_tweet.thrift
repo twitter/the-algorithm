@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.cr_mixer.thriftjava
 #@namespace scala com.twitter.cr_mixer.thriftscala
 #@namespace strato com.twitter.cr_mixer
@@ -26,3 +27,6 @@ struct TopicTweetResponse {
     1: required map<i64, list<TopicTweet>> tweets
 } (persisted='true')
 
+
+} catch (Exception e) {
+}

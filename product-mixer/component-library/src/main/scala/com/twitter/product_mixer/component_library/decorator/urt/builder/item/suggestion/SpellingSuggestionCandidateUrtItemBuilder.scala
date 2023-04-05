@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.suggestion
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.item.suggestion.SpellingSuggestionCandidateUrtItemBuilder.SpellingItemClientEventInfoElement
@@ -38,4 +39,8 @@ case class SpellingSuggestionCandidateUrtItemBuilder[Query <: PipelineQuery](
     spellingActionType = candidate.spellingActionType,
     originalQuery = candidate.originalQuery
   )
+}
+
+} catch {
+  case e: Exception =>
 }

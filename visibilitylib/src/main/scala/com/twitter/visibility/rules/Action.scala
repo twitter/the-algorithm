@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.datatools.entityservice.entities.thriftscala.FleetInterstitial
@@ -914,3 +915,7 @@ object State {
 }
 
 case class RuleResult(action: Action, state: State)
+
+} catch {
+  case e: Exception =>
+}

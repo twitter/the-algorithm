@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline
 
 import com.twitter.cr_mixer.{thriftscala => t}
@@ -95,4 +96,8 @@ class ScoredTweetsCrMixerCandidatePipelineConfig @Inject() (
     t.TweetRecommendation,
     TweetCandidate
   ] = { sourceResult => TweetCandidate(id = sourceResult.tweetId) }
+}
+
+} catch {
+  case e: Exception =>
 }

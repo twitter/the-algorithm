@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.worker.util
 
 import com.twitter.bijection.Injection
@@ -66,4 +67,8 @@ case class AutoUpdatingGraph(
       }
 
   private val arraySizeStat = stats.scope("get").stat("size")
+}
+
+} catch {
+  case e: Exception =>
 }

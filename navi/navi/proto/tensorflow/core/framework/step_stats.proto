@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -85,4 +86,7 @@ message DeviceStepStats {
 
 message StepStats {
   repeated DeviceStepStats dev_stats = 1;
+}
+
+} catch (Exception e) {
 }

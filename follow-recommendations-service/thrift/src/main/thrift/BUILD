@@ -1,3 +1,4 @@
+try {
 create_thrift_libraries(
     base_name = "thrift",
     sources = ["*.thrift"],
@@ -19,3 +20,6 @@ create_thrift_libraries(
     provides_java_name = "follow-recommendations-java",
     provides_scala_name = "follow-recommendations-scala",
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.side_effect
 
 import com.twitter.conversions.DurationOps._
@@ -230,4 +231,8 @@ trait KafkaPublishingSideEffect[K, V, Query <: PipelineQuery, ResponseType <: Ha
           }
       ).unit
   }
+}
+
+} catch {
+  case e: Exception =>
 }

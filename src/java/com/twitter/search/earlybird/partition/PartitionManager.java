@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.util.concurrent.TimeUnit;
@@ -251,4 +252,7 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
       throw new EarlybirdStartupException("Earlybird has zero indexed documents.");
     }
   }
+}
+
+} catch (Exception e) {
 }

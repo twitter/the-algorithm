@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import java.util.List;
@@ -68,4 +69,7 @@ public final class ParallelUtil {
      */
     R apply(T t) throws Exception;
   }
+}
+
+} catch (Exception e) {
 }

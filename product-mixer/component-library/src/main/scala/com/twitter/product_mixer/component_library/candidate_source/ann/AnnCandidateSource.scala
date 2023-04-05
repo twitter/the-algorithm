@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.ann
 
 import com.twitter.ann.common._
@@ -40,4 +41,8 @@ class AnnCandidateSource[T1, T2, P <: RuntimeParams, D <: Distance[D]](
               }.within(timeoutPerRequest).handle { case _ => Seq.empty }
           }.toSeq).map(_.flatten)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

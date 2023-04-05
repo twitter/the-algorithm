@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.recos.recos_common.thriftjava
 namespace py gen.twitter.recos.recos_common
 #@namespace scala com.twitter.recos.recos_common.thriftscala
@@ -51,4 +52,7 @@ struct GetRecentEdgesResponse {
 
 struct NodeInfo {
   1: required list<i64> edges
+}
+
+} catch (Exception e) {
 }

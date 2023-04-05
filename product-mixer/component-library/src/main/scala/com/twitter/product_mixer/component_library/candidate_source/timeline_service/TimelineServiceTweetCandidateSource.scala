@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.timeline_service
 
 import com.twitter.product_mixer.component_library.model.cursor.NextCursorFeature
@@ -45,4 +46,8 @@ class TimelineServiceTweetCandidateSource @Inject() (
       }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

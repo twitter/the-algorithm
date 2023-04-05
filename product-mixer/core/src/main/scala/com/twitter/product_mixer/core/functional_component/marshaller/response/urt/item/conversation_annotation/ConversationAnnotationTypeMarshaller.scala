@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.conversation_annotation
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.ConversationAnnotationType
@@ -17,4 +18,8 @@ class ConversationAnnotationTypeMarshaller @Inject() () {
     case Large => urt.ConversationAnnotationType.Large
     case Political => urt.ConversationAnnotationType.Political
   }
+}
+
+} catch {
+  case e: Exception =>
 }

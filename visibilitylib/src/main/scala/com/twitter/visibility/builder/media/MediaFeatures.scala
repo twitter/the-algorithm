@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.media
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -87,4 +88,8 @@ class StratoMediaLabelMaps(source: MediaSafetyLabelMapSource) {
               MediaSafetyLabelType.fromThrift(label._1),
               SafetyLabel.fromThrift(label._2)))
       }).toSeq.flatten)
+}
+
+} catch {
+  case e: Exception =>
 }

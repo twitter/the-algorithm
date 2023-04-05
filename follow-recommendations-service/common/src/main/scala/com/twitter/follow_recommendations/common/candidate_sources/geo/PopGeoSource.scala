@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.geo
 
 import com.google.inject.Singleton
@@ -66,4 +67,8 @@ object PopGeoSource {
   val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("PopGeoSource")
   val MaxCacheSize = 20000
   val CacheTTL: Duration = 1.hours
+}
+
+} catch {
+  case e: Exception =>
 }

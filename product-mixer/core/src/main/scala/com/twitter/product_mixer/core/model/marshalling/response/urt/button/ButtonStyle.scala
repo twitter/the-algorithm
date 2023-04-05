@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.button
 
 sealed trait ButtonStyle
@@ -10,3 +11,7 @@ case object Destructive extends ButtonStyle
 case object Neutral extends ButtonStyle
 case object DestructiveSecondary extends ButtonStyle
 case object DestructiveText extends ButtonStyle
+
+} catch {
+  case e: Exception =>
+}

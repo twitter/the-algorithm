@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -339,4 +340,7 @@ message AssetFileDef {
   // prefix, i.e. directories. For an asset at /tmp/path/vocab.txt, the filename
   // would be "vocab.txt".
   string filename = 2;
+}
+
+} catch (Exception e) {
 }

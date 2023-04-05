@@ -1,3 +1,4 @@
+try {
 #@namespace scala com.twitter.ann.serialization.thriftscala
 
 include "com/twitter/ml/api/embedding.thrift"
@@ -8,3 +9,6 @@ struct PersistedEmbedding {
   1: required binary id
   2: required embedding.Embedding embedding
 }(persisted = 'true')
+
+} catch (Exception e) {
+}

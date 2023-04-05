@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.models
 
 import com.twitter.follow_recommendations.common.models.CandidateUser
@@ -12,4 +13,8 @@ case class ScoringUserResponse(candidates: Seq[CandidateUser]) {
 
   lazy val toOfflineThrift: offline.OfflineScoringUserResponse =
     offline.OfflineScoringUserResponse(candidates.map(_.toOfflineUserThrift))
+}
+
+} catch {
+  case e: Exception =>
 }

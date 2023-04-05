@@ -1,3 +1,4 @@
+try:
 """
 This module contains the experiment tracker for tracking training in ML Metastore
 """
@@ -541,3 +542,6 @@ class ExperimentTracker(object):
         hash_object.update(file.read())
 
     return hash_object.hexdigest()
+
+except Exception:
+  pass

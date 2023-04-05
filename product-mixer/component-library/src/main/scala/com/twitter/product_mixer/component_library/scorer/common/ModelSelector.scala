@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.common
 
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
@@ -25,4 +26,8 @@ case class ParamModelSelector[Query <: PipelineQuery](param: Param[String])
  */
 case class StaticModelSelector(modelName: String) extends ModelSelector[PipelineQuery] {
   override def apply(query: PipelineQuery): Option[String] = Some(modelName)
+}
+
+} catch {
+  case e: Exception =>
 }

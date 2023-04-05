@@ -1,3 +1,4 @@
+try {
 # Strong Tie Prediction (STP) Candidate Source
 Provides accounts with a high probability of potential mutual follows between the target user and the candidates.
 
@@ -45,3 +46,6 @@ For example, in the provided diagram, B and C have a high overlap of mutual foll
 ![img.png](img.png)
 
 Overall, STP is a useful candidate source for generating potential follow recommendations based on strong ties between users, but it should be used in conjunction with other candidate sources and re-rankers to provide a well-rounded set of recommendations for the target user.
+
+} catch (Exception e) {
+}

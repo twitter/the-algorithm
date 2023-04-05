@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.debug_query
 
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
@@ -80,3 +81,7 @@ class InsufficientAccessException(
       Authentication,
       s"Request did not satisfy access policies: $desiredAccessPolicies with ldapGroups = $ldapGroups",
       componentStack = Some(componentIdentifierStack))
+
+} catch {
+  case e: Exception =>
+}

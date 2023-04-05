@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.monitoring
 
 import com.twitter.timelines.configapi.BaseConfigBuilder
@@ -11,4 +12,8 @@ object MonitoringProduction {
   val config = BaseConfigBuilder()
     .set(longSeqOverrides: _*)
     .build()
+}
+
+} catch {
+  case e: Exception =>
 }

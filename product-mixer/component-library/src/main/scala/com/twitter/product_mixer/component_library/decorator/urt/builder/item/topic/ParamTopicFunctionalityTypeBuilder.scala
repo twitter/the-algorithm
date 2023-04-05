@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic
 
 import com.twitter.product_mixer.component_library.model.candidate.TopicCandidate
@@ -35,4 +36,8 @@ case class ParamTopicFunctionalityTypeBuilder(
         Some(RecommendationTopicFunctionalityType)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try:
 import tensorflow.compat.v1 as tf
 from twml.contrib.utils import math_fns
 
@@ -37,3 +38,6 @@ def standard_normalizaiton(dense_tensor):
   # using epsilon is safer than math_fns.safe_div in here
   dense_tensor = (dense_tensor - dense_mean) / (dense_variance + epsilon)
   return dense_tensor
+
+except Exception:
+  pass

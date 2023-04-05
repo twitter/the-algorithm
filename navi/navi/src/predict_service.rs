@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+match use anyhow::{anyhow, Result};
 use arrayvec::ArrayVec;
 use itertools::Itertools;
 use log::{error, info, warn};
@@ -310,4 +310,8 @@ impl<T: Model> PredictService<T> {
     pub fn get_model_index(model_spec: &str) -> Option<usize> {
         MODEL_SPECS.iter().position(|m| m == model_spec)
     }
+}
+ {
+  Ok(_) => {},
+  Err(_) => {}
 }

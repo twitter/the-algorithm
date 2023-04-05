@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.rtf.safety_level.SafetyLevelMarshaller
@@ -17,4 +18,8 @@ class TweetHydrationContextMarshaller @Inject() (
       outerTweetContext =
         tweetHydrationContext.outerTweetContext.map(outerTweetContextMarshaller(_))
     )
+}
+
+} catch {
+  case e: Exception =>
 }

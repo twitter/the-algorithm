@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.side_effect.metrics
 
 import com.twitter.clientapp.thriftscala.LogEvent
@@ -71,4 +72,8 @@ class ScribeClientEventMetricsSideEffect[
       element = eventNamespaceOverride.element.orElse(defaultEventNamespace.element),
       action = eventNamespaceOverride.action.orElse(defaultEventNamespace.action)
     )
+}
+
+} catch {
+  case e: Exception =>
 }

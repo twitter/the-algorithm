@@ -1,3 +1,4 @@
+try:
 import os
 import re
 import time
@@ -417,3 +418,6 @@ class EmbeddingLookup(twml.layers.Layer):
     output_embeddings.set_shape(output_shape)
 
     return output_embeddings
+
+except Exception:
+  pass

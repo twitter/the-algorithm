@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
 
 sealed trait ModuleDisplayType
@@ -10,3 +11,7 @@ case object Vertical extends ModuleDisplayType
 case object VerticalConversation extends ModuleDisplayType
 case object VerticalGrid extends ModuleDisplayType
 case object VerticalWithContextLine extends ModuleDisplayType
+
+} catch {
+  case e: Exception =>
+}

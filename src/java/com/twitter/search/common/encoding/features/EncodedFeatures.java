@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.encoding.features;
 
 /**
@@ -55,4 +56,7 @@ public class EncodedFeatures {
   public String toString() {
     return String.format("%x", value);
   }
+}
+
+} catch (Exception e) {
 }

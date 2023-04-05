@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.follow_recommendations.thriftjava
 #@namespace scala com.twitter.follow_recommendations.thriftscala
 #@namespace strato com.twitter.follow_recommendations
@@ -52,4 +53,7 @@ enum DisplayLocation {
     SEARCH_BONUS_FOLLOW = 86
     CONTENT_RECOMMENDER = 87
     HOME_TIMELINE_REVERSE_CHRON = 88
+}
+
+} catch (Exception e) {
 }

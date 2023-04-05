@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.queries;
 
 import java.io.IOException;
@@ -252,4 +253,7 @@ public class GeoTwoPhaseQuery extends Query {
       return "AllDocsAccepter";
     }
   };
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 target(
     name = "ingester-lib",
     dependencies = [
@@ -28,3 +29,6 @@ jvm_binary(
         "src/java/com/twitter/search/common/logging:search-log4j",
     ],
 )
+
+} catch (Exception e) {
+}

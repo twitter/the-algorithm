@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.config;
 
 import java.util.Date;
@@ -177,4 +178,7 @@ public class TierInfo implements ServingRange {
   long getServingRangeOverrideUntilTimeSecondsFromEpoch() {
     return servingRangeMaxOverride.getBoundaryTimeSecondsFromEpoch();
   }
+}
+
+} catch (Exception e) {
 }

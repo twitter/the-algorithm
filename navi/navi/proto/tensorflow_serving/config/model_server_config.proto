@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.serving;
@@ -82,4 +83,7 @@ message ModelServerConfig {
     ModelConfigList model_config_list = 1;
     google.protobuf.Any custom_model_config = 2;
   }
+}
+
+} catch (Exception e) {
 }

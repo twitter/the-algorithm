@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_negative
 
 import com.twitter.beam.io.dal.DALOptions
@@ -15,4 +16,8 @@ trait InteractionGraphNegativeOption extends DALOptions with DateRangeOptions {
   def getBqDataset: String
   def setBqDataset(value: String): Unit
 
+}
+
+} catch {
+  case e: Exception =>
 }

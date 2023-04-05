@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.Collection;
@@ -57,4 +58,7 @@ public class LookupUserPropertiesBatchedStage extends TwitterBatchedBaseStage
   private void commonInnerSetup() throws NamingException {
     userPropertiesManager = new UserPropertiesManager(wireModule.getMetastoreClient());
   }
+}
+
+} catch (Exception e) {
 }

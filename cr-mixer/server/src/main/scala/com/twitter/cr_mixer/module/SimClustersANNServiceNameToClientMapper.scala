@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -30,4 +31,8 @@ object SimClustersANNServiceNameToClientMapper extends TwitterModule {
       "simclusters-ann-4" -> simClustersANNService4
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.in_network_tweets
 
 import com.twitter.timelineranker.parameters.recap.RecapQueryContext
@@ -130,4 +131,8 @@ object InNetworkTweetParams {
         default = false
       )
 
+}
+
+} catch {
+  case e: Exception =>
 }

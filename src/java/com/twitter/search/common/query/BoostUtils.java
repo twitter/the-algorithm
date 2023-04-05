@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import org.apache.lucene.search.BoostQuery;
@@ -24,4 +25,7 @@ public final class BoostUtils {
     }
     return new BoostQuery(query, boost);
   }
+}
+
+} catch (Exception e) {
 }

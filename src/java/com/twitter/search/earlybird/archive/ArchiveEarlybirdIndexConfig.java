@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive;
 
 import java.io.IOException;
@@ -72,4 +73,7 @@ public abstract class ArchiveEarlybirdIndexConfig extends EarlybirdIndexConfig {
         data.getTimeMapper(),
         data.getIndexExtensionsData());
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance.scoring;
 
 import java.io.IOException;
@@ -1357,4 +1358,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
       return explanation.toString();
     }
   }
+}
+
+} catch (Exception e) {
 }

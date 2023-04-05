@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.step.candidate_feature_hydrator
 
 import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
@@ -68,4 +69,8 @@ case class CandidateFeatureHydratorStep[
     config: Seq[BaseCandidateFeatureHydrator[Query, Candidate, _]]
   ): Boolean =
     config.isEmpty
+}
+
+} catch {
+  case e: Exception =>
 }

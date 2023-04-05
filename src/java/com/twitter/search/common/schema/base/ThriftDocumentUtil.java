@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema.base;
 
 import java.util.ArrayList;
@@ -143,4 +144,7 @@ public final class ThriftDocumentUtil {
 
     return null;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.scoring_pipeline
 
 import com.twitter.home_mixer.functional_component.scorer.OONTweetScalingScorer
@@ -20,4 +21,8 @@ object ScoredTweetsRescoreOONScoringPipelineConfig
     Seq(InsertAppendResults(AllPipelines))
 
   override val scorers: Seq[Scorer[ScoredTweetsQuery, TweetCandidate]] = Seq(OONTweetScalingScorer)
+}
+
+} catch {
+  case e: Exception =>
 }

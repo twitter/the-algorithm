@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
@@ -13,4 +14,7 @@ public final class CacheCommonUtil {
       && (response.getSearchResults().getResults() != null)
       && !response.getSearchResults().getResults().isEmpty();
   }
+}
+
+} catch (Exception e) {
 }

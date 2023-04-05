@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter.kafka;
 
 import javax.naming.NamingException;
@@ -105,4 +106,7 @@ public class TweetThriftVersionedEventsKafkaProducerStage extends KafkaProducerS
   public void setDebugEventLogPeriod(int debugEventLogPeriod) {
     this.debugEventLogPeriod = debugEventLogPeriod;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.common.alert.predicate
 
 /**
@@ -12,4 +13,8 @@ case class TriggerIfBelow(
     extends Predicate
     with ThroughputPredicate {
   override val operator: Operator = `<`
+}
+
+} catch {
+  case e: Exception =>
 }

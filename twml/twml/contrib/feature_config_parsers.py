@@ -1,3 +1,4 @@
+try:
 """Utility functions to create FeatureConfig objects from feature_spec.yaml files"""
 import os
 import re
@@ -222,3 +223,6 @@ def create_feature_config(config_path, data_spec_path):
     config_dict = yaml.safe_load(fs)
 
   return create_feature_config_from_dict(config_dict, data_spec_path)
+
+except Exception:
+  pass

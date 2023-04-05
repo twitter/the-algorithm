@@ -1,3 +1,4 @@
+try {
 #!/bin/bash
 # script to deploy simclusters persistent storm job to CI
 
@@ -75,3 +76,6 @@ echo "Starting your topology... for ${ENV} ${JOB_NAME}"
 #set -v
 
 heron submit "${AURORA_PATH}" "dist/${JAR_NAME}" com.twitter.simclusters_v2.summingbird.storm.PersistentTweetJobRunner --env "$ENV" --dc "$CLUSTER"
+
+} catch (Exception e) {
+}

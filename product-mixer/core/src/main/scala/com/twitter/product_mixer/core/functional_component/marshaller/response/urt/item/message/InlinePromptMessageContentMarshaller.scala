@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.SocialContextMarshaller
@@ -29,4 +30,8 @@ class InlinePromptMessageContentMarshaller @Inject() (
         userFacepile = inlinePromptMessageContent.userFacepile.map(userFacepileMarshaller(_))
       )
     )
+}
+
+} catch {
+  case e: Exception =>
 }

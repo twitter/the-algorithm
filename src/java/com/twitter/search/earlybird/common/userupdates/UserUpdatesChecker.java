@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common.userupdates;
 
 import java.util.Date;
@@ -67,4 +68,7 @@ public class UserUpdatesChecker {
   private boolean skipProtectedUserUpdate() {
     return !isFullArchiveCluster;
   }
+}
+
+} catch (Exception e) {
 }

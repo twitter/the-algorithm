@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index;
 
 import org.apache.lucene.document.Field;
@@ -21,4 +22,7 @@ public class EarlybirdIndexableField extends Field {
     }
   }
 
+}
+
+} catch (Exception e) {
 }

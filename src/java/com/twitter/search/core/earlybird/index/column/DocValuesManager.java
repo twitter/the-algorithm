@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.column;
 
 import java.io.IOException;
@@ -245,4 +246,7 @@ public abstract class DocValuesManager implements Flushable {
         int maxSegmentSize,
         ConcurrentHashMap<String, ColumnStrideFieldIndex> columnStrideFields);
   }
+}
+
+} catch (Exception e) {
 }

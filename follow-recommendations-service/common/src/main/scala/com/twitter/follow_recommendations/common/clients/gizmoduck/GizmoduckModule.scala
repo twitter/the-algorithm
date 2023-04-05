@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.gizmoduck
 
 import com.google.inject.Provides
@@ -21,4 +22,8 @@ object GizmoduckModule extends BaseClientModule[UserService.MethodPerEndpoint] w
   def providesStitchClient(futureIface: UserService.MethodPerEndpoint): Gizmoduck = {
     Gizmoduck(futureIface)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

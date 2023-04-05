@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.fatigue_ranker
 
 import com.twitter.timelines.configapi.FSParam
@@ -11,4 +12,8 @@ object ImpressionBasedFatigueRankerParams {
   // Whether to scribe candidate ranking/scoring info per ranking stage
   object ScribeRankingInfoInFatigueRanker
       extends FSParam[Boolean]("fatigue_ranker_scribe_ranking_info", true)
+}
+
+} catch {
+  case e: Exception =>
 }

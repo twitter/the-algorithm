@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urp
 
 sealed trait TimelineKey
@@ -30,3 +31,7 @@ case class ShoppingHomeTimeline() extends TimelineKey
 case class ForYouExploreMixerTimeline() extends TimelineKey
 
 case class TrendingExploreMixerTimeline() extends TimelineKey
+
+} catch {
+  case e: Exception =>
+}

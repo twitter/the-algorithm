@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.tweets
 
 import com.twitter.spam.rtf.thriftscala.SafetyLabelType
@@ -36,4 +37,8 @@ class TweetVisibilityNudgeSourceWrapper(localizedNudgeSource: LocalizedNudgeSour
       .fetch(safetyLabel, languageCode, countryCode)
       .map(LocalizedNudge.fromStratoThrift)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

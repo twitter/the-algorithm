@@ -1,3 +1,4 @@
+try {
 #pragma once
 #include <twml/defines.h>
 #include <cstdlib>
@@ -59,3 +60,6 @@ twml_err block_format_writer_delete(const block_format_writer w);
 #ifdef __cplusplus
 }
 #endif
+
+} catch (Exception e) {
+}

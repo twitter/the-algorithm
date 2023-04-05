@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.model
 
 import com.twitter.servo.util.Gate
@@ -275,4 +276,8 @@ case class RecapQuery(
       candidateTweetSourceId = candidateTweetSourceId.flatMap(CandidateTweetSourceId.toThrift)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

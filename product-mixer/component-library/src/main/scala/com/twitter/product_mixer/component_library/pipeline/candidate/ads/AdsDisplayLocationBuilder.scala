@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.ads
 
 import com.twitter.adserver.{thriftscala => ads}
@@ -13,4 +14,8 @@ case class StaticAdsDisplayLocationBuilder(displayLocation: ads.DisplayLocation)
     extends AdsDisplayLocationBuilder[PipelineQuery with AdsQuery] {
 
   def apply(query: PipelineQuery with AdsQuery): ads.DisplayLocation = displayLocation
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common
 
 import com.twitter.algebird.Monoid
@@ -15,4 +16,8 @@ object SimClustersEmbeddingMonoid {
 
   val monoid: Monoid[SimClustersEmbedding] = SimClustersEmbeddingMonoid()
 
+}
+
+} catch {
+  case e: Exception =>
 }

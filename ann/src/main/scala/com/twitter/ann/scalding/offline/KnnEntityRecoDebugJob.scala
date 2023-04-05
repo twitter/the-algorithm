@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.scalding.offline
 import com.twitter.ann.common.Distance
 import com.twitter.ann.common.Metric
@@ -88,4 +89,8 @@ object KnnEntityRecoDebugJob extends TwitterExecutionApp {
       .shard(1)
       .writeExecution(TypedTsv(args("output_path")))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

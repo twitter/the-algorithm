@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.segment;
 
 import java.util.Optional;
@@ -69,4 +70,7 @@ public class EmptySegmentDataReaderSet implements SegmentDataReaderSet {
   public Optional<Long> getUpdateEventsStreamOffsetForSegment(SegmentInfo segmentInfo) {
     return Optional.of(0L);
   }
+}
+
+} catch (Exception e) {
 }

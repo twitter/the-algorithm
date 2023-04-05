@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.search;
 
 /**
@@ -9,4 +10,7 @@ public interface DocIdTracker {
    * Retrieve current doc ID
    */
   int getCurrentDocId();
+}
+
+} catch (Exception e) {
 }

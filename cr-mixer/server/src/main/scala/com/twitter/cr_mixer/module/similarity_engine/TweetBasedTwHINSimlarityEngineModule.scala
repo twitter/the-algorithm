@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module.similarity_engine
 import com.google.inject.Provides
 import com.twitter.ann.common.thriftscala.AnnQueryService
@@ -67,4 +68,8 @@ object TweetBasedTwHINSimlarityEngineModule extends TwitterModule {
         ))
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

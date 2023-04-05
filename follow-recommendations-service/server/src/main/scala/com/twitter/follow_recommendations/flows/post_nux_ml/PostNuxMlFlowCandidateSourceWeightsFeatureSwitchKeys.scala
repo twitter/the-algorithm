@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.post_nux_ml
 
 object PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys {
@@ -43,4 +44,8 @@ object PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys {
     "post_nux_ml_flow_candidate_source_weights_user_user_user_graph"
   val CandidateWeightRealGraphOonV2 =
     "post_nux_ml_flow_candidate_source_weights_user_real_graph_oon_v2"
+}
+
+} catch {
+  case e: Exception =>
 }

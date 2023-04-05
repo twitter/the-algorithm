@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.gate
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -15,4 +16,8 @@ case class NonEmptySeqFeatureGate[T: TypeTag](
 
   override def shouldContinue(query: PipelineQuery): Stitch[Boolean] =
     Stitch.value(query.features.exists(_.get(feature).nonEmpty))
+}
+
+} catch {
+  case e: Exception =>
 }

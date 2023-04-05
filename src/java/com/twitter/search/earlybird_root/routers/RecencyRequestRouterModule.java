@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.routers;
 
 import javax.inject.Named;
@@ -71,4 +72,7 @@ public class RecencyRequestRouterModule extends TwitterModule {
     return EarlybirdTimeRangeFilter.newTimeRangeFilterWithoutQueryRewriter(
         getProtectedServingRangeProvider(decider));
   }
+}
+
+} catch (Exception e) {
 }

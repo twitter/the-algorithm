@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.feature.featuremap.datarecord
 
 import com.twitter.ml.api.DataRecord
@@ -48,4 +49,8 @@ class DataRecordConverter[DRFeature <: BaseDataRecordFeature[_, _]](
     }
     richDataRecord.getRecord
   }
+}
+
+} catch {
+  case e: Exception =>
 }

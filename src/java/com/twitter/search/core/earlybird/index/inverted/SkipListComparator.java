@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 /**
@@ -40,4 +41,7 @@ public interface SkipListComparator<K> {
    * @return the sentinel value.
    */
   int getSentinelValue();
+}
+
+} catch (Exception e) {
 }

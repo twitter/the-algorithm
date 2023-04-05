@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.feature_hydrator_observer
 
 import com.twitter.finagle.stats.BroadcastStatsReceiver
@@ -134,3 +135,7 @@ class MissingFeatureException(
   feature: Feature[_, _])
     extends Exception(
       s"Missing Feature in Stats Map: ${feature.toString} for ${featureHydratorIdentifier.name}")
+
+} catch {
+  case e: Exception =>
+}

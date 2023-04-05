@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.products.sidebar
 
 import com.twitter.follow_recommendations.common.base.BaseRecommendationFlow
@@ -70,4 +71,8 @@ class SidebarProduct @Inject() (
 
   override def enabled(request: ProductRequest): Stitch[Boolean] =
     Stitch.value(request.params(SidebarParams.EnableProduct))
+}
+
+} catch {
+  case e: Exception =>
 }

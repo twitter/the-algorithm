@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.models
 
 sealed trait ViolationLevel extends Product with Serializable {
@@ -48,4 +49,8 @@ object ViolationLevel {
     safetyLabelToViolationLevel.get(tweetSafetyLabel.labelType)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

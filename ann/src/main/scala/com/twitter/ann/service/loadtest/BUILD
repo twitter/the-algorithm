@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "loadtest",
     sources = ["*.scala"],
@@ -29,3 +30,6 @@ jvm_binary(
         "twitter-server/slf4j-jdk14/src/main/scala",
     ],
 )
+
+} catch (Exception e) {
+}

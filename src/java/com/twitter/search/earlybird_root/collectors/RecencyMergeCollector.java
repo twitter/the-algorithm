@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.collectors;
 
 import java.util.Comparator;
@@ -72,4 +73,7 @@ public class RecencyMergeCollector extends MultiwayMergeCollector<ThriftSearchRe
     }
     return true;
   }
+}
+
+} catch (Exception e) {
 }

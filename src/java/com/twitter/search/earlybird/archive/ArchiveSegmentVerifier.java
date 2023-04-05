@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive;
 
 import java.io.IOException;
@@ -72,4 +73,7 @@ public final class ArchiveSegmentVerifier {
       return false;
     }
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = [
         "*.scala",
@@ -25,3 +26,6 @@ hadoop_binary(
         ":offline_tweets",
     ],
 )
+
+} catch (Exception e) {
+}

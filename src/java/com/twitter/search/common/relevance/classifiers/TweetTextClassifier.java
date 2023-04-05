@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.classifiers;
 
 import com.google.common.base.Preconditions;
@@ -64,4 +65,7 @@ public class TweetTextClassifier extends TweetClassifier {
       trendsExtractor.extractTrends(tweets);
     }
   }
+}
+
+} catch (Exception e) {
 }

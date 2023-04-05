@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.List;
@@ -92,4 +93,7 @@ public class ConvertDelayedMessageToThriftStage extends TwitterBaseStage
     ingesterThriftVersionedEvents.setDebugEvents(twitterMessage.getDebugEvents().deepCopy());
     return ingesterThriftVersionedEvents;
   }
+}
+
+} catch (Exception e) {
 }

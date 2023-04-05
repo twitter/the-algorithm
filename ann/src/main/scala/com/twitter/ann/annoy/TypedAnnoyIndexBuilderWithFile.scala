@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.annoy
 
 import com.twitter.ann.annoy.AnnoyCommon.IndexIdMappingFileName
@@ -52,4 +53,8 @@ private[this] class TypedAnnoyIndexBuilderWithFile[T, D <: Distance[D]](
   override def toQueryable: Queryable[T, AnnoyRuntimeParams, D] = {
     transformedIndex.toQueryable
   }
+}
+
+} catch {
+  case e: Exception =>
 }

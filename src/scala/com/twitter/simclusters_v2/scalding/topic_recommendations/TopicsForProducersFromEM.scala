@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.topic_recommendations
 import com.twitter.bijection.Bufferable
 import com.twitter.bijection.Injection
@@ -258,4 +259,8 @@ object TopicsForProducersFromEM {
     }
     resultsFromEMForEachLocale
   }
+}
+
+} catch {
+  case e: Exception =>
 }

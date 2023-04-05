@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.util
 
 import com.twitter.mediaservices.commons.tweetmedia.thriftscala.MediaInfo
@@ -270,3 +271,7 @@ case class UserDefinedProductMetadataFeatures(
   hasVisitSiteCallToAction: Option[Boolean],
   hasAppInstallCallToAction: Option[Boolean],
   hasWatchNowCallToAction: Option[Boolean])
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.decider
 
 import com.twitter.decider.{Decider, DeciderFactory, RandomRecipient, Recipient}
@@ -30,4 +31,8 @@ object RecosInjectorDeciderConstants {
     "tweet_event_transformer_user_tweet_entity_edges"
   val EnableEmitTweetEdgeFromReply = "enable_emit_tweet_edge_from_reply"
   val EnableUnfavoriteEdge = "enable_unfavorite_edge"
+}
+
+} catch {
+  case e: Exception =>
 }

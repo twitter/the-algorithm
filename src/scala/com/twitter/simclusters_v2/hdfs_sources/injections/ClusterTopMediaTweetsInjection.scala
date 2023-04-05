@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.hdfs_sources.injections
 
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
@@ -10,4 +11,8 @@ object ClusterTopMediaTweetsInjection {
     ScalaCompactThrift(DayPartitionedClusterId),
     ScalaCompactThrift(TweetsWithScore)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

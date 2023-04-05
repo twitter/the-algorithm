@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.feature.featurestorev1
 
 import com.twitter.ml.api.DataRecord
@@ -309,4 +310,8 @@ object FeatureStoreV1CandidateFeatureGroup {
       override val keepLegacyNames: Boolean = _keepLegacyNames
       override val featureNameTransform: Option[FeatureRenameTransform] = _featureNameTransform
     }
+}
+
+} catch {
+  case e: Exception =>
 }

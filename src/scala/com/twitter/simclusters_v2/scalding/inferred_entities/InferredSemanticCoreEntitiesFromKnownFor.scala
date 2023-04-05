@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.inferred_entities
 
 import com.twitter.escherbird.metadata.thriftscala.FullMetadata
@@ -241,4 +242,8 @@ object InferredSemanticCoreEntitiesFromKnownForAdhocApp extends AdhocExecutionAp
         coverageDistribution
       ).unit
   }
+}
+
+} catch {
+  case e: Exception =>
 }

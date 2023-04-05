@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.index;
 
 import java.io.Closeable;
@@ -1067,4 +1068,7 @@ public class EarlybirdSegment {
       stat.increment();
     }
   }
+}
+
+} catch (Exception e) {
 }

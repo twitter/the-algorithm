@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.RosettaColorMarshaller
@@ -16,4 +17,8 @@ class ShowAlertColorConfigurationMarshaller @Inject() (
       text = rosettaColorMarshaller(colorConfiguration.text),
       border = colorConfiguration.border.map(rosettaColorMarshaller(_)),
     )
+}
+
+} catch {
+  case e: Exception =>
 }

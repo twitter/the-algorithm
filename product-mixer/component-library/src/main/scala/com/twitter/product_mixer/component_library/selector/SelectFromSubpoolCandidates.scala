@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.core.functional_component.common.CandidateScope
@@ -144,4 +145,8 @@ object SelectFromSubpoolCandidates {
     includeSetInSubpool,
     subpoolRemainingCandidatesHandler
   )
+}
+
+} catch {
+  case e: Exception =>
 }

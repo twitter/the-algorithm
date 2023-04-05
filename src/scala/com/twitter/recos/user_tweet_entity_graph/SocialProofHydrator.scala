@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_tweet_entity_graph
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -108,4 +109,8 @@ class SocialProofHydrator(statsReceiver: StatsReceiver) {
     }.toMap
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.common.actions.ComplianceTweetNoticeEventType
@@ -97,4 +98,8 @@ object SearchEdiSafeSearchWithoutUserInQueryDropRule
     ) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(
     EnableSearchIpiSafeSearchWithoutUserInQueryDropRule)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.real_graph
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -44,4 +45,8 @@ object RealGraphOonParams {
         max = 1000
       )
 
+}
+
+} catch {
+  case e: Exception =>
 }

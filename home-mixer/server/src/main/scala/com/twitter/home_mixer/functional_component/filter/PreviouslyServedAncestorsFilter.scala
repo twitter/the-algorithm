@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.filter
 
 import com.twitter.common_internal.analytics.twitter_client_user_agent_parser.UserAgent
@@ -41,4 +42,8 @@ object PreviouslyServedAncestorsFilter
 
     Stitch.value(FilterResult(kept = kept, removed = removed))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

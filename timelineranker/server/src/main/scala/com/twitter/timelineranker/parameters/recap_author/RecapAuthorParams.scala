@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.recap_author
 
 import com.twitter.timelines.configapi.FSParam
@@ -50,4 +51,8 @@ object RecapAuthorParams {
         default = false
       )
 
+}
+
+} catch {
+  case e: Exception =>
 }

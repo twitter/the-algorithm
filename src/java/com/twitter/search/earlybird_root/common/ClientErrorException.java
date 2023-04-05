@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.common;
 
 public class ClientErrorException extends RuntimeException {
@@ -21,4 +22,7 @@ public class ClientErrorException extends RuntimeException {
                               boolean enableSuppression, boolean writableStackTrace) {
     super(message, cause, enableSuppression, writableStackTrace);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.model
 
 /**
@@ -119,4 +120,8 @@ object ModuleNames {
   final val DiffusionBasedSimilarityEngine = "DiffusionBasedSimilarityEngine"
 
   final val BlueVerifiedAnnotationStore = "BlueVerifiedAnnotationStore"
+}
+
+} catch {
+  case e: Exception =>
 }

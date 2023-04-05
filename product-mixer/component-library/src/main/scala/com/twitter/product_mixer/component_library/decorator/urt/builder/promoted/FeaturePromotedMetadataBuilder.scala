@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.promoted
 
 import com.twitter.ads.adserver.{thriftscala => ads}
@@ -103,4 +104,8 @@ case class FeaturePromotedMetadataBuilder(adImpressionFeature: Feature[_, Option
           throw new UnsupportedOperationException(s"Unsupported: $value")
       }
     )
+}
+
+} catch {
+  case e: Exception =>
 }

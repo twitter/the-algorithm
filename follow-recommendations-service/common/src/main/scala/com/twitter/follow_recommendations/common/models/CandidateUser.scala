@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.follow_recommendations.logging.{thriftscala => offline}
@@ -189,4 +190,8 @@ object CandidateUser {
       CandidateSourceIdentifier(algoName) -> rank
     }).toMap
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.feature_update_service.whitelist;
 
 import java.io.InputStream;
@@ -74,4 +75,7 @@ public class ClientIdWhitelist extends PeriodicFileLoader {
   public boolean isClientAllowed(ClientId clientId) {
     return clientIdSet.get().contains(clientId);
   }
+}
+
+} catch (Exception e) {
 }

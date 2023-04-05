@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import java.io.IOException;
@@ -79,4 +80,7 @@ public class OptimizedFacetCountingArray extends AbstractFacetCountingArray {
       return new OptimizedFacetCountingArray(facetsMap, facetsPool);
     }
   }
+}
+
+} catch (Exception e) {
 }

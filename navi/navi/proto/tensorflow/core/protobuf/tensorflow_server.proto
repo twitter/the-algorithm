@@ -1,3 +1,4 @@
+try {
 /* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -58,4 +59,7 @@ message ServerDef {
   // Device filters for remote tasks in the cluster.
   // NOTE: This is an experimental feature and only effective in TensorFlow 2.x.
   ClusterDeviceFilters cluster_device_filters = 7;
+}
+
+} catch (Exception e) {
 }

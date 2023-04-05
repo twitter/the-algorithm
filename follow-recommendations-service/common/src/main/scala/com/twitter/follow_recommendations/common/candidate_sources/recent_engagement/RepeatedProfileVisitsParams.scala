@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.recent_engagement
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -34,4 +35,8 @@ object RepeatedProfileVisitsParams {
   case object UseOnlineDataset
       extends FSParam[Boolean](name = "repeated_profile_visits_use_online_dataset", default = true)
 
+}
+
+} catch {
+  case e: Exception =>
 }

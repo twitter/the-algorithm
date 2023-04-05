@@ -1,3 +1,4 @@
+try {
 scala_library(
     compiler_option_sets = ["fatal_warnings"],
     platform = "java8",
@@ -20,3 +21,6 @@ scala_library(
         "util/util-core/src/main/scala/com/twitter/conversions",
     ],
 )
+
+} catch (Exception e) {
+}

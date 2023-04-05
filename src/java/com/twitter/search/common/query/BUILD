@@ -1,3 +1,4 @@
+try {
 java_library(
     sources = ["*.java"],
     platform = "java8",
@@ -23,3 +24,6 @@ java_library(
         "src/java/com/twitter/search/queryparser/query/search:search-query-nodes",
     ],
 )
+
+} catch (Exception e) {
+}

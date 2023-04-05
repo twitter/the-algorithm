@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates
 
 import com.twitter.ml.api.DataRecord
@@ -33,4 +34,8 @@ private[offline_aggregates] object Utils {
   def filterDataRecord(dr: DataRecord, featureContext: FeatureContext): Unit = {
     new RichDataRecord(dr, featureContext).dropUnknownFeatures()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

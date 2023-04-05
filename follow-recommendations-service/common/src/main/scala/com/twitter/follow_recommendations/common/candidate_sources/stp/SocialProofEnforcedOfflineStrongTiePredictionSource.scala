@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.stp
 
 import com.google.inject.Singleton
@@ -25,4 +26,8 @@ object SocialProofEnforcedOfflineStrongTiePredictionSource {
     Algorithm.StrongTiePredictionRecWithSocialProof.toString)
 
   val MinNumSocialProofsRequired = 1
+}
+
+} catch {
+  case e: Exception =>
 }

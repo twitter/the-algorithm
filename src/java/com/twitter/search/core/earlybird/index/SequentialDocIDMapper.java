@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index;
 
 /**
@@ -84,4 +85,7 @@ public class SequentialDocIDMapper implements DocIDToTweetIDMapper {
     // Segments that use this DocIDToTweetIDMapper should never be optimized.
     throw new UnsupportedOperationException("SequentialDocIDMapper cannot be optimized.");
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 
 import com.twitter.logging.Logger
@@ -192,4 +193,8 @@ object DumpNormsAndCountsAdhoc extends TwitterExecutionApp {
           }
         }
     }
+}
+
+} catch {
+  case e: Exception =>
 }

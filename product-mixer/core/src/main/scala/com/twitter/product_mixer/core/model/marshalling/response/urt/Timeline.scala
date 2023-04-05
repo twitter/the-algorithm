@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt
 
 import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
@@ -8,3 +9,7 @@ case class Timeline(
   // responseObjects::feedbackActions actions are populated implicitly, see UrtTransportMarshaller
   metadata: Option[TimelineMetadata] = None)
     extends HasMarshalling
+
+} catch {
+  case e: Exception =>
+}

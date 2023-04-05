@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.cortex
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -95,3 +96,7 @@ case class FeatureWithExtractor[
 
 class UnexpectedFeatureTypeException(feature: Feature[_, _])
     extends UnsupportedOperationException(s"Unsupported Feature type passed in $feature")
+
+} catch {
+  case e: Exception =>
+}

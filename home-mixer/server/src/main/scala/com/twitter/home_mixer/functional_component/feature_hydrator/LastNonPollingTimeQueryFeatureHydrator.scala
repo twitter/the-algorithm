@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.home_mixer.model.HomeFeatures.FollowingLastNonPollingTimeFeature
@@ -65,4 +66,8 @@ case class LastNonPollingTimeQueryFeatureHydrator @Inject() (
   override val alerts = Seq(
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.9)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_tweet_entity_graph
 
 import com.twitter.graphjet.bipartite.api.EdgeTypeMask
@@ -92,4 +93,8 @@ object UserTweetEdgeTypeMask extends Enumeration {
     }
     edgeType.toByte
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.hermit.ml.models.Feature
@@ -159,4 +160,8 @@ trait HasUserCandidateSourceDetails { candidateUser: CandidateUser =>
     )
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

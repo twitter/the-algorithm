@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search;
 
 import java.io.IOException;
@@ -185,4 +186,7 @@ public class SearchResultsCollector
     Collections.sort(results);
     return new SimpleSearchResults(results);
   }
+}
+
+} catch (Exception e) {
 }

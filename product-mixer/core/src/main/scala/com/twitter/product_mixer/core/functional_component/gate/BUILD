@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -19,3 +20,6 @@ scala_library(
         "stitch/stitch-core",
     ],
 )
+
+} catch (Exception e) {
+}

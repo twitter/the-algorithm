@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.controllers
 
 import com.twitter.finagle.http.Request
@@ -112,3 +113,7 @@ case class ComponentRegistryResponse(
 
 case class ProductPipeline(identifier: String)
 case class ProductPipelinesResponse(productPipelines: Seq[ProductPipeline])
+
+} catch {
+  case e: Exception =>
+}

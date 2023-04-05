@@ -1,3 +1,4 @@
+try:
 # pylint: disable=too-many-branches
 """ This module includes functions for managing learning rate decay """
 import tensorflow.compat.v1 as tf
@@ -166,3 +167,6 @@ def get_learning_rate_decay_fn(params):
     return cosine_restart_decay_fn
 
   raise ValueError("Unsupported params.learning_rate_decay: %s" % params.learning_rate_decay)
+
+except Exception:
+  pass

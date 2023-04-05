@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.engine
 
 import com.twitter.finagle.stats.NullStatsReceiver
@@ -177,3 +178,7 @@ case class VisibilityResultsMetricRecorder(
 
 object NullVisibilityResultsMetricsRecorder
     extends VisibilityResultsMetricRecorder(NullStatsReceiver, Gate.False)
+
+} catch {
+  case e: Exception =>
+}

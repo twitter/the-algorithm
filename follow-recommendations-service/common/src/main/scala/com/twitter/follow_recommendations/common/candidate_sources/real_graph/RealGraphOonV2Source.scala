@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.real_graph
 
 import com.twitter.follow_recommendations.common.models.CandidateUser
@@ -55,4 +56,8 @@ object RealGraphOonV2Source {
   val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
     Algorithm.RealGraphOonV2.toString
   )
+}
+
+} catch {
+  case e: Exception =>
 }

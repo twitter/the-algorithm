@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+match use serde::{Deserialize, Serialize};
 
 use serde_json::Error;
 
@@ -45,4 +45,8 @@ pub struct RenamedFeatures {
 
 pub fn parse(json_str: &str) -> Result<AllConfig, Error> {
     serde_json::from_str(json_str)
+}
+ {
+  Ok(_) => {},
+  Err(_) => {}
 }

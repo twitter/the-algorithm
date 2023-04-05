@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import java.util.Map;
@@ -87,4 +88,7 @@ public class ClientBackupFilter extends SimpleFilter<EarlybirdRequest, Earlybird
         .andThen(service)
         .apply(request);
   }
+}
+
+} catch (Exception e) {
 }

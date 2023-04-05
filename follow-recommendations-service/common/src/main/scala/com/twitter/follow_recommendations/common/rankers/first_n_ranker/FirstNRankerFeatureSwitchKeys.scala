@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.first_n_ranker
 
 object FirstNRankerFeatureSwitchKeys {
@@ -5,4 +6,8 @@ object FirstNRankerFeatureSwitchKeys {
   val ScribeRankingInfo = "first_n_ranker_scribe_ranking_info"
   val MinNumCandidatesScoredScaleDownFactor =
     "first_n_ranker_min_scale_down_factor"
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -11,4 +12,8 @@ class RecentEngagementSimilarUsersFSConfig @Inject() () extends FeatureSwitchCon
   override val booleanFSParams: Seq[FSParam[Boolean]] = Seq(
     RecentEngagementSimilarUsersParams.FirstDegreeSortEnabled
   )
+}
+
+} catch {
+  case e: Exception =>
 }

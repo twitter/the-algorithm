@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.store
 
 import com.twitter.bijection.Injection
@@ -31,4 +32,8 @@ class RealGraphInNetworkScoresStore(manhattanKVEndpoint: ManhattanKVEndpoint)
   override def get(viewerId: Long): Future[Option[Seq[wtf.Candidate]]] = Stitch
     .run(manhattanKVEndpoint.get(realGraphDatasetKey.withPkey(viewerId), valueDesc))
     .map(_.map(mhResponse => mhResponse.contents.candidates))
+}
+
+} catch {
+  case e: Exception =>
 }

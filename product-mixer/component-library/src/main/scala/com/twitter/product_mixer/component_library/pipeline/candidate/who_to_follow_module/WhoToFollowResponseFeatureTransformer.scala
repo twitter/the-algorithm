@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
 
 import com.twitter.adserver.{thriftscala => ad}
@@ -36,4 +37,8 @@ object WhoToFollowResponseFeatureTransformer
     .add(TrackingTokenFeature, input.trackingToken)
     .add(ScoreFeature, input.mlPredictionScore)
     .build()
+}
+
+} catch {
+  case e: Exception =>
 }

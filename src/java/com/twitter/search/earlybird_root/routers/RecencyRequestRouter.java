@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.routers;
 
 import javax.inject.Inject;
@@ -70,4 +71,7 @@ public class RecencyRequestRouter extends AbstractRecencyAndRelevanceRequestRout
 
     return true;
   }
+}
+
+} catch (Exception e) {
 }

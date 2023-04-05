@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.index;
 
 import java.io.IOException;
@@ -78,4 +79,7 @@ public class TweetIDQuery extends Query {
   public String toString(String field) {
     return "TWEET_ID_QUERY: " + tweetIDs;
   }
+}
+
+} catch (Exception e) {
 }

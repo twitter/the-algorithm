@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml.prediction_engine;
 
 import java.util.Map;
@@ -61,4 +62,7 @@ public class SchemaBasedScoreAccumulator extends BaseScoreAccumulator<ThriftSear
       }
     }
   }
+}
+
+} catch (Exception e) {
 }

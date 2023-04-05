@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.scalding
 
 import com.twitter.scalding._
@@ -82,4 +83,8 @@ trait GraphFeatureServiceScheduledBaseApp
       printerCounters(runOnDateRange())
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

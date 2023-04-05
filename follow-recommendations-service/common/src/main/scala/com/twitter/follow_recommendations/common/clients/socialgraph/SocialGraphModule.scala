@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.socialgraph
 
 import com.google.inject.Provides
@@ -22,4 +23,8 @@ object SocialGraphModule
   def providesStitchClient(futureIface: SocialGraphService.MethodPerEndpoint): SocialGraph = {
     SocialGraph(futureIface)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

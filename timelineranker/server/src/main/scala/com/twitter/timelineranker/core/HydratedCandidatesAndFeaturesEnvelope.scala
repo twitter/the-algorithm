@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.core
 
 import com.twitter.search.common.constants.thriftscala.ThriftLanguage
@@ -16,3 +17,7 @@ case class HydratedCandidatesAndFeaturesEnvelope(
   contentFeaturesFuture: Future[Map[TweetId, ContentFeatures]] = FutureUtils.EmptyMap,
   tweetSourceTweetMap: Map[TweetId, TweetId] = Map.empty,
   inReplyToTweetIds: Set[TweetId] = Set.empty)
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try:
 # pylint: disable=wildcard-import
 """This module contains experimental util functions for contrib."""
 
@@ -16,3 +17,6 @@ from .loss_fns import get_lambda_pair_loss  # noqa: F401
 from .device import get_device_map, get_gpu_list, get_gpu_count, is_gpu_available  # noqa: F401
 from .similarities import cosine_similarity  # noqa: F401
 from . import interp # noqa: F401
+
+except Exception:
+  pass

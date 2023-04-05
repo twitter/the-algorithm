@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.TimelineScribeConfigMarshaller
@@ -62,4 +63,8 @@ object UrpTransportMarshallerBuilder {
       pageHeaderMarshaller = pageHeaderMarshaller,
       pageNavBarMarshaller = pageNavBarMarshaller
     )
+}
+
+} catch {
+  case e: Exception =>
 }

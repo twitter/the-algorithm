@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import java.util.concurrent.TimeUnit;
@@ -37,4 +38,7 @@ public class ShutdownWaitTimeParams {
   public static ShutdownWaitTimeParams immediately() {
     return new ShutdownWaitTimeParams(0, TimeUnit.MILLISECONDS);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.server.modules
 
 import com.twitter.bijection.Injection
@@ -14,4 +15,8 @@ object LZ4Injection extends Injection[Array[Byte], Array[Byte]] {
   override def invert(b: Array[Byte]): Try[Array[Byte]] = Try {
     LZ4Injection.decompressor.decompress(b)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

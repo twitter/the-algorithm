@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.hdfs_sources
 
 import com.twitter.bijection.scrooge.BinaryScalaCodec
@@ -161,4 +162,8 @@ object AdhocKeyValSources {
     implicit val valInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
     VersionedKeyValSource[Int, Long](path)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

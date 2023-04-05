@@ -1,3 +1,4 @@
+try:
 """Module containing wrapper class to allow numpy arrays to work with twml functions"""
 
 import ctypes as ct
@@ -99,3 +100,6 @@ class Array(object):
     Delete the handle
     """
     CLIB.twml_tensor_delete(self._handle)
+
+except Exception:
+  pass

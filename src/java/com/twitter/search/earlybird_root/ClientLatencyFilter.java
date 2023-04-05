@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,4 +43,7 @@ public class ClientLatencyFilter extends SimpleFilter<EarlybirdRequest, Earlybir
             EarlybirdSuccessfulResponseHandler.INSTANCE);
     return service.apply(request).addEventListener(requestCountersEventListener);
   }
+}
+
+} catch (Exception e) {
 }

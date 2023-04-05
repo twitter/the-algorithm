@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.facets;
 
 import java.io.IOException;
@@ -226,4 +227,7 @@ public class FacetResultsCollector extends
 
     return new Accumulator(accumulators, accessor, facetIDMap);
   }
+}
+
+} catch (Exception e) {
 }

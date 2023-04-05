@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.simclusters_v2.thriftjava
 namespace py gen.twitter.simclusters_v2.simclusters_presto
 #@namespace scala com.twitter.simclusters_v2.thriftscala
@@ -57,3 +58,6 @@ struct UserTopicWeightedEmbedding {
   1: required i64 userId(personalDataType = 'UserId')
   2: required list<ClustersScore> clusterScore
 }(persisted="true", hasPersonalData = 'true')
+
+} catch (Exception e) {
+}

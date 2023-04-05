@@ -1,3 +1,4 @@
+try {
 #pragma once
 #include <twml/defines.h>
 
@@ -80,3 +81,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+} catch (Exception e) {
+}

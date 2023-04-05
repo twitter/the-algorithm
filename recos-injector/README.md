@@ -1,3 +1,4 @@
+try {
 # Recos-Injector
 
 Recos-Injector is a streaming event processor used to build input streams for GraphJet-based services. It is a general-purpose tool that consumes arbitrary incoming event streams (e.g., Fav, RT, Follow, client_events, etc.), applies filtering, and combines and publishes cleaned up events to corresponding GraphJet services. Each GraphJet-based service subscribes to a dedicated Kafka topic, and Recos-Injector enables GraphJet-based services to consume any event they want.
@@ -38,3 +39,6 @@ To package your service into a zip file for deployment, run:
     $ bazel bundle recos-injector/server:bin --bundle-jvm-archive=zip
 
 If the command is successful, a file named `dist/recos-injector-server.zip` will be created.
+
+} catch (Exception e) {
+}

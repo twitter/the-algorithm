@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.scalding.offline.indexbuilderfrombq
 
 import com.twitter.ann.common.Appendable
@@ -50,4 +51,8 @@ object IndexBuilder {
       FutureHelper.executionFrom(result).unit
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

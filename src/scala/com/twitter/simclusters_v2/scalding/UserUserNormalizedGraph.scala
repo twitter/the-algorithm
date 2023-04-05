@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 
 import com.twitter.bijection.Injection
@@ -450,4 +451,8 @@ object VitGraph extends TwitterExecutionApp {
         }
     }
 
+}
+
+} catch {
+  case e: Exception =>
 }

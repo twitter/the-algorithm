@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.post_nux_ml
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -170,4 +171,8 @@ class PostNuxMlRequestBuilder @Inject() (
         )
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

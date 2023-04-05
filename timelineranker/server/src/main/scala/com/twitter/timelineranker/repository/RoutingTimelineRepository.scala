@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.repository
 
 import com.twitter.timelineranker.model._
@@ -22,4 +23,8 @@ class RoutingTimelineRepository(
   override def get(queries: Seq[TimelineQuery]): Seq[Future[Timeline]] = {
     queries.map(get)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

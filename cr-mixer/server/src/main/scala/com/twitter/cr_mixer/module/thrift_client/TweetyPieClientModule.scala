@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module.thrift_client
 
 import com.google.inject.Provides
@@ -57,4 +58,8 @@ object TweetyPieClientModule
   ): STweetyPie = {
     STweetyPie(tweetyPieService)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

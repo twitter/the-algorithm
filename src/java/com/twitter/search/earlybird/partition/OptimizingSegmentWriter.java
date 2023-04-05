@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.IOException;
@@ -207,4 +208,7 @@ public class OptimizingSegmentWriter implements ISegmentWriter {
   public Future<SegmentInfo> getOptimizationPromise() {
     return optimizationPromise;
   }
+}
+
+} catch (Exception e) {
 }

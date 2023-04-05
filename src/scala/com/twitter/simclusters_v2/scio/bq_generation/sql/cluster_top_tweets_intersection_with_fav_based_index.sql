@@ -1,3 +1,4 @@
+try {
 WITH
   cluster_top_tweets AS (
     {CLUSTER_TOP_TWEETS_SQL}
@@ -57,3 +58,6 @@ WITH
 
  SELECT *
  FROM processed_cluster_top_tweets
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation
 
 object Config {
@@ -79,4 +80,8 @@ object Config {
     84, // CL_OFFER_CARD_CLICK
   )
 
+}
+
+} catch {
+  case e: Exception =>
 }

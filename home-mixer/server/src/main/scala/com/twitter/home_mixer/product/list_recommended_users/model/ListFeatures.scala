@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.list_recommended_users.model
 
 import com.twitter.gizmoduck.{thriftscala => gt}
@@ -9,4 +10,8 @@ object ListFeatures {
   object GizmoduckUserFeature extends Feature[UserCandidate, Option[gt.User]]
   object IsListMemberFeature extends Feature[UserCandidate, Boolean]
   object ScoreFeature extends Feature[UserCandidate, Double]
+}
+
+} catch {
+  case e: Exception =>
 }

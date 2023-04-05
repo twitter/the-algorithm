@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.media.Rect
@@ -14,4 +15,8 @@ class RectMarshaller @Inject() () {
     width = rect.width,
     height = rect.height
   )
+}
+
+} catch {
+  case e: Exception =>
 }

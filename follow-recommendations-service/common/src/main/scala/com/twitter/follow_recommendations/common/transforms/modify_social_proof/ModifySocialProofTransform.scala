@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.transforms.modify_social_proof
 
 import com.twitter.conversions.DurationOps._
@@ -199,4 +200,8 @@ class ModifySocialProofTransform @Inject() (modifySocialProof: ModifySocialProof
   ): Stitch[Seq[CandidateUser]] =
     target.getOptionalUserId
       .map(modifySocialProof.hydrateSocialProof(_, candidates)).getOrElse(Stitch.value(candidates))
+}
+
+} catch {
+  case e: Exception =>
 }

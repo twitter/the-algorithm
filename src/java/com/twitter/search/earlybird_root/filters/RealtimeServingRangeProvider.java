@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.concurrent.TimeUnit;
@@ -57,4 +58,7 @@ public class RealtimeServingRangeProvider implements ServingRangeProvider {
       }
     };
   }
+}
+
+} catch (Exception e) {
 }

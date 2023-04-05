@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -32,3 +33,6 @@ scala_library(
         "util-internal/scribe/src/main/scala/com/twitter/logging",
     ],
 )
+
+} catch (Exception e) {
+}

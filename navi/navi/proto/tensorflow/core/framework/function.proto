@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -133,4 +134,7 @@ message GradientDef {
 message RegisteredGradient {
   string gradient_func = 1;       // The gradient function's name.
   string registered_op_type = 2;  // The gradient function's registered op type.
+}
+
+} catch (Exception e) {
 }

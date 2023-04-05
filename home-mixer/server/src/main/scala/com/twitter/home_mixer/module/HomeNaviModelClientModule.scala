@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.module
 
 import com.google.inject.Provides
@@ -49,4 +50,8 @@ object HomeNaviModelClientModule extends TwitterModule {
 
     new PredictionGRPCService(channel)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

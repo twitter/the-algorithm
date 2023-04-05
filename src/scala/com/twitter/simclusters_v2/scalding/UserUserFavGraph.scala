@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 
 import com.twitter.algebird.DecayedValue
@@ -442,4 +443,8 @@ object DumpFavGraphAdhoc extends TwitterExecutionApp {
             }
         }
     }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.configapi.params
 
 import com.twitter.follow_recommendations.models.CandidateSourceType
@@ -32,4 +33,8 @@ object GlobalParams {
 
   object EnableRecommendationFlowLogs
       extends FSParam[Boolean]("frs_recommendation_flow_logs_enabled", false)
+}
+
+} catch {
+  case e: Exception =>
 }

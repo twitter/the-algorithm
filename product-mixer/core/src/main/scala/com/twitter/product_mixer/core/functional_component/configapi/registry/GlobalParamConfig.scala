@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.configapi.registry
 
 /**
@@ -5,3 +6,7 @@ package com.twitter.product_mixer.core.functional_component.configapi.registry
  * See [[ParamConfig]] for hooks to register Params based on type.
  */
 trait GlobalParamConfig extends ParamConfig with ParamConfigBuilder
+
+} catch {
+  case e: Exception =>
+}

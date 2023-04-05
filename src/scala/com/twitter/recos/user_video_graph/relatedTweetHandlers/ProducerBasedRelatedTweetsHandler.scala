@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_video_graph.relatedTweetHandlers
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -83,4 +84,8 @@ class ProducerBasedRelatedTweetsHandler(
       followerIds
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

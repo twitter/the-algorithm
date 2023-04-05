@@ -1,0 +1,4 @@
+try:
+
+except Exception:
+  pass

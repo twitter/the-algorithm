@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline
 
 import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
@@ -56,4 +57,8 @@ object PipelineResult {
     case ItemCandidateWithDetails(_: CursorCandidate, _, _) => 0
     case _ => 1
   }.sum
+}
+
+} catch {
+  case e: Exception =>
 }

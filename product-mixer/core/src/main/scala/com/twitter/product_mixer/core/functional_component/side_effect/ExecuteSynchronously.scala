@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.side_effect
 
 /**
@@ -20,3 +21,7 @@ trait ExecuteSynchronously { _: SideEffect[_] => }
  * reported in the results but wont cause the request as a whole to fail.
  */
 trait FailOpen { _: ExecuteSynchronously => }
+
+} catch {
+  case e: Exception =>
+}

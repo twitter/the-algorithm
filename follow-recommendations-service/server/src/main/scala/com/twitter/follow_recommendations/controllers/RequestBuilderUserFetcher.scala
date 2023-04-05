@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.controllers
 
 import com.twitter.decider.Decider
@@ -45,4 +46,8 @@ class RequestBuilderUserFetcher @Inject() (
       DeciderKey.EnableFetchUserInRequestBuilder.toString,
       Some(SimpleRecipient(userId)))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

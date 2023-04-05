@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.tweets
 
 import com.twitter.tweetypie.thriftscala.Tweet
@@ -12,3 +13,7 @@ case class TweetVisibilityRequest(
   isRetweet: Boolean,
   hydrateConversationControl: Boolean = false,
   isSourceTweet: Boolean = false)
+
+} catch {
+  case e: Exception =>
+}

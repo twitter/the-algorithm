@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.filter
 
 import com.twitter.product_mixer.core.functional_component.filter.Filter
@@ -60,4 +61,8 @@ object PredicateFilter {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

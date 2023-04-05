@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import com.google.common.collect.ImmutableMap;
@@ -31,4 +32,7 @@ public enum MappableField {
   public String getName() {
     return MAPPABLE_FIELD_TO_NAME_MAP.get(this);
   }
+}
+
+} catch (Exception e) {
 }

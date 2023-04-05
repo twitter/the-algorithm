@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
@@ -14,4 +15,8 @@ class ReaderModeConfigMarshaller @Inject() (urlMarshaller: UrlMarshaller) {
     landingUrl = urlMarshaller(readerModeConfig.landingUrl)
   )
 
+}
+
+} catch {
+  case e: Exception =>
 }

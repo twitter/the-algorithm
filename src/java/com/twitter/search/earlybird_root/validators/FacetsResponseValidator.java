@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.validators;
 
 import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
@@ -36,4 +37,7 @@ public class FacetsResponseValidator implements ServiceResponseValidator<Earlybi
 
     return Future.value(response);
   }
+}
+
+} catch (Exception e) {
 }

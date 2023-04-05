@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.gate_executor
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -104,4 +105,8 @@ class GateExecutor @Inject() (override val statsReceiver: StatsReceiver) extends
      */
     wrapWithErrorHandling(context, gate.identifier)(withStoppedGatesAsExceptions)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

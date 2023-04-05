@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_video_graph
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -79,4 +80,8 @@ case class UserVideoGraphWriter(
       .getOrElse(rightId)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

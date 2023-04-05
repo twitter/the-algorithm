@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.slice
 
 import com.twitter.product_mixer.component_library.model.candidate._
@@ -93,4 +94,8 @@ case class SliceDomainMarshaller[-Query <: PipelineQuery](
 
     buildSlice(query, entries)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

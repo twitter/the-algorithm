@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.stp
 
 import com.twitter.cortex.deepbird.runtime.prediction_engine.TensorflowPredictionEngine
@@ -27,4 +28,8 @@ class Dbv2StpScorer @Inject() (
       richDr.getFeatureValueOpt(new Continuous("output"))
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

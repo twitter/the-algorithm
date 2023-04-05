@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.column;
 
 import com.twitter.search.common.encoding.features.IntegerEncodedFeatures;
@@ -68,4 +69,7 @@ public class ColumnStrideIntViewIndex extends ColumnStrideFieldIndex {
     throw new UnsupportedOperationException(
         "ColumnStrideIntViewIndex instances do not support optimization");
   }
+}
+
+} catch (Exception e) {
 }

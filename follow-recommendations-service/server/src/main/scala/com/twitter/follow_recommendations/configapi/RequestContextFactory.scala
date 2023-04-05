@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.configapi
 
 import com.google.common.annotations.VisibleForTesting
@@ -71,4 +72,8 @@ class RequestContextFactory @Inject() (featureSwitches: FeatureSwitches, decider
       isTwoffice = clientContext.isTwoffice
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.tweets
 
 import com.twitter.decider.Decider
@@ -56,4 +57,8 @@ object DeletedTweetVisibilityLibrary {
         .map(tombstoneGenerator(_, language))
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

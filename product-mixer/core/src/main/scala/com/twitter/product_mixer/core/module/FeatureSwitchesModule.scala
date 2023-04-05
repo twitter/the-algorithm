@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.module
 
 import com.google.inject.Provides
@@ -50,4 +51,8 @@ object FeatureSwitchesModule extends TwitterModule with ForcibleFeatureValuesMod
 
     finalBuilder.build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

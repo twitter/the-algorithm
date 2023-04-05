@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.features.AuthorScreenName
@@ -236,4 +237,8 @@ object RuleBase {
     safetyLevel).dmConversationRules.nonEmpty
   def hasDmEventRules(safetyLevel: SafetyLevel): Boolean = RuleMap(
     safetyLevel).dmEventRules.nonEmpty
+}
+
+} catch {
+  case e: Exception =>
 }

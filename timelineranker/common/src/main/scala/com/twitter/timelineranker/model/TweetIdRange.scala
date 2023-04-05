@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.model
 
 import com.twitter.timelineranker.{thriftscala => thrift}
@@ -50,4 +51,8 @@ case class TweetIdRange(fromId: Option[TweetId] = None, toId: Option[TweetId] = 
       case _ => false
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

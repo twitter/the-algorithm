@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi.configs
 
 import com.twitter.timelines.configapi.Config
@@ -23,4 +24,8 @@ object ExperimentsHelper {
 
   def mkABExperimentConfig(experiment: VisibilityExperiment, safetyLevel: SafetyLevel): Config =
     mkABExperimentConfig(experiment, safetyLevel.enabledParam)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
@@ -21,4 +22,8 @@ class GeneralContextMarshaller @Inject() (
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

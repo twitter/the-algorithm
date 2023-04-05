@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common
 
 import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
@@ -16,4 +17,8 @@ case class SimClustersEmbeddingIdCacheKeyBuilder(
       f":${hash(embeddingId.internalId.toString.getBytes)}%X"
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

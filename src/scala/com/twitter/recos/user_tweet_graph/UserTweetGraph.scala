@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_tweet_graph
 
 import com.twitter.finagle.thrift.ClientId
@@ -95,4 +96,8 @@ class UserTweetGraph(
   ): Future[UserTweetFeatureResponse] =
     EmptyFeatureResponse
 
+}
+
+} catch {
+  case e: Exception =>
 }

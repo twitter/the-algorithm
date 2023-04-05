@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.candidate_source.strato
 
 import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
@@ -18,4 +19,8 @@ object StratoErrCategorizer {
         PipelineFailure(Unauthorized, s"$reason [${context.toString}]", underlying = Some(err))
       )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

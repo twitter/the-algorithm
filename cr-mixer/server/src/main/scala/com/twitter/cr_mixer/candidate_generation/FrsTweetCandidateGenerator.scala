@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.candidate_generation
 
 import com.twitter.contentrecommender.thriftscala.TweetInfo
@@ -217,4 +218,8 @@ object FrsTweetCandidateGenerator {
   val DefaultAlgo: Algorithm.Value = Algorithm.Other
   // 9999 is the token for Algorithm.Other
   val DefaultAlgoToken: Int = AlgorithmToFeedbackTokenMap.getOrElse(DefaultAlgo, 9999)
+}
+
+} catch {
+  case e: Exception =>
 }

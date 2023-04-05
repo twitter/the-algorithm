@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.escherbird.thriftscala.TweetEntityAnnotation
@@ -94,4 +95,8 @@ trait DoesLogVerdict {}
 
 trait DoesLogVerdictDecidered extends DoesLogVerdict {
   def verdictLogDeciderKey: DeciderKey.Value
+}
+
+} catch {
+  case e: Exception =>
 }

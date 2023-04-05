@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import org.apache.lucene.util.CloseableThreadLocal;
@@ -45,4 +46,7 @@ public class QueryCostTracker implements QueryCostProvider {
   public double getTotalCost() {
     return totalCost;
   }
+}
+
+} catch (Exception e) {
 }

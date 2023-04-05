@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.module.http
 
 import com.google.inject.Provides
@@ -76,4 +77,8 @@ object FinatraHttpClientModule extends TwitterModule {
       mapper = scalaObjectMapper
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance;
 
 import java.util.Arrays;
@@ -419,4 +420,7 @@ public class LinearScoringData {
     experimentalHealthModelScore3 = UNSET_SIGNAL_VALUE;
     experimentalHealthModelScore4 = UNSET_SIGNAL_VALUE;
   }
+}
+
+} catch (Exception e) {
 }

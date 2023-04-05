@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -34,4 +35,8 @@ object UserSignalServiceStoreModule extends TwitterModule {
           .withUnitView[BatchSignalRequest, BatchSignalResponse](stratoClient, UssColumnPath),
         statsReceiver))(statsReceiver.scope("user_signal_service_store"))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

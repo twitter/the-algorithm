@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml.prediction_engine;
 
 import java.util.function.Supplier;
@@ -32,4 +33,7 @@ public class CompositeFeatureContext {
     }
     return schemaSupplier.get();
   }
+}
+
+} catch (Exception e) {
 }

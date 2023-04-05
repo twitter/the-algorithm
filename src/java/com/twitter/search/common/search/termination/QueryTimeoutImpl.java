@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.search.termination;
 
 import com.google.common.base.Preconditions;
@@ -62,4 +63,7 @@ public class QueryTimeoutImpl implements QueryTimeout {
     QueryTimeoutImpl queryTimeout = QueryTimeoutImpl.class.cast(obj);
     return clientId.equals(queryTimeout.clientId) && tracker.equals(queryTimeout.tracker);
   }
+}
+
+} catch (Exception e) {
 }

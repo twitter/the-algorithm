@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.config;
 
 import java.io.InputStream;
@@ -111,4 +112,7 @@ public final class TweetProcessingConfig {
       throw new RuntimeException(e);
     }
   }
+}
+
+} catch (Exception e) {
 }

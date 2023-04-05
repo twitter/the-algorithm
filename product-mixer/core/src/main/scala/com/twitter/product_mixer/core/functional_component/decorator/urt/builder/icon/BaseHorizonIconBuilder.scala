@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.icon
 
 import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
@@ -11,4 +12,8 @@ trait BaseHorizonIconBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNou
     query: Query,
     candidates: Seq[CandidateWithFeatures[Candidate]]
   ): Option[HorizonIcon]
+}
+
+} catch {
+  case e: Exception =>
 }

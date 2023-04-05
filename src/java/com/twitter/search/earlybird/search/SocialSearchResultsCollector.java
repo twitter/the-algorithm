@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search;
 
 import java.io.IOException;
@@ -44,4 +45,7 @@ public class SocialSearchResultsCollector extends SearchResultsCollector {
       socialFilter.startSegment(currTwitterReader);
     }
   }
+}
+
+} catch (Exception e) {
 }

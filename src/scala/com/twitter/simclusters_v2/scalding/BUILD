@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     platform = "java8",
@@ -519,3 +520,6 @@ scalding_job(
         ":scalding",
     ],
 )
+
+} catch (Exception e) {
+}

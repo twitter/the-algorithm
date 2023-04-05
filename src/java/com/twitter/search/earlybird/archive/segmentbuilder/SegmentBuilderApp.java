@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive.segmentbuilder;
 
 import java.util.Collection;
@@ -106,4 +107,7 @@ public class SegmentBuilderApp extends AbstractTwitterServer {
   public Collection<Module> javaModules() {
     return ImmutableList.of(new SegmentBuilderModule());
   }
+}
+
+} catch (Exception e) {
 }

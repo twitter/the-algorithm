@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import java.util.Collections;
@@ -202,4 +203,7 @@ public final class FieldWeightUtil {
       }
     };
   }
+}
+
+} catch (Exception e) {
 }

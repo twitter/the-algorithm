@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -19,4 +20,8 @@ object DBV2SimsExpansionParams {
         max = 100d)
   case object DisableHeavyRanker
       extends FSParam[Boolean]("sims_expansion_disable_heavy_ranker", default = false)
+}
+
+} catch {
+  case e: Exception =>
 }

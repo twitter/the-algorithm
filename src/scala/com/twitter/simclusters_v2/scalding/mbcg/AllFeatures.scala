@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.mbcg
 
 import com.google.common.collect.ImmutableSet
@@ -55,4 +56,8 @@ object UserAllFeatures {
   )
 
   val featureContext = new FeatureContext(allFeatures: _*)
+}
+
+} catch {
+  case e: Exception =>
 }

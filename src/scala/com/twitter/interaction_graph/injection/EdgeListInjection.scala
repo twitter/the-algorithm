@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.injection
 
 import com.twitter.interaction_graph.thriftscala.EdgeList
@@ -11,4 +12,8 @@ object EdgeListInjection {
       Long2BigEndian,
       ScalaCompactThrift(EdgeList)
     )
+}
+
+} catch {
+  case e: Exception =>
 }

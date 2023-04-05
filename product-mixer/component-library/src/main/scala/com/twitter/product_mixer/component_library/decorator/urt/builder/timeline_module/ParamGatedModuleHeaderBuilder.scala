@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
 
 import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleHeaderBuilder
@@ -23,4 +24,8 @@ case class ParamGatedModuleHeaderBuilder[-Query <: PipelineQuery, -Candidate <: 
       defaultBuilder.flatMap(_.apply(query, candidates))
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.following
 
 import com.twitter.home_mixer.functional_component.decorator.urt.builder.HomeWhoToFollowFeedbackActionInfoBuilder
@@ -62,4 +63,8 @@ class FollowingWhoToFollowArmCandidatePipelineConfigBuilder @Inject() (
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(70),
     HomeMixerAlertConfig.BusinessHours.defaultEmptyResponseRateAlert()
   )
+}
+
+} catch {
+  case e: Exception =>
 }

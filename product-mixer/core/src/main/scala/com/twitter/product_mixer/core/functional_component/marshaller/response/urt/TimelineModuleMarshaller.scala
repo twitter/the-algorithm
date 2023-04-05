@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
@@ -33,4 +34,8 @@ class TimelineModuleMarshaller @Inject() (
     metadata = timelineModule.metadata.map(moduleMetadataMarshaller(_)),
     showMoreBehavior = timelineModule.showMoreBehavior.map(moduleShowMoreBehaviorMarshaller(_))
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.tweet_tlx
 
 import com.twitter.ml.featurestore.timelines.thriftscala.TimelineScorerScoreView
@@ -55,4 +56,8 @@ class TweetTLXStratoScorer @Inject() (column: TimelineScorerTweetScoresV1ClientC
         case fetchResult => throw new Exception(s"Invalid response from TLX: ${fetchResult.v}")
       }
   })
+}
+
+} catch {
+  case e: Exception =>
 }

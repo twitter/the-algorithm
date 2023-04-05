@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
@@ -16,4 +17,8 @@ class RichTextEntityMarshaller @Inject() (
     ref = entity.ref.map(referenceObjectMarshaller(_)),
     format = entity.format.map(richTextFormatMarshaller(_))
   )
+}
+
+} catch {
+  case e: Exception =>
 }

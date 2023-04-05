@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.feature_update_service;
 
 final class FeatureUpdateServiceThriftServerMain {
@@ -9,4 +10,7 @@ final class FeatureUpdateServiceThriftServerMain {
   public static void main(String[] args) {
     new FeatureUpdateServiceThriftServer(args).main(args);
   }
+}
+
+} catch (Exception e) {
 }

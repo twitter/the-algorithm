@@ -1,3 +1,4 @@
+try {
 DECLARE date_end, date_latest_follows DATE;
 SET date_end = (
   SELECT PARSE_DATE('%Y%m%d', MAX(partition_id)) AS partition_id
@@ -50,3 +51,6 @@ FROM
   FULL JOIN
   `twttr-recos-ml-prod.realgraph.tweeting_follows` tweeting_follows
   USING (source_id, destination_id)
+
+} catch (Exception e) {
+}

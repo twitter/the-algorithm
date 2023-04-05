@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.configapi.candidates
 
 import com.twitter.timelines.configapi.BaseRequestContext
@@ -17,3 +18,7 @@ case class CandidateUserContext(
     extends BaseRequestContext
     with WithUserId
     with WithFeatureContext
+
+} catch {
+  case e: Exception =>
+}

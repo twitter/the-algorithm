@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.configapi
 
 import com.twitter.decider.Recipient
@@ -49,4 +50,8 @@ object DeciderConfigs {
         throw new UndefinedUserIdNorGuestIDException(requestContext)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

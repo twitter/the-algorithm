@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.common
 
 import com.twitter.algebird.{Monoid, OptionMonoid}
@@ -56,4 +57,8 @@ class SimClustersEmbeddingWithMetadataMonoid(
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

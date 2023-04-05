@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -19,4 +20,8 @@ case class FeatureModuleDisplayTypeBuilder(
   ): ModuleDisplayType = candidates.headOption
     .flatMap(_.features.getOrElse(displayTypeFeature, None))
     .getOrElse(defaultDisplayType)
+}
+
+} catch {
+  case e: Exception =>
 }

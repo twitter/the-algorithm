@@ -1,3 +1,4 @@
+try {
 create_thrift_libraries(
     base_name = "interaction_graph",
     sources = ["*.thrift"],
@@ -13,3 +14,6 @@ create_thrift_libraries(
     provides_java_name = "interaction_graph-thrift-java",
     provides_scala_name = "interaction_graph-thrift-scala",
 )
+
+} catch (Exception e) {
+}

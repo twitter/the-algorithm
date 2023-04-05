@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.score
 
 import com.twitter.simclusters_v2.common.SimClustersEmbedding
@@ -198,4 +199,8 @@ object SimClustersEmbeddingPairScoreStore {
     )
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

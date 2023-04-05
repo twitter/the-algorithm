@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urt.builder
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
@@ -12,4 +13,8 @@ case class StaticTimelineScribeConfigBuilder(
     query: PipelineQuery,
     entries: Seq[TimelineEntry]
   ): Option[TimelineScribeConfig] = Some(timelineScribeConfig)
+}
+
+} catch {
+  case e: Exception =>
 }

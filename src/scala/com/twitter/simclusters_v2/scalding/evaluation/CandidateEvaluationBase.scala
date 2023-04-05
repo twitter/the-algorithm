@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.evaluation
 
 import com.twitter.core_workflows.user_model.thriftscala.CondensedUserState
@@ -160,4 +161,8 @@ trait CandidateEvaluationBase {
 
     evaluateResults(referencePerUser, sampledCandidate)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

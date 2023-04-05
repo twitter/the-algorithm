@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.exception;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -111,4 +112,7 @@ public class CriticalExceptionHandler {
       }
     }
   }
+}
+
+} catch (Exception e) {
 }

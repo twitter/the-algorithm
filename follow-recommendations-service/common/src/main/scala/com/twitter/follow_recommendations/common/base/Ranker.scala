@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.base
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -87,4 +88,8 @@ object Ranker {
 class IdentityRanker[Target, Candidate] extends Ranker[Target, Candidate] {
   def rank(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]] =
     Stitch.value(candidates)
+}
+
+} catch {
+  case e: Exception =>
 }

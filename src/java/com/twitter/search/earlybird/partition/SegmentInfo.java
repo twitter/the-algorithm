@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.File;
@@ -425,4 +426,7 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
         + "wasIndexed: " + wasIndexed() + "\n"
         + "queryCachesCardinality: " + indexSegment.getQueryCachesCardinality() + "\n";
   }
+}
+
+} catch (Exception e) {
 }

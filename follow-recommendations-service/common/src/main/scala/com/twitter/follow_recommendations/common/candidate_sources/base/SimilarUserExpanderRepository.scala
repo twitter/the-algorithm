@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.base
 
 import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.DefaultEnableImplicitEngagedExpansion
@@ -310,4 +311,8 @@ object ScoreAggregator {
 
   // aggregate the same candidates with same id by taking the sum of the scores
   val Sum: Seq[Double] => Double = (candidateScores: Seq[Double]) => { candidateScores.sum }
+}
+
+} catch {
+  case e: Exception =>
 }

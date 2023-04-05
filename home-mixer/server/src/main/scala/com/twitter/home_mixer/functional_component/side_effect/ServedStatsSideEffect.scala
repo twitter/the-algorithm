@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.side_effect
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -77,4 +78,8 @@ class ServedStatsSideEffect @Inject() (statsReceiver: StatsReceiver)
 
   private def getCandidateSourceId(candidate: CandidateWithDetails): String =
     candidate.features.getOrElse(CandidateSourceIdFeature, None).map(_.name).getOrElse("None")
+}
+
+} catch {
+  case e: Exception =>
 }

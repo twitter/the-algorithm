@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urt.builder
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
@@ -40,4 +41,8 @@ case class UrtMetadataStringCenterBuilder(
     title = Some(stringCenter.prepare(titleKey)),
     scribeConfig = scribeConfigBuilder.flatMap(_.build(query, entries))
   )
+}
+
+} catch {
+  case e: Exception =>
 }

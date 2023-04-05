@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
@@ -18,4 +19,8 @@ class ClientEventInfoMarshaller @Inject() (
       entityToken = clientEventInfo.entityToken
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

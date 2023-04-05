@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import java.io.IOException;
@@ -20,4 +21,7 @@ public abstract class FacetCountIteratorFactory {
   public abstract FacetCountIterator getFacetCountIterator(
       EarlybirdIndexSegmentAtomicReader reader,
       Schema.FieldInfo fieldInfo) throws IOException;
+}
+
+} catch (Exception e) {
 }

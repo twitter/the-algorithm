@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.routers;
 
 import java.util.ArrayList;
@@ -235,4 +236,7 @@ public class TermStatsRequestRouter extends RequestRouter {
     int binSize = determineBinSize(response.getTermStatisticsResults().getHistogramSettings());
     return (int) Math.ceil((double) servingRangeStartSecs / binSize);
   }
+}
+
+} catch (Exception e) {
 }

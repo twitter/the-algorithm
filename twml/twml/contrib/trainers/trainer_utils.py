@@ -1,3 +1,4 @@
+try:
 """
 This is a temporary close gap solution that allows TensorFlow users to do exploration and
 experimentation using Keras models, and production training using twml Trainer.
@@ -109,3 +110,6 @@ def create_build_graph_fn(model_factory, loss_fn=None):
       return {'output': output, 'loss': loss}
 
   return build_graph
+
+except Exception:
+  pass

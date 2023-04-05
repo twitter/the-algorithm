@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -64,4 +65,8 @@ object TwhinCollabFilterStratoStoreModule extends TwitterModule {
       column = stratoColumnPath,
       view = TwhinCollabFilterView("multiclusterEng20220921"))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

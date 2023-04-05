@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.decider
 
 import com.twitter.decider.Decider
@@ -107,4 +108,8 @@ case class UserTweetGraphDecider(env: String, dc: String) extends GraphDecider {
   override val overlayConfig = Some(
     s"/usr/local/config/overlays/user-tweet-graph/user-tweet-graph/$env/$dc/decider_overlay.yml"
   )
+}
+
+} catch {
+  case e: Exception =>
 }

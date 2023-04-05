@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.content_recommender_flow
 
 import com.twitter.conversions.DurationOps._
@@ -118,4 +119,8 @@ class ContentRecommenderRequestBuilder @Inject() (
           )
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

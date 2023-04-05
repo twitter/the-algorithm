@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.geo
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -17,4 +18,8 @@ class PopGeoSourceFSConfig @Inject() () extends FeatureSwitchConfig {
   override val booleanFSParams: Seq[FSParam[Boolean] with FSName] = Seq(
     PopGeoSourceParams.PopGeoSourceReturnFromAllPrecisions,
   )
+}
+
+} catch {
+  case e: Exception =>
 }

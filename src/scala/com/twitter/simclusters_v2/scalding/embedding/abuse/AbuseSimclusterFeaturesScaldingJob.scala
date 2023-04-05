@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding.abuse
 
 import com.twitter.scalding._
@@ -175,4 +176,8 @@ object AdhocSearchAbuseSimclusterFeaturesScaldingJob extends AdhocExecutionApp {
       args("outputPath")
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

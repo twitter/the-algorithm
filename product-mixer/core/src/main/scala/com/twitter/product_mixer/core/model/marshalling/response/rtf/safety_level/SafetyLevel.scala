@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level
 
 /*
@@ -11,3 +12,7 @@ case object ConversationReplySafetyLevel extends SafetyLevel
 case object ConversationInjectedTweetSafetyLevel extends SafetyLevel
 case object TimelineFocalTweetSafetyLevel extends SafetyLevel
 case object TimelineHomePromotedHydrationSafetyLevel extends SafetyLevel
+
+} catch {
+  case e: Exception =>
+}

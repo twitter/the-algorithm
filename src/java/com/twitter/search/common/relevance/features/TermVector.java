@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.features;
 
 import java.util.Map;
@@ -76,4 +77,7 @@ public class TermVector {
     }
     return getDotProduct(other) / (magnitude * other.magnitude);
   }
+}
+
+} catch (Exception e) {
 }

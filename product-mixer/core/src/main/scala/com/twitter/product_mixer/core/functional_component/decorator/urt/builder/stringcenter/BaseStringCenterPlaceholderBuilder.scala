@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.stringcenter
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -9,4 +10,8 @@ trait BaseStringCenterPlaceholderBuilder[
   -Candidate <: UniversalNoun[Any]] {
 
   def apply(query: Query, candidate: Candidate, candidateFeatures: FeatureMap): Map[String, Any]
+}
+
+} catch {
+  case e: Exception =>
 }

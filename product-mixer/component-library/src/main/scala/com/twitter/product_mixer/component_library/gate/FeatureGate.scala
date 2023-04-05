@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.gate
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -80,4 +81,8 @@ case class FeatureGate[Value](
         }
       )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

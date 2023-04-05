@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module.similarity_engine
 
 import com.google.inject.Provides
@@ -52,4 +53,8 @@ object UserTweetEntityGraphSimilarityEngineModule extends TwitterModule {
       memCacheConfig = None
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

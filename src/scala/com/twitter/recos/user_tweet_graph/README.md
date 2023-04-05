@@ -1,3 +1,4 @@
+try {
 # UserTweetGraph (UTG)
 
 ## What is it
@@ -15,3 +16,6 @@ It maintains an in-memory user engagements over the past 24-48 hours. Older even
 For full details on storage & processing, please check out our open-sourced project GraphJet, a general-purpose high performance in-memory storage engine.
 - https://github.com/twitter/GraphJet
 - http://www.vldb.org/pvldb/vol9/p1281-sharma.pdf
+
+} catch (Exception e) {
+}

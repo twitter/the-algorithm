@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.common
 
 import com.twitter.conversions.DurationOps._
@@ -67,4 +68,8 @@ object Configs {
   final val FirstUpdateValue = 1
 
   final val TempUpdateValue = -1
+}
+
+} catch {
+  case e: Exception =>
 }

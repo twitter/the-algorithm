@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.side_effect
 
 import com.twitter.finagle.tracing.Trace
@@ -209,4 +210,8 @@ class HomeScribeServedEntriesSideEffect @Inject() (
   override val alerts = Seq(
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert()
   )
+}
+
+} catch {
+  case e: Exception =>
 }

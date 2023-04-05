@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.contentrecommender.{thriftscala => cr}
@@ -159,4 +160,8 @@ class TSPInferredTopicFeatureHydrator @Inject() (
   ): Map[Long, Double] = {
     topicWithScores.sortBy(-_.score).take(topK).map(a => (a.topicId, a.score)).toMap
   }
+}
+
+} catch {
+  case e: Exception =>
 }

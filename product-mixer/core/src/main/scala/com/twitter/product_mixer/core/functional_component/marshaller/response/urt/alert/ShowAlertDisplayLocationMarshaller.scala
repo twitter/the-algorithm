@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertDisplayLocation
@@ -16,4 +17,8 @@ class ShowAlertDisplayLocationMarshaller @Inject() () {
       case Bottom => urt.ShowAlertDisplayLocation.Bottom
     }
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.common
 
 import com.twitter.summingbird.{Counter, Group, Name, Platform, Producer}
@@ -19,4 +20,8 @@ object StatsUtil {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.socialgraph
 
 import com.twitter.escherbird.util.stitchcache.StitchCache
@@ -418,4 +419,8 @@ object SocialGraphClient {
   def enablePostRankerSgsPredicate(numInvalidRelationshipUsers: Int): Boolean = {
     numInvalidRelationshipUsers == 0 || numInvalidRelationshipUsers >= MaxNumInvalidRelationship
   }
+}
+
+} catch {
+  case e: Exception =>
 }

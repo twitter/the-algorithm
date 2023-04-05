@@ -1,3 +1,4 @@
+try:
 from .hashing_utils import make_feature_id
 
 from twml.contrib.layers.hashing_discretizer import HashingDiscretizer
@@ -60,3 +61,6 @@ class TFModelDiscretizerBuilder(object):
       n_bin=max_bins,
       out_bits=self.num_bits
     )
+
+except Exception:
+  pass

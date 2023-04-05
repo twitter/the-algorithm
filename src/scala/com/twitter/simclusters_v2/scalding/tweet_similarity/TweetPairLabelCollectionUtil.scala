@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.tweet_similarity
 
 import com.twitter.ads.entities.db.thriftscala.PromotedTweet
@@ -487,4 +488,8 @@ object TweetPairLabelCollectionUtil {
         seq.tail.toStream.map(a => (seq.head, a)) #::: allUniquePairs(seq.tail)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

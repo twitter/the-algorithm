@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import com.twitter.finagle.Service;
@@ -21,4 +22,7 @@ public class TopLevelExceptionHandlingFilter
                                          Service<EarlybirdRequest, EarlybirdResponse> service) {
     return exceptionHandler.handleException(request, service.apply(request));
   }
+}
+
+} catch (Exception e) {
 }

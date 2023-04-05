@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.component_library.selector.sorter.SorterFromOrdering
@@ -83,4 +84,8 @@ case class UpdateSortCandidates(
 
     SelectorResult(remainingCandidates = updatedRemainingCandidates, result = result)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

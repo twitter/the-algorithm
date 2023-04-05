@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_client_event_logs
 
 import com.spotify.scio.values.SCollection
@@ -134,4 +135,8 @@ object InteractionGraphClientEventLogsUtil {
       .values // Fetch only InteractionGraphRawInput
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

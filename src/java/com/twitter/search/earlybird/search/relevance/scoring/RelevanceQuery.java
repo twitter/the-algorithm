@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance.scoring;
 
 import java.io.IOException;
@@ -161,4 +162,7 @@ public class RelevanceQuery extends Query {
   public String toString(String field) {
     return "RelevanceQuery[q=" + luceneQuery.toString(field) + "]";
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
@@ -30,4 +31,8 @@ class HeaderImagePromptMessageContentMarshaller @Inject() (
         bodyRichText = headerImagePromptMessageContent.bodyRichText.map(richTextMarshaller(_))
       )
     )
+}
+
+} catch {
+  case e: Exception =>
 }

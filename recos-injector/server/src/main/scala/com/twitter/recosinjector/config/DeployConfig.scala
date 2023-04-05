@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.config
 
 import com.twitter.bijection.scrooge.BinaryScalaCodec
@@ -212,4 +213,8 @@ trait DeployConfig extends Config with CacheConfig {
 
   // wait for all serversets to populate
   override def init(): Future[Unit] = ClientRegistry.expAllRegisteredClientsResolved().unit
+}
+
+} catch {
+  case e: Exception =>
 }

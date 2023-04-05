@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.cards
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -32,4 +33,8 @@ class CardVisibilityLibraryParityTest(statsReceiver: StatsReceiver) {
           Stitch.Done
       }.unit
   }
+}
+
+} catch {
+  case e: Exception =>
 }

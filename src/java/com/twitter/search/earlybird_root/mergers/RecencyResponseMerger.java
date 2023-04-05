@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.mergers;
 
 import java.util.Collections;
@@ -635,4 +636,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
 
     results.setResults(trimedResults);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.search.common.ranking.thriftjava
 #@namespace scala com.twitter.search.common.ranking.thriftscala
 #@namespace strato com.twitter.search.common.ranking
@@ -364,3 +365,6 @@ struct ThriftFacetRankingOptions {
   // Run facets search as if they happen at this specific time (ms since epoch).
   32: optional i64 fakeCurrentTimeMs  // not really used anywhere, remove?
 }(persisted='true')
+
+} catch (Exception e) {
+}

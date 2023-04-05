@@ -1,4 +1,4 @@
-
+match 
 // A feature value can be one of these
 enum FeatureVal {
   Empty,
@@ -76,3 +76,7 @@ fn get_random_record() -> Record {
   record
 }
 
+ {
+  Ok(_) => {},
+  Err(_) => {}
+}

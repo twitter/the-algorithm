@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.similarity_engine
 
 import com.google.inject.Inject
@@ -140,4 +141,8 @@ object SkitTopicTweetSimilarityEngine {
       params
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 #pragma once
 #include <twml/common.h>
 #include <twml/defines.h>
@@ -20,3 +21,6 @@ namespace twml {
         int output_start);
 }  // namespace twml
 #endif
+
+} catch (Exception e) {
+}

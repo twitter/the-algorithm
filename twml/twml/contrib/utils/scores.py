@@ -1,3 +1,4 @@
+try:
 import tensorflow.compat.v1 as tf
 
 
@@ -31,3 +32,6 @@ def get_pairwise_label_scores(labels):
   differences_ij = tf.maximum(tf.minimum(1.0, pairwise_label_scores), -1.0)
   # values in pairwise_label_scores are within [0, 1] for cross entropy
   return (1.0 / 2.0) * (1.0 + differences_ij)
+
+except Exception:
+  pass

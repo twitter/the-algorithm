@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.source_signal
 
 import com.twitter.cr_mixer.model.GraphSourceInfo
@@ -67,4 +68,8 @@ trait SourceGraphFetcher extends SourceFetcher[GraphSourceInfo] {
       }.toMap
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

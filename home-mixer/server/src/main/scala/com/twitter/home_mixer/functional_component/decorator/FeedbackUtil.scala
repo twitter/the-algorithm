@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.decorator
 
 import com.twitter.conversions.DurationOps._
@@ -58,4 +59,8 @@ object FeedbackUtil {
       )
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

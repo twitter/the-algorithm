@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.encoding.features;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -147,4 +148,7 @@ public class SmartIntegerNormalizer extends ByteNormalizer {
   int[] getBoundaryValues() {
     return boundaryValues;
   }
+}
+
+} catch (Exception e) {
 }

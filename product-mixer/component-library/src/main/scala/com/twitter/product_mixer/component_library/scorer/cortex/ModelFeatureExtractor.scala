@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.cortex
 
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
@@ -12,4 +13,8 @@ import inference.GrpcService.ModelInferResponse.InferOutputTensor
  */
 trait ModelFeatureExtractor[-Query <: PipelineQuery, Result] {
   def apply(query: Query, tensorOutput: Seq[InferOutputTensor]): Seq[Result]
+}
+
+} catch {
+  case e: Exception =>
 }

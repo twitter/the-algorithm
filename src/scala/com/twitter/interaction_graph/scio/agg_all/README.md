@@ -1,3 +1,4 @@
+try {
 ## InteractionGraphAggregationJob Dataflow Job
 
 This job aggregates the previous day's history with today's activities, and outputs an updated
@@ -36,3 +37,5 @@ bin/d6w schedule \
   --bind=profile.date=2022-11-08 \
   --bind=profile.output_path=processed/interaction_graph_aggregation_dataflow
 ```
+} catch (Exception e) {
+}

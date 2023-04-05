@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     platform = "java8",
@@ -79,3 +80,6 @@ hadoop_binary(
         ":optout",
     ],
 )
+
+} catch (Exception e) {
+}

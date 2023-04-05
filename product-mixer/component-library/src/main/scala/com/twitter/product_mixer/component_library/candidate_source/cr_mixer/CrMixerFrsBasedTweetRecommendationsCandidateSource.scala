@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.cr_mixer
 
 import com.twitter.cr_mixer.{thriftscala => t}
@@ -22,4 +23,8 @@ class CrMixerFrsBasedTweetRecommendationsCandidateSource @Inject() (
   override def apply(request: t.FrsTweetRequest): Stitch[Seq[t.FrsTweet]] = Stitch
     .callFuture(crMixerClient.getFrsBasedTweetRecommendations(request))
     .map(_.tweets)
+}
+
+} catch {
+  case e: Exception =>
 }

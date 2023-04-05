@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml.prediction_engine;
 
 import java.util.Collections;
@@ -64,4 +65,7 @@ public class PredictionEngineModelsManager extends BaseModelsManager<PredictionE
     };
   }
 
+}
+
+} catch (Exception e) {
 }

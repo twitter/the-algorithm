@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+match use std::collections::BTreeSet;
 use std::collections::BTreeMap;
 
 use bpr_thrift::data::DataRecord;
@@ -78,4 +78,8 @@ fn logCF(cf: BTreeMap<i64, OrderedFloat<f64>>) {
   for (id, fs) in cf {
     println!("C: {} -> [{}]", id, fs);
   }
+}
+ {
+  Ok(_) => {},
+  Err(_) => {}
 }

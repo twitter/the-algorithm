@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
 
 import com.twitter.product_mixer.core.model.marshalling.response.urp.BasicTopicPageHeaderDisplayType
@@ -16,4 +17,8 @@ class TopicPageHeaderDisplayTypeMarshaller @Inject() () {
     case BasicTopicPageHeaderDisplayType => urp.TopicPageHeaderDisplayType.Basic
     case PersonalizedTopicPageHeaderDisplayType => urp.TopicPageHeaderDisplayType.Personalized
   }
+}
+
+} catch {
+  case e: Exception =>
 }

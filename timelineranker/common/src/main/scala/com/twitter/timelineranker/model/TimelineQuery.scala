@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.model
 
 import com.twitter.timelineranker.{thriftscala => thrift}
@@ -79,4 +80,8 @@ abstract class TimelineQuery(
       options = options.map(_.toTimelineQueryOptionsThrift)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

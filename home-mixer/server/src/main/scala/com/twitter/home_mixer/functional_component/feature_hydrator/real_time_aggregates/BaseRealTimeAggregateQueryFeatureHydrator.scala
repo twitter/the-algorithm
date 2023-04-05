@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.real_time_aggregates
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -32,4 +33,8 @@ trait BaseRealTimeAggregateQueryFeatureHydrator[K]
         .build()
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

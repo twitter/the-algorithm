@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.configapi.registry
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -46,4 +47,8 @@ trait ParamConfigBuilder { paramConfig: ParamConfig =>
         case (fsName, overrides) => FeatureSwitchOverrideUtil.gatedOverrides(fsName, overrides: _*)
       }.toSeq
   }
+}
+
+} catch {
+  case e: Exception =>
 }

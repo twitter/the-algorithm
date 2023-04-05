@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.util.ArrayList;
@@ -62,4 +63,7 @@ public class EarlybirdIndex {
     }
     return numNonOptimized;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.util
 
 import com.twitter.finagle.offload.OffloadFuturePool
@@ -56,4 +57,8 @@ object OffloadFuturePools {
         case _ => false
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

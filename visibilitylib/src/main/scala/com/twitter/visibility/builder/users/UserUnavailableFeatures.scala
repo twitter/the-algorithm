@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.users
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -142,4 +143,8 @@ case class UserUnavailableFeatures(statsReceiver: StatsReceiver) {
         true
       case _ => false
     }
+}
+
+} catch {
+  case e: Exception =>
 }

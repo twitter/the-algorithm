@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.model.request
 
 import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
@@ -17,3 +18,7 @@ case class HomeMixerRequest(
   // Parameters that apply to all products can be promoted to the request-level
   homeRequestParam: Boolean)
     extends Request
+
+} catch {
+  case e: Exception =>
+}

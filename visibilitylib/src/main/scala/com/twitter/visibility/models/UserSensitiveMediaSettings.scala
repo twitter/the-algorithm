@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.models
 
 import com.twitter.contenthealth.sensitivemediasettings.thriftscala.SensitiveMediaSettings
@@ -10,4 +11,8 @@ case class UserSensitiveMediaSettings(sensitiveMediaSettings: Option[SensitiveMe
   ): Option[SensitiveMediaSettings] = {
     sensitiveMediaSettings
   }
+}
+
+} catch {
+  case e: Exception =>
 }

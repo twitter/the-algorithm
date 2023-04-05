@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.SingleStateDefaultVerticalGridItemTileStyle
@@ -17,4 +18,8 @@ class VerticalGridItemTileStyleMarshaller @Inject() () {
       case DoubleStateDefaultVerticalGridItemTileStyle =>
         urt.VerticalGridItemTileStyle.DoubleStateDefault
     }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.common
 
 /**
@@ -17,4 +18,8 @@ object AdhocScoreModificationType extends Enumeration {
 
   // This is added solely for testing purposes and should not be used in production.
   val InvalidAdhocScorer: AdhocScoreModificationType = Value("invalid_adhoc_scorer")
+}
+
+} catch {
+  case e: Exception =>
 }

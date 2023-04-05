@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.entities;
 
 import java.util.List;
@@ -198,4 +199,7 @@ public class GeoObject {
         GeoAddressAccuracy.POINT_LEVEL.getCode(),
         ThriftGeoLocationSource.GEOTAG);
   }
+}
+
+} catch (Exception e) {
 }

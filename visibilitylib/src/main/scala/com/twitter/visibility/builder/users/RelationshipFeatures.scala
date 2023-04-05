@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.users
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -173,4 +174,8 @@ class RelationshipFeatures(
       p => p.noRetweetsFrom,
       userRelationshipSource.noRetweetsFrom,
       viewerMutesRetweetsFromAuthor)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi.configs.overrides
 
 import com.twitter.decider.LocalOverrides
@@ -21,4 +22,8 @@ object VisibilityLibraryDeciderOverrides
 
   val disableLegacyInterstitialFilteredReason: LocalOverrides.Override = feature(
     "visibility_library_disable_legacy_interstitial_filtered_reason")
+}
+
+} catch {
+  case e: Exception =>
 }

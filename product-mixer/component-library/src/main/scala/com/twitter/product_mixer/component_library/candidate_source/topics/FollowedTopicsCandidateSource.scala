@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.topics
 
 import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherSeqSource
@@ -18,4 +19,8 @@ class FollowedTopicsCandidateSource @Inject() (
   override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("FollowedTopics")
 
   override val fetcher: Fetcher[Long, Unit, Seq[Long]] = column.fetcher
+}
+
+} catch {
+  case e: Exception =>
 }

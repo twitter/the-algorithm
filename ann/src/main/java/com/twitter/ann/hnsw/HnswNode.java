@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.hnsw;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -42,4 +43,7 @@ public class HnswNode<T> {
         .append(level)
         .toHashCode();
   }
+}
+
+} catch (Exception e) {
 }

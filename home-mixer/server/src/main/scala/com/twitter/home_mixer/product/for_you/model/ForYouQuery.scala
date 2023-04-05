@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.for_you.model
 
 import com.twitter.adserver.thriftscala.HomeTimelineType
@@ -47,4 +48,8 @@ case class ForYouQuery(
   override val isEmptyState: Option[Boolean] = None
   override val isFirstRequestAfterSignup: Option[Boolean] = None
   override val isEndOfTimeline: Option[Boolean] = None
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.Navigate
@@ -14,4 +15,8 @@ class ShowAlertTypeMarshaller @Inject() () {
     case NewTweets => urt.AlertType.NewTweets
     case Navigate => urt.AlertType.Navigate
   }
+}
+
+} catch {
+  case e: Exception =>
 }

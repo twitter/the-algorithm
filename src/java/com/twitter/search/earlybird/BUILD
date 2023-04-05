@@ -1,3 +1,4 @@
+try {
 COMMON_SOURCES = ["common/**/*.java"]
 
 CONFIG_SOURCES = ["config/**/*.java"]
@@ -220,3 +221,6 @@ java_library(
         "src/thrift/com/twitter/search:earlybird-java",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.slice.builder
 
 import com.twitter.product_mixer.component_library.premarshaller.slice.builder.SliceCursorUpdater.getCursorByType
@@ -55,4 +56,8 @@ trait SliceCursorUpdaterFromUnderlyingBuilder[-Query <: PipelineQuery]
     query: Query,
     entries: Seq[SliceItem]
   ): String = underlying.cursorValue(query, entries)
+}
+
+} catch {
+  case e: Exception =>
 }

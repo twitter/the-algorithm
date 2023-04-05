@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.scalding
 
 import com.twitter.bijection.Injection
@@ -294,4 +295,8 @@ trait GraphFeatureServiceMainJob extends GraphFeatureServiceBaseJob {
         }).unit
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

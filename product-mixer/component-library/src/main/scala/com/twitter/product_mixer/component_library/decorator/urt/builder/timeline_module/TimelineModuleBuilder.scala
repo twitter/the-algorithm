@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -53,4 +54,8 @@ case class TimelineModuleBuilder[-Query <: PipelineQuery, -Candidate <: Universa
       showMoreBehavior = showMoreBehaviorBuilder.map(_.apply(query, candidates))
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

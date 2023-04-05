@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.audio_space
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.item.audio_space.AudioSpaceCandidateUrtItemBuilder.AudioSpaceClientEventInfoElement
@@ -36,4 +37,8 @@ case class AudioSpaceCandidateUrtItemBuilder[-Query <: PipelineQuery](
     feedbackActionInfo =
       feedbackActionInfoBuilder.flatMap(_.apply(query, audioSpaceCandidate, candidateFeatures))
   )
+}
+
+} catch {
+  case e: Exception =>
 }

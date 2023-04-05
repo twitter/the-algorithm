@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.pipeline_failure
 
 /**
@@ -187,4 +188,8 @@ case object ExecutionFailed extends PlatformFailure {
  */
 case object FeatureHydrationFailed extends PlatformFailure {
   override val failureName: String = "FeatureHydrationFailed"
+}
+
+} catch {
+  case e: Exception =>
 }

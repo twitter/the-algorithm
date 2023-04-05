@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import com.twitter.conversions.DurationOps._
@@ -91,4 +92,8 @@ object UtegTweetGlobalParams {
       .set(booleanOverrides: _*)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1
 
 import com.twitter.ml.featurestore.lib.EntityId
@@ -71,4 +72,8 @@ object FeatureStoreDatasetErrorHandler {
       Map.empty
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

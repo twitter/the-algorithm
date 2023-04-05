@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.user
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.PendingFollowUser
@@ -17,4 +18,8 @@ class UserDisplayTypeMarshaller @Inject() () {
       case UserDetailed => urt.UserDisplayType.UserDetailed
       case PendingFollowUser => urt.UserDisplayType.PendingFollowUser
     }
+}
+
+} catch {
+  case e: Exception =>
 }

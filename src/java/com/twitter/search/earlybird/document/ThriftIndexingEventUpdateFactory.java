@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.document;
 
 import java.io.IOException;
@@ -88,4 +89,7 @@ public class ThriftIndexingEventUpdateFactory extends DocumentFactory<ThriftInde
 
     return schemaDocumentFactory.newDocument(document);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.base
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -27,4 +28,8 @@ class SocialProofEnforcedCandidateSourceFSConfig @Inject() () extends FeatureSwi
   override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
     SocialProofEnforcedCandidateSourceParams.GfsLagDurationInDays
   )
+}
+
+} catch {
+  case e: Exception =>
 }

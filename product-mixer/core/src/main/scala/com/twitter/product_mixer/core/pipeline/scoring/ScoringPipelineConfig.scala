@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.scoring
 
 import com.twitter.product_mixer.component_library.selector.InsertAppendResults
@@ -128,4 +129,8 @@ object ScoringPipelineConfig extends PipelineConfigCompanion {
     scorersStep,
     resultStep
   )
+}
+
+} catch {
+  case e: Exception =>
 }

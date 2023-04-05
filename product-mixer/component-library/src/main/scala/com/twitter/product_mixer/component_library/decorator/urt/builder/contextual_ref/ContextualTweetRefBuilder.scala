@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.contextual_ref
 
 import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
@@ -9,4 +10,8 @@ case class ContextualTweetRefBuilder[-Candidate <: BaseTweetCandidate](
 
   def apply(candidate: Candidate): Option[ContextualTweetRef] =
     Some(ContextualTweetRef(candidate.id, Some(tweetHydrationContext)))
+}
+
+} catch {
+  case e: Exception =>
 }

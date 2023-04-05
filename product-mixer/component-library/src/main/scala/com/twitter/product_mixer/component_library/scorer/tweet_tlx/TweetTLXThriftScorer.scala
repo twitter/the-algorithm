@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.tweet_tlx
 
 import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
@@ -76,4 +77,8 @@ class TweetTLXThriftScorer @Inject() (timelineScorerClient: t.TimelineScorer.Met
         throw new UnsupportedOperationException(s"Unknown response type: ${field.field.name}")
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

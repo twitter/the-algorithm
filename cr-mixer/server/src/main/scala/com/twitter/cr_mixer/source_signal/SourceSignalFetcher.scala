@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.source_signal
 
 import com.twitter.cr_mixer.model.SourceInfo
@@ -42,4 +43,8 @@ trait SourceSignalFetcher extends SourceFetcher[Seq[SourceInfo]] {
     sourceType: SourceType,
     signals: Seq[SignalConvertType]
   ): Seq[SourceInfo]
+}
+
+} catch {
+  case e: Exception =>
 }

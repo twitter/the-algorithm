@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     platform = "java8",
@@ -22,3 +23,6 @@ scala_library(
         "util/util-stats/src/main/scala/com/twitter/finagle/stats",
     ],
 )
+
+} catch (Exception e) {
+}

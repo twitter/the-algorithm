@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.search;
 
 import java.util.HashSet;
@@ -199,4 +200,7 @@ public class TerminationTracker {
   public boolean useLastSearchedDocIdOnTimeout() {
     return useLastSearchedDocIdOnTimeout;
   }
+}
+
+} catch (Exception e) {
 }

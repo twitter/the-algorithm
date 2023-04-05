@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.index;
 
 import java.io.IOException;
@@ -143,4 +144,7 @@ public class DocValuesBasedTimeMapper implements TimeMapper {
       return new DocValuesBasedTimeMapper();
     }
   }
+}
+
+} catch (Exception e) {
 }

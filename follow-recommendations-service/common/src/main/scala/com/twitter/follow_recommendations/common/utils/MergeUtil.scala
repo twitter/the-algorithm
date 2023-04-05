@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.utils
 
 object MergeUtil {
@@ -48,4 +49,8 @@ object MergeUtil {
       next()
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

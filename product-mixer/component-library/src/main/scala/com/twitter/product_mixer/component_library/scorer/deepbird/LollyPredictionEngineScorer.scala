@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.deepbird
 
 import com.twitter.ml.prediction.core.PredictionEngine
@@ -58,4 +59,8 @@ class LollyPredictionEngineScorer[
     }
     Stitch.value(featureMaps)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

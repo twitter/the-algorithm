@@ -1,3 +1,4 @@
+try {
 twml_sources = [
     "twml/**/*.py",
 ]
@@ -184,3 +185,6 @@ python3_library(
     ],
     dependencies = twml_deps,
 )
+
+} catch (Exception e) {
+}

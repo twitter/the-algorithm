@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import com.google.common.base.Optional;
@@ -63,4 +64,7 @@ public class RecencyAndRelevanceCachePostProcessor extends EarlybirdCachePostPro
     return postProcessCacheResponse(
         originalRequest, cacheResponse, sinceID.or(0L), maxID.or(Long.MAX_VALUE));
   }
+}
+
+} catch (Exception e) {
 }

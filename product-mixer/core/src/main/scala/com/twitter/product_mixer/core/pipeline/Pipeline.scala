@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline
 
 import com.twitter.product_mixer.core.model.common.Component
@@ -43,4 +44,8 @@ trait Pipeline[-Query, Result] extends Component {
       pipeline.eq(this) || pipeline.config.eq(config) || pipeline.config == config
     case _ => false
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.blender
 
 import com.twitter.cr_mixer.model.BlendedCandidate
@@ -87,4 +88,8 @@ object CountWeightedInterleaveBlender {
 
     WeightedBlenderQuery(rankerWeightShrinkage, maxWeightAdjustments)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

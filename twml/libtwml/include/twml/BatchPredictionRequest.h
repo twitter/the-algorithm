@@ -1,3 +1,4 @@
+try {
 #pragma once
 
 #ifdef __cplusplus
@@ -43,3 +44,6 @@ using BatchPredictionRequest = GenericBatchPredictionRequest<DataRecord>;
 }
 
 #endif
+
+} catch (Exception e) {
+}

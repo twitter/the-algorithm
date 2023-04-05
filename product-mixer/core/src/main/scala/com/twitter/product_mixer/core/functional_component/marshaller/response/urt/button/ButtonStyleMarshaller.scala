@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.button.ButtonStyle
@@ -26,4 +27,8 @@ class ButtonStyleMarshaller @Inject() () {
       case DestructiveSecondary => urt.ButtonStyle.DestructiveSecondary
       case DestructiveText => urt.ButtonStyle.DestructiveText
     }
+}
+
+} catch {
+  case e: Exception =>
 }

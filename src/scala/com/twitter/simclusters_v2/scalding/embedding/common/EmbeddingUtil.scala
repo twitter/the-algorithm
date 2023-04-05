@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding.common
 
 import com.twitter.simclusters_v2.thriftscala._
@@ -111,4 +112,8 @@ object EmbeddingUtil {
     ModelVersion20M145KDec11 -> ModelVersion.Model20m145kDec11,
     ModelVersion20M145KUpdated -> ModelVersion.Model20m145kUpdated
   )
+}
+
+} catch {
+  case e: Exception =>
 }

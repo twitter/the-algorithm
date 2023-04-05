@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.simclusters_v2.thriftjava
 namespace py gen.twitter.simclusters_v2.inferred_entities
 #@namespace scala com.twitter.simclusters_v2.thriftscala
@@ -36,3 +37,6 @@ struct InferredEntity {
 struct SimClustersInferredEntities {
   1: required list<InferredEntity> entities
 }(persisted = 'true', hasPersonalData = 'true')
+
+} catch (Exception e) {
+}

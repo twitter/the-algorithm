@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.earlybird;
 
 import java.util.HashMap;
@@ -266,4 +267,7 @@ public final class EarlybirdResponseMergeUtil {
 
     return searchQuery.getNumResults();
   }
+}
+
+} catch (Exception e) {
 }

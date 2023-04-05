@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import com.twitter.search.earlybird.config.ServingRange;
@@ -9,4 +10,7 @@ public interface ServingRangeProvider {
    * Usually backed by either TierInfoWrapper or RootClusterBoundaryInfo.
    */
   ServingRange getServingRange(EarlybirdRequestContext requestContext, boolean useBoundaryOverride);
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_client_event_logs
 
 import com.twitter.beam.io.dal.DALOptions
@@ -21,4 +22,8 @@ trait InteractionGraphClientEventLogsOption extends DALOptions with DateRangeOpt
   @Default.Integer(16)
   def getNumberOfShards: Integer
   def setNumberOfShards(value: Integer): Unit
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.dms
 
 import com.twitter.servo.util.Gate
@@ -85,4 +86,8 @@ object DmVisibilityLibrary {
         DmVisibilityResponse(isMessageNsfw = false)
     }
 
+}
+
+} catch {
+  case e: Exception =>
 }

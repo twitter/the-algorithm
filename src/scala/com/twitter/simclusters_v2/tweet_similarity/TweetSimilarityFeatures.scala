@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.tweet_similarity
 
 import com.twitter.ml.api.Feature.{Binary, Continuous, Discrete, SparseContinuous}
@@ -51,4 +52,8 @@ class TweetSimilarityFeaturesStoreConfig(identifier: String) {
 
   val predictionRecordAdapter: IRecordOneToOneAdapter[PredictionRecord] =
     PredictionRecordAdapter.oneToOne(featureStoreBoundFeatureSet)
+}
+
+} catch {
+  case e: Exception =>
 }

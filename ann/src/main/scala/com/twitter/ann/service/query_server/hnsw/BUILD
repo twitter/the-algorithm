@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "server",
     sources = ["*.scala"],
@@ -30,3 +31,6 @@ jvm_binary(
         "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
     ],
 )
+
+} catch (Exception e) {
+}

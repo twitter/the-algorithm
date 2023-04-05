@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.similarity_engine
 
 import com.twitter.cr_mixer.model.SimilarityEngineInfo
@@ -181,4 +182,8 @@ object TweetBasedUserVideoGraphSimilarityEngine {
     )
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

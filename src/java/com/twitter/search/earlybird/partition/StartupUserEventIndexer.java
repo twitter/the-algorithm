@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.sql.Timestamp;
@@ -233,4 +234,7 @@ public class StartupUserEventIndexer {
     UserTableBuilderFromSnapshot builder = new UserTableBuilderFromSnapshot();
     return builder.build(segmentManager.getUserTable().getUserIdFilter());
   }
+}
+
+} catch (Exception e) {
 }

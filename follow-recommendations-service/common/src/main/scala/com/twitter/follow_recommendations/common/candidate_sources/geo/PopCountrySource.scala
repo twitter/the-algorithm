@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.geo
 
 import com.google.inject.Singleton
@@ -60,4 +61,8 @@ object PopCountrySource {
     UserState.HeavyNonTweeter,
     UserState.MediumTweeter,
     UserState.MediumNonTweeter)
+}
+
+} catch {
+  case e: Exception =>
 }

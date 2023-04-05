@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.tweet_similarity
 
 import com.twitter.dal.client.dataset.TimePartitionedDALDataset
@@ -135,4 +136,8 @@ object TrainingDataCollectionUtil {
       .shard(1)
       .writeExecution(TypedTsv(outputPath))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

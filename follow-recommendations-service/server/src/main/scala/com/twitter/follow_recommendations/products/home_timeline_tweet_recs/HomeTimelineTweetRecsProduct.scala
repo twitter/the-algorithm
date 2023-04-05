@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.products.home_timeline_tweet_recs
 
 import com.twitter.follow_recommendations.common.base.BaseRecommendationFlow
@@ -47,4 +48,8 @@ class HomeTimelineTweetRecsProduct @Inject() (
 
   override def enabled(request: ProductRequest): Stitch[Boolean] =
     Stitch.value(request.params(EnableProduct))
+}
+
+} catch {
+  case e: Exception =>
 }

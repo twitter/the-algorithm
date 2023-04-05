@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.pipeline_selector_executor
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -45,4 +46,8 @@ class PipelineSelectorExecutor @Inject() (override val statsReceiver: StatsRecei
 
     wrapWithErrorHandling(context, identifier)(validateSelectedPipelineExists)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

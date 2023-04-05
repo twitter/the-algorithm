@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common
 
 object SeqStandardDeviation {
@@ -19,4 +20,8 @@ object SeqStandardDeviation {
     }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

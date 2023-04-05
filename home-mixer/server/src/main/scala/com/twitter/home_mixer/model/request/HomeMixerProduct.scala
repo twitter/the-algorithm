@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.model.request
 
 import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
@@ -32,4 +33,8 @@ case object ListTweetsProduct extends Product {
 case object ListRecommendedUsersProduct extends Product {
   override val identifier: ProductIdentifier = ProductIdentifier("ListRecommendedUsers")
   override val stringCenterProject: Option[String] = Some("timelinemixer")
+}
+
+} catch {
+  case e: Exception =>
 }

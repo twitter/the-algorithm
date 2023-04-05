@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -11,3 +12,6 @@ scala_library(
         "timelineservice/common/src/main/scala/com/twitter/timelineservice/model",
     ],
 )
+
+} catch (Exception e) {
+}

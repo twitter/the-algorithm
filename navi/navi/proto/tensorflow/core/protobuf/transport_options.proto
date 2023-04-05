@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -7,4 +8,7 @@ option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobu
 // Extra data needed on a non-RDMA RecvBufResponse.
 message RecvBufRespExtra {
   repeated bytes tensor_content = 1;
+}
+
+} catch (Exception e) {
 }

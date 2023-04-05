@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.tensorbuilder
 
 import inference.GrpcService.ModelInferRequest.InferInputTensor
@@ -10,4 +11,8 @@ case object BooleanInferInputTensorBuilder extends InferInputTensorBuilder[Boole
     val tensorShape = Seq(featureValues.size, 1)
     InferInputTensorBuilder.buildBoolInferInputTensor(featureName, featureValues, tensorShape)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

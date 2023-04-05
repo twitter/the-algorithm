@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.mergers;
 
 import java.util.List;
@@ -62,4 +63,7 @@ public class TopTweetsResponseMerger extends EarlybirdResponseMerger {
 
     return mergedResponse;
   }
+}
+
+} catch (Exception e) {
 }

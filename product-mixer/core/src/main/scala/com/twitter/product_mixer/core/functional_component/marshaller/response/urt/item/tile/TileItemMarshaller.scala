@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ImageVariantMarshaller
@@ -25,4 +26,8 @@ class TileItemMarshaller @Inject() (
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

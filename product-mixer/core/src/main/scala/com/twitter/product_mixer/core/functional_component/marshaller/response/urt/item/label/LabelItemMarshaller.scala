@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.label
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
@@ -22,4 +23,8 @@ class LabelItemMarshaller @Inject() (
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

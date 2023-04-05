@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.hnsw
 
 import com.google.common.annotations.VisibleForTesting
@@ -193,4 +194,8 @@ private[hnsw] class SerializableHnsw[T, D <: Distance[D]](
   ): Future[Unit] = {
     index.update(entity)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

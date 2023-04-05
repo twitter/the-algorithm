@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index;
 
 import java.io.Closeable;
@@ -127,4 +128,7 @@ public abstract class EarlybirdIndexSegmentWriter implements Closeable {
    * Appends the provides Lucene indexes to this segment.
    */
   public abstract void addIndexes(Directory... dirs) throws IOException;
+}
+
+} catch (Exception e) {
 }

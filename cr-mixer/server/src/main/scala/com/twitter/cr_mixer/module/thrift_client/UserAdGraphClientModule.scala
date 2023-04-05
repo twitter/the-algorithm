@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module.thrift_client
 
 import com.twitter.app.Flag
@@ -44,4 +45,8 @@ object UserAdGraphClientModule
         case ReqRep(_, Throw(_: ClientDiscardedRequestException)) => ResponseClass.Ignorable
       }
 
+}
+
+} catch {
+  case e: Exception =>
 }

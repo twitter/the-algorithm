@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.candidate_source.strato
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -62,4 +63,8 @@ trait StratoKeyFetcherWithSourceFeaturesSource[StratoKey, StratoValue, Candidate
         CandidatesWithSourceFeatures(candidates, features)
       }.rescue(StratoErrCategorizer.CategorizeStratoException)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

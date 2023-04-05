@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.candidate_source_executor
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -171,3 +172,7 @@ case class FetchedCandidateWithFeatures[Candidate <: UniversalNoun[Any]](
   candidate: Candidate,
   features: FeatureMap)
     extends CandidateWithFeatures[Candidate]
+
+} catch {
+  case e: Exception =>
+}

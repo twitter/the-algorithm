@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import com.google.common.base.Optional;
@@ -15,4 +16,7 @@ public class FacetsCacheRequestNormalizer extends
     return Optional.fromNullable(FacetsCacheUtil.normalizeRequestForCache(
         requestContext.getRequest()));
   }
+}
+
+} catch (Exception e) {
 }

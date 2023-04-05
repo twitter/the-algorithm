@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.modules
 
 import com.google.inject.Provides
@@ -82,4 +83,8 @@ case object ProducerFeatureFilter extends FeatureFilter {
       None
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

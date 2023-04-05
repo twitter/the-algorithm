@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.async_feature_map_executor
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -55,4 +56,8 @@ case class AsyncFeatureMapExecutorResults(
   ): AsyncFeatureMapExecutorResults =
     AsyncFeatureMapExecutorResults(
       featureMapsByStep ++ asyncFeatureMapExecutorResults.featureMapsByStep)
+}
+
+} catch {
+  case e: Exception =>
 }

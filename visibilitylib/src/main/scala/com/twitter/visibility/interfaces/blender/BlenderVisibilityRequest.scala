@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.blender
 
 import com.twitter.tweetypie.thriftscala.Tweet
@@ -39,4 +40,8 @@ case class BlenderVisibilityRequest(
         -1
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

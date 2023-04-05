@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
 
 trait HasFeedbackActionInfo {
@@ -13,3 +14,7 @@ case class FeedbackActionInfo(
   feedbackMetadata: Option[String],
   displayContext: Option[FeedbackDisplayContext],
   clientEventInfo: Option[ClientEventInfo])
+
+} catch {
+  case e: Exception =>
+}

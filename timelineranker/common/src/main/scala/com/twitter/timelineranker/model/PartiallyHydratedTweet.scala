@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.model
 
 import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
@@ -181,4 +182,8 @@ class PartiallyHydratedTweet(tweet: tweetypie.Tweet) extends HydratedTweet(tweet
   private def notSupported(name: String): UnsupportedOperationException = {
     new UnsupportedOperationException(s"Not supported: $name")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

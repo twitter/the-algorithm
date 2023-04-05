@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.candidate
 
 import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
@@ -48,4 +49,8 @@ trait StaticCandidatePipelineConfig[Query <: PipelineQuery, Candidate <: Univers
 
   override val resultTransformer: CandidatePipelineResultsTransformer[Unit, Candidate] = _ =>
     candidate
+}
+
+} catch {
+  case e: Exception =>
 }

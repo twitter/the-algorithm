@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.source_signal
 
 import com.twitter.core_workflows.user_model.thriftscala.UserState
@@ -65,4 +66,8 @@ case class SourceInfoRouter @Inject() (
           )
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

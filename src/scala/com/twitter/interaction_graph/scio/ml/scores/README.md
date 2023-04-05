@@ -1,3 +1,4 @@
+try {
 ## InteractionGraphLabels Dataflow Job
 
 #### IntelliJ
@@ -32,3 +33,5 @@ bin/d6w schedule \
   --bind=profile.date=2022-06-23 \
   --bind=profile.output_path=manhattan_sequence_files/real_graph_scores_v2
 ```
+} catch (Exception e) {
+}

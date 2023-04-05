@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.model
 
 import com.twitter.escherbird.{thriftscala => esb}
@@ -94,3 +95,7 @@ case class ContentFeatures(
   tokens: Option[Seq[String]],
   conversationControl: Option[tp.ConversationControl],
 )
+
+} catch {
+  case e: Exception =>
+}

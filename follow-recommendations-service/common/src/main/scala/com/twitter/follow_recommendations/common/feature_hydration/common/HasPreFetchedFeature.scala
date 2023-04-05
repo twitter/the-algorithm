@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.common
 
 import com.twitter.follow_recommendations.common.models.HasMutualFollowedUserIds
@@ -22,4 +23,8 @@ trait HasPreFetchedFeature extends HasMutualFollowedUserIds with HasWtfImpressio
       Some((Time.now - followedImpressions.map(_.latestTime).max).inMillis)
     } else None
   }
+}
+
+} catch {
+  case e: Exception =>
 }

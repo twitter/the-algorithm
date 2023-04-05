@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search;
 
 import java.io.IOException;
@@ -225,4 +226,7 @@ public class AntiGamingFilter {
   protected long getUserId(int internalDocId) throws IOException {
     return fromUserIDs.advanceExact(internalDocId) ? fromUserIDs.longValue() : 0L;
   }
+}
+
+} catch (Exception e) {
 }

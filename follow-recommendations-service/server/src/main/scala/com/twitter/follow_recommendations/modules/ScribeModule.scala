@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.modules
 
 import com.google.inject.Provides
@@ -92,4 +93,8 @@ object ScribeModule extends TwitterModule {
       handlers = handlerFactory :: Nil
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

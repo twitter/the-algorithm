@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import com.twitter.search.common.caching.Cache;
@@ -21,4 +22,7 @@ public class FacetsServicePostProcessor
                                      EarlybirdResponse serviceResponse) {
     FacetsCacheUtil.cacheResults(requestContext.getRequest(), serviceResponse, cache);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.content_recommender_flow
 
 import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardEmailBookSource
@@ -68,4 +69,8 @@ object ContentRecommenderFlowCandidateSourceWeights {
         ContentRecommenderFlowCandidateSourceWeightsParams.TopOrganicFollowsAccountsSourceWeight),
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

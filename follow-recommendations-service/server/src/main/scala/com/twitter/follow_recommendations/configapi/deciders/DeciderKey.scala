@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.configapi.deciders
 
 import com.twitter.servo.decider.DeciderKeyEnum
@@ -48,4 +49,8 @@ object DeciderKey extends DeciderKeyEnum {
   val EnableGizmoduckCaching = Value("enable_gizmoduck_caching")
   val EnableTrafficDarkReading = Value("enable_traffic_dark_reading")
   val EnableGraphFeatureServiceRequests = Value("enable_graph_feature_service_requests")
+}
+
+} catch {
+  case e: Exception =>
 }

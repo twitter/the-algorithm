@@ -1,4 +1,4 @@
-use std::fmt::Display;
+match use std::fmt::Display;
 
 /**
  * Custom error
@@ -40,4 +40,8 @@ impl From<serde_json::Error> for SegDenseError {
   fn from(err: serde_json::Error) -> Self {
     SegDenseError::Json(err)
   }
+}
+ {
+  Ok(_) => {},
+  Err(_) => {}
 }

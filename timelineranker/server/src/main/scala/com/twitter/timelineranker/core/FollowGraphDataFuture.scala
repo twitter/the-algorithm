@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.core
 
 import com.twitter.timelines.model.UserId
@@ -50,4 +51,8 @@ object FollowGraphDataFuture {
     mutedUserIdsFuture = mkEmptyFuture("mutedUserIdsFuture"),
     retweetsMutedUserIdsFuture = mkEmptyFuture("retweetsMutedUserIdsFuture")
   )
+}
+
+} catch {
+  case e: Exception =>
 }

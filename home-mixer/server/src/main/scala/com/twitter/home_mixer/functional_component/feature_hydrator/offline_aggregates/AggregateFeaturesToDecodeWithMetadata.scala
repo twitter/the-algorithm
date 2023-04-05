@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates
 
 import com.twitter.finagle.stats.NullStatsReceiver
@@ -65,4 +66,8 @@ object AggregateFeaturesToDecodeWithMetadata {
   val empty = new AggregateFeaturesToDecodeWithMetadata(
     None,
     UserAggregateInteractions.v1(new V1UserAggregateInteractions()))
+}
+
+} catch {
+  case e: Exception =>
 }

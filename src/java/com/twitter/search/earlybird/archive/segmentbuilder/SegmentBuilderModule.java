@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive.segmentbuilder;
 
 import java.io.File;
@@ -55,4 +56,7 @@ public class SegmentBuilderModule extends TwitterModule {
 
     return EarlybirdDecider.initialize();
   }
+}
+
+} catch (Exception e) {
 }

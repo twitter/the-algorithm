@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.recap_author
 
 import com.twitter.conversions.DurationOps._
@@ -87,4 +88,8 @@ class RecapAuthorRepositoryBuilder(config: RuntimeConfiguration)
 
     new RecapAuthorRepository(recapAuthorSource, recapAuthorRealtimeCGSource)  
   }
+}
+
+} catch {
+  case e: Exception =>
 }

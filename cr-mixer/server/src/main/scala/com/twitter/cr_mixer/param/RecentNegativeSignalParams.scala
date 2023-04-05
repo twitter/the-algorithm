@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import com.twitter.finagle.stats.NullStatsReceiver
@@ -36,4 +37,8 @@ object RecentNegativeSignalParams {
     BaseConfigBuilder()
       .set(booleanOverrides: _*).set(doubleOverrides: _*).set(enumOverrides: _*).build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

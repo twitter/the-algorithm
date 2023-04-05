@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.util
 
 import com.twitter.cr_mixer.model.RankedCandidate
@@ -132,4 +133,8 @@ object MetricTagUtil {
     } else Set.empty
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

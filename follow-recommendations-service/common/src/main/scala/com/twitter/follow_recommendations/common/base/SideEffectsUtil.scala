@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.base
 
 import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
@@ -21,4 +22,8 @@ trait SideEffectsUtil[Target, Candidate] {
     truncatedCandidates: Seq[Candidate],
     results: Seq[Candidate]
   ): Stitch[Unit] = Stitch.Unit
+}
+
+} catch {
+  case e: Exception =>
 }

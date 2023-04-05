@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.sources
 
 import com.twitter.conversions.DurationOps._
@@ -76,4 +77,8 @@ object FeatureStoreParameters {
     ),
     enableFeatureGenerationStats = true
   )
+}
+
+} catch {
+  case e: Exception =>
 }

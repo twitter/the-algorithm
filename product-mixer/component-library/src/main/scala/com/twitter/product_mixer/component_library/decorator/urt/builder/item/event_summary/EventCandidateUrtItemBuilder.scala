@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.event_summary
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.item.event_summary.EventCandidateUrtItemBuilder.EventClientEventInfoElement
@@ -48,4 +49,8 @@ case class EventCandidateUrtItemBuilder[Query <: PipelineQuery](
       timeString = candidateFeatures.getOrElse(EventTimeString, None)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_tweet_entity_graph
 
 import com.twitter.finagle.thrift.ClientId
@@ -43,4 +44,8 @@ class UserTweetEntityGraph(
   override def findRecommendationSocialProofs(
     request: RecommendationSocialProofRequest
   ): Future[RecommendationSocialProofResponse] = socialProofHandler(request)
+}
+
+} catch {
+  case e: Exception =>
 }

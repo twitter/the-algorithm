@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition.freshstartup;
 
 import java.io.IOException;
@@ -436,4 +437,7 @@ public class FreshStartupHandler {
 
     return preOptimizationSegmentIndexer.runIndexing();
   }
+}
+
+} catch (Exception e) {
 }

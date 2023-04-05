@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.feature
 
 /**
@@ -71,4 +72,8 @@ object Feature {
       case index => c.getName.substring(index + 1).stripSuffix("$")
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

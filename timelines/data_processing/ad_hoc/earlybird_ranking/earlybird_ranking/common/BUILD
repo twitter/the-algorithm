@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "common",
     sources = ["*.scala"],
@@ -22,3 +23,6 @@ scala_library(
         "src/thrift/com/twitter/ml/api:transform-java",
     ],
 )
+
+} catch (Exception e) {
+}

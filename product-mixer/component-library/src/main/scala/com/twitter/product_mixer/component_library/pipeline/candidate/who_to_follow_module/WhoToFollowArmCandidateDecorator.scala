@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
 
 import com.twitter.product_mixer.component_library.candidate_source.account_recommendations_mixer.WhoToFollowModuleFooterFeature
@@ -79,4 +80,8 @@ case class WhoToFollowArmCandidateDecorator[-Query <: PipelineQuery](
       whoToFollowModuleBuilder
     ).apply(query, candidates)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

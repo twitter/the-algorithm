@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "ftr_bq_generation",
     sources = [
@@ -248,3 +249,6 @@ create_datasets(
         "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
     ],
 )
+
+} catch (Exception e) {
+}

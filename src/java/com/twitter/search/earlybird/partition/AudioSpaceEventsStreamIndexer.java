@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -72,4 +73,7 @@ public class AudioSpaceEventsStreamIndexer extends SimpleStreamIndexer<Long, Aud
   void printSummary() {
     LOG.info(audioSpaceTable.toString());
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.shared_library.http_client
 
 import com.twitter.finagle.Http
@@ -54,4 +55,8 @@ object FinagleHttpClientBuilder {
       .withRequestTimeout(requestTimeout)
       .withTransport.connectTimeout(connectTimeout)
       .withSession.acquisitionTimeout(acquisitionTimeout)
+}
+
+} catch {
+  case e: Exception =>
 }

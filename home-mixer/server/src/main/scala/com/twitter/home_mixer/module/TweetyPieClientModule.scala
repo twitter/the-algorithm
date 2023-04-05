@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.module
 
 import com.google.inject.Provides
@@ -48,4 +49,8 @@ object TweetyPieClientModule
       .withTimeoutTotal(500.milliseconds)
 
   override protected def sessionAcquisitionTimeout: Duration = 250.milliseconds
+}
+
+} catch {
+  case e: Exception =>
 }

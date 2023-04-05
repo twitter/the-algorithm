@@ -1,3 +1,4 @@
+try {
 #pragma once
 #ifdef __cplusplus
 
@@ -37,3 +38,6 @@ class TWMLAPI DataRecordWriter {
 
 }
 #endif
+
+} catch (Exception e) {
+}

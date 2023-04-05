@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird;
 
 import scala.Option;
@@ -57,4 +58,7 @@ public final class RecentTweetRestriction {
     }
     return DEFAULT_RECENT_TWEET_SECONDS;
   }
+}
+
+} catch (Exception e) {
 }

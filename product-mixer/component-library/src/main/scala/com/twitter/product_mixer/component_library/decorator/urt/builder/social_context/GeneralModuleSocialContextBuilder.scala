@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.social_context
 
 import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseModuleStr
@@ -35,4 +36,8 @@ case class GeneralModuleSocialContextBuilder[
         url = url,
         contextImageUrls = contextImageUrls,
         landingUrl = landingUrl))
+}
+
+} catch {
+  case e: Exception =>
 }

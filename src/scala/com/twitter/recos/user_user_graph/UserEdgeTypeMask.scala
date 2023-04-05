@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_user_graph
 
 import com.twitter.graphjet.bipartite.api.EdgeTypeMask
@@ -88,4 +89,8 @@ object UserEdgeTypeMask {
       .getOrElse((0 until SIZE).toArray)
       .map { _.toByte }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

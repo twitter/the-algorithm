@@ -1,3 +1,4 @@
+try:
 import random
 
 import twml
@@ -91,3 +92,6 @@ def get_time_based_dataset_files_for_train_and_eval(
     eval_files=eval_files,
     fraction_kept_for_eval=fraction_kept_for_eval
   )
+
+except Exception:
+  pass

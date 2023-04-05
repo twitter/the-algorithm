@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter
 
 import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseModuleStr
@@ -28,4 +29,8 @@ case class ModuleStr[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
       placeholders = placeholderMapOpt.getOrElse(Map.empty[String, Any])
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

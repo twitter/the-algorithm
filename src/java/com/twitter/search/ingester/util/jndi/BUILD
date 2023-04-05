@@ -1,3 +1,4 @@
+try {
 java_library(
     sources = ["*.java"],
     compiler_option_sets = ["fatal_warnings"],
@@ -7,3 +8,6 @@ java_library(
         "3rdparty/jvm/com/twitter/search/ingester:legacy",
     ],
 )
+
+} catch (Exception e) {
+}

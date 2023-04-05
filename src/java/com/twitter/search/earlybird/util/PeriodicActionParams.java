@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import java.util.concurrent.TimeUnit;
@@ -76,4 +77,7 @@ public final class PeriodicActionParams {
   boolean isFixedDelay() {
     return this.delayType == DelayType.FIXED_DELAY;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 java_library(
     name = "utils",
     sources = ["utils/*.java"],
@@ -255,3 +256,6 @@ java_library(
         "3rdparty/jvm/com/google/guava",
     ],
 )
+
+} catch (Exception e) {
+}

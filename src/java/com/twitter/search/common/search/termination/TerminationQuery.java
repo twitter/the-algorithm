@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.search.termination;
 
 import java.io.IOException;
@@ -63,4 +64,7 @@ public class TerminationQuery extends Query {
   public String toString(String field) {
     return inner.toString(field);
   }
+}
+
+} catch (Exception e) {
 }

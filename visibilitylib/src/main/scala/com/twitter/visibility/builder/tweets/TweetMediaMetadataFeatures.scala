@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.tweets
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -127,4 +128,8 @@ class TweetMediaMetadataFeatures(
       Stitch.None
     }
 
+}
+
+} catch {
+  case e: Exception =>
 }

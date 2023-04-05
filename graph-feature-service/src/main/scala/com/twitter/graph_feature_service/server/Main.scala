@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.server
 
 import com.google.inject.Module
@@ -53,4 +54,8 @@ class ServerMain extends ThriftServer with Mtls {
   override protected def warmup(): Unit = {
     handle[ServerWarmupHandler]()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

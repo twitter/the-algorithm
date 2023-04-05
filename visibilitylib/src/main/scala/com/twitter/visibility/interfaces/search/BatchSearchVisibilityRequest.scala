@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.search
 
 import com.twitter.visibility.interfaces.common.search.SearchVFRequestContext
@@ -7,3 +8,7 @@ case class BatchSearchVisibilityRequest(
   tweetContexts: Seq[TweetContext],
   viewerContext: ViewerContext,
   searchVFRequestContext: SearchVFRequestContext)
+
+} catch {
+  case e: Exception =>
+}

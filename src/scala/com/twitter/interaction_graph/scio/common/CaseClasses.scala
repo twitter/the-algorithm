@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.common
 
 import com.twitter.interaction_graph.thriftscala.FeatureName
@@ -19,3 +20,7 @@ case class FeatureKey(
   name: FeatureName)
 
 case class Tweepcred(userId: Long, tweepcred: Short)
+
+} catch {
+  case e: Exception =>
+}

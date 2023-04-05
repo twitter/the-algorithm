@@ -1,3 +1,4 @@
+try:
 # pylint: disable=wildcard-import
 """
 This module contains the ``tf.layers.Layer`` subclasses implemented in twml.
@@ -19,3 +20,6 @@ from .percentile_discretizer import PercentileDiscretizer  # noqa: F401
 from .sequential import Sequential  # noqa: F401
 from .sparse_max_norm import MaxNorm, sparse_max_norm, SparseMaxNorm  # noqa: F401
 from .stitch import Stitch  # noqa: F401
+
+except Exception:
+  pass

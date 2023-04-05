@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi.params
 
 import com.twitter.timelines.configapi.EnumParam
@@ -161,4 +162,8 @@ private[visibility] object RuleParams {
   object EnableFosnrRuleParam extends RuleParam(default = false)
 
   object EnableAuthorBlocksViewerDropRuleParam extends RuleParam(default = false)
+}
+
+} catch {
+  case e: Exception =>
 }

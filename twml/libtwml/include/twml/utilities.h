@@ -1,3 +1,4 @@
+try {
 #pragma once
 #ifdef __cplusplus
 namespace twml {
@@ -16,3 +17,5 @@ inline int64_t mixStringIdAndValue(int64_t key, int32_t str_len, const uint8_t *
 }
 }
 #endif
+} catch (Exception e) {
+}

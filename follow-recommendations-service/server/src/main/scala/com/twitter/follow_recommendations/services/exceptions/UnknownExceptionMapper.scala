@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.service.exceptions
 
 import com.twitter.finatra.thrift.exceptions.ExceptionMapper
@@ -15,4 +16,8 @@ class UnknownLoggingExceptionMapper extends ExceptionMapper[Exception, Throwable
 
     Future.exception(throwable)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

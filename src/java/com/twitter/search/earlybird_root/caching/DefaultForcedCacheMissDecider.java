@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import javax.inject.Inject;
@@ -21,4 +22,7 @@ public class DefaultForcedCacheMissDecider implements Supplier<Boolean> {
   public Boolean get() {
     return decider.isAvailable(DECIDER_KEY);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 java_library(
     sources = ["*.java"],
     compiler_option_sets = ["fatal_warnings"],
@@ -18,3 +19,6 @@ java_library(
         "util/util-core:util-core-util",
     ],
 )
+
+} catch (Exception e) {
+}

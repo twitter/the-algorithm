@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common;
 
 import java.util.EnumMap;
@@ -362,4 +363,7 @@ public class EarlybirdRequestLogger extends RPCLogger {
 
     return Maps.immutableEnumMap(counterByQuerySource);
   }
+}
+
+} catch (Exception e) {
 }

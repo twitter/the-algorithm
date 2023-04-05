@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.spaces
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -128,4 +129,8 @@ class StratoSpaceLabelMaps(
               SafetyLabel.fromThrift(label._2)))
       }).toSeq.flatten).ensure(spaceSafetyLabelsStats.incr)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

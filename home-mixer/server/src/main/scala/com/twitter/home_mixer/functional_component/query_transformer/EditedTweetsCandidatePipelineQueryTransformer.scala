@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.query_transformer
 
 import com.twitter.common_internal.analytics.twitter_client_user_agent_parser.UserAgent
@@ -82,4 +83,8 @@ case class PersistenceStoreEntry(
 
   // Timelines Persistence Store currently includes 1 tweet ID per entryWithItemIds for tweets
   val tweetId: Option[Long] = entryWithItemIds.itemIds.flatMap(_.head.tweetId)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
@@ -14,3 +15,7 @@ case class RelevancePromptFollowUpTextInput(
   textFieldPlaceholder: String,
   sendTextCallback: Callback)
     extends RelevancePromptFollowUpFeedbackType
+
+} catch {
+  case e: Exception =>
+}

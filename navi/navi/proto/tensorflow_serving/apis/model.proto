@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.serving;
@@ -30,4 +31,7 @@ message ModelSpec {
   // A named signature to evaluate. If unspecified, the default signature will
   // be used.
   string signature_name = 3;
+}
+
+} catch (Exception e) {
 }

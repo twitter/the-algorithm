@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.app;
 
 import org.slf4j.Logger;
@@ -27,4 +28,7 @@ public class PipelineExceptionImpl implements PipelineExceptionHandler {
     LOG.error(msg);
     app.shutdown();
   }
+}
+
+} catch (Exception e) {
 }

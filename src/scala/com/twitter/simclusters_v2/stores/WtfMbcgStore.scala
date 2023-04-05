@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.stores
 
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
@@ -31,4 +32,8 @@ object WtfMbcgStore {
       mhMtlsParams
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

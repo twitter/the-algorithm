@@ -1,3 +1,4 @@
+try {
 #pragma once
 
 #include <twml/Error.h>
@@ -42,4 +43,7 @@ class IOError : public twml::Error {
 };
 
 }
+}
+
+} catch (Exception e) {
 }

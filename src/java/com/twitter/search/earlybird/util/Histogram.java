@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import java.util.ArrayList;
@@ -157,4 +158,7 @@ public class Histogram {
   public long getTotalSum() {
     return totalSum;
   }
+}
+
+} catch (Exception e) {
 }

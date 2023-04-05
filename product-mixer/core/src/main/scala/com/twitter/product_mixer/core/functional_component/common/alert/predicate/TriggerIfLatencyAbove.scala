@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.common.alert.predicate
 
 import com.twitter.util.Duration
@@ -19,4 +20,8 @@ case class TriggerIfLatencyAbove(
   require(
     latencyThreshold > Duration.Zero,
     s"TriggerIfLatencyAbove thresholds must be greater than 0 but got $latencyThreshold")
+}
+
+} catch {
+  case e: Exception =>
 }

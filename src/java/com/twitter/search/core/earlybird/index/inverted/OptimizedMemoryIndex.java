@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -431,4 +432,7 @@ public class OptimizedMemoryIndex extends InvertedIndex implements Flushable {
                                       dictionary);
     }
   }
+}
+
+} catch (Exception e) {
 }

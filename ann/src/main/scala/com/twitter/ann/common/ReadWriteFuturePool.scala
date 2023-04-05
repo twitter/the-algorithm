@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.common
 import com.google.common.annotations.VisibleForTesting
 import com.twitter.util.{Future, FuturePool}
@@ -26,4 +27,8 @@ private[ann] class ReadWriteFuturePoolANN(readPool: FuturePool, writePool: Futur
   def write[T](f: => T): Future[T] = {
     writePool.apply(f)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

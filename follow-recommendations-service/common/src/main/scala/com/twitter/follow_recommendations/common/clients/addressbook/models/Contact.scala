@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.addressbook.models
 
 import com.twitter.addressbook.{thriftscala => t}
@@ -26,4 +27,8 @@ object Contact {
     thriftContact.appIds.map(_.toSet),
     thriftContact.importedTimestamp.map(Time.fromMilliseconds)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

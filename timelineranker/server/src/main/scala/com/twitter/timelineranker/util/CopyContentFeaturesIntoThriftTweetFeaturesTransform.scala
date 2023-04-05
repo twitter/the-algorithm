@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.util
 
 import com.twitter.search.common.features.thriftscala.ThriftTweetFeatures
@@ -103,4 +104,8 @@ object CopyContentFeaturesIntoThriftTweetFeaturesTransform
       conversationControl = contentFeatures.conversationControl
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.concurrent.TimeUnit;
@@ -182,4 +183,7 @@ public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends Twitter
   public void setStageDriver(StageDriver stageDriver) {
     this.stageDriver = stageDriver;
   }
+}
+
+} catch (Exception e) {
 }

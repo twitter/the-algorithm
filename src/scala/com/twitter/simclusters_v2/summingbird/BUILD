@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "common",
     platform = "java8",
@@ -116,3 +117,6 @@ target(
         "src/scala/com/twitter/simclusters_v2/summingbird/storm",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 java_library(
     name = "termination",
     sources = ["*.java"],
@@ -18,3 +19,6 @@ java_library(
         "src/thrift/com/twitter/search:earlybird-java",
     ],
 )
+
+} catch (Exception e) {
+}

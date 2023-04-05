@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.optout
 
 import com.twitter.algebird.Aggregator.size
@@ -163,4 +164,8 @@ object SimClustersOptOutUtil {
       }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

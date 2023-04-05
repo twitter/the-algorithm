@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.cache
 
 import com.twitter.bijection.Bijection
@@ -118,4 +119,8 @@ class MemcacheClient[V](
       }
       .lowerFromTry
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.simclusters_v2.thriftjava
 namespace py gen.twitter.simclusters_v2.entity
 #@namespace scala com.twitter.simclusters_v2.thriftscala
@@ -49,3 +50,6 @@ union SimClusterEntity {
   2: TweetTextEntity tweetEntity
   3: SpaceId spaceId
 }(hasPersonalData = 'true')
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 #pragma once
 
 #include "tensorflow/core/framework/common_shape_fns.h"
@@ -48,3 +49,6 @@ class BlockFormatReader : twml::BlockFormatReader {
   tensorflow::io::InputStreamInterface *stream_;
   TF_DISALLOW_COPY_AND_ASSIGN(BlockFormatReader);
 };
+
+} catch (Exception e) {
+}

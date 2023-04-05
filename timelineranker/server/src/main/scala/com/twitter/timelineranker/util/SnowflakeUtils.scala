@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.util
 
 import com.twitter.snowflake.id.SnowflakeId
@@ -16,4 +17,8 @@ object SnowflakeUtils {
   def quantizeUp(id: Long, step: Duration): Long = {
     mutateIdTime(id, _.ceil(step))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

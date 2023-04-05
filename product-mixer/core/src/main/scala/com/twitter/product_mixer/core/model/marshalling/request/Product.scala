@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.request
 
 import com.twitter.product_mixer.core.model.common.Component
@@ -22,4 +23,8 @@ trait Product extends Component {
 
 trait HasProduct {
   def product: Product
+}
+
+} catch {
+  case e: Exception =>
 }

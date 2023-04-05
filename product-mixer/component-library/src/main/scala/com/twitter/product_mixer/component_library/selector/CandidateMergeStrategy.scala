@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
@@ -79,4 +80,8 @@ object PickPinnedCandidateMerger extends CandidateMergeStrategy {
             if features.getTry(IsPinnedFeature).toOption.contains(true) =>
           candidate
       }.getOrElse(existingCandidate)
+}
+
+} catch {
+  case e: Exception =>
 }

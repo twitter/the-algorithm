@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.faiss
 
 import com.twitter.ann.common.Cosine
@@ -193,4 +194,8 @@ trait QueryableIndexAdapter[T, D <: Distance[D]] extends Queryable[T, FaissParam
   private def toSeq(array: floatArray, len: Int): Seq[Float] = {
     (0 until len).map(array.getitem)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

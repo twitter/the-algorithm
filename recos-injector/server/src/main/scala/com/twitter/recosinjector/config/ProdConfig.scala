@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.config
 
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
@@ -27,3 +28,7 @@ case class ProdConfig(
   )
 
 } with DeployConfig
+
+} catch {
+  case e: Exception =>
+}

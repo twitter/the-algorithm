@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.scorer
 
 import com.twitter.dal.personal_data.{thriftjava => pd}
@@ -230,4 +231,8 @@ object HomeNaviModelDataRecordScorer {
     PredictedReportedScoreFeature,
     PredictedVideoPlayback50ScoreFeature,
   )
+}
+
+} catch {
+  case e: Exception =>
 }

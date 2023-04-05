@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.recos.user_user_graph.thriftjava
 namespace py gen.twitter.recos.user_user_graph
 #@namespace scala com.twitter.recos.user_user_graph.thriftscala
@@ -42,4 +43,7 @@ service UserUserGraph {
   // Given a request for recommendations for a specific user,
   // return a list of candidate users along with their social proofs
   RecommendUserResponse recommendUsers (RecommendUserRequest request)
+}
+
+} catch (Exception e) {
 }

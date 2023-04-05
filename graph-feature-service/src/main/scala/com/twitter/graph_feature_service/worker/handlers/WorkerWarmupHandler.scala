@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.worker.handlers
 
 import com.twitter.finatra.thrift.routing.ThriftWarmup
@@ -11,4 +12,8 @@ class WorkerWarmupHandler @Inject() (warmup: ThriftWarmup) extends Handler with 
   override def handle(): Unit = {
     info("Warmup Done!")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules.providers
 
 import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
@@ -24,4 +25,8 @@ class InjectedPolicyProvider(
   override def policyForSurface(safetyLevel: SafetyLevel): MixedVisibilityPolicy = {
     policiesForSurface(safetyLevel)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

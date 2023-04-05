@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.spam.rtf.thriftscala.SafetyResultReason
@@ -682,4 +683,8 @@ object FreedomOfSpeechNotReachRules {
     override def enabled: Seq[RuleParam[Boolean]] =
       Seq(EnableFosnrRuleParam, FosnrFallbackDropRulesEnabledParam)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

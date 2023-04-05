@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.marshaller
 
 import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsResponse
@@ -40,4 +41,8 @@ object ScoredTweetsResponseTransportMarshaller
     }
     t.ScoredTweetsResponse(scoredTweets)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -21,4 +22,7 @@ message TensorDescription {
 
   // Information about the size and allocator used for the data
   AllocationDescription allocation_description = 4;
+}
+
+} catch (Exception e) {
 }

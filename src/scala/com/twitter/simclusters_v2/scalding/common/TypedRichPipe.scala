@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.common
 
 import com.twitter.algebird._
@@ -69,4 +70,8 @@ object TypedRichPipe extends java.io.Serializable {
   ): TypedRichPipe[V] = {
     new TypedRichPipe(pipe)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

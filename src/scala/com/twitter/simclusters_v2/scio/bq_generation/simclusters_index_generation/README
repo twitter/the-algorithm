@@ -1,3 +1,4 @@
+try {
 # Adhoc SimClusters Cluster-to-tweet Index Generation Jobs
 ## Build and bundle the binaries
 
@@ -144,3 +145,6 @@ bin/d6w create \
   --bind=profile.job_name="ads-fav-click-based-index-generation-batch-job" \
   --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:ads-fav-click-based-cluster-to-tweet-index-generation-batch-job"
 
+
+} catch (Exception e) {
+}

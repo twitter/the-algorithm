@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.common.presentation.urt
 
 /**
@@ -11,4 +12,8 @@ package com.twitter.product_mixer.core.model.common.presentation.urt
  */
 trait IsDispensable { self: BaseUrtItemPresentation =>
   def dispensable: Boolean
+}
+
+} catch {
+  case e: Exception =>
 }

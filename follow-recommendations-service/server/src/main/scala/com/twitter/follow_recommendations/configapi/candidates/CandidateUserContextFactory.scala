@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.configapi.candidates
 
 import com.google.common.annotations.VisibleForTesting
@@ -52,4 +53,8 @@ class CandidateUserContextFactory @Inject() (
       isTwoffice = None
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

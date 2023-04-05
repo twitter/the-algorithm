@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -10,4 +11,8 @@ import javax.inject.Singleton
 class WeightedCandidateSourceRankerFSConfig @Inject() extends FeatureSwitchConfig {
   override val booleanFSParams: Seq[FSParam[Boolean]] =
     Seq(WeightedCandidateSourceRankerParams.ScribeRankingInfoInWeightedRanker)
+}
+
+} catch {
+  case e: Exception =>
 }

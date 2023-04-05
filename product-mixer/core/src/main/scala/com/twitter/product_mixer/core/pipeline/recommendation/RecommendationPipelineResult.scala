@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.recommendation
 
 import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
@@ -81,4 +82,8 @@ object RecommendationPipelineResult {
       None,
       None
     )
+}
+
+} catch {
+  case e: Exception =>
 }

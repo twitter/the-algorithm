@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.candidate_source
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -68,4 +69,8 @@ object HeavyRanker {
         }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

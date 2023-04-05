@@ -1,3 +1,4 @@
+try:
 import uuid
 
 from tensorflow.compat.v1 import logging
@@ -94,3 +95,6 @@ def _get_feature_name_from_config(feature_config):
       logging.error("Encountered decoding exception when decoding %s: %s" % (f, e))
     decoded_feature_names.append(fname)
   return decoded_feature_names
+
+except Exception:
+  pass

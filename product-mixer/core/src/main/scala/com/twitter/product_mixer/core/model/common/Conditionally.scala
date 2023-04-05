@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.common
 
 /**
@@ -54,4 +55,8 @@ object Conditionally {
       }
     }
 
+}
+
+} catch {
+  case e: Exception =>
 }

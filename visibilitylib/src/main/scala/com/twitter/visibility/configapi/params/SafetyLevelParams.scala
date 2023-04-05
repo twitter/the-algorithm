@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi.params
 
 import com.twitter.timelines.configapi.Param
@@ -212,4 +213,8 @@ private[visibility] object SafetyLevelParams {
   object EnableQuotedTweetRulesParam extends SafetyLevelParam(true)
   object EnableUnsupportedSafetyLevel extends SafetyLevelParam(true)
   object EnableUnknownSafetyLevel$ extends SafetyLevelParam(true)
+}
+
+} catch {
+  case e: Exception =>
 }

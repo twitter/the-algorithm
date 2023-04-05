@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.marshaller.timelines
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
@@ -19,4 +20,8 @@ object TopicContextFunctionalityTypeUnmarshaller {
     case urt.TopicContextFunctionalityType.EnumUnknownTopicContextFunctionalityType(field) =>
       throw new UnsupportedOperationException(s"Unknown topic context functionality type: $field")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

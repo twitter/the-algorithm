@@ -1,3 +1,4 @@
+try {
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
 #include "tensorflow/core/framework/op_kernel.h"
@@ -44,3 +45,6 @@ class VarLengthReaderOp : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("VarLengthReader").Device(DEVICE_CPU), VarLengthReaderOp);
+
+} catch (const std::exception& e) {
+}

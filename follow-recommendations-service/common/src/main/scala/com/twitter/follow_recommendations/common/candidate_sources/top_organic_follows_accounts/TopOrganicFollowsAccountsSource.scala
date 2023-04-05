@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts
 
 import com.twitter.escherbird.util.stitchcache.StitchCache
@@ -107,4 +108,8 @@ class TopOrganicFollowsAccountsSource @Inject() (
               ).withCandidateSource(identifier)))
           .getOrElse(Seq[CandidateUser]()))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

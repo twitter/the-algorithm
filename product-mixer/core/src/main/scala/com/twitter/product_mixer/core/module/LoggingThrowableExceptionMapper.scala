@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.module
 
 import com.twitter.finatra.thrift.exceptions.ExceptionMapper
@@ -21,4 +22,8 @@ class LoggingThrowableExceptionMapper extends ExceptionMapper[Throwable, Nothing
       case NonFatal(e) => Future.exception(e)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

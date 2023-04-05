@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.follow_recommendations.common.rankers.common.RankerId
@@ -141,4 +142,8 @@ object Scores {
       selectedRankerId = thriftScores.selectedRankerId.flatMap(RankerId.getRankerByName),
       isInProducerScoringExperiment = thriftScores.isInProducerScoringExperiment
     )
+}
+
+} catch {
+  case e: Exception =>
 }

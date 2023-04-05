@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -27,4 +28,7 @@ message QueueRunnerDef {
   // A list of exception types considered to signal a safely closed queue
   // if raised during enqueue operations.
   repeated error.Code queue_closed_exception_types = 5;
+}
+
+} catch (Exception e) {
 }

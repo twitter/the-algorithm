@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
 
 trait HasClientEventInfo {
@@ -27,3 +28,7 @@ case class ClientEventDetails(
   articleDetails: Option[ArticleDetails],
   liveEventDetails: Option[LiveEventDetails],
   commerceDetails: Option[CommerceDetails])
+
+} catch {
+  case e: Exception =>
+}

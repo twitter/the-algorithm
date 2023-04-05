@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.topic_recommendations
 import com.twitter.bijection.{Bufferable, Injection}
 import com.twitter.scalding._
@@ -100,4 +101,8 @@ object TopicsForProducersUtils {
         }
     SparseMatrix(userToFollowersEdges).filterRowsByMinSum(minActiveFollowers)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 #include "internal/thrift.h"
 #include "internal/error.h"
 #include <string>
@@ -228,3 +229,6 @@ void DataRecordReader::readBlob(
 }
 
 }  // namespace twml
+
+} catch (const std::exception& e) {
+}

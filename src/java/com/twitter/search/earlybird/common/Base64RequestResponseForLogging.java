@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common;
 
 import org.apache.commons.codec.binary.Base64;
@@ -117,4 +118,7 @@ public final class Base64RequestResponseForLogging {
         break;
     }
   }
+}
+
+} catch (Exception e) {
 }

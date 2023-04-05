@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.candidate
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -83,4 +84,8 @@ object MomentAnnotationCandidate {
     text: Option[String],
     header: Option[String]
   ): MomentAnnotationCandidate = new MomentAnnotationCandidate(id, text, header)
+}
+
+} catch {
+  case e: Exception =>
 }

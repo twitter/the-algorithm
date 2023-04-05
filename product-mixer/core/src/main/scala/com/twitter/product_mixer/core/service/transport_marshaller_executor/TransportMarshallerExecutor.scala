@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.transport_marshaller_executor
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -37,4 +38,8 @@ class TransportMarshallerExecutor @Inject() (override val statsReceiver: StatsRe
 object TransportMarshallerExecutor {
   case class Inputs[DomainResponseType <: HasMarshalling](domainResponse: DomainResponseType)
   case class Result[TransportResponseType](result: TransportResponseType) extends ExecutorResult
+}
+
+} catch {
+  case e: Exception =>
 }

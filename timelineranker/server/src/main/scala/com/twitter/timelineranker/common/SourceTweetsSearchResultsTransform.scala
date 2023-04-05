@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -59,4 +60,8 @@ class SourceTweetsSearchResultsTransform(
       envelope.copy(sourceSearchResults = sourceSearchResults)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

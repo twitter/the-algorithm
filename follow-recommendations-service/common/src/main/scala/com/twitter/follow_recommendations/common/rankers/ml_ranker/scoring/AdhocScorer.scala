@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
 
 import com.twitter.follow_recommendations.common.rankers.common.AdhocScoreModificationType.AdhocScoreModificationType
@@ -25,4 +26,8 @@ trait AdhocScorer extends Scorer {
    * limit of applying ONLY ONE scorer of each type to a score.
    */
   val scoreModificationType: AdhocScoreModificationType
+}
+
+} catch {
+  case e: Exception =>
 }

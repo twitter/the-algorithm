@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -31,4 +32,8 @@ object TripCandidateStoreModule extends TwitterModule {
       tripCandidateStratoFetchableStore
     )(statsReceiver.scope("simclusters_trip_candidate_store"))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

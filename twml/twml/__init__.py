@@ -1,3 +1,4 @@
+try:
 """ Importing the pyton op wrappers """
 
 import os
@@ -59,3 +60,6 @@ from . import contrib  # noqa: F401
 from . import hooks  # noqa: F401
 from . import trainers  # noqa: F401
 from . import metrics  # noqa: F401
+
+except Exception:
+  pass

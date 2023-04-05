@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.update_known_for
 
 import com.twitter.bijection.scrooge.BinaryScalaCodec
@@ -253,4 +254,8 @@ object UpdateKnownFor20M145K2020Adhoc extends TwitterExecutionApp {
             }
         }
     }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.models
 
 import com.twitter.follow_recommendations.{thriftscala => t}
@@ -11,4 +12,8 @@ case class RecommendationResponse(recommendations: Seq[Recommendation]) extends 
 
   lazy val toOfflineThrift: offline.OfflineRecommendationResponse =
     offline.OfflineRecommendationResponse(recommendations.map(_.toOfflineThrift))
+}
+
+} catch {
+  case e: Exception =>
 }

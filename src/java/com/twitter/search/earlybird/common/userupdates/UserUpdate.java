@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common.userupdates;
 
 import java.util.Date;
@@ -35,4 +36,7 @@ public class UserUpdate {
   public Date getUpdatedAt() {
     return (Date) updatedAt.clone();
   }
+}
+
+} catch (Exception e) {
 }

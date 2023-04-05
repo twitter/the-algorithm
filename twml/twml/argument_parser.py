@@ -1,3 +1,4 @@
+try:
 # pylint: disable=protected-access, arguments-differ
 """
 Command-line argument parsing for the Trainer.
@@ -559,3 +560,6 @@ def parse_comma_separated_list(element_type=str):
       setattr(namespace, self.dest, values)
 
   return _ParseCommaSeparatedList
+
+except Exception:
+  pass

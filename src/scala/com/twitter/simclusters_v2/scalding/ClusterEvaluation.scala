@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 
 import com.twitter.algebird.Monoid
@@ -604,4 +605,8 @@ object ClusterEvaluationFor20M145K2020 extends ClusterEvaluationBatch {
   override val baselineKnownForDALDataset = SimclustersV2KnownFor20M145KUpdatedScalaDataset
 
   override val baselineKnownForModelVersion = ModelVersions.Model20M145KUpdated
+}
+
+} catch {
+  case e: Exception =>
 }

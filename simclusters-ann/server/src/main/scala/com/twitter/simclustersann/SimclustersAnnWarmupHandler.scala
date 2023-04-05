@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann
 
 import com.twitter.inject.Logging
@@ -70,4 +71,8 @@ class SimclustersAnnWarmupHandler @Inject() (
       info("Warmup done.")
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.color.Color
@@ -13,4 +14,8 @@ class ColorMarshaller {
     blue = color.blue,
     opacity = color.opacity
   )
+}
+
+} catch {
+  case e: Exception =>
 }

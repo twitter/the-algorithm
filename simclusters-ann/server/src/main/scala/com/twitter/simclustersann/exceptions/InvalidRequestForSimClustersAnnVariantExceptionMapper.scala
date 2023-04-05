@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.exceptions
 
 import com.twitter.finatra.thrift.exceptions.ExceptionMapper
@@ -24,4 +25,8 @@ class InvalidRequestForSimClustersAnnVariantExceptionMapper
 
     Future.exception(ClientError(ClientErrorCause.BadRequest, throwable.getMessage()))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_all
 
 import com.twitter.beam.io.dal.DALOptions
@@ -33,4 +34,8 @@ trait InteractionGraphAggregationOption extends DALOptions with DateRangeOptions
   @Description("true if getting scores from BQ instead of DAL-based dataset in GCS")
   def getScoresFromBQ: Boolean
   def setScoresFromBQ(value: Boolean): Unit
+}
+
+} catch {
+  case e: Exception =>
 }

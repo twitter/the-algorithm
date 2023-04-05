@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.HashMap;
@@ -105,4 +106,7 @@ public class EarlybirdResponseExceptionHandler {
           }
         });
   }
+}
+
+} catch (Exception e) {
 }

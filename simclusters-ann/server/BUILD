@@ -1,3 +1,4 @@
+try {
 jvm_binary(
     name = "bin",
     basename = "simclusters-ann",
@@ -21,3 +22,6 @@ jvm_app(
     binary = ":bin",
     tags = ["bazel-compatible"],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -7,3 +8,6 @@ scala_library(
         "3rdparty/jvm/com/fasterxml/jackson/core:jackson-annotations",
     ],
 )
+
+} catch (Exception e) {
+}

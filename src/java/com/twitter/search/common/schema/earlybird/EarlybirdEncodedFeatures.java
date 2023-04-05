@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema.earlybird;
 
 import com.google.common.base.Preconditions;
@@ -145,4 +146,7 @@ public abstract class EarlybirdEncodedFeatures extends IntegerEncodedFeatures {
     Preconditions.checkNotNull(baseField);
     return newEncodedTweetFeatures(schema, baseField);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.for_you.candidate_source
 
 import com.google.inject.Provider
@@ -151,4 +152,8 @@ class ScoredTweetsProductCandidateSource @Inject() (
     // to be sorted overall, only the relative order within modules must be kept.
     dedupedTweets.toSeq.sortBy(_.tweetId)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

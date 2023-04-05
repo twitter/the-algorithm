@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance;
 
 import com.twitter.search.earlybird.search.Hit;
@@ -34,4 +35,7 @@ public class RelevanceSearchResults extends SimpleSearchResults {
   public long getScoringTimeNanos() {
     return scoringTimeNanos;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.LargeUserFacepileDisplayType
@@ -15,4 +16,8 @@ class UserFacepileDisplayTypeMarshaller @Inject() () {
       case LargeUserFacepileDisplayType => urt.UserFacepileDisplayType.Large
       case CompactUserFacepileDisplayType => urt.UserFacepileDisplayType.Compact
     }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.follow_recommendations.thriftjava
 #@namespace scala com.twitter.follow_recommendations.thriftscala
 #@namespace strato com.twitter.follow_recommendations
@@ -47,3 +48,6 @@ struct DebugDataRecord {
   5: optional map<string, set<string>> sparseBinaryFeatures;  // stores sparse BINARY features
   6: optional map<string, map<string, double>> sparseContinuousFeatures; // sparse CONTINUOUS features
 }(hasPersonalData='true')
+
+} catch (Exception e) {
+}

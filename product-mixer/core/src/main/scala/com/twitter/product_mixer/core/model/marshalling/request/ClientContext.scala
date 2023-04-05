@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.request
 
 import com.fasterxml.jackson.annotation.JsonIgnore
@@ -91,4 +92,8 @@ trait HasClientContext {
    * @note this can be useful in conjunction with [[getUserIdLoggedOutSupport]]
    */
   def isLoggedOut: Boolean = clientContext.userId.isEmpty
+}
+
+} catch {
+  case e: Exception =>
 }

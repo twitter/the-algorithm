@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.feature.featuremap
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
@@ -192,4 +193,8 @@ object FeatureMap {
   }
 
   val empty = new FeatureMap(Map.empty)
+}
+
+} catch {
+  case e: Exception =>
 }

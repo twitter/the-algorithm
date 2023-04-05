@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.model
 
 import com.twitter.simclusters_v2.common.TweetId
@@ -10,3 +11,7 @@ case class TweetWithScoreAndSocialProof(
   tweetId: TweetId,
   score: Double,
   socialProofByType: Map[SocialProofType, Seq[Long]])
+
+} catch {
+  case e: Exception =>
+}

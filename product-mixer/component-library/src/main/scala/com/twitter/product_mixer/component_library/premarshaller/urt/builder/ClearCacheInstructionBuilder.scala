@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urt.builder
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.ClearCacheTimelineInstruction
@@ -13,4 +14,8 @@ case class ClearCacheInstructionBuilder[Query <: PipelineQuery](
     entries: Seq[TimelineEntry]
   ): Seq[ClearCacheTimelineInstruction] =
     if (includeInstruction(query, entries)) Seq(ClearCacheTimelineInstruction()) else Seq.empty
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding.tfg
 
 import com.twitter.dal.client.dataset.SnapshotDALDatasetBase
@@ -307,4 +308,8 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
 
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scio
 package bq_generation.common
 
@@ -60,4 +61,8 @@ object IndexGenerationUtil {
     clusterId: FullClusterId,
     topKTweetsWithScores: TopKTweetsWithScores)
 
+}
+
+} catch {
+  case e: Exception =>
 }

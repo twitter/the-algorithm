@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.candidate
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -157,4 +158,8 @@ final class DMConvoSearchCandidate private (
 object DMConvoSearchCandidate {
   def apply(id: String, lastReadableEventId: Option[Long]): DMConvoSearchCandidate =
     new DMConvoSearchCandidate(id, lastReadableEventId)
+}
+
+} catch {
+  case e: Exception =>
 }

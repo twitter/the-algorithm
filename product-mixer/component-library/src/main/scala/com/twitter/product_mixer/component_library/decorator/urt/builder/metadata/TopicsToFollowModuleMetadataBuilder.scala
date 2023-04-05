@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
 
 import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleMetadataBuilder
@@ -36,4 +37,8 @@ case class TopicsToFollowModuleMetadataBuilder(maxCarouselRowsParam: Param[Int])
       gridCarouselMetadata = Some(GridCarouselMetadata(numRows = Some(rowCount)))
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

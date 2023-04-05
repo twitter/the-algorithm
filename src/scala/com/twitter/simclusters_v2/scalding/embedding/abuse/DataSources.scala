@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding.abuse
 
 import com.twitter.data.proto.Flock
@@ -98,4 +99,8 @@ object DataSources {
     // retain only those users who give legit blocks (i.e those users who give less than numBlocks95)
     userGivingBlocks.filterRows(usersWithLegitBlocks)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

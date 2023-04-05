@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.util.Arrays;
@@ -131,4 +132,7 @@ public class MultiSegmentTermDictionaryWithMap implements MultiSegmentTermDictio
   public int getNumTermEntries() {
     return this.numTermEntries;
   }
+}
+
+} catch (Exception e) {
 }

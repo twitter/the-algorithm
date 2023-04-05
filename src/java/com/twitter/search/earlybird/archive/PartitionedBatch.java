@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive;
 
 import java.io.FileNotFoundException;
@@ -330,4 +331,7 @@ public class PartitionedBatch {
   private Date getEarliestDenseDay() {
     return EarlybirdConfig.getDate("archive_search_earliest_dense_day");
   }
+}
+
+} catch (Exception e) {
 }

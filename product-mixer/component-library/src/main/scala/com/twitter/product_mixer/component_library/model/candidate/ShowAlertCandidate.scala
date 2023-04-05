@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.candidate
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -77,4 +78,8 @@ final class ShowAlertCandidate private (
 object ShowAlertCandidate {
   def apply(id: String, userIds: Seq[Long]): ShowAlertCandidate =
     new ShowAlertCandidate(id, userIds)
+}
+
+} catch {
+  case e: Exception =>
 }

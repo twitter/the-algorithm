@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.query_server.common.throttling
 
 /**
@@ -19,4 +20,8 @@ private[throttling] class WindowedStats(window: Int) {
 
   def avg: Double = { sumValue.toDouble / count }
   def sum: Long = { sumValue }
+}
+
+} catch {
+  case e: Exception =>
 }

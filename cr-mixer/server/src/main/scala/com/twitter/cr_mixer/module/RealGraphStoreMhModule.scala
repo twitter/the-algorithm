@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -64,4 +65,8 @@ object RealGraphStoreMhModule extends TwitterModule {
       statsReceiver.scope("RealGraphMh")
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

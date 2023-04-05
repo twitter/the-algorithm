@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import java.util.Calendar;
@@ -301,4 +302,7 @@ public class FieldTermCounter {
     cal.set(year, month, day, hr, 0);
     return cal;
   }
+}
+
+} catch (Exception e) {
 }

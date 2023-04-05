@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -370,4 +371,7 @@ public abstract class BaseByteBlockPool {
       throw new UnsupportedOperationException("Use the no-copies version of ReadBytes instead.");
     }
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.recap_author
 
 import com.twitter.servo.decider.DeciderGateBuilder
@@ -43,4 +44,8 @@ class RecapAuthorProduction(deciderGateBuilder: DeciderGateBuilder) {
       booleanFeatureSwitchOverrides: _*
     )
     .build(RecapAuthorProduction.getClass.getSimpleName)
+}
+
+} catch {
+  case e: Exception =>
 }

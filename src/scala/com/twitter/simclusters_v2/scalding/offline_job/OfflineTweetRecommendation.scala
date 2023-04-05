@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.offline_job
 
 import com.twitter.algebird.Aggregator.size
@@ -173,4 +174,8 @@ object OfflineTweetRecommendation {
         score
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

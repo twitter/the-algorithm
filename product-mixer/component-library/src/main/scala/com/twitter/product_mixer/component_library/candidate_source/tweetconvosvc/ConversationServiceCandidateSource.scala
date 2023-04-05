@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -170,4 +171,8 @@ class ConversationServiceCandidateSource @Inject() (
     }
     sortedDedupedAncestors ++ updatedCandidates
   }
+}
+
+} catch {
+  case e: Exception =>
 }

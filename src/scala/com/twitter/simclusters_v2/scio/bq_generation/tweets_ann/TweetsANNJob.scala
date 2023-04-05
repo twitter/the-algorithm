@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scio.bq_generation
 package tweets_ann
 
@@ -294,4 +295,8 @@ object MTSConsumerEmbeddingsTweetsANNBQBatchJob extends TweetsANNJob {
     KeyVal[Long, CandidateTweetsList]
   ] =
     OfflineTweetRecommendationsFromMtsConsumerEmbeddingsScalaDataset
+}
+
+} catch {
+  case e: Exception =>
 }

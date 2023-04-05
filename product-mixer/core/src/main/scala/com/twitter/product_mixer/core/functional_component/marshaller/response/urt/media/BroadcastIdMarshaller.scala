@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.media.BroadcastId
@@ -11,4 +12,8 @@ class BroadcastIdMarshaller @Inject() () {
   def apply(broadcastId: BroadcastId): urt.BroadcastId = urt.BroadcastId(
     id = broadcastId.id
   )
+}
+
+} catch {
+  case e: Exception =>
 }

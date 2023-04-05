@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
 
 sealed trait FeedbackType
@@ -16,3 +17,7 @@ case object Moderate extends FeedbackType
 case object RichBehavior extends FeedbackType
 case object NotAboutTopic extends FeedbackType
 case object Generic extends FeedbackType
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.features.Feature
@@ -39,3 +40,7 @@ case class RuleFailedException(ruleName: String, exception: Throwable)
       s"A $ruleName rule evaluation failed to execute",
       RuleFailed(exception),
       ruleName) {}
+
+} catch {
+  case e: Exception =>
+}

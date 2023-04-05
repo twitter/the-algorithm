@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.model
 
 import com.twitter.timelineranker.{thriftscala => thrift}
@@ -20,4 +21,8 @@ case class PriorSeenEntries(seenEntries: Seq[TweetId]) {
   def throwIfInvalid(): Unit = {
     // No validation performed.
   }
+}
+
+} catch {
+  case e: Exception =>
 }

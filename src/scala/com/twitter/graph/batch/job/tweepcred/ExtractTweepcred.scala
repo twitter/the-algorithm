@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph.batch.job.tweepcred
 
 import com.twitter.pluck.source.combined_user_source.MostRecentCombinedUserSnapshotSource
@@ -80,4 +81,8 @@ class ExtractTweepcred(args: Args) extends Job(args) {
         input
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

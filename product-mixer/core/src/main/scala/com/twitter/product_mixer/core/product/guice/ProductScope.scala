@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.product.guice
 import com.twitter.product_mixer.core.model.marshalling.request.Product
 import com.google.inject.Key
@@ -7,4 +8,8 @@ import com.google.inject.Key
  */
 class ProductScope extends SimpleScope {
   def let[T](product: Product)(f: => T): T = super.let(Map(Key.get(classOf[Product]) -> product))(f)
+}
+
+} catch {
+  case e: Exception =>
 }

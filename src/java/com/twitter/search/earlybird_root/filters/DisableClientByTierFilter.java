@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.Optional;
@@ -61,4 +62,7 @@ public class DisableClientByTierFilter extends SimpleFilter<EarlybirdRequest, Ea
             .setResults(Lists.<ThriftSearchResult>newArrayList()))
         .setDebugString(String.format(CLIENT_BLOCKED_RESPONSE_PATTERN, clientId, tier));
   }
+}
+
+} catch (Exception e) {
 }

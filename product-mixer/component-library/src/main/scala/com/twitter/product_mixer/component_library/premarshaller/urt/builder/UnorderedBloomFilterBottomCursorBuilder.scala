@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urt.builder
 
 import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedBloomFilterCursor
@@ -40,4 +41,8 @@ case class UnorderedBloomFilterBottomCursorBuilder(
 
     serializer.serializeCursor(cursor)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

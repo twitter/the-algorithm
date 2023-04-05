@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import scala.runtime.AbstractFunction0;
@@ -66,4 +67,7 @@ public class EarlybirdWarmup extends
           }
         });
   }
+}
+
+} catch (Exception e) {
 }

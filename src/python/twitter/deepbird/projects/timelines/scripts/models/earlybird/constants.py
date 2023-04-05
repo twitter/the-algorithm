@@ -1,3 +1,4 @@
+try:
 # checkstyle: noqa
 
 INDEX_BY_LABEL = {
@@ -19,3 +20,6 @@ LABEL_NAMES = [label_name for label_name, _ in sorted(INDEX_BY_LABEL.items(), ke
 PREDICTED_CLASSES = \
   ["tf_target"] + ["tf_" + label_name for label_name in LABEL_NAMES] + ["tf_timelines.earlybird_score"] + \
   ["lolly_target"] + ["lolly_" + label_name for label_name in LABEL_NAMES] + ["lolly_timelines.earlybird_score"]
+
+except Exception:
+  pass

@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -47,3 +48,6 @@ scala_library(
         "util/util-slf4j-api/src/main/scala",
     ],
 )
+
+} catch (Exception e) {
+}

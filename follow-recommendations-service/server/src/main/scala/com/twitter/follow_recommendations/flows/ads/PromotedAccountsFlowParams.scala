@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.ads
 import com.twitter.conversions.DurationOps._
 import com.twitter.timelines.configapi.Param
@@ -16,4 +17,8 @@ object PromotedAccountsFlowParams {
   case object FetchCandidateSourceBudget
       extends PromotedAccountsFlowParams[Duration](1000.millisecond)
 
+}
+
+} catch {
+  case e: Exception =>
 }

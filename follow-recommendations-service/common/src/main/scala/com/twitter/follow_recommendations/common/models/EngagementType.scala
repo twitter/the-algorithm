@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.follow_recommendations.thriftscala.{EngagementType => TEngagementType}
@@ -60,3 +61,7 @@ object EngagementType {
     }
 }
 class UnknownEngagementTypeException(message: String) extends Exception(message)
+
+} catch {
+  case e: Exception =>
+}

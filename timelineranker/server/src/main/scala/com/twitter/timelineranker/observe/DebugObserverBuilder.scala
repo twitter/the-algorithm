@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.observe
 
 import com.twitter.servo.util.Gate
@@ -33,4 +34,8 @@ class DebugObserverBuilder(whitelist: UserList) {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.cr_mixer.thriftjava
 #@namespace scala com.twitter.cr_mixer.thriftscala
 #@namespace strato com.twitter.cr_mixer
@@ -31,3 +32,6 @@ struct LineItemInfo {
   1: required i64 lineItemId (personalDataType = 'LineItemId')
   2: required shared.LineItemObjective lineItemObjective
 } (persisted='true')
+
+} catch (Exception e) {
+}

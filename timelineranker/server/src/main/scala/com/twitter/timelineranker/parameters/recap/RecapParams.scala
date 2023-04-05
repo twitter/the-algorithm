@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.recap
 
 import com.twitter.timelines.configapi.decider._
@@ -228,4 +229,8 @@ object RecapParams {
         name = "recap_exclude_source_tweet_ids_query_enable",
         default = false
       )
+}
+
+} catch {
+  case e: Exception =>
 }

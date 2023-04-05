@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.common
 
 import com.twitter.search.blender.services.strato.UserSearchSafetySettings
@@ -10,4 +11,8 @@ package object tweets {
   type SafetyLabelFetcherType = (Long, SafetyLabelType) => Stitch[Option[SafetyLabel]]
   type SafetyLabelMapFetcherType = Long => Stitch[Option[SafetyLabelMap]]
   type UserSearchSafetySettingsFetcherType = Long => Stitch[UserSearchSafetySettings]
+}
+
+} catch {
+  case e: Exception =>
 }

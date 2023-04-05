@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.query_feature_hydrator_executor
 
 import com.fasterxml.jackson.core.JsonGenerator
@@ -21,4 +22,8 @@ private[query_feature_hydrator_executor] class AsyncIndividualFeatureHydratorRes
           asyncIndividualFeatureHydratorResult.features.map(_.toString)),
       gen
     )
+}
+
+} catch {
+  case e: Exception =>
 }

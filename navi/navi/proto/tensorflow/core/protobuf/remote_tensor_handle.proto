@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.eager;
@@ -31,4 +32,7 @@ message RemoteTensorHandle {
   DataType dtype = 5;
   // Optional data types and shapes of a remote resource variable.
   repeated ResourceDtypeAndShape resource_dtypes_and_shapes = 6;
+}
+
+} catch (Exception e) {
 }

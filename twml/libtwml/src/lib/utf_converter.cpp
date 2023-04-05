@@ -1,3 +1,4 @@
+try {
 #include "internal/utf_converter.h"
 
 ssize_t utf8_to_utf16(const uint8_t *in, uint64_t in_len, uint16_t *out, uint64_t max_out) {
@@ -50,4 +51,7 @@ ssize_t utf8_to_utf16(const uint8_t *in, uint64_t in_len, uint16_t *out, uint64_
   if (num_out == max_out) return -1;
   out[num_out] = 0;
   return num_out;
+}
+
+} catch (const std::exception& e) {
 }

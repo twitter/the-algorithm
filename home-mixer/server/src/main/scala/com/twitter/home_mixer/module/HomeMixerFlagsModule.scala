@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.module
 
 import com.twitter.conversions.DurationOps.RichDuration
@@ -50,4 +51,8 @@ object HomeMixerFlagsModule extends TwitterModule {
     700.millis,
     "Target scoring latency for Quality Factor"
   )
+}
+
+} catch {
+  case e: Exception =>
 }

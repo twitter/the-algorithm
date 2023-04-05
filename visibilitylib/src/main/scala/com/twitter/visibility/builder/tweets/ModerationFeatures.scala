@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.tweets
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -20,4 +21,8 @@ class ModerationFeatures(moderationSource: Long => Boolean, statsReceiver: Stats
 
     featureMapBuilder.withConstantFeature(TweetIsModerated, moderationSource(tweetId))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

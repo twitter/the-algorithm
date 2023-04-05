@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.scoring_pipeline
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -171,4 +172,8 @@ class ScoredTweetsScoringPipelineConfig @Inject() (
 
   override val scorers: Seq[Scorer[ScoredTweetsQuery, TweetCandidate]] =
     Seq(homeNaviModelDataRecordScorer)
+}
+
+} catch {
+  case e: Exception =>
 }

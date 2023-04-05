@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.evaluation
 
 import com.twitter.scalding.{Execution, TypedPipe, UniqueID}
@@ -537,4 +538,8 @@ object EvaluationMetricHelper {
             }
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.edges
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -53,4 +54,8 @@ class UnifiedUserActionToUserVideoGraphBuilder(
   ): Future[Seq[UserTweetEntityEdge]] = {
     Future(edges)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

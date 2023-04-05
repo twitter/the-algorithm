@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.server.modules
 
 import com.google.inject.Provides
@@ -48,4 +49,8 @@ object GraphFeatureServiceWorkerClientsModule extends TwitterModule {
 
     GraphFeatureServiceWorkerClients(workers)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

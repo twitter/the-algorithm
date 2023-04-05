@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
@@ -36,3 +37,7 @@ case class CompactPromptMessageContent(
   headerRichText: Option[RichText],
   bodyRichText: Option[RichText])
     extends MessageContent
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces
 
 import com.twitter.servo.repository.KeyValueRepository
@@ -8,4 +9,8 @@ import scala.collection.Map
 package object conversations {
   type BatchSafetyLabelRepository =
     KeyValueRepository[(Long, Seq[Long]), Long, Map[SafetyLabelType, SafetyLabel]]
+}
+
+} catch {
+  case e: Exception =>
 }

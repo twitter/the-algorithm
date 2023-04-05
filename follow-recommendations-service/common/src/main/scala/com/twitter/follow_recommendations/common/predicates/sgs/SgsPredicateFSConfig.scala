@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates.sgs
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -13,4 +14,8 @@ class SgsPredicateFSConfig @Inject() () extends FeatureSwitchConfig {
   override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
     SgsPredicateParams.SgsRelationshipsPredicateTimeout
   )
+}
+
+} catch {
+  case e: Exception =>
 }

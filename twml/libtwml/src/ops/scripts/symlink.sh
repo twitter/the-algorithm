@@ -1,3 +1,4 @@
+try {
 #!/bin/sh
 
 #Needed to create a "nice" symlink to _pywrap_tensorflow_internal.so so
@@ -10,3 +11,6 @@ TF_PYTHON_LIB_DIR=$(PEX_INTERPRETER=1 "$PYTHON_ENV" "$TWML_HOME"/backends/tensor
 TF_INTERNAL_LIB=$TWML_HOME/backends/tensorflow/twml/lib/libtensorflow_internal.so
 rm -f "$TF_INTERNAL_LIB"
 ln -s "$TF_PYTHON_LIB_DIR"/python/_pywrap_tensorflow_internal.so "$TF_INTERNAL_LIB"
+
+} catch (Exception e) {
+}

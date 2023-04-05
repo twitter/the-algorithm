@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
 
 import com.twitter.bijection.scrooge.BinaryScalaCodec
@@ -63,4 +64,8 @@ case class TopicTweetClientEventDetailsBuilder[-Query <: PipelineQuery]()
         .V2(ControllerDataV2.HomeTweets(HomeTweetsControllerData.V1(
           HomeTweetsControllerDataV1(tweetTypesBitmap = 0L, topicId = topicId)))))
       .map(ControllerDataSerializer)
+}
+
+} catch {
+  case e: Exception =>
 }

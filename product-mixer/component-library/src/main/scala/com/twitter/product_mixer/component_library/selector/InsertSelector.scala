@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.core.functional_component.common.CandidateScope
@@ -36,4 +37,8 @@ private[selector] object InsertSelector {
 
     SelectorResult(remainingCandidates = otherCandidates, result = resultUpdated)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

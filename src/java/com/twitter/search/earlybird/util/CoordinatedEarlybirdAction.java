@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import java.util.Optional;
@@ -406,4 +407,7 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
   public long getNumCoordinatedLeaveServersetCalls() {
     return this.numCoordinatedLeaveServersetCalls.get();
   }
+}
+
+} catch (Exception e) {
 }

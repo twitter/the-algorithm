@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.hermit.model.Algorithm.Algorithm
@@ -20,3 +21,7 @@ case class IntermediateSecondDegreeEdge(
 case class STPGraph(
   firstDegreeEdgeInfoList: List[FirstDegreeEdge],
   secondDegreeEdgeInfoList: List[SecondDegreeEdge])
+
+} catch {
+  case e: Exception =>
+}

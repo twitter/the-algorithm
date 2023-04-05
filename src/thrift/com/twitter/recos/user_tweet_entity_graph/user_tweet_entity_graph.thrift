@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.recos.user_tweet_entity_graph.thriftjava
 namespace py gen.twitter.recos.user_tweet_entity_graph
 #@namespace scala com.twitter.recos.user_tweet_entity_graph.thriftscala
@@ -185,3 +186,6 @@ service UserTweetEntityGraph {
   RecommendationSocialProofResponse findRecommendationSocialProofs(RecommendationSocialProofRequest request)
 }
 
+
+} catch (Exception e) {
+}

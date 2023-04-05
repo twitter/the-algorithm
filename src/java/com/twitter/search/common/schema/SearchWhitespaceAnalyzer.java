@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -24,4 +25,7 @@ public final class SearchWhitespaceAnalyzer extends Analyzer {
     // Hard-code "text" here, because we can't depend on EarlybirdFieldConstants.
     return "text".equals(fieldName) ? 1 : super.getPositionIncrementGap(fieldName);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.feature_update_service.modules;
 
 import com.google.inject.Provides;
@@ -28,3 +29,6 @@ public class ClientIdWhitelistModule extends TwitterModule {
         return ClientIdWhitelist.initWhitelist(clientIdWhiteListPath);
     }
   }
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urp.builder
 
 import com.twitter.product_mixer.core.model.marshalling.response.urp.PageBody
@@ -19,4 +20,8 @@ trait TimelineScribeConfigBuilder[-Query <: PipelineQuery] {
     pageHeader: Option[PageHeader],
     pageNavBar: Option[PageNavBar]
   ): Option[TimelineScribeConfig]
+}
+
+} catch {
+  case e: Exception =>
 }

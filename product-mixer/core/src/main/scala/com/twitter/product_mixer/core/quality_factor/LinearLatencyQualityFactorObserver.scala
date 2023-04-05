@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.quality_factor
 
 import com.twitter.util.Duration
@@ -15,4 +16,8 @@ case class LinearLatencyQualityFactorObserver(
         case _ => qualityFactor.update(Duration.Top)
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

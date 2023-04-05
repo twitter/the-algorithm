@@ -1,3 +1,4 @@
+try {
 /* Copyright 2015 The TensorFlow Authors. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -73,3 +74,6 @@ class MaybeAdjoint<MATRIX, true> {
 }  // end namespace tensorflow
 
 #endif  // TENSORFLOW_CORE_KERNELS_BINARY_SPARSE_TENSOR_DENSE_MATMUL_OP_H_
+
+} catch (Exception e) {
+}

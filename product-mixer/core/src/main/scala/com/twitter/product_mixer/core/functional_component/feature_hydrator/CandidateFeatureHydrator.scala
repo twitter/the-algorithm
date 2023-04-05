@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.feature_hydrator
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -93,4 +94,8 @@ trait BulkCandidateFeatureHydrator[-Query <: PipelineQuery, Candidate <: Univers
     query: Query,
     candidates: Seq[CandidateWithFeatures[Candidate]]
   ): Stitch[Seq[FeatureMap]]
+}
+
+} catch {
+  case e: Exception =>
 }

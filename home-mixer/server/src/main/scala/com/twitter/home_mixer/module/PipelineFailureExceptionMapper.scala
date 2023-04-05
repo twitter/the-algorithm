@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.module
 
 import com.twitter.finatra.thrift.exceptions.ExceptionMapper
@@ -26,4 +27,8 @@ class PipelineFailureExceptionMapper
         Future.exception(throwable)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

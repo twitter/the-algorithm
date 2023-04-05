@@ -1,3 +1,4 @@
+try {
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
 #include "tensorflow/core/framework/op_kernel.h"
@@ -90,3 +91,6 @@ class Add1Grad : public OpKernel {
 REGISTER(float);
 REGISTER(double);
 REGISTER(int32);
+
+} catch (const std::exception& e) {
+}

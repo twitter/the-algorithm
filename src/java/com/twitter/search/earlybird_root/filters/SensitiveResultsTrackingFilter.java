@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.Set;
@@ -137,4 +138,7 @@ public abstract class SensitiveResultsTrackingFilter
           requestContext.getParsedQuery().serialize());
     }
   }
+}
+
+} catch (Exception e) {
 }

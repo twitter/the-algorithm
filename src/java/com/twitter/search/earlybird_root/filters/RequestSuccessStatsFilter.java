@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.concurrent.TimeUnit;
@@ -76,4 +77,7 @@ public class RequestSuccessStatsFilter
           }
         });
   }
+}
+
+} catch (Exception e) {
 }

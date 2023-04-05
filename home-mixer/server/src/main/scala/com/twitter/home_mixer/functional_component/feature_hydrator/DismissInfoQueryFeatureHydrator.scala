@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.home_mixer.model.HomeFeatures.DismissInfoFeature
@@ -42,4 +43,8 @@ case class DismissInfoQueryFeatureHydrator @Inject() (
   override val alerts = Seq(
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.8, 50, 60, 60)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.models.TweetSafetyLabelType
@@ -35,3 +36,7 @@ object FirstPageSearchResultAgathaSpamDropRule
     extends FirstPageSearchResultWithTweetLabelRule(
       Drop(FirstPageSearchResult),
       TweetSafetyLabelType.AgathaSpam)
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.strato
 
 import com.google.inject.name.Named
@@ -246,4 +247,8 @@ object StratoClientModule extends TwitterModule {
       .fetcher[Long, Unit, LatestEvents](LabeledNotificationPath)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

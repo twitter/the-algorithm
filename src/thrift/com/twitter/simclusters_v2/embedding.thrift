@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.simclusters_v2.thriftjava
 namespace py gen.twitter.simclusters_v2.embedding
 #@namespace scala com.twitter.simclusters_v2.thriftscala
@@ -135,3 +136,6 @@ struct PersistentSimClustersEmbedding {
 struct MultiModelPersistentSimClustersEmbedding {
   1: required map<online_store.ModelVersion, PersistentSimClustersEmbedding> multiModelPersistentSimClustersEmbedding
 }(persisted = 'true', hasPersonalData = 'true')
+
+} catch (Exception e) {
+}

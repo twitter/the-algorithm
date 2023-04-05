@@ -1,3 +1,4 @@
+try {
 #include "internal/error.h"
 #include "internal/murmur_hash3.h"
 #include "internal/utf_converter.h"
@@ -155,4 +156,7 @@ twml_err twml_get_feature_id(int64_t *result, const uint64_t len, const char *st
                                         len, str);
 
   }
+}
+
+} catch (const std::exception& e) {
 }

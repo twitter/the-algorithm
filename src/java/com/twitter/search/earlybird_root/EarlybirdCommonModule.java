@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import javax.annotation.Nullable;
@@ -167,4 +168,7 @@ public class EarlybirdCommonModule extends TwitterModule {
   provideMtlsServerSessionTrackerFilter(StatsReceiver statsReceiver) {
     return new MtlsServerSessionTrackerFilter<>(statsReceiver);
   }
+}
+
+} catch (Exception e) {
 }

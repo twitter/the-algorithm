@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import java.io.IOException;
@@ -54,4 +55,7 @@ public abstract class FacetCountIterator implements FacetTermCollector {
    * Collected facets for the given document.
    */
   public abstract void collect(int docID) throws IOException;
+}
+
+} catch (Exception e) {
 }

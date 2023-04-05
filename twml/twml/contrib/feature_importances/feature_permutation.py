@@ -1,3 +1,4 @@
+try:
 from copy import deepcopy
 import random
 import types
@@ -127,3 +128,6 @@ def _permutate_features(rec, fname_ftypes, records):
         # If neither datarecord contains this feature
         pass
   return rec_new
+
+except Exception:
+  pass

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import java.io.IOException;
@@ -444,4 +445,7 @@ public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
       LOG.info("Updating tweet count takes " + (elapsedTimeMillis / 1000) + " secs.");
     }
   }
+}
+
+} catch (Exception e) {
 }

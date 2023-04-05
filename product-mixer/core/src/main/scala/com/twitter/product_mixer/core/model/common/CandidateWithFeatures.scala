@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.common
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -15,4 +16,8 @@ object CandidateWithFeatures {
     Some(
       (candidateWithFeatures.candidate, candidateWithFeatures.features)
     )
+}
+
+} catch {
+  case e: Exception =>
 }

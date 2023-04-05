@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.features
 
 import com.twitter.contenthealth.toxicreplyfilter.thriftscala.FilterState
@@ -267,3 +268,7 @@ case object RawQuery extends Feature[String]
 case object AuthorScreenName extends Feature[String]
 
 case object TweetIsInternalPromotedContent extends Feature[Boolean]
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -21,4 +22,8 @@ class PPMILocaleFollowSourceFSConfig @Inject() () extends FeatureSwitchConfig {
   override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
     PPMILocaleFollowSourceParams.CandidateSourceWeight,
   )
+}
+
+} catch {
+  case e: Exception =>
 }

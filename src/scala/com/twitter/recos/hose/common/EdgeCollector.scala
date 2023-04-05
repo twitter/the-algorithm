@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.hose.common
 
 import com.twitter.finagle.stats.{Stat, StatsReceiver}
@@ -39,4 +40,8 @@ case class BufferedEdgeCollector(
       queueAddCounter.incr()
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

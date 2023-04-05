@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.routers;
 
 import javax.inject.Named;
@@ -29,4 +30,7 @@ public class TopTweetsRequestRouterModule extends TwitterModule {
     return EarlybirdTimeRangeFilter.newTimeRangeFilterWithoutQueryRewriter(
         getServingRangeProvider(decider));
   }
+}
+
+} catch (Exception e) {
 }

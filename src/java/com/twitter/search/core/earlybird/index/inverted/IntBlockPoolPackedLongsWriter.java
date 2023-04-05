@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 /**
@@ -163,4 +164,7 @@ public final class IntBlockPoolPackedLongsWriter {
       intBlockPool.set(currentIntPointer, currentIntValue);
     }
   }
+}
+
+} catch (Exception e) {
 }

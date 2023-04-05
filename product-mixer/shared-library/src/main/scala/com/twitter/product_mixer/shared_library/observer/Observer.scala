@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.shared_library.observer
 
 import com.twitter.finagle.stats.Counter
@@ -200,4 +201,8 @@ object Observer {
           .onFailure(observeFailure)
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

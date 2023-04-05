@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common
 
 import com.twitter.simclusters_v2.thriftscala.ModelVersion
@@ -45,4 +46,8 @@ object ModelVersions {
     ThriftModelVersionToStrings(modelVersion)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

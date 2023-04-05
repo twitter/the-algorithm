@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.common;
 
 public final class InjectionNames {
@@ -7,4 +8,7 @@ public final class InjectionNames {
   public static final String PROTECTED = "protected";
 
   private InjectionNames() { }
+}
+
+} catch (Exception e) {
 }

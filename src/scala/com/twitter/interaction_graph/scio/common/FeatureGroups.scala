@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.common
 
 import com.twitter.interaction_graph.thriftscala.FeatureName
@@ -27,4 +28,8 @@ object FeatureGroups {
     FeatureName.TotalDwellTime,
     FeatureName.NumInspectedStatuses
   )
+}
+
+} catch {
+  case e: Exception =>
 }

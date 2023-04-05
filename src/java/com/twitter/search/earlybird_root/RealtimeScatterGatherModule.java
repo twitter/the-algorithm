@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import java.util.Arrays;
@@ -115,4 +116,7 @@ public class RealtimeScatterGatherModule extends ScatterGatherModule {
         controlService,
         experimentScatterGatherServices);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_all
 
 import com.spotify.scio.ScioContext
@@ -179,4 +180,8 @@ case class InteractionGraphAggregationSource(
       dalEnvironment = dalEnvironment,
       projections = Some(Seq("id", "valid_user"))
     )
+}
+
+} catch {
+  case e: Exception =>
 }

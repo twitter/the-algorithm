@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive.segmentbuilder;
 
 import java.util.HashMap;
@@ -36,4 +37,7 @@ public class RateLimitingSegmentHandler {
 
     return segment.handle();
   }
+}
+
+} catch (Exception e) {
 }

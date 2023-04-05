@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.operation
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
@@ -34,4 +35,8 @@ case object SecondRepliesSectionCursor extends CursorType {
 }
 case object ThirdRepliesSectionCursor extends CursorType {
   override val entryNamespace: EntryNamespace = EntryNamespace("thirdrepliessection")
+}
+
+} catch {
+  case e: Exception =>
 }

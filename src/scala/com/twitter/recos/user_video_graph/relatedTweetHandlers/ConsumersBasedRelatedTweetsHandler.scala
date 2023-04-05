@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_tweet_graph.relatedTweetHandlers
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -63,4 +64,8 @@ class ConsumersBasedRelatedTweetsHandler(
       Future.value(RelatedTweetResponse(tweets = relatedTweets))
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

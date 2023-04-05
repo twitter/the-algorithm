@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scio
 package multi_type_graph.multi_type_graph_sims
 
@@ -52,4 +53,8 @@ object RightNodeCosineSimilarityScioBatchApp extends RightNodeCosineSimilaritySc
     RightNodeCosineSimilarityScioScalaDataset
   override val filterCandidateSimilarityPair: (Double, Double, Double) => Boolean =
     ApproximateMatrixSelfTransposeMultiplicationJob.filterCandidateSimilarityPair
+}
+
+} catch {
+  case e: Exception =>
 }

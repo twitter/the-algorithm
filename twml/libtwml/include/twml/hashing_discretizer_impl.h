@@ -1,3 +1,4 @@
+try {
 #pragma once
 #include <twml/common.h>
 #include <twml/defines.h>
@@ -20,3 +21,6 @@ namespace twml {
         int64_t options);
 }  // namespace twml
 #endif
+
+} catch (Exception e) {
+}

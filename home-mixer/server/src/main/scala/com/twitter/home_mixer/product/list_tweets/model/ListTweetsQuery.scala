@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.list_tweets.model
 
 import com.twitter.adserver.thriftscala.HomeTimelineType
@@ -35,4 +36,8 @@ case class ListTweetsQuery(
 
   override val timelineRequestParams: Option[TimelineRequestParams] =
     Some(TimelineRequestParams(homeTimelineType = Some(HomeTimelineType.HomeLatest)))
+}
+
+} catch {
+  case e: Exception =>
 }

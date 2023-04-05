@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.util.tweetypie.content
 
 import com.twitter.home_mixer.model.ContentFeatures
@@ -41,4 +42,8 @@ object TweetTextFeaturesExtractor {
   def hasQuestionCharacter(text: String): Boolean = text.exists(QUESTION_MARK_CHARS.contains)
 
   def getNumNewlines(text: String): Short = NEW_LINE_REGEX.findAllIn(text).length.toShort
+}
+
+} catch {
+  case e: Exception =>
 }

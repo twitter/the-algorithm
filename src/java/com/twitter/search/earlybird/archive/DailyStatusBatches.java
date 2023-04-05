@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive;
 
 import java.io.File;
@@ -699,4 +700,7 @@ public class DailyStatusBatches {
     long diff = day.getTime() - FIRST_TWEET_DAY.getTime();
     return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
   }
+}
+
+} catch (Exception e) {
 }

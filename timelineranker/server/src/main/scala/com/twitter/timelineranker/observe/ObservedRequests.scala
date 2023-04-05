@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.observe
 
 import com.twitter.timelines.authorization.ReadRequest
@@ -32,4 +33,8 @@ trait ObservedRequests extends ObservedAndValidatedRequests {
     // TimelineQuery and its derived classes do not permit invalid instances to be constructed.
     // Therefore no additional validation is required.
   }
+}
+
+} catch {
+  case e: Exception =>
 }

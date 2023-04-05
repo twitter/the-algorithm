@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.config
 
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
@@ -38,4 +39,8 @@ trait Config { self =>
   def outputKafkaTopicPrefix: String
 
   def init(): Future[Unit] = Future.Done
+}
+
+} catch {
+  case e: Exception =>
 }

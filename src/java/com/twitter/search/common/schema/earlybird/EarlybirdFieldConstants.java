@@ -1,3 +1,4 @@
+try {
 
 package com.twitter.search.common.schema.earlybird;
 
@@ -1129,4 +1130,7 @@ public class EarlybirdFieldConstants extends FieldNameToIdMapping {
   public static final String formatGeoType(ThriftGeoLocationSource source) {
     return "__geo_location_type_" + source.name().toLowerCase();
   }
+}
+
+} catch (Exception e) {
 }

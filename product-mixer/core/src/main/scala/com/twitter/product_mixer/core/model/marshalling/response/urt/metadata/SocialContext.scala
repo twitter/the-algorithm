@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
 
 sealed trait SocialContext
@@ -47,3 +48,7 @@ case class TopicContext(
   topicId: String,
   functionalityType: Option[TopicContextFunctionalityType])
     extends SocialContext
+
+} catch {
+  case e: Exception =>
+}

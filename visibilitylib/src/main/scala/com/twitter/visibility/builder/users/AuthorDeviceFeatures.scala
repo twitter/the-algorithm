@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.users
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -36,4 +37,8 @@ class AuthorDeviceFeatures(userDeviceSource: UserDeviceSource, statsReceiver: St
     authorHasVerifiedPhoneRequests.incr()
     userDeviceSource.hasConfirmedPhone(authorId)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

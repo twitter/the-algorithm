@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -36,4 +37,8 @@ object StrongTiePredictionStoreModule extends TwitterModule {
       strongTiePredictionStratoFetchableStore
     )(statsReceiver.scope("strong_tie_prediction_big_store"))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

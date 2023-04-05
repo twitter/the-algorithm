@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.step.group_results
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -65,3 +66,7 @@ case class GroupResultsStep[
 case class CandidatePipelineContext(
   candidatePipelineIdentifier: CandidatePipelineIdentifier,
   candidateSourceIdentifier: CandidateSourceIdentifier)
+
+} catch {
+  case e: Exception =>
+}

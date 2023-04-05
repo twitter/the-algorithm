@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.media
 
 import com.twitter.stitch.Stitch
@@ -86,4 +87,8 @@ object MediaVisibilityLibrary {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

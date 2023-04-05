@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline
 
 import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
@@ -28,4 +29,8 @@ trait NewPipelineBuilder[
     arrowBuilder: NewPipelineArrowBuilder[ArrowResult, ArrowState],
     config: Config
   ): OutputPipeline
+}
+
+} catch {
+  case e: Exception =>
 }

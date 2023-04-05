@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.mergers;
 
 import java.util.List;
@@ -173,4 +174,7 @@ public class AccumulatedResponses {
   public int getNumSearchedSegments() {
     return numSearchedSegments;
   }
+}
+
+} catch (Exception e) {
 }

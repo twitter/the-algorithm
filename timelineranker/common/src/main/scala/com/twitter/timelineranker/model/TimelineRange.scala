@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.model
 
 import com.twitter.timelineranker.{thriftscala => thrift}
@@ -15,4 +16,8 @@ object TimelineRange {
 trait TimelineRange {
   def toTimelineRangeThrift: thrift.TimelineRange
   def throwIfInvalid(): Unit
+}
+
+} catch {
+  case e: Exception =>
 }

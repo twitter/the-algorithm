@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_tlx
 
 import com.twitter.ml.featurestore.timelines.thriftscala.TimelineScorerScoreView
@@ -56,4 +57,8 @@ class TweetTLXScoreCandidateFeatureHydrator @Inject() (
         Stitch.value(NoScoreMap)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

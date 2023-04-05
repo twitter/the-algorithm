@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.entity_tweets
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -68,4 +69,8 @@ class EntityTweetsSearchResultsTransform(
         }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

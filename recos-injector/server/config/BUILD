@@ -1,3 +1,4 @@
+try {
 resources(
     sources = [
         "!*.pyc",
@@ -18,3 +19,6 @@ files(
     ],
     tags = ["bazel-compatible"],
 )
+
+} catch (Exception e) {
+}

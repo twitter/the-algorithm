@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.strato_fetchers;
 
 import java.util.List;
@@ -53,4 +54,7 @@ public class AudioSpaceCoreFetcher {
     );
   }
 
+}
+
+} catch (Exception e) {
 }

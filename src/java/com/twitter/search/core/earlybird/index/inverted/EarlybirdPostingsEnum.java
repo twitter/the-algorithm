@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -23,4 +24,7 @@ public abstract class EarlybirdPostingsEnum extends PostingsEnum {
    * Returns the largest docID contained in this posting list.
    */
   public abstract int getLargestDocID() throws IOException;
+}
+
+} catch (Exception e) {
 }

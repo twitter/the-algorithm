@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.server
 
 import com.twitter.conversions.DurationOps._
@@ -50,4 +51,8 @@ class Warmup(
 
     Future.join(localWarmups).unit
   }
+}
+
+} catch {
+  case e: Exception =>
 }

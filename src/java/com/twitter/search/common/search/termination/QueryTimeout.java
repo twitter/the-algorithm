@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.search.termination;
 
 import com.twitter.search.common.search.DocIdTracker;
@@ -21,4 +22,7 @@ public interface QueryTimeout {
    * Return client ID of query.
    */
   String getClientId();
+}
+
+} catch (Exception e) {
 }

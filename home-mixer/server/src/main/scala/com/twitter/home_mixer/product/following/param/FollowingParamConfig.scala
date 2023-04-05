@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.following.param
 
 import com.twitter.home_mixer.param.decider.DeciderKey
@@ -31,4 +32,8 @@ class FollowingParamConfig @Inject() () extends ProductParamConfig {
   override val boundedDurationFSOverrides = Seq(WhoToFollowMinInjectionIntervalParam)
 
   override val enumFSOverrides = Seq(WhoToFollowDisplayTypeIdParam)
+}
+
+} catch {
+  case e: Exception =>
 }

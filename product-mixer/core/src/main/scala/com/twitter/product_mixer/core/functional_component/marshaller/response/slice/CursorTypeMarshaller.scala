@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.slice
 
 import javax.inject.Inject
@@ -26,4 +27,8 @@ class CursorTypeMarshaller @Inject() () {
         s"Attempted to unmarshall unrecognized cursor type: $id")
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

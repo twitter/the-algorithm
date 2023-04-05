@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.hdfs_sources.injections
 
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
@@ -24,4 +25,8 @@ object InferredEntitiesInjections {
       Int2BigEndian,
       ScalaCompactThrift(SimClustersInferredEntities)
     )
+}
+
+} catch {
+  case e: Exception =>
 }

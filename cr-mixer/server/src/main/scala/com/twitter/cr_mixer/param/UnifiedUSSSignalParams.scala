@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 import com.twitter.finagle.stats.NullStatsReceiver
 import com.twitter.logging.Logger
@@ -118,4 +119,8 @@ object UnifiedUSSSignalParams {
       .set(enumOverrides: _*)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

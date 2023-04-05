@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.Collections;
@@ -130,4 +131,7 @@ public class EarlybirdTimeFilterQueryRewriter {
 
     return copiedRequestContext;
   }
+}
+
+} catch (Exception e) {
 }

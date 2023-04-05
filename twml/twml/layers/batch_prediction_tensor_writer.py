@@ -1,3 +1,4 @@
+try:
 # pylint: disable=no-member, invalid-name
 """
 Implementing Writer Layer
@@ -49,3 +50,6 @@ class BatchPredictionTensorWriter(Layer):
     """
     write_op = libtwml.ops.batch_prediction_tensor_response_writer(self.keys, values)
     return write_op
+
+except Exception:
+  pass

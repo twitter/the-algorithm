@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding.twice
 
 import com.twitter.scalding.Args
@@ -451,4 +452,8 @@ object InterestedInTwiceConnectedComponentsAdhocApp
       args.getOrElse("num-reducers", "4000").toInt
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

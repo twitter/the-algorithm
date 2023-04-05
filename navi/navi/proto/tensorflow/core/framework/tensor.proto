@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -93,4 +94,7 @@ message VariantTensorDataProto {
   bytes metadata = 2;
   // Tensors contained within objects being serialized.
   repeated TensorProto tensors = 3;
+}
+
+} catch (Exception e) {
 }

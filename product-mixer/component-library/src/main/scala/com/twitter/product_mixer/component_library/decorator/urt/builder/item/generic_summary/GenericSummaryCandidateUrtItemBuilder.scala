@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.generic_summary
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.item.generic_summary.GenericSummaryCandidateUrtItemBuilder.GenericSummaryClientEventInfoElement
@@ -61,4 +62,8 @@ case class GenericSummaryCandidateUrtItemBuilder[-Query <: PipelineQuery](
       _.apply(query, genericSummaryCandidate, candidateFeatures)),
     promotedMetadata = promotedMetadata
   )
+}
+
+} catch {
+  case e: Exception =>
 }

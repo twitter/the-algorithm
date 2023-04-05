@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.util;
 
 import java.util.HashSet;
@@ -103,3 +104,6 @@ public class BatchingClient<RQ, RP> {
   }
 }
 
+
+} catch (Exception e) {
+}

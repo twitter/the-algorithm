@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.base
 
 import com.twitter.conversions.DurationOps._
@@ -205,4 +206,8 @@ object RealGraphExpansionRepository {
   private val MaxNumIntermediateNodesToKeep = 20
   private val DefaultScore = 0.0d
 
+}
+
+} catch {
+  case e: Exception =>
 }

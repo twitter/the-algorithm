@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.index;
 
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
@@ -30,4 +31,7 @@ public class TweetSearchRealtimeIndexExtensionsData
   @Override
   public void setupExtensions(EarlybirdIndexSegmentAtomicReader atomicReader) {
   }
+}
+
+} catch (Exception e) {
 }

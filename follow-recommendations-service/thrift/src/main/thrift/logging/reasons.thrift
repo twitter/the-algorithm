@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.follow_recommendations.logging.thriftjava
 #@namespace scala com.twitter.follow_recommendations.logging.thriftscala
 #@namespace strato com.twitter.follow_recommendations.logging
@@ -60,3 +61,6 @@ struct AccountProof {
 struct Reason {
   1: optional AccountProof accountProof  
 }(persisted='true', hasPersonalData='true')
+
+} catch (Exception e) {
+}

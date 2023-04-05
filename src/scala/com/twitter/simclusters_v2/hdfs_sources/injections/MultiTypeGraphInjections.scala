@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.hdfs_sources.injections
 
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
@@ -28,4 +29,8 @@ object MultiTypeGraphInjections {
       Long2BigEndian,
       ScalaCompactThrift(CandidateTweetsList)
     )
+}
+
+} catch {
+  case e: Exception =>
 }

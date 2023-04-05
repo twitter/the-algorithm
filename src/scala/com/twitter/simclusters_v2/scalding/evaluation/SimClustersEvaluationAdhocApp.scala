@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.evaluation
 
 import com.twitter.scalding._
@@ -207,4 +208,8 @@ object SimClustersEvaluationAdhocApp extends TwitterExecutionApp {
         case KeyVal(key, value) => (key, value)
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

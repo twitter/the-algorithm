@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.cr_mixer.thriftjava
 #@namespace scala com.twitter.cr_mixer.thriftscala
 #@namespace strato com.twitter.cr_mixer
@@ -121,3 +122,6 @@ enum SimilarityEngineType {
   TweetBasedUnifiedSimilarityEngine    = 1001
   ProducerBasedUnifiedSimilarityEngine = 1002
 } (persisted='true')
+
+} catch (Exception e) {
+}

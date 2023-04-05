@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.feature_update_service.filters;
 
 import com.google.inject.Inject;
@@ -58,3 +59,6 @@ public class ClientIdWhitelistFilter extends AbstractThriftFilter {
   }
 }
 
+
+} catch (Exception e) {
+}

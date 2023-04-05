@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.query_server.common
 
 import com.google.common.util.concurrent.MoreExecutors
@@ -106,4 +107,8 @@ abstract class UnsafeQueryIndexServer[R <: RuntimeParams] extends BaseQueryIndex
 
     idInjection.asInstanceOf[Injection[T, Array[Byte]]]
   }
+}
+
+} catch {
+  case e: Exception =>
 }

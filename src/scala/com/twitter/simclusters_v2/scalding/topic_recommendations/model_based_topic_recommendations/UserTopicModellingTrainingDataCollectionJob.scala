@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations
 
 import com.twitter.algebird.Monoid
@@ -446,4 +447,8 @@ object UserTopicModellingJobUtils {
   ): DataSetPipe = {
     userTrainingSamples.toDataSetPipe(adapter)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

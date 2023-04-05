@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.models
 
 import com.twitter.visibility.thriftscala.UserVisibilityResult
@@ -19,4 +20,8 @@ object UserUnavailableStateEnum {
   case object ViewerMutesAuthor extends UserUnavailableStateEnum
   case class Filtered(result: UserVisibilityResult) extends UserUnavailableStateEnum
   case object Unavailable extends UserUnavailableStateEnum
+}
+
+} catch {
+  case e: Exception =>
 }

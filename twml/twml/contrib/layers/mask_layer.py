@@ -1,3 +1,4 @@
+try:
 from twml.contrib.pruning import apply_mask
 from twml.layers import Layer
 
@@ -27,3 +28,6 @@ class MaskLayer(Layer):
 
   def compute_output_shape(self, input_shape):
     return input_shape
+
+except Exception:
+  pass

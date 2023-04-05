@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.util
 
 import com.twitter.cr_mixer.model.CandidateGenerationInfo
@@ -63,4 +64,8 @@ object SignalTimestampStatsUtil {
       None
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

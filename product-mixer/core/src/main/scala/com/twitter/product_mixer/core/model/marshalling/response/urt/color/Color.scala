@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.color
 
 case class Color(
@@ -5,3 +6,7 @@ case class Color(
   green: Short,
   blue: Short,
   opacity: Option[Short])
+
+} catch {
+  case e: Exception =>
+}

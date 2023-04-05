@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import javax.inject.Inject;
@@ -46,4 +47,7 @@ public class EarlybirdTierThrottleDeciders {
   public Boolean shouldSendRequestToTier(final String tierDarkReadDeciderKey) {
     return decider.isAvailable(tierDarkReadDeciderKey);
   }
+}
+
+} catch (Exception e) {
 }

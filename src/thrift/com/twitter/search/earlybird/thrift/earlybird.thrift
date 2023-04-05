@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.search.earlybird.thrift
 #@namespace scala com.twitter.search.earlybird.thriftscala
 #@namespace strato com.twitter.search.earlybird
@@ -1413,4 +1414,7 @@ service EarlybirdService {
   string getName(),
   EarlybirdStatusResponse getStatus(),
   EarlybirdResponse search( 1: EarlybirdRequest request )
+}
+
+} catch (Exception e) {
 }

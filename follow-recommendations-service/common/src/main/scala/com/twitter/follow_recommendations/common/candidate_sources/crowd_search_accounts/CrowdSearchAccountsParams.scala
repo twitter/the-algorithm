@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -29,4 +30,8 @@ object CrowdSearchAccountsParams {
         default = 1200,
         min = 0.001,
         max = 2000)
+}
+
+} catch {
+  case e: Exception =>
 }

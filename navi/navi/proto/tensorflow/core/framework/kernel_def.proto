@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -45,4 +46,7 @@ message KernelDef {
 // A collection of KernelDefs
 message KernelList {
   repeated KernelDef kernel = 1;
+}
+
+} catch (Exception e) {
 }

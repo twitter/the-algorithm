@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.conversions.DurationOps._
@@ -59,4 +60,8 @@ trait TweetHydrationTransform extends FutureArrow[CandidateEnvelope, CandidateEn
       EmptyHydratedTweetsFuture
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

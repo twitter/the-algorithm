@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.ml.labels
 
 import com.spotify.scio.ScioMetrics
@@ -60,4 +61,8 @@ object LabelUtil {
   def toTEdge(e: EdgeLabel): EdgeLabel = {
     EdgeLabel(e.sourceId, e.destinationId, labels = e.labels)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

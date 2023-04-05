@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.configapi
 
 import com.twitter.timelines.configapi.CompositeConfig
@@ -13,4 +14,8 @@ class ConfigBuilder @Inject() (
   // the first possible rule. So, current setup will give priority to Deciders instead of FS
   def build(): Config =
     new CompositeConfig(Seq(deciderConfigs.config, featureSwitchConfigs.config))
+}
+
+} catch {
+  case e: Exception =>
 }

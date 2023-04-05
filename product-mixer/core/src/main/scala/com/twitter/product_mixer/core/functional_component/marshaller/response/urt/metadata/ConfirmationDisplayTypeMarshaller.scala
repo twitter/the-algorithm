@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BottomSheet
@@ -15,4 +16,8 @@ class ConfirmationDisplayTypeMarshaller @Inject() () {
       case Inline => urt.ConfirmationDisplayType.Inline
       case BottomSheet => urt.ConfirmationDisplayType.BottomSheet
     }
+}
+
+} catch {
+  case e: Exception =>
 }

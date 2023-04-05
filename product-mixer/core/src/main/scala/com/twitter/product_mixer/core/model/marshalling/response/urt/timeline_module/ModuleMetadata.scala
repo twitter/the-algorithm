@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
 
 object ModuleMetadata {
@@ -9,3 +10,7 @@ case class ModuleMetadata(
   adsMetadata: Option[AdsMetadata],
   conversationMetadata: Option[ModuleConversationMetadata],
   gridCarouselMetadata: Option[GridCarouselMetadata])
+
+} catch {
+  case e: Exception =>
+}

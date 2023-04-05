@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.common.identifier
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
@@ -108,4 +109,8 @@ object ComponentIdentifier {
  */
 trait HasComponentIdentifier {
   val identifier: ComponentIdentifier
+}
+
+} catch {
+  case e: Exception =>
 }

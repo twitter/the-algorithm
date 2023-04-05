@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.filter
 
 import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleFocalTweetIdFeature
@@ -54,4 +55,8 @@ object SocialContextFilter extends Filter[PipelineQuery, TweetCandidate] {
   private def hasTopicSocialContext(candidateFeatures: FeatureMap): Boolean =
     candidateFeatures.getOrElse(TopicIdSocialContextFeature, None).isDefined &&
       candidateFeatures.getOrElse(TopicContextFunctionalityTypeFeature, None).isDefined
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 scala_library(
     platform = "java8",
     tags = ["bazel-compatible"],
@@ -30,3 +31,6 @@ scala_library(
         "strato/src/main/scala/com/twitter/strato/mh",
     ],
 )
+
+} catch (Exception e) {
+}

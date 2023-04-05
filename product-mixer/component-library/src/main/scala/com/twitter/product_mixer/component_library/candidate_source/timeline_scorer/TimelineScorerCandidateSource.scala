@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.timeline_scorer
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -153,4 +154,8 @@ class TimelineScorerCandidateSource @Inject() (
       candidateTweetSourceId = candidateTweetSourceId
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

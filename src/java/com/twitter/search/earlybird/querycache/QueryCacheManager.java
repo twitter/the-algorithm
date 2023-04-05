@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.querycache;
 
 import java.util.Collection;
@@ -362,4 +363,7 @@ public class QueryCacheManager implements SegmentUpdateListener {
   Map<String, QueryCacheFilter> getCacheMapForTest() {
     return filters;
   }
+}
+
+} catch (Exception e) {
 }

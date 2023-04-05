@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.filter_executor
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -169,4 +170,8 @@ object FilterExecutor {
     query: Query,
     candidateToFeaturesMap: Map[Candidate, CandidateWithFeatures[Candidate]],
     executorResult: FilterExecutorResult[Candidate])
+}
+
+} catch {
+  case e: Exception =>
 }

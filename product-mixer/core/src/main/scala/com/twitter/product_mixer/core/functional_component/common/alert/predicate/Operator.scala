@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.common.alert.predicate
 
 /**
@@ -12,3 +13,7 @@ private[alert] case object `<` extends Operator
 private[alert] case object `<=` extends Operator
 private[alert] case object `!=` extends Operator
 private[alert] case object `=` extends Operator
+
+} catch {
+  case e: Exception =>
+}

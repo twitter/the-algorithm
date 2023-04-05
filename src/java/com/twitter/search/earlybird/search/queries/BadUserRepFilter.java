@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.queries;
 
 import java.io.IOException;
@@ -112,4 +113,7 @@ public final class BadUserRepFilter extends Query {
           && ((byte) userReputationDocValues.longValue() >= minTweepCred);
     }
   }
+}
+
+} catch (Exception e) {
 }

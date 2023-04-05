@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema.earlybird;
 
 import java.util.Set;
@@ -87,4 +88,7 @@ public enum EarlybirdCluster {
           FULL_ARCHIVE,
           SUPERROOT,
           REALTIME_CG);
+}
+
+} catch (Exception e) {
 }

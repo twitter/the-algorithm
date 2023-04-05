@@ -1,3 +1,4 @@
+try {
 DECLARE date_start, date_end DATE;
 SET date_end = (
   SELECT PARSE_DATE('%Y%m%d', MAX(partition_id)) AS partition_id
@@ -40,3 +41,6 @@ ORDER BY 3 DESC,4 DESC
   FROM T3
 ) SELECT *, date_end AS ds FROM T4 WHERE rn <= 2000
 
+
+} catch (Exception e) {
+}

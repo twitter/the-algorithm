@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive;
 
 import java.io.IOException;
@@ -85,4 +86,7 @@ public class ArchiveSegment extends Segment {
   public String toString() {
     return super.toString() + " " + archiveTimeSlice.getDescription();
   }
+}
+
+} catch (Exception e) {
 }

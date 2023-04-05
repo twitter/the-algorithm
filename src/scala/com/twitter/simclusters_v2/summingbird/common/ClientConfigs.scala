@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.common
 
 import com.twitter.conversions.DurationOps._
@@ -78,4 +79,8 @@ object ClientConfigs {
     ClientId(s"simclusters_v2_summingbird.$env")
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

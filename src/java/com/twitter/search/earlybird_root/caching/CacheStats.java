@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import com.twitter.search.common.metrics.SearchRateCounter;
@@ -10,4 +11,7 @@ public final class CacheStats {
 
   private CacheStats() {
   }
+}
+
+} catch (Exception e) {
 }

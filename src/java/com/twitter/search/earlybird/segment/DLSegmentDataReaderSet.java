@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.segment;
 
 import java.io.IOException;
@@ -234,4 +235,7 @@ public class DLSegmentDataReaderSet implements SegmentDataReaderSet {
     return ((getDocumentReader() == null) || getDocumentReader().isCaughtUp())
         && ((getUpdateEventsReader() == null) || getUpdateEventsReader().isCaughtUp());
   }
+}
+
+} catch (Exception e) {
 }

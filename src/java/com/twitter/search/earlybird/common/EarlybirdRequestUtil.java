@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common;
 
 import java.util.concurrent.TimeUnit;
@@ -241,4 +242,7 @@ public final class EarlybirdRequestUtil {
       CLIENT_CLOCK_DIFF_MISSING.increment();
     }
   }
+}
+
+} catch (Exception e) {
 }

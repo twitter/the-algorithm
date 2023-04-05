@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import scala.PartialFunction;
@@ -66,4 +67,7 @@ public class RootResponseClassifier extends AbstractPartialFunction<ReqRep, Resp
         return ResponseClasses.SUCCESS;
     }
   }
+}
+
+} catch (Exception e) {
 }

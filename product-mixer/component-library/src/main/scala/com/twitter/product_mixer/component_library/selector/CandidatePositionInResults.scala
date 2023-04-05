@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 import com.twitter.product_mixer.component_library.model.candidate.RelevancePromptCandidate
 import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
@@ -30,4 +31,8 @@ object PromptCandidatePositionInResults extends CandidatePositionInResults[Pipel
     // not supporting ModuleCandidateWithDetails right now as RelevancePromptCandidate shouldn't be in a module
     case _ => None
   }
+}
+
+} catch {
+  case e: Exception =>
 }

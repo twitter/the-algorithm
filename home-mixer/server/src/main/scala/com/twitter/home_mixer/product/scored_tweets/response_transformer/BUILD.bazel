@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -16,3 +17,6 @@ scala_library(
         "topic-social-proof/server/src/main/thrift:thrift-scala",
     ],
 )
+
+} catch (Exception e) {
+}

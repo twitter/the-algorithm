@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button.ButtonStyleMarshaller
@@ -25,4 +26,8 @@ class CoverCtaMarshaller @Inject() (
     icon = coverCta.icon.map(horizonIconMarshaller(_)),
     buttonStyle = coverCta.buttonStyle.map(buttonStyleMarshaller(_))
   )
+}
+
+} catch {
+  case e: Exception =>
 }

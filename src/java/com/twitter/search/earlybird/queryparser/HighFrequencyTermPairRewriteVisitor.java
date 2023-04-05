@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.queryparser;
 
 import java.util.ArrayList;
@@ -474,4 +475,7 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
   private static boolean hasAnnotations(com.twitter.search.queryparser.query.Query node) {
     return node.hasAnnotations();
   }
+}
+
+} catch (Exception e) {
 }

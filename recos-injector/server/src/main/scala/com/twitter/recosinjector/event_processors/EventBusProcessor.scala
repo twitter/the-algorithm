@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.event_processors
 
 import com.twitter.eventbus.client.{EventBusSubscriber, EventBusSubscriberBuilder}
@@ -57,4 +58,8 @@ trait EventBusProcessor[Event <: ThriftStruct] {
         log.error(ex, s"Exception while stopping EventBus processor ${this.getClass.getSimpleName}")
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

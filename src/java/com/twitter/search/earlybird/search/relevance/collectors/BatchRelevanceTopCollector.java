@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance.collectors;
 
 import java.io.IOException;
@@ -115,4 +116,7 @@ public class BatchRelevanceTopCollector extends RelevanceTopCollector {
       batchScoringPerModelTimer.timerIncrement(scoringTimeNanos);
     }
   }
+}
+
+} catch (Exception e) {
 }

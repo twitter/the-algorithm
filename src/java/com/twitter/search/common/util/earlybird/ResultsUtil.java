@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.earlybird;
 
 import java.util.Map;
@@ -33,4 +34,7 @@ public final class ResultsUtil {
     }
     return total;
   }
+}
+
+} catch (Exception e) {
 }

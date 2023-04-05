@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -70,3 +71,6 @@ scala_library(
         "user_session_store/src/main/scala/com/twitter/user_session_store/impl/manhattan/readwrite",
     ],
 )
+
+} catch (Exception e) {
+}

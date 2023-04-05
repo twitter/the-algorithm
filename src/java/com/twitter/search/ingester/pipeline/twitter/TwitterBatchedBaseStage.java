@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -306,4 +307,7 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
   public void setForceProcessAfter(int forceProcessAfterMS) {
     this.forceProcessAfterMs = forceProcessAfterMS;
   }
+}
+
+} catch (Exception e) {
 }

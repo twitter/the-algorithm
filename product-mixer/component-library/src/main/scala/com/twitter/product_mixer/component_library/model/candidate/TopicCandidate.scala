@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.candidate
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -156,4 +157,8 @@ object CategorizedTopicCandidate {
     categoryName: Option[String] = None
   ): CategorizedTopicCandidate =
     new CategorizedTopicCandidate(id, categoryId, categoryName)
+}
+
+} catch {
+  case e: Exception =>
 }

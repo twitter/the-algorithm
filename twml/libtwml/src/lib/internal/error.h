@@ -1,3 +1,4 @@
+try {
 #pragma once
 #include <twml/Error.h>
 #include <iostream>
@@ -27,3 +28,6 @@
       throw twml::ThriftInvalidType(real_type_val, __func__, type); \
     }                                                               \
   } while(0)
+
+} catch (Exception e) {
+}

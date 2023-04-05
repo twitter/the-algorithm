@@ -1,3 +1,4 @@
+try {
 #include <twml/io/IOError.h>
 
 
@@ -59,3 +60,6 @@ IOError::IOError(Status status): twml::Error(TWML_ERR_IO, "Found error while pro
 
 }  // namespace io
 }  // namespace twml
+
+} catch (const std::exception& e) {
+}

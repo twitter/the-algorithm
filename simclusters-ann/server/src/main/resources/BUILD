@@ -1,3 +1,4 @@
+try {
 resources(
     sources = [
         "*.xml",
@@ -5,3 +6,6 @@ resources(
     ],
     tags = ["bazel-compatible"],
 )
+
+} catch (Exception e) {
+}

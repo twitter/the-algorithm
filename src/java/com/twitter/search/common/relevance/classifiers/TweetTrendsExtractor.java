@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.classifiers;
 
 import java.util.List;
@@ -162,4 +163,7 @@ public class TweetTrendsExtractor {
           textFeatures.getTrendingTerms(), penguinVersion));
     }
   }
+}
+
+} catch (Exception e) {
 }

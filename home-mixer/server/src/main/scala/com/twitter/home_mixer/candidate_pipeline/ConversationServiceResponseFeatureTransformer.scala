@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.candidate_pipeline
 
 import com.twitter.home_mixer.model.HomeFeatures._
@@ -36,4 +37,8 @@ object ConversationServiceResponseFeatureTransformer
     .add(AncestorsFeature, candidate.ancestors)
     .add(SuggestTypeFeature, Some(SuggestType.RankedOrganicTweet))
     .build()
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.state
 
 import com.twitter.product_mixer.core.functional_component.decorator.Decoration
@@ -8,4 +9,8 @@ trait HasCandidatesWithDetails[T] {
   def updateCandidatesWithDetails(newCandidates: Seq[CandidateWithDetails]): T
 
   def updateDecorations(decoration: Seq[Decoration]): T
+}
+
+} catch {
+  case e: Exception =>
 }

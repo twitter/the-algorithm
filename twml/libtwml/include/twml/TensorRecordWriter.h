@@ -1,3 +1,4 @@
+try {
 #pragma once
 #ifdef __cplusplus
 
@@ -33,3 +34,6 @@ public:
 
 }
 #endif
+
+} catch (Exception e) {
+}

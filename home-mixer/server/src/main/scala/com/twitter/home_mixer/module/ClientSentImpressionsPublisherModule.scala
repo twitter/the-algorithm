@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.module
 
 import com.google.inject.Provides
@@ -45,4 +46,8 @@ object ClientSentImpressionsPublisherModule extends TwitterModule with ConfigUti
       .publishTimeout(1.second)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

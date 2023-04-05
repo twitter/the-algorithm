@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.transforms.recommendation_flow_identifier
 
 import com.google.inject.Inject
@@ -17,4 +18,8 @@ class AddRecommendationFlowIdentifierTransform @Inject()
       candidateUser.copy(recommendationFlowIdentifier = target.recommendationFlowIdentifier)
     })
   }
+}
+
+} catch {
+  case e: Exception =>
 }

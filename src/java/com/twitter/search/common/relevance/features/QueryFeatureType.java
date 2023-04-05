@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.features;
 
 /**
@@ -6,4 +7,7 @@ package com.twitter.search.common.relevance.features;
 public enum QueryFeatureType {
   SOCIAL_ENGAGEMENTS,
   CLICKS
+}
+
+} catch (Exception e) {
 }

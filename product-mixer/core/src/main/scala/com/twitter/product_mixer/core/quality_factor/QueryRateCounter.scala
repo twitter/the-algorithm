@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.quality_factor
 
 import com.twitter.util.Duration
@@ -18,4 +19,8 @@ case class QueryRateCounter private[quality_factor] (
   def increment(count: Int): Unit = leakyBucket.put(count)
 
   def getRate(): Double = leakyBucket.count / queryRateWindowInSeconds
+}
+
+} catch {
+  case e: Exception =>
 }

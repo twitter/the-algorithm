@@ -1,3 +1,4 @@
+try {
 -- This SQL query generate the cluster to top k tweets index based on tweet engagements.
 -- The engagement type is decided by USER_TWEET_ENGAGEMENT_TABLE_SQL.
 
@@ -83,3 +84,6 @@ with vars as (
 SELECT *
 FROM clusters_top_k_tweets
 
+
+} catch (Exception e) {
+}

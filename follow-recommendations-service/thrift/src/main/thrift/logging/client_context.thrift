@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.follow_recommendations.logging.thriftjava
 #@namespace scala com.twitter.follow_recommendations.logging.thriftscala
 #@namespace strato com.twitter.follow_recommendations.logging
@@ -12,3 +13,6 @@ struct OfflineClientContext {
   6: optional i64 guestIdAds(personalDataType='GuestId')
   7: optional i64 guestIdMarketing(personalDataType='GuestId')
 }(persisted='true', hasPersonalData='true')
+
+} catch (Exception e) {
+}

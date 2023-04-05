@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.recap_hydration
 
 import com.twitter.servo.decider.DeciderGateBuilder
@@ -42,4 +43,8 @@ class RecapHydrationProduction(deciderGateBuilder: DeciderGateBuilder) {
       booleanFeatureSwitchOverrides: _*
     )
     .build(RecapHydrationProduction.getClass.getSimpleName)
+}
+
+} catch {
+  case e: Exception =>
 }

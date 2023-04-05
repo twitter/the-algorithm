@@ -1,3 +1,4 @@
+try {
 scala_library(
     platform = "java8",
     tags = ["bazel-compatible"],
@@ -25,3 +26,6 @@ scala_library(
         "src/scala/com/twitter/wtf/summingbird/sources/storm",
     ],
 )
+
+} catch (Exception e) {
+}

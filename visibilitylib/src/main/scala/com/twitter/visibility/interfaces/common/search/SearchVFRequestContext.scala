@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.common.search
 
 import com.twitter.search.blender.services.strato.UserSearchSafetySettings
@@ -16,4 +17,8 @@ case class SearchVFRequestContext(
     querySourceOption: Option[ThriftQuerySource],
     userSearchSafetySettings: UserSearchSafetySettings
   ) = this(resultsPageNumber, candidateCount, querySourceOption, userSearchSafetySettings, false)
+}
+
+} catch {
+  case e: Exception =>
 }

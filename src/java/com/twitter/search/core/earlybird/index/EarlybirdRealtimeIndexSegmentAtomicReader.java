@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index;
 
 import java.io.IOException;
@@ -172,4 +173,7 @@ public final class EarlybirdRealtimeIndexSegmentAtomicReader
   public CacheHelper getReaderCacheHelper() {
     return null;
   }
+}
+
+} catch (Exception e) {
 }

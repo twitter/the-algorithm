@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.filter
 
 import com.twitter.cr_mixer.model.CandidateGeneratorQuery
@@ -96,4 +97,8 @@ object PreRankFilterRunner {
             }
         }
     }
+}
+
+} catch {
+  case e: Exception =>
 }

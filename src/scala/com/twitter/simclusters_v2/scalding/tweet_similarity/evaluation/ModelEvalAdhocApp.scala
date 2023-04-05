@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.tweet_similarity.evaluation
 
 import com.twitter.ml.api.Feature.Continuous
@@ -88,4 +89,8 @@ object ModelEvalAdhocApp extends TwitterExecutionApp {
           .writeExecution(TypedTsv[(Long, Long, Boolean, Double, Double)](outputPath))
       }
     }
+}
+
+} catch {
+  case e: Exception =>
 }

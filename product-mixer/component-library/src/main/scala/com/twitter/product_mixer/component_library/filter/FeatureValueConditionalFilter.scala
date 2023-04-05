@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.filter
 
 import com.twitter.product_mixer.component_library.filter.FeatureConditionalFilter.IdentifierInfix
@@ -61,4 +62,8 @@ case class FeatureValueConditionalFilter[
 
 object FeatureConditionalFilter {
   val IdentifierInfix = "FeatureConditional"
+}
+
+} catch {
+  case e: Exception =>
 }

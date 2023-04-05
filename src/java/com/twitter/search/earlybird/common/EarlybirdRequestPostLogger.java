@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common;
 
 import com.twitter.decider.Decider;
@@ -34,4 +35,7 @@ public final class EarlybirdRequestPostLogger {
     EarlybirdRequestUtil.updateHitsCounters(request);
     logger.logRequest(request, response, timer);
   }
+}
+
+} catch (Exception e) {
 }

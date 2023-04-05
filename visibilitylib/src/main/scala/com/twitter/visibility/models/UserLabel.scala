@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.models
 
 import com.twitter.gizmoduck.{thriftscala => t}
@@ -241,4 +242,8 @@ object UserLabel {
       source = userLabel.source.map(_.name)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

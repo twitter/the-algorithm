@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -248,4 +249,7 @@ message SaveableObject {
   // These functions save and restore directly from tensors.
   int32 save_function = 2;
   int32 restore_function = 3;
+}
+
+} catch (Exception e) {
 }

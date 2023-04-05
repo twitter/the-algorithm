@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.data;
@@ -193,4 +194,7 @@ message Options {
   oneof optional_external_state_policy {
     ExternalStatePolicy external_state_policy = 6;
   }
+}
+
+} catch (Exception e) {
 }

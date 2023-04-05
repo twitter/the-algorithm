@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.modules
 
 import com.google.inject.Provides
@@ -44,4 +45,8 @@ object SimClustersANNCandidateSourceModule extends TwitterModule {
       statsReceiver = statsReceiver.scope("simClustersANNCandidateSource")
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scio.bq_generation
 package tweets_ann
 
@@ -117,4 +118,8 @@ object TweetsANNFromBQ {
   case class UserToTweetRecommendations(
     userId: Long,
     tweetCandidates: List[CandidateTweet])
+}
+
+} catch {
+  case e: Exception =>
 }

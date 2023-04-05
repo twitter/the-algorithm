@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.revchron
 
 import com.twitter.timelineranker.model.ReverseChronTimelineQuery
@@ -111,4 +112,8 @@ class ReverseChronTimelineQueryContextImpl(
   override def postFilteringBasedOnSearchMetadataEnabled(): Boolean = {
     getPostFilteringBasedOnSearchMetadataEnabled()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

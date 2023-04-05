@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates.user_activity
 
 import com.twitter.core_workflows.user_model.thriftscala.UserState
@@ -159,3 +160,7 @@ class NonNearZeroUserActivityPredicate @Inject() (
       client,
       statsReceiver
     )
+
+} catch {
+  case e: Exception =>
+}

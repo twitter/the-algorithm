@@ -1,3 +1,4 @@
+try {
 # SALSA Candidate Source
 Provides an account expansion based on the SALSA PYMK (People You May Know) algorithm for a given account. The algorithm focuses on the mutual follow and address book graph, making it highly effective at providing good mutual follow recommendations.
 
@@ -8,3 +9,6 @@ For each target user, the local graph is a bipartite graph with a left-hand side
 The random walk starts from the target user in the LHS and adopts a restarting strategy to realize personalization.
 
 In summary, the SALSA Candidate Source provides an account expansion based on the SALSA PYMK algorithm, utilizing a bipartite graph with personalized random walks to identify the most relevant and interesting recommendations for the user.
+
+} catch (Exception e) {
+}

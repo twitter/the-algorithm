@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
@@ -98,4 +99,8 @@ object UrtTransportMarshaller {
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

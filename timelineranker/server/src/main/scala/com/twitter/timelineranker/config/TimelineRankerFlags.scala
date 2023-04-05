@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.config
 
 import com.twitter.app.Flags
@@ -69,4 +70,8 @@ class TimelineRankerFlags(flag: Flags)
   def getDatacenter: Datacenter.Value = getDC(dc())
   def getEnv: Env.Value = getEnv(environment())
   override def getServiceIdentifier: ServiceIdentifier = serviceIdentifier()
+}
+
+} catch {
+  case e: Exception =>
 }

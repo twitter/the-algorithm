@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 package multi_type_graph.assemble_multi_type_graph
 
@@ -32,4 +33,8 @@ object Config {
   )
   val SampledEmployeeIds: Set[Long] =
     Set()
+}
+
+} catch {
+  case e: Exception =>
 }

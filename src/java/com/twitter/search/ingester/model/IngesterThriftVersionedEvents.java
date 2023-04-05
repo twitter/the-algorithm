@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.model;
 
 import java.util.Map;
@@ -47,4 +48,7 @@ public class IngesterThriftVersionedEvents extends ThriftVersionedEvents
   public long getUserId() {
     return this.userId;
   }
+}
+
+} catch (Exception e) {
 }

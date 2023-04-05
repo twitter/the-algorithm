@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.recap_hydration
 
 import com.twitter.conversions.DurationOps._
@@ -44,4 +45,8 @@ class RecapHydrationRepositoryBuilder(config: RuntimeConfiguration, configBuilde
 
     new RecapHydrationRepository(recapHydrationSource)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

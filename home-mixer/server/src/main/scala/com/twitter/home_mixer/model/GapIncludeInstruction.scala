@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.model
 
 import com.twitter.home_mixer.functional_component.candidate_source.EarlybirdBottomTweetFeature
@@ -60,4 +61,8 @@ object GapIncludeInstruction
       case _ => false
     })
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref.ContextualTweetRefMarshaller
@@ -708,4 +709,8 @@ object UrtTransportMarshallerBuilder {
       childFeedbackActionMarshaller = childFeedbackActionMarshaller,
       timelineMetadataMarshaller = timelineMetadataMarshaller
     )
+}
+
+} catch {
+  case e: Exception =>
 }

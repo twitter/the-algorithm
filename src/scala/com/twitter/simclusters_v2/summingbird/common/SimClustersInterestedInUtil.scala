@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.common
 
 import com.twitter.simclusters_v2.common.ClusterId
@@ -69,4 +70,8 @@ object SimClustersInterestedInUtil {
       EmptyClustersWithScores
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

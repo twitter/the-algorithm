@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.button.CtaButton
@@ -16,4 +17,8 @@ class CtaButtonMarshaller @Inject() (
     case button: TextCtaButton => urt.CtaButton.Text(textCtaButtonMarshaller(button))
     case button: IconCtaButton => urt.CtaButton.Icon(iconCtaButtonMarshaller(button))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

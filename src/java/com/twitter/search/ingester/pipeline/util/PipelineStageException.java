@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.util;
 
 public class PipelineStageException extends Exception {
@@ -16,4 +17,7 @@ public class PipelineStageException extends Exception {
   public PipelineStageException(Object location, String message) {
     super(message + " In Stage : " + location.getClass());
   }
+}
+
+} catch (Exception e) {
 }

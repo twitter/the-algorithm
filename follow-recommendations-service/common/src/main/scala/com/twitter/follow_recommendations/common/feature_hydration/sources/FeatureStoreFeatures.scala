@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.sources
 
 import com.twitter.ml.api.DataRecord
@@ -339,4 +340,8 @@ object FeatureStoreRawFeatures {
     PrimaryMobileSdkVersion,
     SecondaryClient
   )
+}
+
+} catch {
+  case e: Exception =>
 }

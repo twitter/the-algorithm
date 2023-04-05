@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.candidate_source
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -14,3 +15,7 @@ import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
 case class CandidatesWithSourceFeatures[+Candidate](
   candidates: Seq[Candidate],
   features: FeatureMap)
+
+} catch {
+  case e: Exception =>
+}

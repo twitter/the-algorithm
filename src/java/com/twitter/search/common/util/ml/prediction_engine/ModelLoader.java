@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml.prediction_engine;
 
 import java.io.IOException;
@@ -175,4 +176,7 @@ public class ModelLoader implements Runnable {
     }
     return false;
   };
+}
+
+} catch (Exception e) {
 }

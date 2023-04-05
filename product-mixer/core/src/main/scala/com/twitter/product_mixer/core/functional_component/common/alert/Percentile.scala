@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.common.alert
 
 /**
@@ -15,3 +16,7 @@ case object P99 extends Percentile { override val metricSuffix: String = ".p99" 
 case object P999 extends Percentile { override val metricSuffix: String = ".p9990" }
 case object P9999 extends Percentile { override val metricSuffix: String = ".p9999" }
 case object Max extends Percentile { override val metricSuffix: String = ".max" }
+
+} catch {
+  case e: Exception =>
+}

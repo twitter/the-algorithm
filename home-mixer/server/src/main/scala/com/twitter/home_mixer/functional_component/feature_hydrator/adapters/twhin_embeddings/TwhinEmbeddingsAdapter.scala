@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.adapters.twhin_embeddings
 
 import com.twitter.ml.api.util.BufferToIterators.RichFloatBuffer
@@ -78,4 +79,8 @@ object TwhinUserFollowEmbeddingsAdapter extends TwhinEmbeddingsAdapter {
     TwhinEmbeddingsFeatures.TwhinUserFollowEmbeddingsFeature
 
   override val commonFeatures: Set[Feature[_]] = Set(twhinEmbeddingsFeature)
+}
+
+} catch {
+  case e: Exception =>
 }

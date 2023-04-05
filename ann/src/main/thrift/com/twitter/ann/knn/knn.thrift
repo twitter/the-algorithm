@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.ann.knn.thriftjava
 #@namespace scala com.twitter.ann.knn.thriftscala
 namespace py gen.twitter.ann.knn
@@ -13,3 +14,6 @@ struct Knn {
   1: required entity.EntityId queryId
   2: required list<Neighbor> neighbors
 }(persisted='true')
+
+} catch (Exception e) {
+}

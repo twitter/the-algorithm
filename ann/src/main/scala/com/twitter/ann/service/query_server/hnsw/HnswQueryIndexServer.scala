@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.query_server.hnsw
 
 import com.twitter.ann.common.Distance
@@ -95,4 +96,8 @@ class HNSWWarmup(hnsw: Queryable[_, HnswParams, _], dimension: Int) extends Warm
         .queryWithDistance(randomQuery(), 100, HnswParams(ef = 800))
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

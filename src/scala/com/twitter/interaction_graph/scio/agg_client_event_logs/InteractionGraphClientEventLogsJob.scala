@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_client_event_logs
 
 import com.spotify.scio.ScioContext
@@ -71,4 +72,8 @@ object InteractionGraphClientEventLogsJob
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_direct_interactions
 
 import com.spotify.scio.ScioContext
@@ -48,4 +49,8 @@ case class InteractionGraphAggDirectInteractionsSource(
       noOlderThan = Duration.fromDays(5),
       dalEnvironment = dalEnvironment
     )
+}
+
+} catch {
+  case e: Exception =>
 }

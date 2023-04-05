@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.util.HashMap;
@@ -41,4 +42,7 @@ public class InMemoryFields extends Fields {
   public int size() {
     return perFields.size();
   }
+}
+
+} catch (Exception e) {
 }

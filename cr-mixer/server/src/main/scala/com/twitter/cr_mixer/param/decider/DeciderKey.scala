@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param.decider
 
 import com.twitter.servo.decider.DeciderKeyEnum
@@ -64,4 +65,8 @@ object DeciderKey extends DeciderKeyEnum {
 
   val enableEarlybirdTrafficDeciderKey: Value = Value(
     DeciderConstants.enableEarlybirdTrafficDeciderKey)
+}
+
+} catch {
+  case e: Exception =>
 }

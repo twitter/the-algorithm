@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.slice.builder
 
 import com.twitter.product_mixer.component_library.model.cursor.OrderedCursor
@@ -35,4 +36,8 @@ case class OrderedNextCursorBuilder[Query <: PipelineQuery with HasPipelineCurso
 
     serializer.serializeCursor(cursor)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

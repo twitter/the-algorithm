@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.shared_library.http_client
 
 import com.twitter.finagle.Http
@@ -94,4 +95,8 @@ object FinagleHttpClientWithProxyBuilder {
   ): Service[Request, Response] = {
     finagleHttpClientWithProxy.newService(twitterProxyHostPort.toString)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

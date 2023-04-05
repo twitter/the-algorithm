@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.topic
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -12,4 +13,8 @@ trait BaseTopicDisplayTypeBuilder[-Query <: PipelineQuery, -Candidate <: Univers
     candidate: Candidate,
     candidateFeatures: FeatureMap
   ): Option[TopicDisplayType]
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import com.twitter.timelines.configapi.BaseConfig
@@ -55,4 +56,8 @@ object TweetBasedUserAdGraphParams {
       .build()
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 class Profile(Struct):
   project = Required(String)
   date = Required(String)
@@ -37,3 +38,6 @@ job = Job(
 
 jobs=[job]
 
+
+} catch (Exception e) {
+}

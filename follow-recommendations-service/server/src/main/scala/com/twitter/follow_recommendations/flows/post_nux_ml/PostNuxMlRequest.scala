@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.post_nux_ml
 
 import com.twitter.core_workflows.user_model.thriftscala.UserState
@@ -51,4 +52,8 @@ case class PostNuxMlRequest(
     inputPreviouslyRecommendedUserIds.getOrElse(Set.empty)
   override val previouslyFollowedUserIds: Set[Long] =
     inputPreviouslyFollowedUserIds.getOrElse(Set.empty)
+}
+
+} catch {
+  case e: Exception =>
 }

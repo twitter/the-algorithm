@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search;
 
 import java.io.IOException;
@@ -196,4 +197,7 @@ public final class GeoQuadTreeQueryBuilder {
               boundingBox.getCrossesDateLine());
     }
   }
+}
+
+} catch (Exception e) {
 }

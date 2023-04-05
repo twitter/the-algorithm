@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.IOException;
@@ -27,4 +28,7 @@ public final class HdfsUtil {
     FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
     return statuses != null && statuses.length > 0;
   }
+}
+
+} catch (Exception e) {
 }

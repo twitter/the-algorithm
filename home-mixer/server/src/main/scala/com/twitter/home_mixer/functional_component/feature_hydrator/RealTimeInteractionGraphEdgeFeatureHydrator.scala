@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
@@ -61,4 +62,8 @@ class RealTimeInteractionGraphEdgeFeatureHydrator @Inject() ()
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

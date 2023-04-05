@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.request
 
 /**
@@ -5,4 +6,8 @@ package com.twitter.product_mixer.core.model.marshalling.request
  */
 trait HasExcludedIds {
   val excludedIds: Set[Long] = Set.empty
+}
+
+} catch {
+  case e: Exception =>
 }

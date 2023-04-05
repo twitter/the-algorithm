@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.scorer
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -33,4 +34,8 @@ trait Scorer[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]]
     query: Query,
     candidates: Seq[CandidateWithFeatures[Candidate]]
   ): Stitch[Seq[FeatureMap]]
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.module.stringcenter
 
 import com.google.inject.Provides
@@ -132,4 +133,8 @@ class ProductScopeStringCenterModule extends TwitterModule {
   ): StringCenterClientConfig = {
     StringCenterClientConfig(handleLanguageFallback = handleLanguageFallback)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

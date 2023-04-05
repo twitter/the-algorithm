@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.cr_mixer.thriftjava
 #@namespace scala com.twitter.cr_mixer.thriftscala
 #@namespace strato com.twitter.cr_mixer
@@ -29,3 +30,6 @@ struct UtegTweet {
 struct UtegTweetResponse {
   1: required list<UtegTweet> tweets
 } (persisted='true')
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.sources
 
 import com.google.inject.Provides
@@ -40,4 +41,8 @@ class ClientContextSource() extends FeatureSource {
         .map(_ -> ((t.clientContext, t.displayLocation))).toMap.mapValues(
           ClientContextAdapter.adaptToDataRecord))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

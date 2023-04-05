@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema.earlybird;
 
 import javax.annotation.Nullable;
@@ -333,4 +334,7 @@ public enum FlushVersion {
   public int getMinorVersion() {
     return minorVersion;
   }
+}
+
+} catch (Exception e) {
 }

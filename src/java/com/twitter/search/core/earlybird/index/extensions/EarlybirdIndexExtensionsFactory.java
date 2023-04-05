@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.extensions;
 
 /**
@@ -16,4 +17,7 @@ public abstract class EarlybirdIndexExtensionsFactory {
    * Returns the {@link EarlybirdIndexExtensionsData} instance to be used for a new Lucene segment.
    */
   public abstract EarlybirdIndexExtensionsData newLuceneIndexExtensionsData();
+}
+
+} catch (Exception e) {
 }

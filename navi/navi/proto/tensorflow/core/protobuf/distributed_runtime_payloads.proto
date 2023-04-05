@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.distributed_runtime;
@@ -22,3 +23,6 @@ message GrpcPayloadsLost {}
 // URI:
 // "type.googleapis.com/tensorflow.distributed_runtime.WorkerPossiblyRestarted"
 message WorkerPossiblyRestarted {}
+
+} catch (Exception e) {
+}

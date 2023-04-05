@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.configapi.params.FSRuleParams.HighToxicityModelScoreSpaceThresholdParam
@@ -216,4 +217,8 @@ object SpaceRules {
         Drop(Nsfw),
         NsfwBannerImage
       )
+}
+
+} catch {
+  case e: Exception =>
 }

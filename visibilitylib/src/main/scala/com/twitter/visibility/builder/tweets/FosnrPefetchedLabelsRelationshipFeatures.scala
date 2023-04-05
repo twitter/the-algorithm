@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.tweets
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -78,4 +79,8 @@ class FosnrPefetchedLabelsRelationshipFeatures(
       viewerDoesNotFollowAuthorOfViolatingTweet).map(following => !following)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

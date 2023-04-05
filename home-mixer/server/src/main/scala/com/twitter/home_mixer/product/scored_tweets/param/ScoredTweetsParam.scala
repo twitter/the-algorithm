@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.param
 
 import com.twitter.conversions.DurationOps._
@@ -173,4 +174,8 @@ object ScoredTweetsParam {
 
   object CompetitorURLSeqParam
       extends FSParam[Seq[String]](name = "scored_tweets_competitor_url_list", default = Seq.empty)
+}
+
+} catch {
+  case e: Exception =>
 }

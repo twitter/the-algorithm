@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.utils
 import scala.util.Random
 
@@ -85,4 +86,8 @@ object RandomUtil {
     val candWeights = items.zipWithIndex.map { case (item, rank) => (item, rankToWeight(rank)) }
     RandomUtil.weightedRandomShuffle(candWeights, random).map(_._1)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

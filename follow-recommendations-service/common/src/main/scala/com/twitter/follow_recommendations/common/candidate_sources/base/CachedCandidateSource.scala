@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.base
 
 import com.twitter.escherbird.util.stitchcache.StitchCache
@@ -23,4 +24,8 @@ class CachedCandidateSource[K <: Object, V <: Object](
   )
 
   override def apply(target: K): Stitch[Seq[V]] = cache.readThrough(target)
+}
+
+} catch {
+  case e: Exception =>
 }

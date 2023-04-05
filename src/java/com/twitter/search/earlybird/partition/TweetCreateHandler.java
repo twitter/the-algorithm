@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.IOException;
@@ -523,4 +524,7 @@ public class TweetCreateHandler {
     LOG.info(String.format("  tweets in wrong segment: %,d", TWEETS_IN_WRONG_SEGMENT.getCount()));
     LOG.info(String.format("  segments closed early: %,d", SEGMENTS_CLOSED_EARLY.getCount()));
   }
+}
+
+} catch (Exception e) {
 }

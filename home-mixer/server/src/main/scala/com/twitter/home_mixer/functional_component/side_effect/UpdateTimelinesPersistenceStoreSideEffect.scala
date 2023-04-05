@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.side_effect
 
 import com.twitter.home_mixer.model.HomeFeatures._
@@ -240,4 +241,8 @@ class UpdateTimelinesPersistenceStoreSideEffect @Inject() (
         case (feature, requestType) if features.getOrElse(feature, false) => requestType
       }.getOrElse(persistence.RequestType.Other)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

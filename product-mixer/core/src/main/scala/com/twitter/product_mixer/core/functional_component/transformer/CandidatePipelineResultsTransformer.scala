@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.transformer
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -42,4 +43,8 @@ object CandidatePipelineResultsTransformer {
       resultTransformer
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

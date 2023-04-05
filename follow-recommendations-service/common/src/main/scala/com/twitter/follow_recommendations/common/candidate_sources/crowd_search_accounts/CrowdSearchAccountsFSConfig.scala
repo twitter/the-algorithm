@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -15,4 +16,8 @@ class CrowdSearchAccountsFSConfig @Inject() () extends FeatureSwitchConfig {
   override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
     CrowdSearchAccountsParams.CandidateSourceWeight,
   )
+}
+
+} catch {
+  case e: Exception =>
 }

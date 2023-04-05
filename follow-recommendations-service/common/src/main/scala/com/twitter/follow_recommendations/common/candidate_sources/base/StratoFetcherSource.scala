@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.base
 
 import com.twitter.follow_recommendations.common.models.CandidateUser
@@ -24,4 +25,8 @@ abstract class StratoFetcherSource[K, U, V](
           .map(_.withCandidateSource(identifier))
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

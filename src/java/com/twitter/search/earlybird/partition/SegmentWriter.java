@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.IOException;
@@ -236,4 +237,7 @@ public class SegmentWriter implements ISegmentWriter {
         tie.getCreateTimeMillis(),
         documentFactory.newDocument(tie));
   }
+}
+
+} catch (Exception e) {
 }

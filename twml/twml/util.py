@@ -1,3 +1,4 @@
+try:
 """
 This module contains utility functions for twml.
 """
@@ -940,3 +941,6 @@ def do_every_n_steps(action, num_steps):
   global_step = tf.train.get_or_create_global_step()
   condition = tf.math.equal(tf.math.floormod(global_step, num_steps), 0)
   return tf.cond(condition, action, lambda: tf.no_op())
+
+except Exception:
+  pass

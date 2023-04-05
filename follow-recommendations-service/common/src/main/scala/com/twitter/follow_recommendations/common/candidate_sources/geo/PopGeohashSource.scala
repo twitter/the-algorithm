@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.geo
 
 import com.google.inject.Singleton
@@ -33,4 +34,8 @@ class PopGeohashSource @Inject() (
 object PopGeohashSource {
   val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
     Algorithm.PopGeohash.toString)
+}
+
+} catch {
+  case e: Exception =>
 }

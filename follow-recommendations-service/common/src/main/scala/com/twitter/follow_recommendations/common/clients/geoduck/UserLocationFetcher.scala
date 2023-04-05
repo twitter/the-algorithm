@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.geoduck
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -56,4 +57,8 @@ class UserLocationFetcher @Inject() (
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

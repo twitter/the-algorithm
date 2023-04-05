@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector.sorter.featurestorev1
 
 import com.twitter.ml.featurestore.lib.EntityId
@@ -95,4 +96,8 @@ object FeatureStoreV1FeatureValueSorter {
 
     SorterFromOrdering(ordering, Descending)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

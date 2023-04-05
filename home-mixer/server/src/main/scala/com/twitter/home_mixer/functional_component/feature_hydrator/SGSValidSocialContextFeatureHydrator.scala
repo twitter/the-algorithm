@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.home_mixer.model.HomeFeatures.FavoritedByUserIdsFeature
@@ -102,4 +103,8 @@ class SGSValidSocialContextFeatureHydrator @Inject() (
       socialGraph.ids(request).map(_.ids)
     } else Stitch.Nil
   }
+}
+
+} catch {
+  case e: Exception =>
 }

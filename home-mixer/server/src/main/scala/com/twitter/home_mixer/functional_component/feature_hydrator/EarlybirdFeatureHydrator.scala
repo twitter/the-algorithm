@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -126,4 +127,8 @@ class EarlybirdFeatureHydrator @Inject() (
         .build()
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

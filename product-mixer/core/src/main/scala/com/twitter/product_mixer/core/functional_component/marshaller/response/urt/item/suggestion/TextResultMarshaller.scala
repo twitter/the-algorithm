@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.suggestion
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.highlight.HighlightedSectionMarshaller
@@ -22,4 +23,8 @@ class TextResultMarshaller @Inject() (highlightedSectionMarshaller: HighlightedS
       score = textResult.score,
       querySource = textResult.querySource)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

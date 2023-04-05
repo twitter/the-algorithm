@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.users
 
 import com.twitter.finagle.stats.Counter
@@ -76,4 +77,8 @@ case object AuthorVerbsViewer {
       case None => AuthorVerbsViewer(author.id, viewerId, relationship, relationshipCounter)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

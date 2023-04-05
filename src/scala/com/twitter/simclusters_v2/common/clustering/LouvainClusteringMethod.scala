@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common.clustering
 
 import com.twitter.eventdetection.common.louvain.LouvainDriver
@@ -233,4 +234,8 @@ class LouvainClusteringMethod(
 
     (clusters, contactIdWithSilhouette)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

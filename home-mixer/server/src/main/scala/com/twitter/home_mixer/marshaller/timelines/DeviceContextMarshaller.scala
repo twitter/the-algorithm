@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.marshaller.timelines
 
 import com.twitter.home_mixer.model.request.DeviceContext
@@ -31,4 +32,8 @@ class DeviceContextMarshaller @Inject() () {
       isUrtRequest = Some(true)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

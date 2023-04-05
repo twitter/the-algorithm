@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_user_graph
 
 /**
@@ -10,4 +11,8 @@ object KafkaConfig {
   val bufferSize = 64
 
   println("KafkaConfig -                 bufferSize " + bufferSize)
+}
+
+} catch {
+  case e: Exception =>
 }

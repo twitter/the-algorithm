@@ -1,3 +1,4 @@
+try {
 RECOSGRAPH_SOURCES = ["user_tweet_entity_graph.thrift"]
 
 create_thrift_libraries(
@@ -17,3 +18,6 @@ create_thrift_libraries(
     provides_java_name = "user_tweet_entity_graph-java",
     provides_scala_name = "user_tweet_entity_graph-scala",
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context
 
 import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
@@ -11,4 +12,8 @@ trait BaseModuleSocialContextBuilder[-Query <: PipelineQuery, -Candidate <: Univ
     query: Query,
     candidates: Seq[CandidateWithFeatures[Candidate]]
   ): Option[SocialContext]
+}
+
+} catch {
+  case e: Exception =>
 }

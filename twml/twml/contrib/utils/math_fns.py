@@ -1,3 +1,4 @@
+try:
 import tensorflow.compat.v1 as tf
 from tensorflow.python.ops import array_ops, math_ops
 
@@ -169,3 +170,6 @@ def safe_log(raw_scores, name=None):
   epsilon = 1E-8
   clipped_raw_scores = tf.maximum(raw_scores, epsilon)
   return tf.log(clipped_raw_scores)
+
+except Exception:
+  pass

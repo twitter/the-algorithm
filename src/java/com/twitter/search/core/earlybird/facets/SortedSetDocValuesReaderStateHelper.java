@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import org.apache.lucene.facet.sortedset.SortedSetDocValuesReaderState;
@@ -11,4 +12,7 @@ public abstract class SortedSetDocValuesReaderStateHelper {
   public static boolean isDimSupported(SortedSetDocValuesReaderState state, String dim) {
     return state.getOrdRange(dim) != null;
   }
+}
+
+} catch (Exception e) {
 }

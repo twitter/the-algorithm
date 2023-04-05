@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -27,3 +28,6 @@ scala_library(
         "visibility/lib/src/main/thrift/com/twitter/visibility/logging:vf-logging-scala",
     ],
 )
+
+} catch (Exception e) {
+}

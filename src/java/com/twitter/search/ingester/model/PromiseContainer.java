@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.model;
 
 import com.twitter.util.Promise;
@@ -18,4 +19,7 @@ public class PromiseContainer<T, U> {
   public U getObj() {
     return obj;
   }
+}
+
+} catch (Exception e) {
 }

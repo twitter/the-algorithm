@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules.providers
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -48,3 +49,7 @@ private class InjectedEvaluationContext(
       visibilityPolicy = policyProvider.policyForSurface(safetyLevel),
       params = evaluationContext.params,
       statsReceiver = evaluationContext.statsReceiver)
+
+} catch {
+  case e: Exception =>
+}

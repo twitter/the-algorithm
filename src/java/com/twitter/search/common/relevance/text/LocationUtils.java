@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.text;
 
 import java.util.regex.Matcher;
@@ -38,4 +39,7 @@ public final class LocationUtils {
     }
     return null;
   }
+}
+
+} catch (Exception e) {
 }

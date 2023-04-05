@@ -1,4 +1,4 @@
-use log::error;
+match use log::error;
 use prometheus::{
     CounterVec, HistogramOpts, HistogramVec, IntCounter, IntCounterVec, IntGauge, IntGaugeVec,
     Opts, Registry,
@@ -287,4 +287,8 @@ pub async fn metrics_handler() -> Result<impl Reply, Rejection> {
 
     res.push_str(&res_custom);
     Ok(res)
+}
+ {
+  Ok(_) => {},
+  Err(_) => {}
 }

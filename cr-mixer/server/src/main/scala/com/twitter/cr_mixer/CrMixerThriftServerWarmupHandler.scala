@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer
 
 import com.twitter.finagle.thrift.ClientId
@@ -72,4 +73,8 @@ class CrMixerThriftServerWarmupHandler @Inject() (warmup: ThriftWarmup)
         error(exception.getMessage, exception)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 java_library(
     name = "swig-local",
     sources = ["*.java"],
@@ -24,3 +25,6 @@ java_library(
         "ann/src/main/java/com/twitter/ann/faiss:swig-native-utils",
     ],
 )
+
+} catch (Exception e) {
+}

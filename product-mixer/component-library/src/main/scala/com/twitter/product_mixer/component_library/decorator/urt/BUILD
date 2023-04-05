@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "urt",
     sources = ["**/*.scala"] + exclude_globs(["builder/richtext/*.scala"]),
@@ -106,3 +107,6 @@ scala_library(
         "twitter-text/lib/java/src/main/java/com/twitter/twittertext",
     ],
 )
+
+} catch (Exception e) {
+}

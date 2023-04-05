@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.experiments.metrics
 
 // Base trait for all placeholder values
@@ -34,4 +35,8 @@ object PlaceholderConfig {
   type PlaceholderKey = String
   type Placeholder = Seq[Named]
   type PlaceholdersMap = Map[PlaceholderKey, Placeholder]
+}
+
+} catch {
+  case e: Exception =>
 }

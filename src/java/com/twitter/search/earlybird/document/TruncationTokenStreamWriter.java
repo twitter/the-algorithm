@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.document;
 
 import com.twitter.common.text.token.TokenProcessor;
@@ -83,4 +84,7 @@ public class TruncationTokenStreamWriter implements SchemaDocumentFactory.TokenS
 
     return maxPosition;
   }
+}
+
+} catch (Exception e) {
 }

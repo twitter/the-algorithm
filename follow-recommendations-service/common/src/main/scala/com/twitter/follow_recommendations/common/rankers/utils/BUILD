@@ -1,3 +1,4 @@
+try {
 scala_library(
     compiler_option_sets = ["fatal_warnings"],
     platform = "java8",
@@ -6,3 +7,6 @@ scala_library(
         "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.filter
 
 import com.twitter.cr_mixer.model.CandidateGeneratorQuery
@@ -60,4 +61,8 @@ case class ImpressedTweetlistFilter() extends FilterBase {
 
 object ImpressedTweetlistFilter {
   case class FilterConfig(impressedTweetList: Set[TweetId])
+}
+
+} catch {
+  case e: Exception =>
 }

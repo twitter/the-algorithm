@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
 
 import com.twitter.follow_recommendations.common.candidate_sources.base.TwoHopExpansionCandidateSource
@@ -111,4 +112,8 @@ object SimsExpansionBasedCandidateSource {
       alpha * candidateScores.max + decay_scores.sum + beta * candidateScores.size
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

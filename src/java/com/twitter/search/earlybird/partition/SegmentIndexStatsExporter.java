@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import com.twitter.common.base.Supplier;
@@ -82,4 +83,7 @@ public final class SegmentIndexStatsExporter {
   private static String getName(final int segmentIndex, final String nameSuffix) {
     return NAME_PREFIX + segmentIndex + "_" + nameSuffix;
   }
+}
+
+} catch (Exception e) {
 }

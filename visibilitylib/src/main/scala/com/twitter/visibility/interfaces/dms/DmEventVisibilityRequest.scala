@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.dms
 
 import com.twitter.visibility.models.SafetyLevel
@@ -7,3 +8,7 @@ case class DmEventVisibilityRequest(
   dmEventId: Long,
   safetyLevel: SafetyLevel,
   viewerContext: ViewerContext)
+
+} catch {
+  case e: Exception =>
+}

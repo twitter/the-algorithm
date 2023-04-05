@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -26,4 +27,8 @@ trait RecapHydrationSearchResultsTransformBase
         envelope.copy(searchResults = results)
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

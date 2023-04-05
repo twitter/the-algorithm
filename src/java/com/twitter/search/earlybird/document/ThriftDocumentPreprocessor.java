@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.document;
 
 import java.io.IOException;
@@ -167,4 +168,7 @@ public final class ThriftDocumentPreprocessor {
       EarlybirdThriftDocumentUtil.addNormalizedMinEngagementField(doc, field, engagementCounter);
     }
   }
+}
+
+} catch (Exception e) {
 }

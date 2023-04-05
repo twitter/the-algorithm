@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.generators
 
 import com.twitter.visibility.common.actions.InterstitialReason
@@ -44,4 +45,8 @@ object InterstitialReasonToLocalizedMessage {
     val links = learnMoreLinkOpt.toSeq ++ additionalLinks
     LocalizedMessage(message = text, language = languageTag, links = links)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

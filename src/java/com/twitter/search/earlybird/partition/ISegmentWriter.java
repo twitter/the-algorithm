@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.IOException;
@@ -21,4 +22,7 @@ public interface ISegmentWriter {
    * Returns the segment info for this segment writer.
    */
   SegmentInfo getSegmentInfo();
+}
+
+} catch (Exception e) {
 }

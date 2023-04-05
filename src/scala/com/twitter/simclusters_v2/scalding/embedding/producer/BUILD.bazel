@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = [
         "*.scala",
@@ -221,3 +222,6 @@ scalding_job(
     ],
     dependencies = [":producer"],
 )
+
+} catch (Exception e) {
+}

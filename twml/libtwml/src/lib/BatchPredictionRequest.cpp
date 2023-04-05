@@ -1,3 +1,4 @@
+try {
 #include "internal/thrift.h"
 #include "internal/error.h"
 
@@ -50,3 +51,6 @@ template void GenericBatchPredictionRequest<HashedDataRecord>::decode(HashedData
 template void GenericBatchPredictionRequest<DataRecord>::decode(DataRecordReader &reader);
 
 }  // namespace twml
+
+} catch (const std::exception& e) {
+}

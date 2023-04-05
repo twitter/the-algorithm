@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import java.io.IOException;
@@ -99,4 +100,7 @@ public class EarlybirdFacets extends Facets {
     throw new UnsupportedOperationException("Not supported");
   }
 
+}
+
+} catch (Exception e) {
 }

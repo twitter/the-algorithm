@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.scalding.offline.com.twitter.ann.scalding.benchmark
 
 /*
@@ -125,4 +126,8 @@ object KnnJob extends TwitterExecutionApp with KnnJobBase {
     }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

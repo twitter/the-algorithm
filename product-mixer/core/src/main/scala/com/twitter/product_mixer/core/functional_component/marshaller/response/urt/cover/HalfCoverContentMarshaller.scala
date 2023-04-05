@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
@@ -30,4 +31,8 @@ class HalfCoverContentMarshaller @Inject() (
         coverImage = halfCover.coverImage.map(coverImageMarshaller(_)),
         dismissInfo = halfCover.dismissInfo.map(dismissInfoMarshaller(_))
       ))
+}
+
+} catch {
+  case e: Exception =>
 }

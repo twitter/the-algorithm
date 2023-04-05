@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.core
 
 import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetRecommendation
@@ -22,3 +23,7 @@ case class CandidateEnvelope(
   // - the inReplyTo tweet, for extended replies
   sourceSearchResults: Seq[ThriftSearchResult] = CandidateEnvelope.EmptySearchResults,
   sourceHydratedTweets: HydratedTweets = CandidateEnvelope.EmptyHydratedTweets)
+
+} catch {
+  case e: Exception =>
+}

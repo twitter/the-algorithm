@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.extensions;
 
 import java.io.IOException;
@@ -12,4 +13,7 @@ public interface EarlybirdIndexExtensionsData {
    * Sets up the extensions for the given reader.
    */
   void setupExtensions(EarlybirdIndexSegmentAtomicReader atomicReader) throws IOException;
+}
+
+} catch (Exception e) {
 }

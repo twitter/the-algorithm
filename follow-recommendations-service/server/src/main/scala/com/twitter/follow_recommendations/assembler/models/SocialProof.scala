@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.assembler.models
 
 import com.twitter.stringcenter.client.core.ExternalString
@@ -14,3 +15,7 @@ sealed trait SocialText {
 
 case class GeoSocialText(text: String) extends SocialText
 case class FollowedByUsersText(text: String) extends SocialText
+
+} catch {
+  case e: Exception =>
+}

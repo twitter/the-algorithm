@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.candidate_source
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -99,4 +100,8 @@ object SimClustersANNCandidateSource {
   case class Query(
     sourceEmbeddingId: SimClustersEmbeddingId,
     config: SimClustersANNConfig)
+}
+
+} catch {
+  case e: Exception =>
 }

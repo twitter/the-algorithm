@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_notifications
 
 import com.twitter.beam.io.dal.DALOptions
@@ -21,4 +22,8 @@ trait InteractionGraphNotificationsOption extends DALOptions with DateRangeOptio
   @Default.Integer(8)
   def getNumberOfShards: Integer
   def setNumberOfShards(value: Integer): Unit
+}
+
+} catch {
+  case e: Exception =>
 }

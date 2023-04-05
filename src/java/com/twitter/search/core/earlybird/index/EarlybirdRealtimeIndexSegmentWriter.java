@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index;
 
 import java.io.IOException;
@@ -786,4 +787,7 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
       doc.add(allDocsField);
     }
   }
+}
+
+} catch (Exception e) {
 }

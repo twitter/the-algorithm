@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.List;
@@ -164,4 +165,7 @@ public class FullArchiveProtectedOperatorFilter extends
     return Future.value(response);
   }
 
+}
+
+} catch (Exception e) {
 }

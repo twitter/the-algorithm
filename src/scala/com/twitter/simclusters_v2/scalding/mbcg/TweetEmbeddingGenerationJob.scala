@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.mbcg
 
 import com.twitter.ann.common.EntityEmbedding
@@ -381,4 +382,8 @@ object TweetEmbeddingGenerationBatchJobExperimental
         }
       }
     }
+}
+
+} catch {
+  case e: Exception =>
 }

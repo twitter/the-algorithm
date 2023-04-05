@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.adapters.non_ml_features
 
 import com.twitter.ml.api.constant.SharedFeatures
@@ -41,4 +42,8 @@ object NonMLCandidateFeaturesAdapter extends TimelinesMutatingAdapterBase[NonMLC
     nonMLCandidateFeatures.originalAuthorId.foreach(
       richDataRecord.setFeatureValue[JLong](TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID, _))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

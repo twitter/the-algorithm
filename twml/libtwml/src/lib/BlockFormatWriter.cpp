@@ -1,3 +1,4 @@
+try {
 #include "internal/error.h"
 #include <cstring>
 #include <iostream>
@@ -160,4 +161,7 @@ twml_err block_format_writer_delete(const block_format_writer w) {
   HANDLE_EXCEPTIONS(
     delete twml::getBlockFormatWriter(w););
   return TWML_ERR_NONE;
+}
+
+} catch (const std::exception& e) {
 }

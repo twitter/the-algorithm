@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.source_signal
 
 import com.twitter.core_workflows.user_model.thriftscala.UserState
@@ -98,4 +99,8 @@ object SourceFetcher {
     userState: UserState,
     params: Params)
 
+}
+
+} catch {
+  case e: Exception =>
 }

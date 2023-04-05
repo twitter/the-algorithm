@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.real_graph
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -24,4 +25,8 @@ class RealGraphOonFSConfig @Inject() () extends FeatureSwitchConfig {
       RealGraphOonParams.RealGraphOonResultCountThreshold,
       RealGraphOonParams.MaxResults,
     )
+}
+
+} catch {
+  case e: Exception =>
 }

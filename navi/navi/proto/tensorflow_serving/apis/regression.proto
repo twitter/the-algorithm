@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 option cc_enable_arenas = true;
@@ -34,4 +35,7 @@ message RegressionResponse {
   ModelSpec model_spec = 2;
 
   RegressionResult result = 1;
+}
+
+} catch (Exception e) {
 }

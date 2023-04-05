@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.util.earlybird
 
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
@@ -46,4 +47,8 @@ object RelevanceSearchUtil {
       returnAllResults = Some(true)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

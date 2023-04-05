@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.features;
 
 import java.util.Map;
@@ -72,4 +73,7 @@ public class FeatureSink {
   public IntegerEncodedFeatures getFeaturesForBaseField(String baseFieldName) {
     return encodedFeatureMap.get(baseFieldName);
   }
+}
+
+} catch (Exception e) {
 }

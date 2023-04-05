@@ -1,3 +1,4 @@
+try {
 resources(
     name = "resources",
     sources = [
@@ -15,3 +16,6 @@ resources(
         "visibility://visibility:private",
     ],
 )
+
+} catch (Exception e) {
+}

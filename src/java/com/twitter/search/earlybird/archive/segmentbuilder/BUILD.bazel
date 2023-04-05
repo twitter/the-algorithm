@@ -1,3 +1,4 @@
+try {
 java_library(
     name = "segment_builder_lib",
     sources = ["**/*.java"],
@@ -62,3 +63,6 @@ hadoop_binary(
         "src/java/com/twitter/search/common/logging:search-log4j",
     ],
 )
+
+} catch (Exception e) {
+}

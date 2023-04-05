@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
 
 case class MediaInfo(
@@ -9,3 +10,7 @@ case class MediaInfo(
   advertiserName: Option[String],
   renderAdByAdvertiserName: Option[Boolean],
   advertiserProfileImageUrl: Option[String])
+
+} catch {
+  case e: Exception =>
+}

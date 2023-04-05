@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_flock
 
 import com.spotify.scio.values.SCollection
@@ -60,4 +61,8 @@ object InteractionGraphAggFlockUtil {
       }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

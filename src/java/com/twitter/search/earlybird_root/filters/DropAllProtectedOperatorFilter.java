@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import javax.inject.Inject;
@@ -68,4 +69,7 @@ public class DropAllProtectedOperatorFilter
       return service.apply(clonedRequestContext);
     }
   }
+}
+
+} catch (Exception e) {
 }

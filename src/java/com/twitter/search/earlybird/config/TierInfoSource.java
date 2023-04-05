@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.config;
 
 import java.util.ArrayList;
@@ -36,4 +37,7 @@ public class TierInfoSource {
     return tierInfos;
   }
 
+}
+
+} catch (Exception e) {
 }

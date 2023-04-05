@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.common
 
 import com.twitter.stitch.Stitch
@@ -38,4 +39,8 @@ trait QueryableById[T1, T2, P <: RuntimeParams, D <: Distance[D]] {
     numOfNeighbors: Int,
     runtimeParams: P
   ): Stitch[List[NeighborWithDistanceWithSeed[T1, T2, D]]]
+}
+
+} catch {
+  case e: Exception =>
 }

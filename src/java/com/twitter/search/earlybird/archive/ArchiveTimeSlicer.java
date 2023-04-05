@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive;
 
 import java.io.IOException;
@@ -319,4 +320,7 @@ public class ArchiveTimeSlicer {
   protected DailyStatusBatches getDailyStatusBatches() {
     return dailyStatusBatches;
   }
+}
+
+} catch (Exception e) {
 }

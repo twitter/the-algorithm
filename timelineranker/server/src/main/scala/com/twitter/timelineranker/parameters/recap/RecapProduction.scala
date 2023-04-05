@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.recap
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -112,4 +113,8 @@ class RecapProduction(deciderGateBuilder: DeciderGateBuilder, statsReceiver: Sta
       boundedDoubleFeatureSwitchOverrides: _*
     )
     .build(RecapProduction.getClass.getSimpleName)
+}
+
+} catch {
+  case e: Exception =>
 }

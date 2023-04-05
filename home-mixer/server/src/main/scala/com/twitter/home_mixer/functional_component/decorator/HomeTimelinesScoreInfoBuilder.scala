@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.decorator
 
 import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
@@ -23,4 +24,8 @@ object HomeTimelinesScoreInfoBuilder
       Some(TimelinesScoreInfo(score))
     } else None
   }
+}
+
+} catch {
+  case e: Exception =>
 }

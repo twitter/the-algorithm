@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -8,3 +9,6 @@ option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobu
 // Status. Used by StatusGroup to ignore certain Statuses when reporting
 // errors to end users.
 message DerivedStatus {}
+
+} catch (Exception e) {
+}

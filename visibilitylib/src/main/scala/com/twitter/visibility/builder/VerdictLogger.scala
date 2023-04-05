@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder
 
 import com.twitter.datatools.entityservice.entities.thriftscala.FleetInterstitial
@@ -184,4 +185,8 @@ class VerdictLogger(
     }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

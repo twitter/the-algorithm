@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.util.Time
@@ -27,4 +28,8 @@ trait HasWtfImpressions {
   def getCandidateLatestTime(id: Long): Option[Time] = {
     candidateImpressions.get(id).map(_.latestTime)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

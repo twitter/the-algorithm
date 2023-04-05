@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.configapi
 
 import com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts.CrowdSearchAccountsParams.AccountsFilteringAndRankingLogics
@@ -46,4 +47,8 @@ class GlobalFeatureSwitchConfig @Inject() () extends FeatureSwitchConfig {
       AccountsFilteringAndRankingLogics,
       OrganicAccountsFilteringAndRankingLogics
     )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.phone_storage_service
 
 import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
@@ -9,4 +10,8 @@ object PhoneStorageServiceModule
     with MtlsClient {
   override val label = "phone-storage-service"
   override val dest = "/s/ibis-ds-api/ibis-ds-api:thrift2"
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.util;
 
 import java.util.Collection;
@@ -443,4 +444,7 @@ public class UserPropertiesManager {
     // if any of the sensitive bits are set, we return true
     return anySensitiveBitSet;
   }
+}
+
+} catch (Exception e) {
 }

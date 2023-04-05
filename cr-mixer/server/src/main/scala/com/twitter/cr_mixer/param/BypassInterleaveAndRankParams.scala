@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import com.twitter.timelines.configapi.BaseConfig
@@ -95,4 +96,8 @@ object BypassInterleaveAndRankParams {
       .set(doubleOverrides: _*)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

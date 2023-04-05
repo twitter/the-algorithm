@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.module
 
 import com.twitter.conversions.DurationOps._
@@ -35,4 +36,8 @@ object ExploreRankerClientModule
       .withTimeoutTotal(timeoutTotal)
       .nonIdempotent
   }
+}
+
+} catch {
+  case e: Exception =>
 }

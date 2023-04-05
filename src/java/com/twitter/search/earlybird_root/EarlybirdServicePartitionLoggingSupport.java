@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import java.util.Map;
@@ -39,4 +40,7 @@ public class EarlybirdServicePartitionLoggingSupport
           request.getSearchQuery().getSerializedQuery());
     }
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.util;
 
 import com.google.common.base.Strings;
@@ -46,3 +47,6 @@ public final class CardFieldUtil {
   }
 }
 
+
+} catch (Exception e) {
+}

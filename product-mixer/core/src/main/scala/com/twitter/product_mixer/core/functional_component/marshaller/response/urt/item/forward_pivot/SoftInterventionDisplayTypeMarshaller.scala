@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.forward_pivot
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.GetTheLatest
@@ -21,4 +22,8 @@ class SoftInterventionDisplayTypeMarshaller @Inject() () {
       case Misleading => urt.SoftInterventionDisplayType.Misleading
       case GovernmentRequested => urt.SoftInterventionDisplayType.GovernmentRequested
     }
+}
+
+} catch {
+  case e: Exception =>
 }

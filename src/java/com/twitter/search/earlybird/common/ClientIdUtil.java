@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common;
 
 import java.util.Optional;
@@ -82,4 +83,7 @@ public final class ClientIdUtil {
 
     return clientId;
   }
+}
+
+} catch (Exception e) {
 }

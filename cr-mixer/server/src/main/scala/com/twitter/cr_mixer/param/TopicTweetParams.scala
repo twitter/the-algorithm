@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import com.twitter.conversions.DurationOps._
@@ -112,4 +113,8 @@ object TopicTweetParams {
       .set(durationFSOverrides: _*)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

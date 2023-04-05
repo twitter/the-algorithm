@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.card
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
@@ -25,4 +26,8 @@ case class CardItem(
   override val entryNamespace: EntryNamespace = CardItem.CardEntryNamespace
 
   override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+}
+
+} catch {
+  case e: Exception =>
 }

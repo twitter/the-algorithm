@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.stp
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.models.AccountProof
@@ -73,4 +74,8 @@ object OnlineSTPSourceWithDeepbirdV2Scorer {
   private def logit(x: Double): Double = math.log(x / (1 - x + EPS))
   def logitSubtraction(x: Double): Double = sigmoid(
     logit(x) - (logit(dbv2MeanScore) - logit(legacyMeanScore)))
+}
+
+} catch {
+  case e: Exception =>
 }

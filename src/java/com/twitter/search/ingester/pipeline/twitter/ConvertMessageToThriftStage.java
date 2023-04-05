@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.io.IOException;
@@ -114,4 +115,7 @@ public class ConvertMessageToThriftStage extends TwitterBaseStage
   public void setThriftVersionedEventsBranchName(String thriftVersionedEventsBranchName) {
     this.thriftVersionedEventsBranchName = thriftVersionedEventsBranchName;
   }
+}
+
+} catch (Exception e) {
 }

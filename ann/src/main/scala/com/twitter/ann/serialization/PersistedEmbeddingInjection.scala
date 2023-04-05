@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.serialization
 
 import com.twitter.ann.common.EntityEmbedding
@@ -25,4 +26,8 @@ class PersistedEmbeddingInjection[T](
       EntityEmbedding(id, embeddingSerDe.fromThrift(persistedEmbedding.embedding))
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

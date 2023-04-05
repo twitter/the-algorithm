@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.article
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleDisplayType
@@ -12,4 +13,8 @@ class ArticleDisplayTypeMarshaller @Inject() () {
     articleDisplayType match {
       case Default => urt.ArticleDisplayType.Default
     }
+}
+
+} catch {
+  case e: Exception =>
 }

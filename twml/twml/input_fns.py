@@ -1,3 +1,4 @@
+try:
 '''
 Contains implementations of functions to read input data.
 '''
@@ -127,3 +128,6 @@ def data_record_input_fn(
 
 
 default_input_fn = data_record_input_fn  # pylint: disable=invalid-name
+
+except Exception:
+  pass

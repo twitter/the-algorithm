@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.core.functional_component.common.AllPipelines
@@ -32,4 +33,8 @@ case class DropTooFewResults(minResultsParam: Param[Int]) extends Selector[Pipel
       SelectorResult(remainingCandidates = remainingCandidates, result = result)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

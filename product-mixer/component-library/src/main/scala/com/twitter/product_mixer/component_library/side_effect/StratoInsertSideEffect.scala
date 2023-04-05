@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.side_effect
 
 import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
@@ -67,4 +68,8 @@ trait StratoInsertSideEffect[
       .traverse(events) { case (keyarg, value) => stratoInserter.insert(keyarg, value) }
       .unit
   }
+}
+
+} catch {
+  case e: Exception =>
 }

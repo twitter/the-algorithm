@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.entities;
 
 import java.text.Normalizer;
@@ -441,4 +442,7 @@ public final class TwitterMessageUtil {
     COUNTERS_MAP.get(field).getTruncatedCounter().increment();
     return text.substring(0, truncatePoint);
   }
+}
+
+} catch (Exception e) {
 }

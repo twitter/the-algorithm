@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.common.access_policy
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
@@ -36,3 +37,7 @@ object AllowedLdapGroups {
  *       This issue may be resolved in Scala 2.13: https://github.com/scala/scala/pull/9279
  */
 case class BlockEverything() extends AccessPolicy
+
+} catch {
+  case e: Exception =>
+}

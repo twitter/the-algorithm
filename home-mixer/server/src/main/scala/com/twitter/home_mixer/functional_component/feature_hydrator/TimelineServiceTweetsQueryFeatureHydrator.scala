@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.home_mixer.marshaller.timelines.DeviceContextMarshaller
@@ -60,4 +61,8 @@ case class TimelineServiceTweetsQueryFeatureHydrator @Inject() (
   override val alerts = Seq(
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.7)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

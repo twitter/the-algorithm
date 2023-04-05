@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 /**
@@ -13,4 +14,7 @@ public interface FacetTermCollector {
    *         Currently, this return value is not used.
    */
   boolean collect(int docID, long termID, int fieldID);
+}
+
+} catch (Exception e) {
 }

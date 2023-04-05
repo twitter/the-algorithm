@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import com.google.common.base.Preconditions;
@@ -160,4 +161,7 @@ public class InvertedRealtimeIndexWriter
     payloadAtt = null;
     termPayloadAtt = null;
   }
+}
+
+} catch (Exception e) {
 }

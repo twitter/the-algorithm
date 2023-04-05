@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.scalding.offline.indexbuilderfrombq
 
 import com.google.auth.oauth2.ServiceAccountCredentials
@@ -191,4 +192,8 @@ object IndexBuilderFromBQApp extends TwitterExecutionApp with IndexBuilderFromBQ
   override def job: Execution[Unit] = Execution.getArgs.flatMap { args: Args =>
     indexBuilderExecution(args)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

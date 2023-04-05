@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.module
 
 import com.twitter.decider.Decider
@@ -24,4 +25,8 @@ class DarkTrafficFilterModule[MethodIface <: Filterable[MethodIface]: ClassTag](
       .map(_.name).exists(name => name.contains("diffy") || name.contains("darktraffic"))
     !fromProxy && decider.isAvailable(deciderKey, recipient = Some(RandomRecipient))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

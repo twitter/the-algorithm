@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird;
 
 public final class EarlybirdMain {
@@ -7,4 +8,7 @@ public final class EarlybirdMain {
   public static void main(String[] args) {
     new Earlybird().main(args);
   }
+}
+
+} catch (Exception e) {
 }

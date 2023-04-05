@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.cards
 
 import com.twitter.tweetypie.{thriftscala => tweetypiethrift}
@@ -11,3 +12,7 @@ case class CardVisibilityRequest(
   isPollCardType: Boolean,
   safetyLevel: SafetyLevel,
   viewerContext: ViewerContext)
+
+} catch {
+  case e: Exception =>
+}

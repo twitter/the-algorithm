@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.cr_mixer.thriftjava
 #@namespace scala com.twitter.cr_mixer.thriftscala
 #@namespace strato com.twitter.cr_mixer
@@ -101,4 +102,7 @@ service CrMixer {
     # Server errors - the details of which will not be reported to clients
     2: finatra_thrift_exceptions.ServerError serverError
   )
+}
+
+} catch (Exception e) {
 }

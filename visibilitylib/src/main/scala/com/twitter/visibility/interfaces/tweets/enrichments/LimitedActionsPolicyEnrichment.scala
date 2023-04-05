@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.tweets.enrichments
 
 import com.twitter.featureswitches.FSRecipient
@@ -170,4 +171,8 @@ object LimitedActionsPolicyEnrichment {
 
     PolicyFeatureSwitchResults(limitedActionTypes, copyNamespace, promptType, learnMoreUrl)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

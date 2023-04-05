@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.decorator
 
 import com.twitter.home_mixer.functional_component.decorator.builder.HomeConversationModuleMetadataBuilder
@@ -46,4 +47,8 @@ object HomeConversationServiceCandidateDecorator {
           candidateFeatures.getOrElse(ConversationModuleFocalTweetIdFeature, None)
       ))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

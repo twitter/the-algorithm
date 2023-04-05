@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.selector_executor
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -102,4 +103,8 @@ object SelectorExecutor {
   case class Inputs[Query <: PipelineQuery](
     query: Query,
     candidatesWithDetails: Seq[CandidateWithDetails])
+}
+
+} catch {
+  case e: Exception =>
 }

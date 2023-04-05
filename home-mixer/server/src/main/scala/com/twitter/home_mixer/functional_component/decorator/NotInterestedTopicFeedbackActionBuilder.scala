@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.decorator
 
 import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
@@ -68,4 +69,8 @@ case class NotInterestedTopicFeedbackActionBuilder @Inject() (
       None
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

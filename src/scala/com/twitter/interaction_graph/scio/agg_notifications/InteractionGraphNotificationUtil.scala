@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_notifications
 
 import com.spotify.scio.ScioMetrics
@@ -129,4 +130,8 @@ object InteractionGraphNotificationUtil {
       }
     } yield (tweetId, (userId, featureName))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

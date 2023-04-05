@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ConversationDetails
@@ -12,4 +13,8 @@ class ConversationDetailsMarshaller @Inject() (sectionMarshaller: ConversationSe
     urt.ConversationDetails(
       conversationSection = conversationDetails.conversationSection.map(sectionMarshaller(_))
     )
+}
+
+} catch {
+  case e: Exception =>
 }

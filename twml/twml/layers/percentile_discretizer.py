@@ -1,3 +1,4 @@
+try:
 # pylint: disable=no-member, attribute-defined-outside-init, too-many-instance-attributes
 """
 Implementing PercentileDiscretizer Layer
@@ -207,3 +208,6 @@ class PercentileDiscretizer(Layer):
 
     """
     raise NotImplementedError
+
+except Exception:
+  pass

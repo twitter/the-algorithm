@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 /**
@@ -17,4 +18,8 @@ object AlgorithmType extends Enumeration {
   val Geo: Value = Value("geo")
   val Activity: Value = Value("activity")
   val Interest: Value = Value("interest")
+}
+
+} catch {
+  case e: Exception =>
 }

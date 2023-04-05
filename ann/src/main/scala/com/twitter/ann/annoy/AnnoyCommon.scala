@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.annoy
 
 import com.twitter.ann.common.RuntimeParams
@@ -41,4 +42,8 @@ case class AnnoyRuntimeParams(
   nodesToExplore: Option[Int])
     extends RuntimeParams {
   override def toString: String = s"AnnoyRuntimeParams( nodesToExplore = $nodesToExplore)"
+}
+
+} catch {
+  case e: Exception =>
 }

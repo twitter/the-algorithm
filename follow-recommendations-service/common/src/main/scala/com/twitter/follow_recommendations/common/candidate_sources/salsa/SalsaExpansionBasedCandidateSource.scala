@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.salsa
 
 import com.twitter.follow_recommendations.common.models.CandidateUser
@@ -29,4 +30,8 @@ abstract class SalsaExpansionBasedCandidateSource[Target](salsaExpander: SalsaEx
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

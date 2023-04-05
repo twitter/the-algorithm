@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.products
 
 import com.twitter.follow_recommendations.common.models.DisplayLocation
@@ -42,3 +43,7 @@ class ProdProductRegistry @Inject() (
 
 class MissingProductException(displayLocation: DisplayLocation)
     extends Exception(s"No Product found for ${displayLocation}")
+
+} catch {
+  case e: Exception =>
+}

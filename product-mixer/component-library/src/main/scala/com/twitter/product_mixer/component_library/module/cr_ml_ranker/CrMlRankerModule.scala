@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.module.cr_ml_ranker
 
 import com.google.inject.Provides
@@ -36,4 +37,8 @@ case class CrMLRankerModule(totalTimeout: Duration = 100.milliseconds, batchSize
     crMlRankerThriftClient,
     maxBatchSize = batchSize
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.entity_tweets
 
 import com.twitter.servo.decider.DeciderGateBuilder
@@ -39,4 +40,8 @@ case class EntityTweetsProduction(deciderGateBuilder: DeciderGateBuilder) {
     .set(booleanFeatureSwitchOverrides: _*)
     .set(intFeatureSwitchOverrides: _*)
     .build()
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 scala_library(
     platform = "java11",
     strict_deps = False,
@@ -22,3 +23,6 @@ scala_library(
         "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer
 
 import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
@@ -34,4 +35,8 @@ object FlipCandidateFeatureTransformer extends CandidateFeatureTransformer[Inter
       .add(FlipPromptCarouselTileFeature, input.carouselTile)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

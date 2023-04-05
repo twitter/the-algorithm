@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.feature_hydrator.query.logged_in_only
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -28,4 +29,8 @@ case class LoggedInOnlyQueryFeatureHydrator[-Query <: PipelineQuery, Result <: U
   override def onlyIf(query: Query): Boolean =
     Conditionally.and(query, queryFeatureHydrator, !query.isLoggedOut)
   override def hydrate(query: Query): Stitch[FeatureMap] = queryFeatureHydrator.hydrate(query)
+}
+
+} catch {
+  case e: Exception =>
 }

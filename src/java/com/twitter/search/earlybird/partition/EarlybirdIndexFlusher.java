@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.File;
@@ -368,4 +369,7 @@ public class EarlybirdIndexFlusher {
     }
     return BoxedUnit.UNIT;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.filter
 import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
 import com.twitter.cr_mixer.model.RankedCandidate
@@ -55,4 +56,8 @@ case class PostRankFilterRunner @Inject() (
     candidate.potentialReasons.head.sourceInfoOpt.get.sourceType == SourceType.NotificationClick
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

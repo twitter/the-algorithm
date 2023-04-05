@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.interest_discovery
 
 import com.google.inject.Inject
@@ -31,4 +32,8 @@ class RelatedTopicsCandidateSource @Inject() (
         response.topics
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

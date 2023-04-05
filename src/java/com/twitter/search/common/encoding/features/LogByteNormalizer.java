@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.encoding.features;
 
 import com.google.common.base.Preconditions;
@@ -50,4 +51,7 @@ public class LogByteNormalizer extends ByteNormalizer {
         ? Double.POSITIVE_INFINITY
         : Math.floor(Math.pow(base, norm));
   }
+}
+
+} catch (Exception e) {
 }

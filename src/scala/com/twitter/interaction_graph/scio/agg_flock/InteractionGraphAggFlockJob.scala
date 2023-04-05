@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_flock
 
 import com.spotify.scio.ScioContext
@@ -81,4 +82,8 @@ object InteractionGraphAggFlockJob extends ScioBeamJob[InteractionGraphAggFlockO
     )
 
   }
+}
+
+} catch {
+  case e: Exception =>
 }

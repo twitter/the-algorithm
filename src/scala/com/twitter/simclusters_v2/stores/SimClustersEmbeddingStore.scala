@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.stores
 
 import com.twitter.decider.Decider
@@ -117,4 +118,8 @@ object SimClustersEmbeddingStore {
     new SimClustersEmbeddingStore(stores = stores)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

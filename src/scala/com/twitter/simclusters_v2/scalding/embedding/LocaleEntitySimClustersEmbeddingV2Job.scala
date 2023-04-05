@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding
 
 import com.twitter.bijection.{Bufferable, Injection}
@@ -245,4 +246,8 @@ trait LocaleEntitySimClustersEmbeddingV2Job extends SimClustersEmbeddingBaseJob[
       isSkinnyMatrix = true
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

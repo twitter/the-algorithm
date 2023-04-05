@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 /**
@@ -49,3 +50,6 @@ public class IndexingResultCounts {
   }
 }
 
+
+} catch (Exception e) {
+}

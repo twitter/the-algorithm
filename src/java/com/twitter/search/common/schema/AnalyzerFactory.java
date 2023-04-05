@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema;
 
 import java.io.Reader;
@@ -139,4 +140,7 @@ public class AnalyzerFactory {
       super(type + " class with name " + classDef.getClassName() + " currently not supported.");
     }
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.side_effect
 
 import com.twitter.home_mixer.model.HomeFeatures.IsReadFromCacheFeature
@@ -47,4 +48,8 @@ object ServedCandidateKafkaSideEffect {
           candidate.features.getOrElse(ServedIdFeature, None))
       }.values.map(_.head).toSeq
   }
+}
+
+} catch {
+  case e: Exception =>
 }

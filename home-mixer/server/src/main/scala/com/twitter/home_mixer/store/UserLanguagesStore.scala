@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.store
 
 import com.twitter.bijection.Injection
@@ -44,4 +45,8 @@ class UserLanguagesStore(
           keyLossCounter.incr()
           None
       }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import java.util.ArrayList;
@@ -199,4 +200,7 @@ public class EarlybirdServiceScatterGatherSupport
         .setResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR)
         .setDebugString(debugString);
   }
+}
+
+} catch (Exception e) {
 }

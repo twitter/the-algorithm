@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.modules
 
 import com.google.inject.Provides
@@ -92,4 +93,8 @@ object ClusterTweetIndexProviderModule extends TwitterModule {
     }
     cachedStore
   }
+}
+
+} catch {
+  case e: Exception =>
 }

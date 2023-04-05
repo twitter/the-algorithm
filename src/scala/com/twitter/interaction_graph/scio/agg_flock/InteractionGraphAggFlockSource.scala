@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_flock
 
 import com.spotify.scio.ScioContext
@@ -21,4 +22,8 @@ case class InteractionGraphAggFlockSource(
       dataset = ValidUserFollowsScalaDataset,
       dateInterval = dateInterval,
       dalEnvironment = dalEnvironment)
+}
+
+} catch {
+  case e: Exception =>
 }

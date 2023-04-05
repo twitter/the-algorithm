@@ -1,3 +1,4 @@
+try {
 target(
     dependencies = [
         "timelineranker/server/src/main/scala/com/twitter/timelineranker/repository",
@@ -30,3 +31,6 @@ jvm_binary(
 #     depdency from service to c.t.l.Logger
 #
 # [2] incur logback implementation
+
+} catch (Exception e) {
+}

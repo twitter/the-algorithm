@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.util
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -40,4 +41,8 @@ trait ObservedKeyValueResultHandler {
       Throw(MissingKeyException)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

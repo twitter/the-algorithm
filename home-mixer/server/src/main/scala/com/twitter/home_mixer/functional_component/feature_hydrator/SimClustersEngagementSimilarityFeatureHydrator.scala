@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -80,4 +81,8 @@ class SimClustersEngagementSimilarityFeatureHydrator @Inject() (
     Stitch.callFuture(resultFuture)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

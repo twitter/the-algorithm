@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird;
 
 import java.io.IOException;
@@ -1915,4 +1916,7 @@ public class EarlybirdSearcher {
   public Query getLuceneQuery() {
     return luceneQuery;
   }
+}
+
+} catch (Exception e) {
 }

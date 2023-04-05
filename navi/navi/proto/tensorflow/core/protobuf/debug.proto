@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -91,4 +92,7 @@ message DebuggedSourceFile {
 message DebuggedSourceFiles {
   // A collection of source code files.
   repeated DebuggedSourceFile source_files = 1;
+}
+
+} catch (Exception e) {
 }

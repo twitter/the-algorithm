@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
@@ -63,4 +64,8 @@ object TweetMetaDataFeatureHydrator
       TimelinesSharedFeatures.CANDIDATE_TWEET_SOURCE_ID,
       existingFeatures.getOrElse(CandidateSourceIdFeature, None).map(_.value.toLong))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.simclusters_v2.thriftjava
 namespace py gen.twitter.simclusters_v2.score
 #@namespace scala com.twitter.simclusters_v2.thriftscala
@@ -69,3 +70,6 @@ struct ScoreId {
 struct Score {
   1: required double score
 }(hasPersonalData = 'false')
+
+} catch (Exception e) {
+}

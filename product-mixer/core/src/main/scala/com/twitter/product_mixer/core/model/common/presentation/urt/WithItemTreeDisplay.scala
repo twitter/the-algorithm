@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.common.presentation.urt
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItemTreeDisplay
@@ -8,4 +9,8 @@ import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItemT
  */
 trait WithItemTreeDisplay { self: BaseUrtItemPresentation =>
   def treeDisplay: Option[ModuleItemTreeDisplay]
+}
+
+} catch {
+  case e: Exception =>
 }

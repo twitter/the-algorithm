@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding.producer
 
 import com.twitter.scalding._
@@ -162,4 +163,8 @@ trait AggregatableFollowBasedProducerEmbeddingsBaseApp
   override val userToClusterScoringFn: UserToInterestedInClusterScores => Double =
     _.followScoreClusterNormalizedOnly.getOrElse(0.0)
   override val embeddingType: EmbeddingType = EmbeddingType.AggregatableFollowBasedProducer
+}
+
+} catch {
+  case e: Exception =>
 }

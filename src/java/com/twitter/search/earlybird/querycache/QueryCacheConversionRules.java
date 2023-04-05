@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.querycache;
 
 import java.util.Arrays;
@@ -97,4 +98,7 @@ public final class QueryCacheConversionRules {
     }
     STRIP_ANNOTATIONS_QUERIES = ImmutableList.copyOf(stripAnnotationsQueries);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.quality_factor
 
 import com.google.common.annotations.VisibleForTesting
@@ -48,4 +49,8 @@ case class QueriesPerSecondBasedQualityFactor(
 
   override def buildObserver(): QualityFactorObserver =
     QueriesPerSecondBasedQualityFactorObserver(this)
+}
+
+} catch {
+  case e: Exception =>
 }

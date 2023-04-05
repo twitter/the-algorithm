@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.sources
 
 import com.github.benmanes.caffeine.cache.Caffeine
@@ -365,4 +366,8 @@ object FeatureStoreSource {
       .addFeatures(additionalFeatureContext)
       // The below are aggregated features that are aggregated for a second time over multiple keys.
       .addFeatures(maxSumAvgAggregatedFeatureContext)
+}
+
+} catch {
+  case e: Exception =>
 }

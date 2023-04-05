@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -253,4 +254,7 @@ service CoordinationService {
   //   - FailedPrecondition: Barrier has already been passed.
   //   - NotFound: No barrier with the specified id is found.
   rpc CancelBarrier(CancelBarrierRequest) returns (CancelBarrierResponse);
+}
+
+} catch (Exception e) {
 }

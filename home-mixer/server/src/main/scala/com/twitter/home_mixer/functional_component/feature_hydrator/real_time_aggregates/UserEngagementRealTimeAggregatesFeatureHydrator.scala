@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.real_time_aggregates
 
 import com.google.inject.name.Named
@@ -53,4 +54,8 @@ class UserEngagementRealTimeAggregatesFeatureHydrator @Inject() (
   override def keysFromQueryAndCandidates(query: PipelineQuery): Option[Long] = {
     Some(query.getRequiredUserId)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

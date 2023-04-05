@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -44,4 +45,7 @@ public interface TermDictionary extends Flushable {
    * @return  Returns true, iff this term has a term payload.
    */
   boolean getTerm(int termID, BytesRef text, BytesRef termPayload);
+}
+
+} catch (Exception e) {
 }

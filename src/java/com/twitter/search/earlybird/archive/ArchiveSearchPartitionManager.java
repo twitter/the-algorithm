@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive;
 
 import java.io.IOException;
@@ -482,4 +483,7 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
   public ArchiveTimeSlicer getTimeSlicer() {
     return timeSlicer;
   }
+}
+
+} catch (Exception e) {
 }

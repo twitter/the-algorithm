@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.feature.featuremap.datarecord
 
 import com.twitter.ml.api.DataRecord
@@ -154,4 +155,8 @@ case class AllExceptFeatures(
   } else {
     SRichDataRecord(new DataRecord())
   }
+}
+
+} catch {
+  case e: Exception =>
 }

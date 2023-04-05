@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.request
 
 trait Request
@@ -7,4 +8,8 @@ trait Request
     with HasSerializedRequestCursor {
   def maxResults: Option[Int]
   def debugParams: Option[DebugParams]
+}
+
+} catch {
+  case e: Exception =>
 }

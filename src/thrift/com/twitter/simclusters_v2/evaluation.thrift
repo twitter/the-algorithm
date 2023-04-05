@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.simclusters_v2.thriftjava
 namespace py gen.twitter.simclusters_v2.evaluation
 #@namespace scala com.twitter.simclusters_v2.thriftscala
@@ -63,3 +64,5 @@ struct ReferenceTweets {
 struct CandidateTweetsList {
   1: required list<CandidateTweet> recommendedTweets
 }(hasPersonalData = 'true')
+} catch (Exception e) {
+}

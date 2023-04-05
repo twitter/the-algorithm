@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "interests_service",
     sources = ["InterestServiceClient.scala"],
@@ -12,3 +13,6 @@ scala_library(
         "strato/src/main/scala/com/twitter/strato/thrift",
     ],
 )
+
+} catch (Exception e) {
+}

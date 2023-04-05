@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter.Str
@@ -57,4 +58,8 @@ case class WhoToFollowFeedbackActionInfoBuilder[
       clientEventInfo = None
     )
   )
+}
+
+} catch {
+  case e: Exception =>
 }

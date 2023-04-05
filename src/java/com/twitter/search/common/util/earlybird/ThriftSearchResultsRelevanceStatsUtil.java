@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.earlybird;
 
 import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
@@ -43,4 +44,7 @@ public final class ThriftSearchResultsRelevanceStatsUtil {
     base.setNumOffensive(base.getNumOffensive() + delta.getNumOffensive());
     base.setNumBot(base.getNumBot() + delta.getNumBot());
   }
+}
+
+} catch (Exception e) {
 }

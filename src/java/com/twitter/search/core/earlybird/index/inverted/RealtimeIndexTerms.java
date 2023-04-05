@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.util.Iterator;
@@ -362,4 +363,7 @@ public class RealtimeIndexTerms extends Terms {
   public boolean hasPayloads() {
     return true;
   }
+}
+
+} catch (Exception e) {
 }

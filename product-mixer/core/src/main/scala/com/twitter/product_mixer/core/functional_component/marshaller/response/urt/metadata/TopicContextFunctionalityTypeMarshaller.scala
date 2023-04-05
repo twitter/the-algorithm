@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
@@ -17,4 +18,8 @@ object TopicContextFunctionalityTypeMarshaller {
     case RecWithEducationTopicContextFunctionalityType =>
       urt.TopicContextFunctionalityType.RecWithEducation
   }
+}
+
+} catch {
+  case e: Exception =>
 }

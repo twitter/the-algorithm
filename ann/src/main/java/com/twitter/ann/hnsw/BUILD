@@ -1,3 +1,4 @@
+try {
 java_library(
     sources = ["*.java"],
     compiler_option_sets = ["fatal_warnings"],
@@ -16,3 +17,6 @@ java_library(
         "src/java/com/twitter/search/common/file",
     ],
 )
+
+} catch (Exception e) {
+}

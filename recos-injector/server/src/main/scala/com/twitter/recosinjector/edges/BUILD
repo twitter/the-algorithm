@@ -1,3 +1,4 @@
+try {
 scala_library(
     platform = "java11",
     strict_deps = False,
@@ -21,3 +22,6 @@ scala_library(
         "src/thrift/com/twitter/tweetypie:tweet-scala",
     ],
 )
+
+} catch (Exception e) {
+}

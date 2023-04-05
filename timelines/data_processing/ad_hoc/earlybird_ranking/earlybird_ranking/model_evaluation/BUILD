@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "model_evaluation",
     sources = ["*.scala"],
@@ -34,3 +35,6 @@ hadoop_binary(
         ":model_evaluation",
     ],
 )
+
+} catch (Exception e) {
+}

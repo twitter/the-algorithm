@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module.thrift_client
 
 import com.twitter.app.Flag
@@ -38,4 +39,8 @@ object FrsClientModule
       .withSessionQualifier
       .successRateFailureAccrual(successRate = 0.9, window = 30.seconds)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

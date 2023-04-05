@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.loadtest
 
 import com.twitter.ann.common.EmbeddingType.EmbeddingVector
@@ -63,4 +64,8 @@ class AnnIndexBuildLoadTest(
 
     queryable
   }
+}
+
+} catch {
+  case e: Exception =>
 }

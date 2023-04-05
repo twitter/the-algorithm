@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -12,3 +13,6 @@ scala_library(
         "finatra/thrift/src/main/scala/com/twitter/finatra/thrift/routing",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.product.guice
 
 import com.google.inject.Provides
@@ -24,4 +25,8 @@ class ProductScopeModule extends TwitterModule {
 
   @Provides
   def providesProductScope(): ProductScope = productScope
+}
+
+} catch {
+  case e: Exception =>
 }

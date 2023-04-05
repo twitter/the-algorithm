@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi.params
 
 private[visibility] object VisibilityExperiments {
@@ -13,4 +14,8 @@ private[visibility] object VisibilityExperiments {
 
   case object NotGraduatedUserLabelRuleExperiment
       extends VisibilityExperiment("not_graduated_user_holdback_16332")
+}
+
+} catch {
+  case e: Exception =>
 }

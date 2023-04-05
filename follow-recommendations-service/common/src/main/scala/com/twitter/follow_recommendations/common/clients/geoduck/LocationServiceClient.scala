@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.geoduck
 
 import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
@@ -59,4 +60,8 @@ class LocationServiceClient @Inject() (locationService: LocationService.MethodPe
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

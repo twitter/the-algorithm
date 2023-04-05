@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.serving;
@@ -9,4 +10,7 @@ message LogCollectorConfig {
 
   // The prefix to use for the filenames of the logs.
   string filename_prefix = 2;
+}
+
+} catch (Exception e) {
 }

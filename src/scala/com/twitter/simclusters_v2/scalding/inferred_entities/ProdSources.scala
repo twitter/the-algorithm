@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.inferred_entities
 
 import com.twitter.scalding.{DateRange, Days, TypedPipe}
@@ -91,4 +92,8 @@ object ProdSources {
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .toTypedPipe
   }
+}
+
+} catch {
+  case e: Exception =>
 }

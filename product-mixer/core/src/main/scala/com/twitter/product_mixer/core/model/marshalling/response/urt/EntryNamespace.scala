@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt
 
 import scala.util.matching.Regex
@@ -47,4 +48,8 @@ object EntryNamespace {
     else
       throw new IllegalArgumentException(s"Illegal EntryNamespace: $str")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

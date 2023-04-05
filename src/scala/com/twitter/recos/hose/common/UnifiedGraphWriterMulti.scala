@@ -1,3 +1,4 @@
+try {
 package src.scala.com.twitter.recos.hose.common
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -225,4 +226,8 @@ private object UnifiedGraphWriterMulti {
   val MaxPendingRequests = 1000
   // Short Commit MS to reduce duplicate messages.
   val CommitIntervalMs: Long = 5000 // 5 seconds, Default Kafka value.
+}
+
+} catch {
+  case e: Exception =>
 }

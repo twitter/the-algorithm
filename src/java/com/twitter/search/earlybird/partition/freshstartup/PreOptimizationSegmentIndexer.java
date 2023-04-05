@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition.freshstartup;
 
 import java.io.IOException;
@@ -456,4 +457,7 @@ class PreOptimizationSegmentIndexer {
     LOG.info("Indexing TVEs. Kafka consumer: {}", consumerClientId);
     return kafkaConsumer;
   }
+}
+
+} catch (Exception e) {
 }

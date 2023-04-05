@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.filters
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -66,4 +67,8 @@ class UserFilter(
         isValidUser
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

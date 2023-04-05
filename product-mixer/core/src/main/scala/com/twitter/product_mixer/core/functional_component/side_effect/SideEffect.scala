@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.side_effect
 
 import com.twitter.product_mixer.core.model.common.Component
@@ -25,4 +26,8 @@ trait SideEffect[-Inputs] extends Component {
   override val identifier: SideEffectIdentifier
 
   def apply(inputs: Inputs): Stitch[Unit]
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.clients
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -77,4 +78,8 @@ object SocialGraph {
     RelationshipType.FollowedBy -> true,
     RelationshipType.MutedBy -> false
   )
+}
+
+} catch {
+  case e: Exception =>
 }

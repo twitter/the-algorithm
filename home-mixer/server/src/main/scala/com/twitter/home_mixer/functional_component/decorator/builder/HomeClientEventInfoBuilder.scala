@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.decorator.builder
 
 import com.twitter.home_mixer.model.HomeFeatures.EntityTokenFeature
@@ -41,4 +42,8 @@ case class HomeClientEventInfoBuilder[Query <: PipelineQuery, Candidate <: Unive
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

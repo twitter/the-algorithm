@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.decider
 
 import com.twitter.decider.Decider
@@ -36,4 +37,8 @@ class EndpointLoadShedder(
 
 object EndpointLoadShedder {
   object LoadSheddingException extends Exception with NoStackTrace
+}
+
+} catch {
+  case e: Exception =>
 }

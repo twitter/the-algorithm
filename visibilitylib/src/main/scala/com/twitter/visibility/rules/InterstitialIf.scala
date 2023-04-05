@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.rules.Condition.And
@@ -40,4 +41,8 @@ object InterstitialIf {
         Interstitial(Reason.ViewerReportedAuthor),
         Condition.ViewerReportsAuthor
       )
+}
+
+} catch {
+  case e: Exception =>
 }

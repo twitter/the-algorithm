@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.common
 
 import com.twitter.finagle.stats.CategorizingExceptionStatsHandler
@@ -118,4 +119,8 @@ trait Task extends Closable { self: Logging =>
     }
     Future.Done
   }
+}
+
+} catch {
+  case e: Exception =>
 }

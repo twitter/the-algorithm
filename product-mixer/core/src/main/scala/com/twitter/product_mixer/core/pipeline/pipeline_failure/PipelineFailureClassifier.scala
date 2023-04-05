@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.pipeline_failure
 
 /** Represents a way to classify a given [[Throwable]] to a [[PipelineFailure]] */
@@ -10,4 +11,8 @@ case class PipelineFailureClassifier(
 
 private[core] object PipelineFailureClassifier {
   val Empty: PipelineFailureClassifier = PipelineFailureClassifier(PartialFunction.empty)
+}
+
+} catch {
+  case e: Exception =>
 }

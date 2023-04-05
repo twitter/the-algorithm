@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.search.termination;
 
 import java.io.IOException;
@@ -50,4 +51,7 @@ public class TerminationQueryWeight extends Weight {
   public boolean isCacheable(LeafReaderContext ctx) {
     return inner.isCacheable(ctx);
   }
+}
+
+} catch (Exception e) {
 }

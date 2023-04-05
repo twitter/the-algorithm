@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.common.actions.LimitedEngagementReason
@@ -591,4 +592,8 @@ object StaleTweetLimitedActionsRule
       LimitedEngagements(LimitedEngagementReason.StaleTweet),
       TweetIsStaleTweet) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(StaleTweetLimitedActionsRulesEnabledParam)
+}
+
+} catch {
+  case e: Exception =>
 }

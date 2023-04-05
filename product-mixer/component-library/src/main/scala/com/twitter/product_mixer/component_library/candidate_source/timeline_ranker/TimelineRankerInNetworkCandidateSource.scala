@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.timeline_ranker
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -48,4 +49,8 @@ class TimelineRankerInNetworkCandidateSource @Inject() (
           features = sourceTweetsByTweetIdMapFeature)
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

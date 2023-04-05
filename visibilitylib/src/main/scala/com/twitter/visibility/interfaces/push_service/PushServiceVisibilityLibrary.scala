@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.push_service
 
 import com.twitter.gizmoduck.thriftscala.User
@@ -176,4 +177,8 @@ object PushServiceVisibilityLibrary {
 
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

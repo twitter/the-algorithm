@@ -1,3 +1,4 @@
+try:
 # pylint: disable=arguments-differ, unused-argument
 ''' Contains Isotonic Calibration'''
 
@@ -315,3 +316,6 @@ class IsotonicCalibrator(Calibrator):
   def get_layer_args(self, name=None):
     """ Returns layer args. See ``Calibrator.get_layer_args`` for more detailed documentation """
     return {'n_unit': self._xs_input.shape[0], 'n_bin': self._xs_input.shape[1]}
+
+except Exception:
+  pass

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.sims
 
 import com.twitter.follow_recommendations.common.candidate_sources.base.StratoFetcherSource
@@ -37,4 +38,8 @@ object StratoBasedSimsCandidateSource {
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

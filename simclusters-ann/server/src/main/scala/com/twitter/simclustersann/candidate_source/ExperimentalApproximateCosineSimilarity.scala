@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.candidate_source
 
 import com.twitter.simclusters_v2.common.SimClustersEmbedding
@@ -128,4 +129,8 @@ object ExperimentalApproximateCosineSimilarity extends ApproximateCosineSimilari
       .collect(topKCollector)
       .asScala
   }
+}
+
+} catch {
+  case e: Exception =>
 }

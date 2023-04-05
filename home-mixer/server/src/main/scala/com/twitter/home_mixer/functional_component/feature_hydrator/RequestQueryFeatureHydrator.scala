@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.finagle.tracing.Annotation.BinaryAnnotation
@@ -103,4 +104,8 @@ class RequestQueryFeatureHydrator[
 
     Stitch.value(featureMap)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

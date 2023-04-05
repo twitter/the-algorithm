@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "bq_generation",
     sources = [
@@ -108,3 +109,6 @@ jvm_binary(
         ":bq_generation",
     ],
 )
+
+} catch (Exception e) {
+}

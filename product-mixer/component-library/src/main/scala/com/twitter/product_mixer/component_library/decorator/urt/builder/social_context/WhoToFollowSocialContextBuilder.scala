@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.social_context
 
 import com.twitter.hermit.{thriftscala => h}
@@ -45,4 +46,8 @@ case class WhoToFollowSocialContextBuilder(
       case Some(h.ContextType.NewUser) => Some(NewUserGeneralContextType)
       case _ => None
     }
+}
+
+} catch {
+  case e: Exception =>
 }

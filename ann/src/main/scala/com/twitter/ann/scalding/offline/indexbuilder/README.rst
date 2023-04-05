@@ -1,3 +1,4 @@
+try {
 ********
 Overview
 ********
@@ -130,3 +131,6 @@ You can create job bundle locally, upload to packer and then it can be used with
   packer add_version --cluster=atla <role> <package_name> dist/indexbuilder-deploy.zip
 
 
+
+} catch (Exception e) {
+}

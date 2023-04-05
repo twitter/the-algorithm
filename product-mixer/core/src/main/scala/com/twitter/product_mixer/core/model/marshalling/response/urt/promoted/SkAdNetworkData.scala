@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
 
 case class SkAdNetworkData(
@@ -11,3 +12,7 @@ case class SkAdNetworkData(
   signature: Option[String], // the signed payload
   fidelityType: Option[Long] // th
 )
+
+} catch {
+  case e: Exception =>
+}

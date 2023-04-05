@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.query_server.common
 
 import com.google.common.annotations.VisibleForTesting
@@ -209,4 +210,8 @@ class RefreshableQueryable[T, P <: RuntimeParams, D <: Distance[D]](
   ): Future[List[NeighborWithDistance[T, D]]] = {
     queryWithDistance(embedding, numOfNeighbors, runtimeParams, None)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

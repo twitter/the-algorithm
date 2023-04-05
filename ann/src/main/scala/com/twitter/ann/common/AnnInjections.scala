@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.common
 
 import com.twitter.bijection.{Bijection, Injection}
@@ -25,4 +26,8 @@ object AnnInjections {
       .asInstanceOf[Bijection[Int, java.lang.Integer]]
       .inverse
       .andThen(IntInjection)
+}
+
+} catch {
+  case e: Exception =>
 }

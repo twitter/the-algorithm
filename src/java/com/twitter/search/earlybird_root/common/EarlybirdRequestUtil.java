@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.common;
 
 import com.google.common.base.Optional;
@@ -104,4 +105,7 @@ public final class EarlybirdRequestUtil {
     newRequest.unsetAdjustedFullArchiveRequestParams();
     return newRequest;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "agg_all",
     sources = ["*.scala"],
@@ -173,3 +174,6 @@ create_datasets(
         "src/scala/com/twitter/interaction_graph/injection:edge_list_injection",
     ],
 )
+
+} catch (Exception e) {
+}

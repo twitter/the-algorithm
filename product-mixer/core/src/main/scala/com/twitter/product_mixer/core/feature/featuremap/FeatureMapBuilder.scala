@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.feature.featuremap
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -108,3 +109,7 @@ class DuplicateFeatureException(feature: Feature[_, _])
 object ReusedFeatureMapBuilderException
     extends UnsupportedOperationException(
       "build() cannot be called more than once since FeatureMapBuilders are not reusable")
+
+} catch {
+  case e: Exception =>
+}

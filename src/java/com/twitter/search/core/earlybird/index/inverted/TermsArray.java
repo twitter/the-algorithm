@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -186,4 +187,7 @@ public class TermsArray implements Flushable {
           offensiveCounters);
     }
   }
+}
+
+} catch (Exception e) {
 }

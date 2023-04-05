@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet._
@@ -22,4 +23,8 @@ class TweetDisplayTypeMarshaller @Inject() () {
     case ReaderMode => urt.TweetDisplayType.ReaderMode
     case CondensedTweet => urt.TweetDisplayType.CondensedTweet
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import com.twitter.search.queryparser.query.annotation.Annotation;
@@ -10,4 +11,7 @@ public class CollectVariantVisitor extends CollectAnnotationsVisitor {
   public CollectVariantVisitor() {
     super(Annotation.Type.VARIANT);
   }
+}
+
+} catch (Exception e) {
 }

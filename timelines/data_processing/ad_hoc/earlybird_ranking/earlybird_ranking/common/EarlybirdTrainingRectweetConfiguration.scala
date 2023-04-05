@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common
 
 import com.twitter.ml.api.DataRecord
@@ -97,4 +98,8 @@ class EarlybirdTrainingRectweetConfiguration extends EarlybirdTrainingConfigurat
       ).asJava
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

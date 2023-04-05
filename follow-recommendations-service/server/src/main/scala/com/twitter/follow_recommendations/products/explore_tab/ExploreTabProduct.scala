@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.products.explore_tab
 
 import com.twitter.follow_recommendations.common.base.BaseRecommendationFlow
@@ -47,4 +48,8 @@ class ExploreTabProduct @Inject() (
       ExploreTabParams.EnableProductForSoftUser)
     Stitch.value(request.params(ExploreTabParams.EnableProduct) && enabledForUserType)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

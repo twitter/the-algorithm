@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.transforms.weighted_sampling
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -16,4 +17,8 @@ class SamplingTransformFSConfig @Inject() () extends FeatureSwitchConfig {
 
   override val booleanFSParams: Seq[FSParam[Boolean]] = Seq(
     SamplingTransformParams.ScribeRankingInfoInSamplingTransform)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.stores
 
 import com.twitter.bijection.Injection
@@ -295,4 +296,8 @@ object TopKTweetsForClusterKeyReadableStore {
         getTopTweetsWithScoresByFavClusterNormalizedScore(topKTweetsWithScores).take(maxResults)
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

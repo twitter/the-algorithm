@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.encoding.features;
 
 /**
@@ -161,4 +162,7 @@ public final class SingleBytePositiveFloatUtil {
   static double toLog2Double(byte b) {
     return BYTE_TO_LOG2_CONVERSION_TABLE[b & 0xff];
   }
+}
+
+} catch (Exception e) {
 }

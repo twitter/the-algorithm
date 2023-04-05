@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import com.twitter.finagle.Service;
@@ -33,4 +34,7 @@ public class InitializeFilter extends SimpleFilter<EarlybirdRequest, EarlybirdRe
   private void cleanup() {
     ActionChainDebugManager.clearLocals();
   }
+}
+
+} catch (Exception e) {
 }

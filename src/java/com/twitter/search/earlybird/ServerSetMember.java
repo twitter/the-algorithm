@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird;
 
 import org.apache.zookeeper.KeeperException;
@@ -52,4 +53,7 @@ public interface ServerSetMember {
    * This will allow us to access Earlybirds that are not on mesos via ServiceProxy.
    */
   void joinServerSetForServiceProxy();
+}
+
+} catch (Exception e) {
 }

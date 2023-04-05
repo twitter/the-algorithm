@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.simclusters_v2.thriftjava
 namespace py gen.twitter.simclusters_v2.online_store_internal
 #@namespace scala com.twitter.simclusters_v2.thriftscala
@@ -28,3 +29,6 @@ struct ClustersWithScores {
 struct MultiModelClustersWithScores {
  1: optional map<online_store.ModelVersion,ClustersWithScores> multiModelClustersWithScores
 }(hasPersonalData = 'true')
+
+} catch (Exception e) {
+}

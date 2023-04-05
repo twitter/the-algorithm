@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.for_you
 
 import com.twitter.home_mixer.functional_component.decorator.urt.builder.HomeWhoToFollowFeedbackActionInfoBuilder
@@ -56,4 +57,8 @@ class ForYouWhoToFollowCandidatePipelineConfigBuilder @Inject() (
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(70),
     HomeMixerAlertConfig.BusinessHours.defaultEmptyResponseRateAlert()
   )
+}
+
+} catch {
+  case e: Exception =>
 }

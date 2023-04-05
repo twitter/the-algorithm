@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.moment
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
@@ -17,4 +18,8 @@ class MomentAnnotationItemMarshaller @Inject() (richTextMarshaller: RichTextMars
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

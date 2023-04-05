@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.decorator
 
 import com.twitter.conversions.DurationOps._
@@ -85,4 +86,8 @@ case class DontLikeFeedbackActionBuilder @Inject() (
       )
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

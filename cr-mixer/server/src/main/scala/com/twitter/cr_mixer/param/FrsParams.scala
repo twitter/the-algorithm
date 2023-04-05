@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import com.twitter.timelines.configapi.BaseConfig
@@ -128,4 +129,8 @@ object FrsParams {
       .set(enumOverrides: _*)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

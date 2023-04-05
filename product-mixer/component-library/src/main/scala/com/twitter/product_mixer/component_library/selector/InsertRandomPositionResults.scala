@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.component_library.selector.InsertRandomPositionResults.randomIndices
@@ -136,4 +137,8 @@ case class InsertRandomPositionResults[-Query <: PipelineQuery](
 
     SelectorResult(remainingCandidates = candidatesOutOfScope, result = mergedResult)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

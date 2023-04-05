@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.encoding.features;
 
 /**
@@ -32,4 +33,7 @@ public class SingleBytePositiveFloatNormalizer extends ByteNormalizer {
   public double unnormAndLog2(byte norm) {
     return SingleBytePositiveFloatUtil.toLog2Double(norm);
   }
+}
+
+} catch (Exception e) {
 }

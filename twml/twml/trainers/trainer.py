@@ -1,3 +1,4 @@
+try:
 # pylint: disable=too-many-lines
 """
 ``twml.trainers.Trainer`` is a wrapper around `tf.estimator.Estimator
@@ -1775,3 +1776,5 @@ class Trainer(object):
 
     with tf.io.gfile.GFile(file_path, 'w') as f:
       f.write('')
+except Exception:
+  pass

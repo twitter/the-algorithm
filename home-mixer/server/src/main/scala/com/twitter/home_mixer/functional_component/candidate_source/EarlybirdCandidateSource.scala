@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.candidate_source
 
 import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
@@ -41,4 +42,8 @@ case class EarlybirdCandidateSource @Inject() (
       CandidatesWithSourceFeatures(candidates, features)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

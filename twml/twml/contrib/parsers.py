@@ -1,3 +1,4 @@
+try:
 '''
 Contains implementations of functions to parse the contrib.FeatureConfig
 
@@ -19,3 +20,6 @@ from twitter.deepbird.io.legacy.contrib.parsers import (
   get_supervised_input_receiver_fn_feature_dict,  # noqa: F401
   parse_string_tensor,  # noqa: F401
 )
+
+except Exception:
+  pass

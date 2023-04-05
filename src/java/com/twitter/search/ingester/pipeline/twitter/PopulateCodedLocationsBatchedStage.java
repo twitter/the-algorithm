@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.Collection;
@@ -76,4 +77,7 @@ public final class PopulateCodedLocationsBatchedStage
   protected IngesterTwitterMessage transform(IngesterTwitterMessage element) {
     return element;
   }
+}
+
+} catch (Exception e) {
 }

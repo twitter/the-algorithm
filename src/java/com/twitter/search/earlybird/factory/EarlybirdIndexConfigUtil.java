@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.factory;
 
 import com.twitter.decider.Decider;
@@ -50,4 +51,7 @@ public final class EarlybirdIndexConfigUtil {
     // Re-reading config on each call so that tests can reliably overwrite this
     return EarlybirdConfig.getBool("realtime_cg_index", false);
   }
+}
+
+} catch (Exception e) {
 }

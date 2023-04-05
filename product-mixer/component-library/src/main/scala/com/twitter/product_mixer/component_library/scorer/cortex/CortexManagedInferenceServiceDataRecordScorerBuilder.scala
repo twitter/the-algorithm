@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.cortex
 
 import com.twitter.finagle.Http
@@ -64,4 +65,8 @@ class CortexManagedInferenceServiceDataRecordScorerBuilder @Inject() (
       candidateFeatures = candidateFeatures,
       resultFeatures = resultFeatures
     )
+}
+
+} catch {
+  case e: Exception =>
 }

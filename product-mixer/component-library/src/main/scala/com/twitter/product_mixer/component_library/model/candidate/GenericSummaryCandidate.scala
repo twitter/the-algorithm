@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.candidate
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -72,4 +73,8 @@ final class GenericSummaryCandidate private (
 
 object GenericSummaryCandidate {
   def apply(id: String): GenericSummaryCandidate = new GenericSummaryCandidate(id)
+}
+
+} catch {
+  case e: Exception =>
 }

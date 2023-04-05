@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import javax.inject.Named;
@@ -149,4 +150,7 @@ public class RealtimeCgRootAppModule extends TwitterModule {
   public ValidationBehavior<EarlybirdRequest, EarlybirdResponse> provideValidationBehavior() {
     return new EarlybirdServiceValidationBehavior();
   }
+}
+
+} catch (Exception e) {
 }

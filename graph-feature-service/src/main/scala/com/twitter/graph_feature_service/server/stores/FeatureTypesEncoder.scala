@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.server.stores
 
 import com.twitter.graph_feature_service.common.Configs.RandomSeed
@@ -13,4 +14,8 @@ object FeatureTypesEncoder {
     (MurmurHash3.bytesHash(byteArray, RandomSeed) & 0x7fffffff).toString // keep positive
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

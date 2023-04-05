@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicFollowPromptItem
@@ -19,4 +20,8 @@ class TopicFollowPromptItemMarshaller @Inject() (
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

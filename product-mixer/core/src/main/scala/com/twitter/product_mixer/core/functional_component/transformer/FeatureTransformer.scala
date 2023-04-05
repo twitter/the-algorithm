@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.transformer
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -24,4 +25,8 @@ trait FeatureTransformer[-Inputs] extends Transformer[Inputs, FeatureMap] {
 
   /** Hydrates a [[FeatureMap]] for a given [[Inputs]] */
   override def transform(input: Inputs): FeatureMap
+}
+
+} catch {
+  case e: Exception =>
 }

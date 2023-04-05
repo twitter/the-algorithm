@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.ann.common.thriftjava
 #@namespace scala com.twitter.ann.common.thriftscala
 #@namespace strato com.twitter.ann.common
@@ -166,4 +167,7 @@ service AnnQueryService {
   */
   NearestNeighborResult query(1: NearestNeighborQuery query)
     throws (1: ServerCommon.ServerError serverError, 2: BadRequest badRequest)
+}
+
+} catch (Exception e) {
 }

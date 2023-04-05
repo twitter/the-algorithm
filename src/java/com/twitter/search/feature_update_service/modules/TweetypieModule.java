@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.feature_update_service.modules;
 
 import javax.inject.Singleton;
@@ -59,4 +60,7 @@ public class TweetypieModule extends TwitterModule {
 
     return new TweetService.ServiceToClient(finagleClient);
   }
+}
+
+} catch (Exception e) {
 }

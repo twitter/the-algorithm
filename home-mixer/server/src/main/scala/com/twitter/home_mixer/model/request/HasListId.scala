@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.model.request
 
 /**
@@ -5,4 +6,8 @@ package com.twitter.home_mixer.model.request
  */
 trait HasListId {
   def listId: Long
+}
+
+} catch {
+  case e: Exception =>
 }

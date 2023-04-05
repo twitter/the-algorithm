@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.util
 
 import com.twitter.servo.util.Gate
@@ -47,4 +48,8 @@ class RequestContextBuilderImpl(requestContextFactory: RequestContextFactory)
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

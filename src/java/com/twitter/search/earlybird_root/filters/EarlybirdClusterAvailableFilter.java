@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.Collections;
@@ -82,4 +83,7 @@ public class EarlybirdClusterAvailableFilter
     return new EarlybirdResponse(EarlybirdResponseCode.PERSISTENT_ERROR, 0)
       .setDebugString(debugMessage);
   }
+}
+
+} catch (Exception e) {
 }

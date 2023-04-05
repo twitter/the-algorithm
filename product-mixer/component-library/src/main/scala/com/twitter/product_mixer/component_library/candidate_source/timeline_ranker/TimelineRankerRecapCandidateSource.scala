@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.timeline_ranker
 
 import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
@@ -25,4 +26,8 @@ class TimelineRankerRecapCandidateSource @Inject() (
         response.headOption.flatMap(_.candidates).getOrElse(Seq.empty).filter(_.tweet.nonEmpty)
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

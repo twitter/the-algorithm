@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
 
 import com.twitter.onboarding.injections.thriftscala.Injection
@@ -203,3 +204,7 @@ object FlipPromptOffsetInModuleMissing
 object FlipPromptCarouselTileMissing
     extends NoSuchElementException(
       "FlipPromptCarouselTileFeature must be set for the TilesCarousel FLIP injection in PromptCandidateSource")
+
+} catch {
+  case e: Exception =>
+}

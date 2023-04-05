@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.services
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -69,4 +70,8 @@ class ProductMixerRecommendationService @Inject() (
       ProductMixerDebugParams(debugParams.featureOverrides, None)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

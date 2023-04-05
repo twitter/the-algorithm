@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -147,4 +148,7 @@ public abstract class ScheduledExecutorManager {
   // Override if you need to shutdown additional services.
   protected void shutdownComponent() {
   }
+}
+
+} catch (Exception e) {
 }

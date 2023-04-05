@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.IOException;
@@ -188,4 +189,7 @@ public class SimpleSegmentIndexer {
     LOG.info("Total Memory: {}, Free Memory: {}",
         Runtime.getRuntime().totalMemory(), Runtime.getRuntime().freeMemory());
   }
+}
+
+} catch (Exception e) {
 }

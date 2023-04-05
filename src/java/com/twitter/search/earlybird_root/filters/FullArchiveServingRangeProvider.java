@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.Date;
@@ -61,4 +62,7 @@ public class FullArchiveServingRangeProvider implements ServingRangeProvider {
       }
     };
   }
+}
+
+} catch (Exception e) {
 }

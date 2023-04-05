@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.querycache;
 
 import java.io.IOException;
@@ -280,4 +281,7 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
   TaskStats getTaskStatsForTest() {
     return stats;
   }
+}
+
+} catch (Exception e) {
 }

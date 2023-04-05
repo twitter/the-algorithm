@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service
 
 import com.twitter.finagle.stats.BroadcastStatsReceiver
@@ -697,4 +698,8 @@ private[core] object Executor {
     def pushToComponentStack(newComponentIdentifier: ComponentIdentifier): Context =
       copy(componentStack = componentStack.push(newComponentIdentifier))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

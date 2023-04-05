@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.relevance_prompt
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.item.relevance_prompt.RelevancePromptCandidateUrtItemStringCenterBuilder.RelevancePromptClientEventInfoElement
@@ -59,4 +60,8 @@ case class RelevancePromptCandidateUrtItemStringCenterBuilder[-Query <: Pipeline
       ),
       impressionCallbacks = impressionCallbacks
     )
+}
+
+} catch {
+  case e: Exception =>
 }

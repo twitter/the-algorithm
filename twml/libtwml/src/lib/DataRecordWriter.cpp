@@ -1,3 +1,4 @@
+try {
 #include "internal/error.h"
 #include "internal/thrift.h"
 
@@ -160,3 +161,6 @@ TWMLAPI uint64_t DataRecordWriter::write(twml::DataRecord &record) {
 }
 
 }  // namespace twml
+
+} catch (const std::exception& e) {
+}

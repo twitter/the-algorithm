@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.services
 
 import com.twitter.follow_recommendations.common.models.DisplayLocation
@@ -17,3 +18,7 @@ class ProductPipelineSelectorConfig {
 }
 
 case class DarkReadAndExpParams(darkReadParam: Param[Boolean], expParam: FSParam[Boolean])
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.annoy
 
 import com.twitter.ann.common._
@@ -52,4 +53,8 @@ object TypedAnnoyIndex {
   ): Queryable[T, AnnoyRuntimeParams, D] = {
     TypedAnnoyQueryIndexWithFile(dimension, metric, injection, futurePool, directory)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

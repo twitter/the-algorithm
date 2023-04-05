@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml;
 
 import java.util.Map;
@@ -29,4 +30,7 @@ public interface MapBasedLinearModel<K> {
    * @return The instance score according to the model.
    */
   float score(Map<K, Float> instance);
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.filter
 
 import com.twitter.product_mixer.core.functional_component.filter.Filter
@@ -39,4 +40,8 @@ case class SnowflakeIdAgeFilter[Candidate <: UniversalNoun[Long]](
 
     Stitch.value(FilterResult(kept = keptCandidates, removed = removedCandidates))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

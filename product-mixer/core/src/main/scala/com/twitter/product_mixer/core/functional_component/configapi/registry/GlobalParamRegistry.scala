@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.configapi.registry
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -18,4 +19,8 @@ class GlobalParamRegistry @Inject() (
 
     BaseConfigBuilder(globalConfigs).build("GlobalParamRegistry")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

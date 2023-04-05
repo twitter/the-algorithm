@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.stp
 
 import com.twitter.follow_recommendations.common.models.AccountProof
@@ -54,4 +55,8 @@ object OfflineStrongTiePredictionBaseSource {
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

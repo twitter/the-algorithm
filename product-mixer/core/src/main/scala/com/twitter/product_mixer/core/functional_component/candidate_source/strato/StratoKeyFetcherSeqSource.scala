@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.candidate_source.strato
 
 import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
@@ -24,4 +25,8 @@ trait StratoKeyFetcherSeqSource[StratoKey, StratoResult]
           .getOrElse(Seq.empty)
       }.rescue(StratoErrCategorizer.CategorizeStratoException)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.hnsw;
 
 import java.util.Objects;
@@ -42,4 +43,7 @@ class HnswMeta<T> {
   public String toString() {
     return "HnswMeta{maxLevel=" + maxLevel + ", entryPoint=" + entryPoint + '}';
   }
+}
+
+} catch (Exception e) {
 }

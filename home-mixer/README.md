@@ -1,3 +1,4 @@
+try {
 Home Mixer
 ==========
 
@@ -100,3 +101,6 @@ Timeline tabs powered by Home Mixer.
         - ConversationServiceCandidatePipelineConfig (fetch ancestors for conversation modules)
         - ListTweetsAdsCandidatePipelineConfig (fetch ads)
 
+
+} catch (Exception e) {
+}

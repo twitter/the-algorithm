@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.audio_space
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.audio_space.AudioSpaceItem
@@ -14,4 +15,8 @@ class AudioSpaceItemMarshaller @Inject() () {
         id = audioSpaceItem.id
       )
     )
+}
+
+} catch {
+  case e: Exception =>
 }

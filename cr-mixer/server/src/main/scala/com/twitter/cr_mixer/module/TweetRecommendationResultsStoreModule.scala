@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -29,4 +30,8 @@ object TweetRecommendationResultsStoreModule extends TwitterModule {
       keyToString = { k: UserId => k.toString }
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

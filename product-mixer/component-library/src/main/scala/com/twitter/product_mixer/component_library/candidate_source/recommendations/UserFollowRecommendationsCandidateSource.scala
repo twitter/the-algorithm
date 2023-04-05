@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.recommendations
 
 import com.twitter.follow_recommendations.{thriftscala => fr}
@@ -38,4 +39,8 @@ class UserFollowRecommendationsCandidateSource @Inject() (
         throw new Exception("Invalid recommendation type returned from FRS")
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

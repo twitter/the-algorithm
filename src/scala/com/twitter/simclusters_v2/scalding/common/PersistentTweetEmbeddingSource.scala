@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.common
 
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
@@ -58,3 +59,7 @@ class LogFavBasedPersistentTweetEmbeddingMhExportSource(
       stratoColumnPath,
       serviceIdentifier = serviceIdentifier
     )
+
+} catch {
+  case e: Exception =>
+}

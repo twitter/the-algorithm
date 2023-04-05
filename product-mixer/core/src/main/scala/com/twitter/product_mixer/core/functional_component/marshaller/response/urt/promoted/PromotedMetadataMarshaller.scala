@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
@@ -32,4 +33,8 @@ class PromotedMetadataMarshaller @Inject() (
       impressionString = promotedMetadata.impressionString,
       clickTrackingInfo = promotedMetadata.clickTrackingInfo.map(clickTrackingInfoMarshaller(_))
     )
+}
+
+} catch {
+  case e: Exception =>
 }

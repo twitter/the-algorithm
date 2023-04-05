@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -104,4 +105,8 @@ object RepresentationManagerModule extends TwitterModule {
         .mapValues(SimClustersEmbedding(_)))(
       statsReceiver.scope("rms_user_follow_interestedin_store"))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

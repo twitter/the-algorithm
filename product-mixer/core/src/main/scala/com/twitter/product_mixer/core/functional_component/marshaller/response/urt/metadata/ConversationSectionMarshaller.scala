@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.AbusiveQuality
@@ -18,4 +19,8 @@ class ConversationSectionMarshaller @Inject() () {
     case AbusiveQuality => urt.ConversationSection.AbusiveQuality
     case RelatedTweet => urt.ConversationSection.RelatedTweet
   }
+}
+
+} catch {
+  case e: Exception =>
 }

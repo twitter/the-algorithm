@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.exception;
 
 import com.twitter.finagle.Failure;
@@ -22,4 +23,7 @@ public class EarlybirdFinagleServerMonitor extends AbstractMonitor {
     // We return true here because we handle all exceptions.
     return true;
   }
+}
+
+} catch (Exception e) {
 }

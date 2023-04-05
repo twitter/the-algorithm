@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.cr_mixer.thriftjava
 #@namespace scala com.twitter.cr_mixer.thriftscala
 #@namespace strato com.twitter.cr_mixer
@@ -19,3 +20,6 @@ union ProductContext {
 	2: NotificationsContext notificationsContext
 	3: ExploreContext exploreContext
 } (persisted='true', hasPersonalData='false')
+
+} catch (Exception e) {
+}

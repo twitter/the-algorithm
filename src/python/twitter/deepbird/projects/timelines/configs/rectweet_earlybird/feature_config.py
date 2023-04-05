@@ -1,3 +1,4 @@
+try:
 # checkstyle: noqa
 from twml.feature_config import FeatureConfigBuilder
 
@@ -72,3 +73,6 @@ def get_feature_config(data_spec_path, label):
   ]) \
     .define_weight("meta.record_weight/type=earlybird") \
     .build()
+
+except Exception:
+  pass

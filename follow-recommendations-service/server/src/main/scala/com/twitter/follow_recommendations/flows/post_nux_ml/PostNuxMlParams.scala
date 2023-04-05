@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.post_nux_ml
 
 import com.twitter.conversions.DurationOps._
@@ -130,4 +131,8 @@ object PostNuxMlParams {
         default = 0.3,
         min = 0.1,
         max = 1.0)
+}
+
+} catch {
+  case e: Exception =>
 }

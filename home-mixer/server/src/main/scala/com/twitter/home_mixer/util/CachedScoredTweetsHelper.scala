@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.util
 
 import com.twitter.home_mixer.model.HomeFeatures.CachedScoredTweetsFeature
@@ -46,4 +47,8 @@ object CachedScoredTweetsHelper {
       .getOrElse(CachedScoredTweetsFeature, Seq.empty)
       .filter(tweet => !seenTweetIds.contains(tweet.tweetId))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
@@ -17,4 +18,8 @@ object Bucketer {
   /** A [[Bucketer]] that buckets by [[CandidateWithDetails.source]] */
   val ByCandidateSource: Bucketer[CandidatePipelineIdentifier] =
     (candidateWithDetails: CandidateWithDetails) => candidateWithDetails.source
+}
+
+} catch {
+  case e: Exception =>
 }

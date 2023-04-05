@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.model
 
 import com.twitter.core_workflows.user_model.{thriftscala => um}
@@ -259,4 +260,8 @@ object HomeFeatures {
   object FocalTweetRealNamesFeature extends Feature[TweetCandidate, Option[Map[Long, String]]]
   object FocalTweetScreenNamesFeature extends Feature[TweetCandidate, Option[Map[Long, String]]]
   object MediaUnderstandingAnnotationIdsFeature extends Feature[TweetCandidate, Seq[Long]]
+}
+
+} catch {
+  case e: Exception =>
 }

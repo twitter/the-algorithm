@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.tweet_similarity
 
 import com.twitter.ml.api.DailySuffixFeatureSource
@@ -252,4 +253,8 @@ object DatasetTopKAnalysisDumpApp extends TwitterExecutionApp {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -145,4 +146,7 @@ public class ClientIdTrackingFilter extends SimpleFilter<EarlybirdRequest, Early
         .increment();
     }
   }
+}
+
+} catch (Exception e) {
 }

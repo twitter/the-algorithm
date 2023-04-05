@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import com.google.common.base.Preconditions;
@@ -252,4 +253,7 @@ public class SkipListPostingsEnum extends PostingsEnum {
   public long cost() {
     return cost;
   }
+}
+
+} catch (Exception e) {
 }

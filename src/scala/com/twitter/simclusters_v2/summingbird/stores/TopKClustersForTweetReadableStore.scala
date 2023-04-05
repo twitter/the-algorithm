@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.stores
 
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
@@ -173,4 +174,8 @@ object TopKClustersForTweetKeyReadableStore {
     }.getOrElse(Nil)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance.scoring;
 
 import java.io.IOException;
@@ -213,4 +214,7 @@ public abstract class ScoringFunctionProvider {
       return tfScoringFunction;
     }
   }
+}
+
+} catch (Exception e) {
 }

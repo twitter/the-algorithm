@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.server
 
 import com.twitter.thriftwebforms.MethodOptions
@@ -43,4 +44,8 @@ object TimelineRankerThriftWebForms {
         responseRenderers = Seq(renderGetCandidateTweetsResponse)
       )
     )
+}
+
+} catch {
+  case e: Exception =>
 }

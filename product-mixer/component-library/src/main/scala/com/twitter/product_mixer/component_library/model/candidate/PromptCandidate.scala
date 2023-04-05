@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.candidate
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -430,4 +431,8 @@ object RelevancePromptCandidate {
     position: Option[Int] = None
   ): RelevancePromptCandidate =
     new RelevancePromptCandidate(id, position)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.BufferedInputStream;
@@ -221,4 +222,7 @@ public class EarlybirdIndexLoader {
 
     return segmentInfo;
   }
+}
+
+} catch (Exception e) {
 }

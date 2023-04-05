@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.EnumMap;
@@ -77,4 +78,7 @@ public class IsUserProtectedMetadataTrackingFilter
     return response;
   }
 
+}
+
+} catch (Exception e) {
 }

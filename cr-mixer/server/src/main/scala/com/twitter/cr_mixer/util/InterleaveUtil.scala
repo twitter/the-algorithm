@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.util
 
 import com.twitter.cr_mixer.model.Candidate
@@ -158,3 +159,7 @@ object GroupingKey {
 }
 
 case class InterleaveWeights(weight: Double, var summed_weight: Double)
+
+} catch {
+  case e: Exception =>
+}

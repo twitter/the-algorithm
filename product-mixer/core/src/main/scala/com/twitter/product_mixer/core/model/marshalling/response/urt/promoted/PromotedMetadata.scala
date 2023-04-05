@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
 
 /*
@@ -21,3 +22,7 @@ case class PromotedMetadata(
   promotedTrendDescription: Option[String],
   impressionString: Option[String],
   clickTrackingInfo: Option[ClickTrackingInfo])
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.index;
 
 import com.twitter.search.core.earlybird.index.TimeMapper;
@@ -80,4 +81,7 @@ public abstract class AbstractInMemoryTimeMapper implements TimeMapper {
       return Integer.compare(reverseMapTimes.get(index), value);
     }
   }
+}
+
+} catch (Exception e) {
 }

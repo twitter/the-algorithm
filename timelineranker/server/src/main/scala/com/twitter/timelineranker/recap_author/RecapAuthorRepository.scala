@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.recap_author
 
 import com.twitter.timelineranker.model.CandidateTweetsResult
@@ -26,4 +27,7 @@ class RecapAuthorRepository(source: RecapAuthorSource, realtimeCGSource: RecapAu
   def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
     Future.collect(queries.map(query => get(query)))
   }
+}
+} catch {
+  case e: Exception =>
 }

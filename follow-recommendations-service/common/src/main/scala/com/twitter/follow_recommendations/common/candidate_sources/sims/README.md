@@ -1,3 +1,4 @@
+try {
 # Sims Candidate Source
 Offers various online sources for finding similar accounts based on a given user, whether it is the target user or an account candidate.
 
@@ -30,3 +31,6 @@ We employ a multi-tower MLP model and optimize the logistic loss. The model is r
 
 We recompute the candidates and rank them daily. The ranked results are published to the Manhattan dataset.
 
+
+} catch (Exception e) {
+}

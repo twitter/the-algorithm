@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.HashMap;
@@ -78,4 +79,7 @@ public class ServiceResponseValidationFilter
           }
         });
   }
+}
+
+} catch (Exception e) {
 }

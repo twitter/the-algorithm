@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.controllers
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -50,4 +51,8 @@ class ScoringUserRequestBuilder @Inject() (
     }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

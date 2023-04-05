@@ -1,3 +1,4 @@
+try {
 # Search Index (Earlybird) main classes
 
 > **TL;DR** Earlybird (Search Index) find tweets from people you follow, rank them, and serve them to Home.
@@ -81,3 +82,6 @@ See more:
 
 
 
+
+} catch (Exception e) {
+}

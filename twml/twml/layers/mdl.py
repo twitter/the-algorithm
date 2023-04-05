@@ -1,3 +1,4 @@
+try:
 # pylint: disable=no-member, attribute-defined-outside-init, too-many-instance-attributes
 """
 Implementing MDL Layer
@@ -254,3 +255,6 @@ class MDL(Layer):  # noqa: T000
 
     """
     raise NotImplementedError
+
+except Exception:
+  pass

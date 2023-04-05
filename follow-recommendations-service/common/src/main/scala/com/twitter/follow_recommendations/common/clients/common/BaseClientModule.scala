@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.common
 
 import com.twitter.finagle.ThriftMux
@@ -17,4 +18,8 @@ abstract class BaseClientModule[T: ClassTag] extends ThriftClientModule[T] {
           stringLengthLimit = StringLengthLimit,
           containerLengthLimit = ContainerLengthLimit))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

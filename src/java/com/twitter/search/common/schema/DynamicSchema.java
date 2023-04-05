@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema;
 
 import java.util.Collection;
@@ -211,4 +212,7 @@ public class DynamicSchema implements Schema {
   public ImmutableMap<String, FeatureConfiguration> getFeatureNameToFeatureConfig() {
     return schema.get().getFeatureNameToFeatureConfig();
   }
+}
+
+} catch (Exception e) {
 }

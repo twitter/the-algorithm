@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -36,4 +37,8 @@ object RealGraphOonStoreModule extends TwitterModule {
       realGraphOonStratoFetchableStore
     )(statsReceiver.scope("user_real_graph_oon_store"))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

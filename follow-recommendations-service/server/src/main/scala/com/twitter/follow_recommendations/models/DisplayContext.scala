@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.models
 
 import com.twitter.follow_recommendations.common.models.FlowContext
@@ -111,3 +112,7 @@ class UnknownDisplayContextException(name: String)
 
 class UnexpectedDisplayContextTypeException(displayContext: DisplayContext, expectedType: String)
     extends Exception(s"DisplayContext ${displayContext} not of expected type ${expectedType}")
+
+} catch {
+  case e: Exception =>
+}

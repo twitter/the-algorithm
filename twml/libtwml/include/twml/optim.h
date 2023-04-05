@@ -1,3 +1,4 @@
+try {
 #pragma once
 #include <twml/defines.h>
 #include <twml/Tensor.h>
@@ -49,3 +50,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+} catch (Exception e) {
+}

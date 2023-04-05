@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.model_evaluation
 
 import com.twitter.algebird.Aggregator
@@ -211,4 +212,8 @@ object EarlybirdModelEvaluationJob extends TwitterExecutionApp with UTCDateRange
       None
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

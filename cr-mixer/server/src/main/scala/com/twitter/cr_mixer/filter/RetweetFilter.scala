@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.filter
 
 import com.twitter.cr_mixer.model.CandidateGeneratorQuery
@@ -38,4 +39,8 @@ case class RetweetFilter @Inject() () extends FilterBase {
   ): ConfigType = {
     query.params(UtegTweetGlobalParams.EnableRetweetFilterParam)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

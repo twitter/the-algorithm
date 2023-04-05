@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = [
         "*.scala",
@@ -72,3 +73,6 @@ hadoop_binary(
         ":abuse",
     ],
 )
+
+} catch (Exception e) {
+}

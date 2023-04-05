@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 
 import com.twitter.scalding._
@@ -177,4 +178,8 @@ object UserUserGraphAdhoc extends AdhocExecutionApp {
         userAndNeighbors.writeExecution(UserAndNeighborsFixedPathSource(outputDir)),
         userAndNeighbors.writeExecution(TypedTsv(outputDir + "_tsv"))).unit
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.server.modules
 
 import com.twitter.inject.TwitterModule
@@ -28,4 +29,8 @@ object ServerFlagsModule extends TwitterModule {
   flag[String](MemCacheClientName, "MemCache Client Name")
 
   flag[String](MemCachePath, "MemCache Path")
+}
+
+} catch {
+  case e: Exception =>
 }

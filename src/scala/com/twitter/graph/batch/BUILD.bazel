@@ -1,3 +1,4 @@
+try {
 JOB = ["job/**/*"]
 
 scala_library(
@@ -89,3 +90,6 @@ scalding_job(
         ":tweepcred",
     ],
 )
+
+} catch (Exception e) {
+}

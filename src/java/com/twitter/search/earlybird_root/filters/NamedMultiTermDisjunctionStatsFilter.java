@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.List;
@@ -42,4 +43,7 @@ public class NamedMultiTermDisjunctionStatsFilter extends
 
         return service.apply(request);
     }
+}
+
+} catch (Exception e) {
 }

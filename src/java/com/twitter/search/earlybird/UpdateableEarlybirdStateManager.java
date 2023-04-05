@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird;
 
 import java.io.File;
@@ -434,4 +435,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
   public void setEarlybirdServer(EarlybirdServer earlybirdServer) {
     this.earlybirdServer = earlybirdServer;
   }
+}
+
+} catch (Exception e) {
 }

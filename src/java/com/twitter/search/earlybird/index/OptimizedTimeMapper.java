@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.index;
 
 import java.io.IOException;
@@ -106,4 +107,7 @@ public class OptimizedTimeMapper extends AbstractInMemoryTimeMapper implements F
                              DocIDToTweetIDMapper optimizedTweetIdMapper) {
     throw new UnsupportedOperationException("OptimizedTimeMapper instances are already optimized.");
   }
+}
+
+} catch (Exception e) {
 }

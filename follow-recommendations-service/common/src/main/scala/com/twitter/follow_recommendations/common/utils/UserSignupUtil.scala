@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.utils
 
 import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
@@ -11,4 +12,8 @@ object UserSignupUtil {
 
   def userSignupAge(hasClientContext: HasClientContext): Option[Duration] =
     signupTime(hasClientContext).map(Time.now - _)
+}
+
+} catch {
+  case e: Exception =>
 }

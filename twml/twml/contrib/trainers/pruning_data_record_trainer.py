@@ -1,3 +1,4 @@
+try:
 import tensorflow.compat.v1 as tf
 
 from twml.trainers import DataRecordTrainer
@@ -57,3 +58,6 @@ class PruningDataRecordTrainer(DataRecordTrainer):
       signal statistics. A value of 0.9999 can be thought of as averaging statistics over 10,000 \
       steps.")
     return parser
+
+except Exception:
+  pass

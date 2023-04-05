@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.feature.featuremap
 
 import com.fasterxml.jackson.core.JsonGenerator
@@ -60,4 +61,8 @@ private[featuremap] class FeatureMapSerializer() extends JsonSerializer[FeatureM
   // This causes significant performance issues when the result is later sent over the wire.
   private def truncateString(input: String): String =
     if (input.length > 1000) input.take(1000) + "..." else input
+}
+
+} catch {
+  case e: Exception =>
 }

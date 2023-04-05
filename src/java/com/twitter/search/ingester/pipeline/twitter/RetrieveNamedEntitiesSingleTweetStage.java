@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.concurrent.CompletableFuture;
@@ -72,4 +73,7 @@ public class RetrieveNamedEntitiesSingleTweetStage extends TwitterBaseStage
 
     return cf;
   }
+}
+
+} catch (Exception e) {
 }

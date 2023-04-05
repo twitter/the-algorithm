@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.feature_hydrator.candidate.ads
 
 import com.twitter.adserver.{thriftscala => ad}
@@ -49,4 +50,8 @@ case class AdvertiserBrandSafetySettingsFeatureHydrator[
 
     Stitch.callFuture(featureMapFuture)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

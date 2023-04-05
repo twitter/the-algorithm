@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import com.twitter.search.common.caching.filter.QueryCachePredicate;
@@ -21,4 +22,7 @@ public class RelevanceQueryCachePredicate extends QueryCachePredicate<EarlybirdR
         && EarlybirdRequestUtil.isCachingAllowed(requestContext.getRequest())
         && decider.isAvailable(relevanceCacheEnabledDeciderKey);
   }
+}
+
+} catch (Exception e) {
 }

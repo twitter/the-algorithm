@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.model_evaluation
 
 import scala.collection.GenTraversableOnce
@@ -200,4 +201,8 @@ case object NumberOfCandidates extends EarlybirdEvaluationMetric {
   override val name: String = s"number_of_candidates"
   override def apply(candidates: Seq[CandidateRecord]): Option[Double] =
     Some(candidates.size.toDouble)
+}
+
+} catch {
+  case e: Exception =>
 }

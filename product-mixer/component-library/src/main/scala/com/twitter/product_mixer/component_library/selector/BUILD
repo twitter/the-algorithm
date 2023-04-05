@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "insert_append_results",
     sources = ["InsertAppendResults.scala"],
@@ -45,3 +46,6 @@ scala_library(
         "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
     ],
 )
+
+} catch (Exception e) {
+}

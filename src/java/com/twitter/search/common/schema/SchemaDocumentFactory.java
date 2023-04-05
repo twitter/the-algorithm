@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema;
 
 import java.io.IOException;
@@ -430,4 +431,7 @@ public class SchemaDocumentFactory {
      */
     TwitterTokenStream rewrite(Schema.FieldInfo fieldInfo, TwitterTokenStream stream);
   }
+}
+
+} catch (Exception e) {
 }

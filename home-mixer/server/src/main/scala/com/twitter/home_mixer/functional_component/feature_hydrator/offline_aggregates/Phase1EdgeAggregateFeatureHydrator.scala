@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates
 
 import com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates.EdgeAggregateFeatures._
@@ -17,4 +18,8 @@ class Phase1EdgeAggregateFeatureHydrator @Inject() extends BaseEdgeAggregateFeat
       UserOriginalAuthorAggregateFeature,
       UserMentionAggregateFeature
     )
+}
+
+} catch {
+  case e: Exception =>
 }

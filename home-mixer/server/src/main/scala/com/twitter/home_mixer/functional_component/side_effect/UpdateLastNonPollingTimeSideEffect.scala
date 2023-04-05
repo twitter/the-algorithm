@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.side_effect
 
 import com.twitter.home_mixer.model.HomeFeatures.FollowingLastNonPollingTimeFeature
@@ -75,4 +76,8 @@ class UpdateLastNonPollingTimeSideEffect[
         else followingLastNonPollingTime
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -45,4 +46,7 @@ message SaverDef {
     V2 = 2;
   }
   CheckpointFormatVersion version = 7;
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.config;
 
 import java.util.Date;
@@ -172,4 +173,7 @@ public final class TierConfig {
     }
     return readType;
   }
+}
+
+} catch (Exception e) {
 }

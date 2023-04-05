@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import javax.inject.Inject;
@@ -31,4 +32,7 @@ public class ClientRequestTimeFilter extends SimpleFilter<EarlybirdRequest, Earl
     }
     return service.apply(request);
   }
+}
+
+} catch (Exception e) {
 }

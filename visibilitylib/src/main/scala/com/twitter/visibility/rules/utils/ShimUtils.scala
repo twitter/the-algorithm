@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules.utils
 
 import com.twitter.visibility.features.Feature
@@ -57,4 +58,8 @@ object ShimUtils {
 
     filteredFeatureMap
   }
+}
+
+} catch {
+  case e: Exception =>
 }

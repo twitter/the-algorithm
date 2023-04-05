@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.inferred_entities
 
 import com.twitter.scalding.DateRange
@@ -89,4 +90,8 @@ object InferredEntities {
           (userId, SimClustersInferredEntities(inferredEntities))
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

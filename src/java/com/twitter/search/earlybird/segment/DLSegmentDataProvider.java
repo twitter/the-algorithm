@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.segment;
 
 import java.io.IOException;
@@ -59,4 +60,7 @@ public class DLSegmentDataProvider implements SegmentDataProvider {
     Collections.sort(segmentList);
     return segmentList;
   }
+}
+
+} catch (Exception e) {
 }

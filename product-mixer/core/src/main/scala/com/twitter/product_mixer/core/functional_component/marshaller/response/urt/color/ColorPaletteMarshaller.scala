@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.color.ColorPalette
@@ -13,4 +14,8 @@ class ColorPaletteMarshaller @Inject() (
     rgb = colorMarshaller(colorPalette.rgb),
     percentage = colorPalette.percentage
   )
+}
+
+} catch {
+  case e: Exception =>
 }

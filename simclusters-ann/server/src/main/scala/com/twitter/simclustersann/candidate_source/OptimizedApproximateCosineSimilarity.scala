@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.candidate_source
 
 import com.twitter.simclusters_v2.common.ClusterId
@@ -109,4 +110,8 @@ object OptimizedApproximateCosineSimilarity extends ApproximateCosineSimilarity 
       .sortBy(-_._2)
       .take(Math.min(config.maxNumResults, MaxNumResultsUpperBound))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

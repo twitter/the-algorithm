@@ -1,3 +1,4 @@
+try {
 scala_library(
     compiler_option_sets = ["fatal_warnings"],
     platform = "java8",
@@ -22,3 +23,6 @@ scala_library(
         "util/util-slf4j-api/src/main/scala",
     ],
 )
+
+} catch (Exception e) {
+}

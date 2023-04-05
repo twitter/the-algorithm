@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.base
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -33,4 +34,8 @@ trait CandidateSourceRegistry[Target, Candidate] {
     // fails loud if the candidate source is not registered
     identifiers.map(candidateSources(_))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.filter
 
 import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
@@ -33,4 +34,8 @@ object KeepBestOutOfNetworkTweetPerAuthorFilter extends Filter[PipelineQuery, Tw
 
     Stitch.value(FilterResult(kept = kept.map(_.candidate), removed = removed.map(_.candidate)))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

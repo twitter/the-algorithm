@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.candidate
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -84,4 +85,8 @@ final class CursorCandidate private (
 object CursorCandidate {
   def apply(id: Long, value: String, cursorType: CursorType): CursorCandidate =
     new CursorCandidate(id, value, cursorType)
+}
+
+} catch {
+  case e: Exception =>
 }

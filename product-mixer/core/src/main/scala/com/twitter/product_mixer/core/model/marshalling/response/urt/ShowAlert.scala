@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowAlert.ShowAlertEntryNamespace
@@ -43,4 +44,8 @@ case class ShowAlert(
 
 object ShowAlert {
   val ShowAlertEntryNamespace: EntryNamespace = EntryNamespace("show-alert")
+}
+
+} catch {
+  case e: Exception =>
 }

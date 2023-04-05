@@ -1,3 +1,4 @@
+try {
 Overview
 ========
 
@@ -49,3 +50,6 @@ SafetyLabelType
 
 Describes a particular policy violation for a given noun instance, and usually leads to reduced visibility of the
 labeled entity in product surfaces. There are many deprecated, and experimental safety label types. Labels with these safety label types have no effect on VF. Additionally, some safety label types are not used, and not designed for VF.
+
+} catch (Exception e) {
+}

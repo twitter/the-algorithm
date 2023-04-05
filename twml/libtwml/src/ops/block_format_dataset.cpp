@@ -1,3 +1,4 @@
+try {
 #include "block_format_reader.h"
 
 #include "tensorflow/core/framework/dataset.h"
@@ -241,3 +242,6 @@ REGISTER_KERNEL_BUILDER(
   Name("BlockFormatDatasetV2")
   .Device(DEVICE_CPU),
   BlockFormatDatasetV2);
+
+} catch (const std::exception& e) {
+}

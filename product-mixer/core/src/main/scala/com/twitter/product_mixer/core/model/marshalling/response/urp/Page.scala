@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urp
 
 import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
@@ -10,3 +11,7 @@ case class Page(
   pageHeader: Option[PageHeader] = None,
   pageNavBar: Option[PageNavBar] = None)
     extends HasMarshalling
+
+} catch {
+  case e: Exception =>
+}

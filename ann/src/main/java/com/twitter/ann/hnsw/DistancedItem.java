@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.hnsw;
 
 /**
@@ -20,4 +21,7 @@ public class DistancedItem<T> {
   public float getDistance() {
     return distance;
   }
+}
+
+} catch (Exception e) {
 }

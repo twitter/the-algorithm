@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -49,4 +50,8 @@ object BlueVerifiedAnnotationStoreModule extends TwitterModule {
       cacheName = "blue_verified_annotation_cache"
     )(statsReceiver.scope("inMemoryCachedBlueVerifiedAnnotationStore"))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

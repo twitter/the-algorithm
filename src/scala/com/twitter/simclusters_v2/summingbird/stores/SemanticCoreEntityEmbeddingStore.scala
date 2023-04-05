@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.stores
 
 import com.twitter.frigate.common.store.strato.StratoStore
@@ -46,4 +47,8 @@ object SemanticCoreEntityEmbeddingStore {
       }
       .mapValues(SimClustersEmbedding(_))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

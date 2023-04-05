@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.queries;
 
 import java.io.IOException;
@@ -84,4 +85,7 @@ public final class CSFDisjunctionFilter extends Query {
       return docValues.advanceExact(docID()) && values.contains(docValues.longValue());
     }
   }
+}
+
+} catch (Exception e) {
 }

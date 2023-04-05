@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common.clustering
 
 import com.twitter.simclusters_v2.common.UserId
@@ -27,4 +28,8 @@ object ClusterRepresentativeSelectionStatistics {
 
   // Statistics, to be imported where recorded.
   val StatClusterRepresentativeSelectionTime = "cluster_representative_selection_total_time_ms"
+}
+
+} catch {
+  case e: Exception =>
 }

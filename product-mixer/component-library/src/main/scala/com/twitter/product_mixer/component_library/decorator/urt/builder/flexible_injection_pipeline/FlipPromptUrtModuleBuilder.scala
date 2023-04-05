@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
 
 import com.twitter.onboarding.injections.thriftscala.Injection
@@ -52,3 +53,7 @@ class UnsupportedFlipPromptInModuleException(injection: onboardingthrift.Injecti
     extends UnsupportedOperationException(
       "Unsupported timeline item in a Flip prompt module " + TransportMarshaller.getSimpleName(
         injection.getClass))
+
+} catch {
+  case e: Exception =>
+}

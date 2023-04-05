@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.segment;
 
 import java.io.IOException;
@@ -76,4 +77,7 @@ public interface SegmentDataReaderSet {
    * start indexing from.
    */
   Optional<Long> getUpdateEventsStreamOffsetForSegment(SegmentInfo segmentInfo);
+}
+
+} catch (Exception e) {
 }

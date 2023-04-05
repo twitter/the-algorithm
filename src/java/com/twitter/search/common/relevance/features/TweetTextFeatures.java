@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.features;
 
 import java.util.Collection;
@@ -222,4 +223,7 @@ public class TweetTextFeatures {
   public void setCaps(int caps) {
     this.caps = caps;
   }
+}
+
+} catch (Exception e) {
 }

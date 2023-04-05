@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.features;
 
 import com.twitter.search.common.encoding.features.EncodedFeatures;
@@ -54,4 +55,7 @@ public class TweetEngagementFeatures extends EncodedFeatures {
   public int getReplyCount() {
     return getByte(REPLY_COUNT_BIT_SHIFT);
   }
+}
+
+} catch (Exception e) {
 }

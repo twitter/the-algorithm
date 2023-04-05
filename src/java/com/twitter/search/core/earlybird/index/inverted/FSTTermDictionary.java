@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -296,4 +297,7 @@ public class FSTTermDictionary implements TermDictionary, Flushable {
               termPool, termPointers, termPointerEncoding);
     }
   }
+}
+
+} catch (Exception e) {
 }

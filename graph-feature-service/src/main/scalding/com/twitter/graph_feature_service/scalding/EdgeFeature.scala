@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.scalding
 
 case class EdgeFeature(
@@ -7,3 +8,7 @@ case class EdgeFeature(
   favoriteScore: Option[Float] = None,
   retweetScore: Option[Float] = None,
   mentionScore: Option[Float] = None)
+
+} catch {
+  case e: Exception =>
+}

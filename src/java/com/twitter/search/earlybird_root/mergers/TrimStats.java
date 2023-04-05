@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.mergers;
 
 /**
@@ -68,4 +69,7 @@ class TrimStats {
 
     return builder.toString();
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -26,4 +27,8 @@ object RecentFollowingSimilarUsersParams {
       extends FSParam[Boolean](
         name = "sims_expansion_recent_following_integ_timestamp",
         default = false)
+}
+
+} catch {
+  case e: Exception =>
 }

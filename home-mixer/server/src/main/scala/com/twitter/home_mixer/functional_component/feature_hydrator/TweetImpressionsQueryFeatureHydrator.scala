@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.conversions.DurationOps._
@@ -84,4 +85,8 @@ case class TweetImpressionsQueryFeatureHydrator[
         }
     truncatedTweetImpressionsEntries.reverse
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.configapi
 
 import com.twitter.featureswitches.v2.FeatureSwitches
@@ -69,4 +70,8 @@ class RequestContextBuilder @Inject() (featureSwitches: FeatureSwitches) {
     clientApplicationId = clientContext.appId,
     isTwoffice = clientContext.isTwoffice
   )
+}
+
+} catch {
+  case e: Exception =>
 }

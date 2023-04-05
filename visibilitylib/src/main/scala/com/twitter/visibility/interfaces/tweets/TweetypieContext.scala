@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.tweets
 
 import com.twitter.finagle.context.Contexts
@@ -56,4 +57,8 @@ object TweetypieContextKey
       )
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

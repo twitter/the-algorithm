@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.feature.featurestorev1.featurevalue
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
@@ -36,4 +37,8 @@ private[product_mixer] object FeatureStoreV1Response {
       left.failedFeatures ++ right.failedFeatures
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.util
 
 import com.twitter.home_mixer.model.HomeFeatures.TweetImpressionsFeature
@@ -12,4 +13,8 @@ object TweetImpressionsHelper {
 
     (manhattanImpressions ++ memcacheImpressions).toSet
   }
+}
+
+} catch {
+  case e: Exception =>
 }

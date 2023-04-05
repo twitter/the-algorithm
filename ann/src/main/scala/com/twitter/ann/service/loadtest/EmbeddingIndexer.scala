@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.loadtest
 
 import com.twitter.ann.common.{Appendable, Distance, EntityEmbedding, Queryable, RuntimeParams}
@@ -25,4 +26,8 @@ class EmbeddingIndexer {
       queryable
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

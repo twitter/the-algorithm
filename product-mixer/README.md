@@ -1,3 +1,4 @@
+try {
 Product Mixer
 =============
 
@@ -39,3 +40,6 @@ to return to the caller.
 Candidate Pipelines fetch candidates from underlying Candidate Sources and perform some basic
 operations on the Candidates, such as filtering out unwanted candidates, applying decorations,
 and hydrating features.
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common
 
 object CosineSimilarityUtil {
@@ -248,4 +249,8 @@ object CosineSimilarityUtil {
     }
     product
   }
+}
+
+} catch {
+  case e: Exception =>
 }

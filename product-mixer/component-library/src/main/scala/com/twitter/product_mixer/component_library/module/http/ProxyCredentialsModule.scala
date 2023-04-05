@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.module.http
 
 import com.google.inject.Provides
@@ -24,4 +25,8 @@ object ProxyCredentialsModule extends TwitterModule {
   }
 
   object MissingProxyCredentialsException extends Exception("Proxy Credentials not found")
+}
+
+} catch {
+  case e: Exception =>
 }

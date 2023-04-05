@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi.params
 
 import com.twitter.timelines.configapi.Param
@@ -12,4 +13,8 @@ private[visibility] object LabelSourceParams {
   object FilterTweetsSmyteAutomationParamA extends LabelSourceParam(false)
   object FilterTweetsSmyteAutomationParamB extends LabelSourceParam(false)
   object FilterTweetsSmyteAutomationParamAB extends LabelSourceParam(false)
+}
+
+} catch {
+  case e: Exception =>
 }

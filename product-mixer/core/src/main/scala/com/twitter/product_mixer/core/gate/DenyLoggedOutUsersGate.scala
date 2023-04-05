@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.gate
 
 import com.twitter.product_mixer.core.functional_component.gate.Gate
@@ -28,4 +29,8 @@ case class DenyLoggedOutUsersGate(pipelineIdentifier: ComponentIdentifier)
 
 object DenyLoggedOutUsersGate {
   val Suffix = "DenyLoggedOutUsers"
+}
+
+} catch {
+  case e: Exception =>
 }

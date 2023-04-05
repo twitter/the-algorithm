@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.config
 
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
@@ -31,3 +32,7 @@ case class StagingConfig(
   val abDeciderLoggerNode = "staging_abdecider_scribe"
 
 } with DeployConfig
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.stores
 
 import com.twitter.bijection.scrooge.CompactScalaCodec
@@ -84,4 +85,8 @@ object TopicTopProducersStore {
       ),
       mhMtlsParams
     )
+}
+
+} catch {
+  case e: Exception =>
 }

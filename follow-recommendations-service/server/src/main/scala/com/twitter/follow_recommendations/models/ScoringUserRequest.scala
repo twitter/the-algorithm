@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.models
 
 import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
@@ -42,4 +43,8 @@ case class ScoringUserRequest(
     debugParams = debugParams,
     isSoftUser = isSoftUser
   )
+}
+
+} catch {
+  case e: Exception =>
 }

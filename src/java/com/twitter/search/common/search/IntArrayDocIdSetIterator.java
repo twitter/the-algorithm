@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.search;
 
 import java.util.Arrays;
@@ -73,4 +74,7 @@ public class IntArrayDocIdSetIterator extends DocIdSetIterator {
   public long cost() {
     return docIds == null ? 0 : docIds.length;
   }
+}
+
+} catch (Exception e) {
 }

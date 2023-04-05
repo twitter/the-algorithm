@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.tweets
 
 import com.twitter.decider.Decider
@@ -135,4 +136,8 @@ object UserUnavailableStateVisibilityLibrary {
         stats.counter("empty")
         Reason.Unspecified
       }
+}
+
+} catch {
+  case e: Exception =>
 }

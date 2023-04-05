@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.similarity_engine
 
 import com.twitter.cr_mixer.param.ConsumerEmbeddingBasedTwoTowerParams
@@ -15,4 +16,8 @@ object ConsumerEmbeddingBasedTwoTowerSimilarityEngine {
       params = params
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 <configuration>
     <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
 
@@ -165,3 +166,6 @@
     </logger>
 
 </configuration>
+
+} catch (Exception e) {
+}

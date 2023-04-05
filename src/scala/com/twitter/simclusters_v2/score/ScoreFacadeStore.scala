@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.score
 
 import com.twitter.finagle.stats.BroadcastStatsReceiver
@@ -100,4 +101,8 @@ object ScoreFacadeStore {
     store
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

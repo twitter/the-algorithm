@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.File;
@@ -377,4 +378,7 @@ public final class SegmentVulture {
     // Remove old flushed segments
     removeOldFlushVersionIndexes(schemaMajorVersion, segmentSyncConfig);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.shared_library.observer
 
 import com.twitter.finagle.stats.Stat
@@ -240,4 +241,8 @@ object ResultsStatsObserver {
       observeResultsWithSize(results, resultsSize)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

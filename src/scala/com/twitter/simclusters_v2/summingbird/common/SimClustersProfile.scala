@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.common
 
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
@@ -209,4 +210,8 @@ object SimClustersProfile {
       )
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

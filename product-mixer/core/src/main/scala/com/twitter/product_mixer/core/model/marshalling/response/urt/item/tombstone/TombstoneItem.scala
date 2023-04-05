@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
@@ -23,4 +24,8 @@ case class TombstoneItem(
   override val entryNamespace: EntryNamespace = TombstoneItem.TombstoneEntryNamespace
 
   override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+}
+
+} catch {
+  case e: Exception =>
 }

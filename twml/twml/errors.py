@@ -1,3 +1,4 @@
+try:
 """
 Error classes for twml
 """
@@ -10,4 +11,7 @@ class EarlyStopError(Exception):
 
 class CheckpointNotFoundError(Exception):
   """Exception used to indicate a checkpoint hasnt been found."""
+  pass
+
+except Exception:
   pass

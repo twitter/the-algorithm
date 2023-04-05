@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.data.model;
@@ -131,4 +132,7 @@ message ModelProto {
   }
 
   OptimizationParams optimization_params = 5;
+}
+
+} catch (Exception e) {
 }

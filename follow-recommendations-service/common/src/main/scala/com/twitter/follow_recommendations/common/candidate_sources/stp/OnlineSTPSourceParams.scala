@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.stp
 
 import com.twitter.timelines.configapi.FSParam
@@ -16,4 +17,8 @@ object OnlineSTPSourceParams {
 
   case object SetPredictionDetails extends Param[Boolean](default = false)
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.visitors;
 
 import java.util.Collections;
@@ -133,4 +134,7 @@ public class MultiTermDisjunctionPerPartitionVisitor extends SearchQueryTransfor
           .collect(Collectors.toList());
     }
   }
+}
+
+} catch (Exception e) {
 }

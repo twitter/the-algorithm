@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.message
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageActionType
@@ -21,4 +22,8 @@ case class UserFacePileBuilder(
     displaysFeaturingText = displaysFeaturingText,
     displayType = displayType
   )
+}
+
+} catch {
+  case e: Exception =>
 }

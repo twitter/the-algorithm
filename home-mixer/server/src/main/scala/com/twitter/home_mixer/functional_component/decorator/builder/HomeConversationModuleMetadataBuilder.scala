@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.decorator.builder
 
 import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
@@ -27,4 +28,8 @@ case class HomeConversationModuleMetadataBuilder[
       )),
     gridCarouselMetadata = None
   )
+}
+
+} catch {
+  case e: Exception =>
 }

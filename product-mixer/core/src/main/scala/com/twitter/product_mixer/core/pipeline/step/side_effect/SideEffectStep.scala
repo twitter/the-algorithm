@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.step.side_effect
 
 import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
@@ -100,3 +101,7 @@ case class PipelineStepConfig[Query <: PipelineQuery, DomainResultType <: HasMar
   sideEffects: Seq[PipelineResultSideEffect[Query, DomainResultType]],
   selectorStepIdentifier: PipelineStepIdentifier,
   domainMarshallerStepIdentifier: PipelineStepIdentifier)
+
+} catch {
+  case e: Exception =>
+}

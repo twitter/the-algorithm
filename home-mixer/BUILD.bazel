@@ -1,3 +1,4 @@
+try {
 jvm_binary(
     name = "bin",
     basename = "home-mixer",
@@ -28,3 +29,6 @@ jvm_app(
     ],
     tags = ["bazel-compatible"],
 )
+
+} catch (Exception e) {
+}

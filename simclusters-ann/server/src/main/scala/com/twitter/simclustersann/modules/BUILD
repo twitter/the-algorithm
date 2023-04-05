@@ -1,3 +1,4 @@
+try {
 scala_library(
     compiler_option_sets = ["fatal_warnings"],
     tags = ["bazel-compatible"],
@@ -22,3 +23,6 @@ scala_library(
         "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
     ],
 )
+
+} catch (Exception e) {
+}

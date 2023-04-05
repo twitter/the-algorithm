@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.stp
 
 import com.google.inject.Singleton
@@ -41,4 +42,8 @@ class OfflineStrongTiePredictionSource @Inject() (
 object OfflineStrongTiePredictionSource {
   val Identifier: CandidateSourceIdentifier =
     CandidateSourceIdentifier(Algorithm.StrongTiePredictionRec.toString)
+}
+
+} catch {
+  case e: Exception =>
 }

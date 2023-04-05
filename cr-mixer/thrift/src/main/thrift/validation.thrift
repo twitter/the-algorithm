@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.cr_mixer.thriftjava
 #@namespace scala com.twitter.cr_mixer.thriftscala
 #@namespace strato com.twitter.cr_mixer
@@ -17,3 +18,6 @@ exception ValidationException {
 exception ValidationExceptionList {
   1: list<ValidationException> errors
 } (hasPersonalData='false')
+
+} catch (Exception e) {
+}

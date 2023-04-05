@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -15,4 +16,8 @@ case class StaticTopicDisplayTypeBuilder(
     candidate: BaseTopicCandidate,
     candidateFeatures: FeatureMap
   ): Option[TopicDisplayType] = Some(displayType)
+}
+
+} catch {
+  case e: Exception =>
 }

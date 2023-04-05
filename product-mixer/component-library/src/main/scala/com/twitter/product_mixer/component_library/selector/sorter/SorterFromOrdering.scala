@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector.sorter
 
 import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
@@ -22,4 +23,8 @@ case class SorterFromOrdering(
 
   override def sort[Candidate <: CandidateWithDetails](candidates: Seq[Candidate]): Seq[Candidate] =
     candidates.sorted(ordering)
+}
+
+} catch {
+  case e: Exception =>
 }

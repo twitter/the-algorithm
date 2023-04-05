@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -48,4 +49,7 @@ public class InstrumentedQueue<T> {
   public long getQueueSize() {
     return queueSize.get();
   }
+}
+
+} catch (Exception e) {
 }

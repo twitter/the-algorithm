@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import java.io.IOException;
@@ -65,4 +66,7 @@ public class JsonViewerWriter implements ViewerWriter {
   public void flush() throws IOException {
     out.flush();
   }
+}
+
+} catch (Exception e) {
 }

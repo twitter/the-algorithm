@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "agg_client_event_logs",
     sources = ["*.scala"],
@@ -59,3 +60,6 @@ create_datasets(
         "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
     ],
 )
+
+} catch (Exception e) {
+}

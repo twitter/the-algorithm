@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
@@ -108,4 +109,8 @@ private[selector] object DropSelector {
     }
     resultsBuilder.result()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

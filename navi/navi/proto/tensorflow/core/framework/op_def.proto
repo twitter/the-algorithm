@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -190,4 +191,7 @@ message OpDeprecation {
 // A collection of OpDefs
 message OpList {
   repeated OpDef op = 1;
+}
+
+} catch (Exception e) {
 }

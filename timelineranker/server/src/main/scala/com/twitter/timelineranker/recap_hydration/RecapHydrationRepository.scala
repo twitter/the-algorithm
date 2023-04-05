@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.recap_hydration
 
 import com.twitter.timelineranker.model.CandidateTweetsResult
@@ -17,4 +18,8 @@ class RecapHydrationRepository(source: RecapHydrationSource) {
   def hydrate(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
     source.hydrate(queries)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

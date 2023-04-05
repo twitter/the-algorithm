@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
 
 import com.twitter.product_mixer.component_library.decorator.urt.GroupByKey
@@ -20,4 +21,8 @@ object FlipPromptModuleGrouping extends GroupByKey[PipelineQuery, UniversalNoun[
     // Otherwise, we return a hash of the injection instance which will be used to aggregate candidates with matching values into a module.
     offsetInModule.map(_ => injection.hashCode())
   }
+}
+
+} catch {
+  case e: Exception =>
 }

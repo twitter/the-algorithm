@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.validators;
 
 import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
@@ -19,4 +20,7 @@ public class TopTweetsResultsValidator implements ServiceResponseValidator<Early
     }
     return Future.value(response);
   }
+}
+
+} catch (Exception e) {
 }

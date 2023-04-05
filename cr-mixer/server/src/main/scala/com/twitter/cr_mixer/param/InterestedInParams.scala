@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import com.twitter.finagle.stats.NullStatsReceiver
@@ -210,4 +211,8 @@ object InterestedInParams {
       .set(enumOverrides: _*)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

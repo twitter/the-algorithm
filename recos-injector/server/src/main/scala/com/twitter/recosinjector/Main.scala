@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector
 
 import com.twitter.app.Flag
@@ -210,4 +211,8 @@ object Main extends TwitterServer with JDK14Logging with Deciderable { self =>
     // Wait on the thriftServer so that shutdownTimeout is respected.
     Await.result(adminHttpServer)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

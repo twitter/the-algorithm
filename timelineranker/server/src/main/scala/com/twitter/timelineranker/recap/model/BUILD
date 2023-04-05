@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     platform = "java8",
@@ -13,3 +14,6 @@ scala_library(
         "src/thrift/com/twitter/timelines/content_features:thrift-scala",
     ],
 )
+
+} catch (Exception e) {
+}

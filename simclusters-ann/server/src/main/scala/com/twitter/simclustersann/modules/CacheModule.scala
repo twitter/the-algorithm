@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.modules
 
 import com.google.inject.Provides
@@ -31,4 +32,8 @@ object CacheModule extends TwitterModule {
       statsReceiver = stats.scope("cache_client"),
       serviceIdentifier = serviceIdentifier
     )
+}
+
+} catch {
+  case e: Exception =>
 }

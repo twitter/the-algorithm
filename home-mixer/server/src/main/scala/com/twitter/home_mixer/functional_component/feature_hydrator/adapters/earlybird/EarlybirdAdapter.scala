@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.adapters.earlybird
 
 import com.twitter.ml.api.Feature
@@ -450,4 +451,8 @@ object EarlybirdAdapter extends TimelinesMutatingAdapterBase[Option[sc.ThriftTwe
       )
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

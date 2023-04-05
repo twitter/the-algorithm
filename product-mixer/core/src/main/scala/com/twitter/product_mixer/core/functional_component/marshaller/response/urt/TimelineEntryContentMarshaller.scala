@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
@@ -22,4 +23,8 @@ class TimelineEntryContentMarshaller @Inject() (
     case operation: TimelineOperation =>
       urt.TimelineEntryContent.Operation(timelineOperationMarshaller(operation))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

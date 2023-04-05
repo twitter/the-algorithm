@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.users
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -38,4 +39,8 @@ class ViewerSensitiveMediaSettingsFeatures(
       case _ => Stitch.value(None)
     }).map(UserSensitiveMediaSettings)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

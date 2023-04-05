@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_tweetypie
 
 import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
@@ -238,4 +239,8 @@ class TweetTweetypieCandidateFeatureHydrator(
     countryCode: String,
     takedownCountryCodes: Set[String]
   ) = hasTakedown && takedownCountryCodes.contains(countryCode)
+}
+
+} catch {
+  case e: Exception =>
 }

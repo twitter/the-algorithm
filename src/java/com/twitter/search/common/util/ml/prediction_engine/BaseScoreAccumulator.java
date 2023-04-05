@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml.prediction_engine;
 
 /**
@@ -45,4 +46,7 @@ public abstract class BaseScoreAccumulator<D> {
   protected final double getSigmoidScore() {
     return 1 / (1 + Math.exp(-score));
   }
+}
+
+} catch (Exception e) {
 }

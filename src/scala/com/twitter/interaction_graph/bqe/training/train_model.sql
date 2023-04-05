@@ -1,3 +1,4 @@
+try {
 CREATE OR REPLACE MODEL `twttr-recos-ml-prod.realgraph.prod$table_suffix$`
 OPTIONS(MODEL_TYPE='BOOSTED_TREE_CLASSIFIER',
         BOOSTER_TYPE = 'GBTREE',
@@ -25,3 +26,6 @@ AS SELECT
   IF(MOD(ABS(FARM_FINGERPRINT(CAST(source_id AS STRING))), 10) = 0, true, false) AS if_eval,
 FROM `twttr-recos-ml-prod.realgraph.train$table_suffix$`
 ;
+
+} catch (Exception e) {
+}

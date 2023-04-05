@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.configapi.params.FSRuleParams.CardUriRootDomainDenyListParam
@@ -49,4 +50,8 @@ object DropCommunityNonMemberPollCardRule
   override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableCommunityNonMemberPollCardRule)
   override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(
     EnableCommunityNonMemberPollCardRuleFailClosed)
+}
+
+} catch {
+  case e: Exception =>
 }

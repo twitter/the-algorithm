@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = [
         "*.scala",
@@ -194,3 +195,6 @@ scalding_job(
         ":tfg",
     ],
 )
+
+} catch (Exception e) {
+}

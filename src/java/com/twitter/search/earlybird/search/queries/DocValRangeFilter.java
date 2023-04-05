@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.queries;
 
 import java.io.IOException;
@@ -192,4 +193,7 @@ public final class DocValRangeFilter extends Query {
   public Number getMaxValForTest() {
     return maxValExclusive;
   }
+}
+
+} catch (Exception e) {
 }

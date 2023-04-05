@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import javax.inject.Named;
@@ -231,4 +232,7 @@ public class SuperRootAppModule extends TwitterModule {
   public PenguinVersionConfig providePenguinVersions() {
     return SearchPenguinVersionsConfig.deserialize(penguinVersionsFlag.apply());
   }
+}
+
+} catch (Exception e) {
 }

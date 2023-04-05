@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.evaluation
 
 import com.twitter.algebird.AveragedValue
@@ -58,4 +59,8 @@ object LabelCorrelationsHelper {
       .map { tweet => (toDouble(tweet.labels.isLiked), tweet.algorithmScore.getOrElse(0.0)) }
       .toIterableExecution.map { iter => Util.computeCorrelation(iter.iterator) }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

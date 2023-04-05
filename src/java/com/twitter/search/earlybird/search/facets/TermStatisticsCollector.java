@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.facets;
 
 import java.io.IOException;
@@ -484,4 +485,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
       TERM_STATS_HISTOGRAM_REQUESTS_WITH_MOVED_BACK_BINS.recordResults(numTimesBinsWereMovedBack);
     }
   }
+}
+
+} catch (Exception e) {
 }

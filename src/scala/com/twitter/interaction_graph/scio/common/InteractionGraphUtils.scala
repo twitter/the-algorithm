@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.common
 
 import com.twitter.interaction_graph.thriftscala.TimeSeriesStatistics
@@ -37,4 +38,8 @@ object InteractionGraphUtils {
     )
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

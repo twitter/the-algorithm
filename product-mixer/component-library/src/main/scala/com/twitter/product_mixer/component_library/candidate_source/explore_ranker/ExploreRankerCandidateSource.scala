@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.explore_ranker
 
 import com.twitter.explore_ranker.{thriftscala => t}
@@ -28,4 +29,8 @@ class ExploreRankerCandidateSource @Inject() (
           throw new UnsupportedOperationException(s"Unknown response type: $response")
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

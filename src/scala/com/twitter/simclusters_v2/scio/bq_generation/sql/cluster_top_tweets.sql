@@ -1,3 +1,4 @@
+try {
 WITH tweet_embedding AS (
 -- Expected columns:
 -- tweetId, clusterId, tweetScore
@@ -13,3 +14,6 @@ SELECT
   topKTweetsForClusterKey
 FROM clusters_top_k_tweets
 
+
+} catch (Exception e) {
+}

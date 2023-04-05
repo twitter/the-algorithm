@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.hnsw
 
 import com.twitter.ann.common._
@@ -170,4 +171,8 @@ object TypedHnswIndex {
       directory
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module.core
 
 import com.google.inject.Provides
@@ -67,4 +68,8 @@ object KafkaProducerFactory {
       new NullKafkaProducer[String, GetTweetsRecommendationsScribe]
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

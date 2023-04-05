@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.modules
 
 import com.google.inject.Provides
@@ -24,4 +25,8 @@ object FuturePoolProvider extends TwitterModule {
       override def toString: String = s"warmup-future-pool-$executor)"
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

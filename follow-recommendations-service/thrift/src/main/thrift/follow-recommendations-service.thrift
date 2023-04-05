@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.follow_recommendations.thriftjava
 #@namespace scala com.twitter.follow_recommendations.thriftscala
 #@namespace strato com.twitter.follow_recommendations
@@ -98,3 +99,6 @@ struct RecommendationDisplayResponse {
  3: optional assembler.Footer footer
  4: optional assembler.WTFPresentation wtfPresentation
 }(hasPersonalData='true')
+
+} catch (Exception e) {
+}

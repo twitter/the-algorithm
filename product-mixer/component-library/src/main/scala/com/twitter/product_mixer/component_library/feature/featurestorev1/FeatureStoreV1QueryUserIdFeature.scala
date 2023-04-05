@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.feature.featurestorev1
 
 import com.twitter.ml.api.transform.FeatureRenameTransform
@@ -43,4 +44,8 @@ object QueryUserIdEntity extends FeatureStoreV1QueryEntity[PipelineQuery, UserId
 
   override def entityWithId(query: PipelineQuery): EntityWithId[UserId] =
     entity.withId(UserId(query.getUserIdLoggedOutSupport))
+}
+
+} catch {
+  case e: Exception =>
 }

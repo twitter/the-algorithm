@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.mergers;
 
 import java.util.ArrayList;
@@ -351,3 +352,6 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
   }
 }
 
+
+} catch (Exception e) {
+}

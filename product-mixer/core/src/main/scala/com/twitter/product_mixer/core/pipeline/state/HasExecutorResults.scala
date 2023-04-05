@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.state
 
 import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
@@ -10,4 +11,8 @@ trait HasExecutorResults[State] {
   private[pipeline] def setExecutorResults(
     newMap: ListMap[PipelineStepIdentifier, ExecutorResult]
   ): State
+}
+
+} catch {
+  case e: Exception =>
 }

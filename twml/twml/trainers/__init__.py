@@ -1,3 +1,4 @@
+try:
 # pylint: disable=wildcard-import
 """
 This module contains the Trainer and DataRecordTrainer classes.
@@ -8,3 +9,6 @@ Trainers wrap a
 
 from .trainer import Trainer  # noqa: F401
 from .data_record_trainer import DataRecordTrainer  # noqa: F401
+
+except Exception:
+  pass

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline
 
 import com.twitter.home_mixer.functional_component.gate.MinCachedTweetsGate
@@ -64,4 +65,8 @@ class ScoredTweetsFrsCandidatePipelineConfig @Inject() (
     tlr.CandidateTweet,
     TweetCandidate
   ] = { candidate => TweetCandidate(candidate.tweet.get.id) }
+}
+
+} catch {
+  case e: Exception =>
 }

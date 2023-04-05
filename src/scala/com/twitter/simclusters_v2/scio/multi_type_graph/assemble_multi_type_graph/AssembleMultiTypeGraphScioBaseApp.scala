@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph
 
 import com.spotify.scio.ScioContext
@@ -571,4 +572,8 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
       )
 
   }
+}
+
+} catch {
+  case e: Exception =>
 }

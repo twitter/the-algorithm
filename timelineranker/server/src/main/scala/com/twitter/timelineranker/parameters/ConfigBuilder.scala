@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -57,4 +58,8 @@ class ConfigBuilder(deciderGateBuilder: DeciderGateBuilder, statsReceiver: Stats
     ),
     "rootConfig"
   )
+}
+
+} catch {
+  case e: Exception =>
 }

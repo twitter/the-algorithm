@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common
 
 import com.twitter.simclusters_v2.thriftscala.SimClusterWithScore
@@ -578,4 +579,8 @@ object DefaultSimClustersEmbedding {
   // To support existing code which builds embeddings from a Seq
   def apply(embedding: Seq[(ClusterId, Double)]): SimClustersEmbedding = SimClustersEmbedding(
     embedding)
+}
+
+} catch {
+  case e: Exception =>
 }

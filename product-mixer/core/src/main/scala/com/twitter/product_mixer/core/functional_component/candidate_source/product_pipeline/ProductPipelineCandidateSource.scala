@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.candidate_source.product_pipeline
 
 import com.google.inject.Provider
@@ -68,4 +69,8 @@ abstract class ProductPipelineCandidateSource[
       .process(ProductPipelineRequest(request, params))
       .map(productPipelineResultTransformer)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

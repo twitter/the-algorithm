@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.segment;
 
 import java.io.IOException;
@@ -10,4 +11,7 @@ public interface SegmentProvider {
    * Returns a *new* sorted list of all available segments on disk / db / hdfs / etc.
    */
   List<Segment> newSegmentList() throws IOException;
+}
+
+} catch (Exception e) {
 }

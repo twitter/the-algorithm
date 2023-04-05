@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
 
 import com.twitter.bijection.scrooge.BinaryScalaCodec
@@ -64,4 +65,8 @@ case class WhoToFollowClientEventDetailsBuilder[-Query <: PipelineQuery](
         commerceDetails = None
       ))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

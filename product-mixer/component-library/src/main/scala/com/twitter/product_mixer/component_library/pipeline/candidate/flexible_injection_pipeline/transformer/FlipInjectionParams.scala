@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer
 
 import com.twitter.onboarding.task.service.{thriftscala => flip}
@@ -8,4 +9,8 @@ trait HasFlipInjectionParams {
   def isEmptyState: Option[Boolean]
   def isFirstRequestAfterSignup: Option[Boolean]
   def isEndOfTimeline: Option[Boolean]
+}
+
+} catch {
+  case e: Exception =>
 }

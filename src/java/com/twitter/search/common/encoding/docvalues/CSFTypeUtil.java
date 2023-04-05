@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.encoding.docvalues;
 
 public final class CSFTypeUtil {
@@ -31,4 +32,7 @@ public final class CSFTypeUtil {
         | ((data[offset + 2] & 0xFF) << 8)
         | (data[offset + 3] & 0xFF);
   }
+}
+
+} catch (Exception e) {
 }

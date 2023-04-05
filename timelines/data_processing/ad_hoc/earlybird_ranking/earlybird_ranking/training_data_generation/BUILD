@@ -1,3 +1,4 @@
+try {
 create_datarecord_datasets(
     base_name = "earlybird_recap_data_records",
     platform = "java8",
@@ -87,3 +88,6 @@ hadoop_binary(
         ":training_data_generation",
     ],
 )
+
+} catch (Exception e) {
+}

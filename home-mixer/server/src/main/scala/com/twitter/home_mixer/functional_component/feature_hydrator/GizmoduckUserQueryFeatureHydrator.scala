@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.gizmoduck.{thriftscala => gt}
@@ -47,4 +48,8 @@ case class GizmoduckUserQueryFeatureHydrator @Inject() (gizmoduck: Gizmoduck)
   override val alerts = Seq(
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.7)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

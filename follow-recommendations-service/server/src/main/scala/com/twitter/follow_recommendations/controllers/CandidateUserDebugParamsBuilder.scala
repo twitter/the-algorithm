@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.controllers
 
 import com.twitter.follow_recommendations.common.models._
@@ -22,4 +23,8 @@ class CandidateUserDebugParamsBuilder @Inject() (paramsFactory: ParamsFactory) {
           .map(_.mapValues(FeatureValue.fromThrift).toMap).getOrElse(Map.empty))
     }.toMap)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

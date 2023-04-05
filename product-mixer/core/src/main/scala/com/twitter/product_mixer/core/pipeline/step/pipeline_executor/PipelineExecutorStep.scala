@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.step.pipeline_executor
 
 import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
@@ -79,3 +80,7 @@ case class PipelineExecutorStepConfig[Query <: PipelineQuery, Result](
   pipelinesByIdentifier: Map[ComponentIdentifier, Pipeline[Query, Result]],
   selectedPipelineResultIdentifier: PipelineStepIdentifier,
   qualityFactorObserversByIdentifier: Map[ComponentIdentifier, QualityFactorObserver])
+
+} catch {
+  case e: Exception =>
+}

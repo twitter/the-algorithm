@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi
 
 import com.twitter.abdecider.LoggingABDecider
@@ -58,4 +59,8 @@ class VisibilityParams(
     val requestContext = contextFactory(viewerContext, safetyLevel, unitsOfDiversion)
     config.apply(requestContext, paramStats)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -110,4 +111,8 @@ object RecentEngagementSimilarUsersSource {
   val Identifier = CandidateSourceIdentifier(Algorithm.RecentEngagementSimilarUser.toString)
   val MaxFirstDegreeNodes = 10
   val MaxResults = 200
+}
+
+} catch {
+  case e: Exception =>
 }

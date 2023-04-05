@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.query_server.faiss
 
 import com.twitter.ann.common.Distance
@@ -146,4 +147,8 @@ class FaissWarmup(faiss: Queryable[_, FaissParams, _], dimension: Int) extends W
           FaissParams(nprobe = Some(128), None, None, None, None))
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

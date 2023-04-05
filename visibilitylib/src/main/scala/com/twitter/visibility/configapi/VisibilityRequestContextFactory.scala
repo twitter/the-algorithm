@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi
 
 import com.twitter.abdecider.LoggingABDecider
@@ -61,4 +62,8 @@ class VisibilityRequestContextFactory(
       featureContext
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

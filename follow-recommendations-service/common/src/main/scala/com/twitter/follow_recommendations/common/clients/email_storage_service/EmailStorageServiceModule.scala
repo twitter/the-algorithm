@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.email_storage_service
 
 import com.twitter.emailstorage.api.thriftscala.EmailStorageService
@@ -9,4 +10,8 @@ object EmailStorageServiceModule
     with MtlsClient {
   override val label = "email-storage-service"
   override val dest = "/s/email-server/email-server"
+}
+
+} catch {
+  case e: Exception =>
 }

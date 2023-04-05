@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urp.builder
 
 import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
@@ -15,4 +16,8 @@ trait PageBodyBuilder[-Query <: PipelineQuery] {
     query: Query,
     selections: Seq[CandidateWithDetails]
   ): PageBody
+}
+
+} catch {
+  case e: Exception =>
 }

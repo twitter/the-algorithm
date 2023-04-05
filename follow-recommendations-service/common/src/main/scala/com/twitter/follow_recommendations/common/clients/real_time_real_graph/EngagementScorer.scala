@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.real_time_real_graph
 
 import com.twitter.conversions.DurationOps._
@@ -55,4 +56,8 @@ object EngagementScorer {
 
     Seq(filteredEngagement.getOrElse(EngagementType.Click))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

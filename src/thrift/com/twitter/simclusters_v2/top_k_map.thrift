@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.simclusters_v2.thriftjava
 namespace py gen.twitter.simclusters_v2.top_k_map
 #@namespace scala com.twitter.simclusters_v2.thriftscala
@@ -12,3 +13,6 @@ struct TopKClusters {
 struct TopKTweets {
 	1: required map<i64, algebird.DecayedValue> topK(personalDataTypeKey='TweetId')
 }(hasPersonalData = 'true') 
+
+} catch (Exception e) {
+}

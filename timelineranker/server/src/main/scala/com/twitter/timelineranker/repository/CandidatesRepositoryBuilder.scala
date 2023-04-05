@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.repository
 
 import com.twitter.search.earlybird.thriftscala.EarlybirdService
@@ -86,4 +87,8 @@ abstract class CandidatesRepositoryBuilder(config: RuntimeConfiguration) extends
       collectConversationIdGate = Gate.True,
       statsReceiver = config.statsReceiver
     ).scope(requestScope)
+}
+
+} catch {
+  case e: Exception =>
 }

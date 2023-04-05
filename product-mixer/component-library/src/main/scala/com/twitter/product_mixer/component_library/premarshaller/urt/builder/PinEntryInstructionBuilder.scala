@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urt.builder
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.PinEntryTimelineInstruction
@@ -20,4 +21,8 @@ case class PinEntryInstructionBuilder()
         PinEntryTimelineInstruction(entry)
     }.toSeq
   }
+}
+
+} catch {
+  case e: Exception =>
 }

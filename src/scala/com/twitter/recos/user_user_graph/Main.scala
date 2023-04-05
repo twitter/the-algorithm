@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_user_graph
 
 import com.twitter.abdecider.ABDeciderFactory
@@ -252,4 +253,8 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
     // Wait on the thriftServer so that shutdownTimeout is respected.
     Await.result(thriftServer)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

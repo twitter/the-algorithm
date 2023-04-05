@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird;
 
 import java.text.SimpleDateFormat;
@@ -201,4 +202,7 @@ public final class EarlybirdStatus {
       return "UNKNOWN";
     }
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.modules
 
 import com.google.inject.Provides
@@ -37,4 +38,8 @@ object ScorerModule extends TwitterModule {
       .withTrainingConfig(trainingConfigPath)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

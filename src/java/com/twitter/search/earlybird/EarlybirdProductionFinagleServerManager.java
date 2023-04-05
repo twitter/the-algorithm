@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird;
 
 import java.net.InetSocketAddress;
@@ -148,4 +149,7 @@ public class EarlybirdProductionFinagleServerManager implements EarlybirdFinagle
       LOG.info(serverDescription + " server ExitGuard explanation: " + ExitGuard.explainGuards());
     }
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.logging
 
 import com.twitter.cr_mixer.model.AdsCandidateGeneratorQuery
@@ -136,4 +137,8 @@ case class AdsRecommendationsScribeLogger @Inject() (
       message = scribeMsg)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.error;
@@ -149,4 +150,7 @@ enum Code {
   // Nobody should rely on the value (currently 20) listed here.  It
   // may change in the future.
   DO_NOT_USE_RESERVED_FOR_FUTURE_EXPANSION_USE_DEFAULT_IN_SWITCH_INSTEAD_ = 20;
+}
+
+} catch (Exception e) {
 }

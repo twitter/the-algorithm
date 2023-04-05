@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.offline_job
 
 import com.twitter.scalding._
@@ -110,4 +111,8 @@ object SimClustersOfflineJobScheduledApp extends ScheduledExecutionApp {
       .unit
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

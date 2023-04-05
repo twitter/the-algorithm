@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.ads
 
 import com.twitter.adserver.thriftscala.AdImpression
@@ -19,4 +20,8 @@ class AdsProdThriftCandidateSource @Inject() (
 
   override def apply(request: AdRequestParams): Stitch[Seq[AdImpression]] =
     Stitch.callFuture(adServerClient.makeAdRequest(request)).map(_.impressions)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.facets;
 
 import java.util.LinkedHashMap;
@@ -115,4 +116,7 @@ public class ExpandedUrlCollector extends AbstractFacetTermCollector {
         return MediaTypes.UNKNOWN;
     }
   }
+}
+
+} catch (Exception e) {
 }

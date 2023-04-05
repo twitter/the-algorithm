@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import com.google.common.base.Preconditions;
@@ -93,4 +94,7 @@ public class PerfieldFacetCountAggregator {
 
     return new FacetResult(name, null, 0, labelValues, numValid);
   }
+}
+
+} catch (Exception e) {
 }

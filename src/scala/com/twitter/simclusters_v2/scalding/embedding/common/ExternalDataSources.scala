@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding.common
 
 import com.twitter.algebird.Aggregator
@@ -562,4 +563,8 @@ object ExternalDataSources {
           }
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.entities;
 
 import java.util.Optional;
@@ -228,4 +229,7 @@ public final class TwitterMessageUser {
   public int hashCode() {
     return HashCodeBuilder.reflectionHashCode(this);
   }
+}
+
+} catch (Exception e) {
 }

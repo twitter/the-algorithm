@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.moment
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.item.moment.MomentAnnotationCandidateUrtItemBuilder.MomentAnnotationItemClientEventInfoElement
@@ -43,4 +44,8 @@ case class MomentAnnotationCandidateUrtItemBuilder[Query <: PipelineQuery](
     header = candidate.header.map(_ =>
       annotationHeaderRichTextBuilder(query, candidate, candidateFeatures)),
   )
+}
+
+} catch {
+  case e: Exception =>
 }

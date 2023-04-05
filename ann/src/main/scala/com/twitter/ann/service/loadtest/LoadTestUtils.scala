@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.loadtest
 
 import com.google.common.annotations.VisibleForTesting
@@ -197,4 +198,8 @@ object LoadTestUtils {
       QueryTimeConfiguration.ResultHeader
     ) ++ queryTimeConfigStrings
   }
+}
+
+} catch {
+  case e: Exception =>
 }

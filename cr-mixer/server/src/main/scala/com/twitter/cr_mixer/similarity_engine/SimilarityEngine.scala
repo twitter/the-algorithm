@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.similarity_engine
 
 import com.twitter.cr_mixer.param.decider.CrMixerDecider
@@ -166,4 +167,8 @@ object SimilarityEngine extends Logging {
       Future.None
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

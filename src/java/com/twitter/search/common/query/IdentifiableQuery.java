@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import java.io.IOException;
@@ -74,4 +75,7 @@ public class IdentifiableQuery extends Query {
   public FieldRankHitInfo getQueryIdForTest() {
     return queryId;
   }
+}
+
+} catch (Exception e) {
 }

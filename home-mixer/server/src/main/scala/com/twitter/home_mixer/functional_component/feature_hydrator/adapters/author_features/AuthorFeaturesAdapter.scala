@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.adapters.author_features
 
 import com.twitter.ml.api.DataRecordMerger
@@ -56,4 +57,8 @@ object AuthorFeaturesAdapter extends TimelinesMutatingAdapterBase[Option[af.Auth
       drMerger.merge(dataRecord, originalAuthorAggregatesDataRecord)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.stores
 
 import com.twitter.frigate.common.store.strato.StratoFetchableStore
@@ -26,4 +27,8 @@ object TweetStatusCountsStore {
       includeReplyCount = true,
       includeFavoriteCount = true,
       includeQuoteCount = true)
+}
+
+} catch {
+  case e: Exception =>
 }

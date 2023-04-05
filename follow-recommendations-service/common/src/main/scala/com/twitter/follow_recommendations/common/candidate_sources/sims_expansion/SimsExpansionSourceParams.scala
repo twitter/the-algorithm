@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
 import com.twitter.timelines.configapi.FSEnumParam
 
@@ -14,4 +15,8 @@ object SimsExpansionSourceAggregatorId extends Enumeration {
   val Sum: AggregatorId = Value("sum")
   val Max: AggregatorId = Value("max")
   val MultiDecay: AggregatorId = Value("multi_decay")
+}
+
+} catch {
+  case e: Exception =>
 }

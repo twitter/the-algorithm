@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.products.home_timeline
 
 import com.twitter.follow_recommendations.assembler.models.ActionConfig
@@ -111,4 +112,8 @@ class HomeTimelineProduct @Inject() (
       req.params(DefaultMaxResults)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

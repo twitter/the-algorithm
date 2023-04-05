@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.tweets
 
 import com.twitter.contenthealth.toxicreplyfilter.thriftscala.FilterState
@@ -54,4 +55,8 @@ class ToxicReplyFilterFeature(
 
   private[this] val filteredFromAuthorStats =
     scopedStatsReceiver.scope(ToxicReplyFilterState.name).counter("requests")
+}
+
+} catch {
+  case e: Exception =>
 }

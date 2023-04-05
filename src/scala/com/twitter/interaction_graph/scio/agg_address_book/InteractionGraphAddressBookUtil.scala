@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_address_book
 
 import com.spotify.scio.values.SCollection
@@ -90,4 +91,8 @@ object InteractionGraphAddressBookUtil {
     // Calculate the Features
     FeatureGeneratorUtil.getFeatures(addressBookFeatureInput)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

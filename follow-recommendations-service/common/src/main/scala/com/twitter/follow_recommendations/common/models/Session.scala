@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.finagle.tracing.Trace
@@ -13,4 +14,8 @@ object Session {
    *
    */
   def getSessionId: Long = Trace.id.traceId.toLong
+}
+
+} catch {
+  case e: Exception =>
 }

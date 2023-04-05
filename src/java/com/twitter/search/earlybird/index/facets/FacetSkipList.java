@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.index.facets;
 
 import java.io.IOException;
@@ -123,4 +124,7 @@ public abstract class FacetSkipList {
     return new ThriftTermRequest(EarlybirdFieldConstant.getFacetSkipFieldName(fieldName))
         .setFieldName(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName());
   }
+}
+
+} catch (Exception e) {
 }

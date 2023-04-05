@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.filter
 
 import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
@@ -34,4 +35,8 @@ case class TweetAuthorIsSelfFilter[Candidate <: BaseTweetCandidate]()
     )
     Stitch.value(filterResult)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

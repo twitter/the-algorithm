@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.decorator
 
 import com.twitter.conversions.DurationOps._
@@ -224,4 +225,8 @@ object HomeTweetTypePredicates {
   )
 
   val PredicateMap = CandidatePredicates.toMap
+}
+
+} catch {
+  case e: Exception =>
 }

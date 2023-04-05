@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -16,3 +17,6 @@ scala_library(
         "interests_discovery/thrift/src/main/thrift:service-thrift-scala",
     ],
 )
+
+} catch (Exception e) {
+}

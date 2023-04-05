@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.stp
 
 import com.twitter.finagle.stats.Stat
@@ -29,4 +30,8 @@ class STPGraphBuilder @Inject() (
           STPGraph(firstDegreeEdges.toList, secondDegreeEdges.toList)
         }
     }
+}
+
+} catch {
+  case e: Exception =>
 }

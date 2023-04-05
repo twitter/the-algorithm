@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.document;
 
 import java.io.IOException;
@@ -107,4 +108,7 @@ public abstract class DocumentFactory<T extends TBase<T, ?>> {
     }
     return null;
   }
+}
+
+} catch (Exception e) {
 }

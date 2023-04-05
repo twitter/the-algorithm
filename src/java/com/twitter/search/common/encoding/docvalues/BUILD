@@ -1,3 +1,4 @@
+try {
 # Java library for docvalues and common stride field encoding utilities.
 java_library(
     sources = ["*.java"],
@@ -18,3 +19,6 @@ java_library(
         "src/thrift/com/twitter/search/common:schema-java",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.in_network_tweets
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -268,4 +269,8 @@ class InNetworkTweetSource(
   def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
     Future.collect(queries.map(get))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

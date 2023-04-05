@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.hdfs_sources
 
 import com.twitter.dal.client.dataset.KeyValDALDataset
@@ -175,4 +176,8 @@ object InterestedInSources {
       }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.util;
 
 import com.google.common.base.Preconditions;
@@ -39,4 +40,7 @@ public abstract class SearchSortUtils {
       return low > end ? end : low;
     }
   }
+}
+
+} catch (Exception e) {
 }

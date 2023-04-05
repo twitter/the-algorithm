@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.impression_store
 
 import com.google.inject.Provides
@@ -28,4 +29,8 @@ object ImpressionStoreModule extends TwitterModule {
       ](columnPath)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

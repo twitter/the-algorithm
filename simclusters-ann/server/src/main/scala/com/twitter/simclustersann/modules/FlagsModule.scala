@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.modules
 
 import com.twitter.inject.TwitterModule
@@ -41,4 +42,8 @@ object FlagsModule extends TwitterModule {
     help = "Maximum number of tweets to take per each simclusters"
   )
 
+}
+
+} catch {
+  case e: Exception =>
 }

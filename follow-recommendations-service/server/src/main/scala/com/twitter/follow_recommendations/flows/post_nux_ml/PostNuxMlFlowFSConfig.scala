@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.post_nux_ml
 
 import com.twitter.follow_recommendations.common.models.CandidateUser
@@ -77,4 +78,8 @@ class PostNuxMlFlowFSConfig @Inject() () extends FeatureSwitchConfig {
       PostNuxMlParams.CandidateShuffler := new NoShuffle[CandidateUser]
     ),
   )
+}
+
+} catch {
+  case e: Exception =>
 }

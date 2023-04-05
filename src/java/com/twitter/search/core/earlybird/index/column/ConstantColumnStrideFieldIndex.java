@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.column;
 
 /**
@@ -15,4 +16,7 @@ public class ConstantColumnStrideFieldIndex extends ColumnStrideFieldIndex {
   public long get(int docID) {
     return defaultValue;
   }
+}
+
+} catch (Exception e) {
 }

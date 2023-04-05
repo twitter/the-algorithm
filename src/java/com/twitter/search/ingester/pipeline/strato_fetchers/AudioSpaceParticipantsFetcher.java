@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.strato_fetchers;
 
 import com.twitter.periscope.api.thriftjava.AudioSpacesLookupContext;
@@ -33,4 +34,7 @@ public class AudioSpaceParticipantsFetcher {
   public Future<Fetch.Result<Participants>> fetch(String spaceId) {
     return Stitch.run(fetcher.fetch(spaceId, EMPTY_AUDIO_LOOKUP_CONTEXT));
   }
+}
+
+} catch (Exception e) {
 }

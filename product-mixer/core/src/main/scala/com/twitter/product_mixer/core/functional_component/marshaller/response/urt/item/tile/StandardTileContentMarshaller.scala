@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.BadgeMarshaller
@@ -16,4 +17,8 @@ class StandardTileContentMarshaller @Inject() (
       supportingText = standardTileContent.supportingText,
       badge = standardTileContent.badge.map(badgeMarshaller(_))
     )
+}
+
+} catch {
+  case e: Exception =>
 }

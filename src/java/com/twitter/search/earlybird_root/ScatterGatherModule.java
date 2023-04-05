@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import java.util.ArrayList;
@@ -164,4 +165,7 @@ public abstract class ScatterGatherModule extends TwitterModule {
         requestSuccessStats,
         partitionLoggingSupport);
   }
+}
+
+} catch (Exception e) {
 }

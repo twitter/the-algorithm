@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline
 
 /**
@@ -35,4 +36,8 @@ object UrtPipelineCursor {
       case _ => None
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

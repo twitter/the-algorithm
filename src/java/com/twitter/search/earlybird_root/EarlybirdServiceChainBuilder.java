@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import java.util.Collections;
@@ -275,4 +276,7 @@ public class EarlybirdServiceChainBuilder {
         };
     return tierThrottleFilter;
   }
+}
+
+} catch (Exception e) {
 }

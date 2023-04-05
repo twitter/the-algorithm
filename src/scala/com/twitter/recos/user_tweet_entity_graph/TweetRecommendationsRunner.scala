@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_tweet_entity_graph
 
 import java.util.Random
@@ -319,4 +320,8 @@ class TweetRecommendationsRunner(
       magicRecsResponse.toOption getOrElse Nil
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

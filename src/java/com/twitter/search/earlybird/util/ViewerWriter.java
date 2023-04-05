@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import java.io.IOException;
@@ -44,4 +45,7 @@ public interface ViewerWriter {
    * Writes a new line.
    */
   ViewerWriter newline() throws IOException;
+}
+
+} catch (Exception e) {
 }

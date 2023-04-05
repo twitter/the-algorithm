@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import java.util.Collections;
@@ -78,4 +79,7 @@ public class QueryHitAttributeHelper extends HitAttributeHelper {
   public Query getAnnotatedQuery() {
     return annotatedQuery;
   }
+}
+
+} catch (Exception e) {
 }

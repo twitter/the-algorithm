@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
@@ -15,4 +16,8 @@ class UrlMarshaller @Inject() (
     url = url.url,
     urtEndpointOptions = url.urtEndpointOptions.map(urtEndpointOptionsMarshaller(_))
   )
+}
+
+} catch {
+  case e: Exception =>
 }

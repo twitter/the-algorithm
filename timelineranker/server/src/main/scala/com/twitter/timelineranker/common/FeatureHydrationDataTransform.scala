@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.servo.util.FutureArrow
@@ -30,4 +31,8 @@ class FeatureHydrationDataTransform(
             userProfileInfo)
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

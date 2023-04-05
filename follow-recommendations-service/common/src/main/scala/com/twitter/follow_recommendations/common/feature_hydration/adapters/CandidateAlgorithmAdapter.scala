@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.adapters
 
 import com.twitter.follow_recommendations.common.models.UserCandidateSourceDetails
@@ -69,4 +70,8 @@ object CandidateAlgorithmAdapter
     }
     dr
   }
+}
+
+} catch {
+  case e: Exception =>
 }

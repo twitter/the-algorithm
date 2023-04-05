@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -16,3 +17,6 @@ scala_library(
         "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/side_effect",
     ],
 )
+
+} catch (Exception e) {
+}

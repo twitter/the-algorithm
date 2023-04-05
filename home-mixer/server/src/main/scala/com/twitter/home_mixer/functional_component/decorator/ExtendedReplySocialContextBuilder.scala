@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.decorator
 
 import com.twitter.home_mixer.model.HomeFeatures.FocalTweetAuthorIdFeature
@@ -75,4 +76,8 @@ case class ExtendedReplySocialContextBuilder @Inject() (
       None
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

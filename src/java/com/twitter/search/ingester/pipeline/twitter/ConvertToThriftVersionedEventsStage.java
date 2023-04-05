@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import javax.naming.NamingException;
@@ -80,4 +81,7 @@ public class ConvertToThriftVersionedEventsStage extends TwitterBaseStage
         message.getUserId(),
         message.getDebugEvents().deepCopy());
   }
+}
+
+} catch (Exception e) {
 }

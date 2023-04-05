@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.audiospace
 
 import com.twitter.periscope.audio_space.thriftscala.CreatedSpacesView
@@ -46,4 +47,8 @@ class CreatedSpacesCandidateSource @Inject() (
     }
     featureMapBuilder.build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

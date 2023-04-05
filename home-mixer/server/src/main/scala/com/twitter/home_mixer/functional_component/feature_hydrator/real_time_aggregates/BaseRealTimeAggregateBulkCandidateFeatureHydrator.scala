@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.real_time_aggregates
 
 import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
@@ -38,4 +39,8 @@ trait BaseRealTimeAggregateBulkCandidateFeatureHydrator[K]
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

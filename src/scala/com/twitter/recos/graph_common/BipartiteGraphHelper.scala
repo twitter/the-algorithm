@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.graph_common
 
 import com.twitter.graphjet.algorithms.TweetIDMask
@@ -37,4 +38,8 @@ class BipartiteGraphHelper(graph: BipartiteGraph) {
 
     leftNodes.reverse.distinct // Most recent edges first, no duplications
   }
+}
+
+} catch {
+  case e: Exception =>
 }

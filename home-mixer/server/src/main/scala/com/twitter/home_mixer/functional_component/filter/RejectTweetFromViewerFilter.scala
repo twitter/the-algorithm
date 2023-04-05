@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.filter
 
 import com.twitter.home_mixer.util.CandidatesUtil
@@ -21,4 +22,8 @@ object RejectTweetFromViewerFilter extends Filter[PipelineQuery, TweetCandidate]
       CandidatesUtil.isAuthoredByViewer(query, candidate.features))
     Stitch.value(FilterResult(kept = kept.map(_.candidate), removed = removed.map(_.candidate)))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

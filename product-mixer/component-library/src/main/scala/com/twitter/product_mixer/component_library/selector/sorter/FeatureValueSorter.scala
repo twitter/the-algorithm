@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector.sorter
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -245,4 +246,8 @@ object FeatureValueSorter {
 
     defaultValue.asInstanceOf[FeatureValue]
   }
+}
+
+} catch {
+  case e: Exception =>
 }

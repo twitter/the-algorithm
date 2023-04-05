@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.feature_hydrator.candidate.decay
 
 import com.twitter.conversions.DurationOps._
@@ -62,4 +63,8 @@ case class DecayCandidateFeatureHydrator[Candidate <: UniversalNoun[Long]](
         .add(resultFeature, decayScore)
         .build())
   }
+}
+
+} catch {
+  case e: Exception =>
 }

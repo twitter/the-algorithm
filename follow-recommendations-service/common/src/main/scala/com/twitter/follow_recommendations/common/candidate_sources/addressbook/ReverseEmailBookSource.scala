@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.addressbook
 
 import com.twitter.cds.contact_consent_state.thriftscala.PurposeOfProcessing
@@ -75,4 +76,8 @@ object ReverseEmailBookSource {
   val NumEmailBookEntries: Int = 500
   val IsPhone = false
   val DefaultEdgeType: EdgeType = EdgeType.Reverse
+}
+
+} catch {
+  case e: Exception =>
 }

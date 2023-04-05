@@ -1,3 +1,4 @@
+try {
 scala_library(
     platform = "java8",
     tags = [
@@ -124,3 +125,6 @@ scalding_job(
         ":offline_job",
     ],
 )
+
+} catch (Exception e) {
+}

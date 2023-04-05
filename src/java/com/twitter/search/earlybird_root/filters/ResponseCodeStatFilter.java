@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.Map;
@@ -47,4 +48,7 @@ public class ResponseCodeStatFilter
         });
 
   }
+}
+
+} catch (Exception e) {
 }

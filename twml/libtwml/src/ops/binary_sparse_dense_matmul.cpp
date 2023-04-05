@@ -1,3 +1,4 @@
+try {
 /* Copyright 2015 The TensorFlow Authors. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -328,3 +329,6 @@ struct SparseTensorDenseMatMulFunctor<CPUDevice,
 }  // namespace functor
 
 }  // namespace tensorflow
+
+} catch (const std::exception& e) {
+}

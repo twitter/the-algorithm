@@ -1,3 +1,4 @@
+try:
 # pylint: disable=wildcard-import
 """
 This module contains classes used for calibration.
@@ -16,3 +17,5 @@ from .isotonic import IsotonicCalibrator  # noqa: F401
 from .percentile_discretizer import PercentileDiscretizerCalibrator  # noqa: F401
 from .hashed_percentile_discretizer import HashedPercentileDiscretizerCalibrator  # noqa: F401
 from .hashing_discretizer import HashingDiscretizerCalibrator  # noqa: F401
+except Exception:
+  pass

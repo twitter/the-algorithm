@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -35,4 +36,8 @@ class ScorerFactory @Inject() (
       scorerStat.counter("invalid_scorer_type").incr()
       throw new IllegalArgumentException("unknown_scorer_type")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

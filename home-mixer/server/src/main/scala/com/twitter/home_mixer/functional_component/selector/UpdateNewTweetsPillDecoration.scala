@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.selector
 
 import com.twitter.home_mixer.functional_component.selector.UpdateNewTweetsPillDecoration.NumAvatars
@@ -77,4 +78,8 @@ case class UpdateNewTweetsPillDecoration[Query <: PipelineQuery with HasDeviceCo
     val enableAvatars = query.params(EnableNewTweetsPillAvatarsParam)
     enableAvatars && userIds.size >= NumAvatars
   }
+}
+
+} catch {
+  case e: Exception =>
 }

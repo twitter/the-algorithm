@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates
 
 import com.twitter.follow_recommendations.common.base.Predicate
@@ -18,4 +19,8 @@ class CandidateParamPredicate[A <: HasParams](
       Stitch.value(PredicateResult.Invalid(Set(reason)))
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

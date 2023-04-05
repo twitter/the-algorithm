@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.urp
 
 import com.twitter.pages.render.{thriftscala => urp}
@@ -23,4 +24,8 @@ class UrpService @Inject() (productPipelineRegistry: ProductPipelineRegistry) {
     productPipelineRegistry
       .getProductPipeline[RequestType, urp.Page](request.product)
       .process(ProductPipelineRequest(request, params))
+}
+
+} catch {
+  case e: Exception =>
 }

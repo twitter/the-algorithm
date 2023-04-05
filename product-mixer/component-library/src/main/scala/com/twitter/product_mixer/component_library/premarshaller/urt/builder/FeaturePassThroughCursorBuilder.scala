@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urt.builder
 
 import com.twitter.product_mixer.component_library.model.cursor.UrtPassThroughCursor
@@ -30,4 +31,8 @@ case class PassThroughCursorBuilder[
         cursorType = Some(cursorType)
       )
     )
+}
+
+} catch {
+  case e: Exception =>
 }

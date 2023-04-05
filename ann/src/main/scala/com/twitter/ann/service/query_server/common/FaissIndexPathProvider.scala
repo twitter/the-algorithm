@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.query_server.common
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -17,4 +18,8 @@ case class FaissIndexPathProvider(
     dir.hasSuccessFile &&
     dir.getChild("faiss.index").exists()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

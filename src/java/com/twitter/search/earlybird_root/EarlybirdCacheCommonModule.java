@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import javax.inject.Named;
@@ -93,4 +94,7 @@ public class EarlybirdCacheCommonModule extends TwitterModule {
         .withInProcessCache()
         .build();
   }
+}
+
+} catch (Exception e) {
 }

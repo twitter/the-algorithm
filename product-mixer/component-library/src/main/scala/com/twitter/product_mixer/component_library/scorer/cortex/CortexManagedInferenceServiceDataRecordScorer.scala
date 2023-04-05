@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.cortex
 
 import com.google.protobuf.ByteString
@@ -134,4 +135,8 @@ private[cortex] class CortexManagedDataRecordScorer[
 
     resultScoreMaps
   }
+}
+
+} catch {
+  case e: Exception =>
 }

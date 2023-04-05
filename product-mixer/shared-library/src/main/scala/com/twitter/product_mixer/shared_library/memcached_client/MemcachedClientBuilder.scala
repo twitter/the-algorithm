@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.shared_library.memcached_client
 
 import com.twitter.finagle.memcached.Client
@@ -114,4 +115,8 @@ object MemcachedClientBuilder {
         client
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

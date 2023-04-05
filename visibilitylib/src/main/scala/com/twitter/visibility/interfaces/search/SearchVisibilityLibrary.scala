@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.search
 
 import com.twitter.decider.Decider
@@ -463,4 +464,8 @@ class SearchVisibilityLibrary(
 
     result.copy(verdict = newVerdict)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

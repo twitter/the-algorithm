@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.score
 
 import com.twitter.simclusters_v2.common.SimClustersEmbeddingId._
@@ -126,4 +127,8 @@ object SimClustersEmbeddingPairScoreId {
     case ThriftScoreId(algorithm, ScoreInternalId.SimClustersEmbeddingPairScoreId(pairScoreId)) =>
       SimClustersEmbeddingPairScoreId(algorithm, pairScoreId.id1, pairScoreId.id2)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

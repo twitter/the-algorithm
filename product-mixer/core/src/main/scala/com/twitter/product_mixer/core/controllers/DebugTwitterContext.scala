@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.controllers
 
 import com.twitter.context.TwitterContext
@@ -52,4 +53,8 @@ trait DebugTwitterContext {
       guestToken = None
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search;
 
 import java.util.Map;
@@ -96,4 +97,7 @@ public class SearchResultsInfo {
   public void setEarlyTerminationReason(String earlyTerminationReason) {
     this.earlyTerminationReason = earlyTerminationReason;
   }
+}
+
+} catch (Exception e) {
 }

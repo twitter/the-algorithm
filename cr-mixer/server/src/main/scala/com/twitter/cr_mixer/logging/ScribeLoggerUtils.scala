@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.logging
 
 import com.twitter.cr_mixer.featureswitch.CrMixerImpressedBuckets
@@ -40,4 +41,8 @@ object ScribeLoggerUtils {
     }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 #ifndef TWML_LIBTWML_INCLUDE_TWML_COMMON_H_
 #define TWML_LIBTWML_INCLUDE_TWML_COMMON_H_
 
@@ -40,3 +41,5 @@ namespace twml {
 }  // namespace twml
 
 #endif  // TWML_LIBTWML_INCLUDE_TWML_COMMON_H_
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.factory;
 
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -38,4 +39,7 @@ public class ProductionEarlybirdKafkaConsumersFactory implements EarlybirdKafkaC
   public KafkaConsumer<Long, ThriftVersionedEvents> createKafkaConsumer(String clientID) {
     return createKafkaConsumer(clientID, defaultMaxPollRecords);
   }
+}
+
+} catch (Exception e) {
 }

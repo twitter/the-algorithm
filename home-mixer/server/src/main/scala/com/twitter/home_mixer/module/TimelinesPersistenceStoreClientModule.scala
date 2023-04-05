@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.module
 
 import com.google.inject.Provides
@@ -40,4 +41,8 @@ object TimelinesPersistenceStoreClientModule extends TwitterModule {
       statsReceiver
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

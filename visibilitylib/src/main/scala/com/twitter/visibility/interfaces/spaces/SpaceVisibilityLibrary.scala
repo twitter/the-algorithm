@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.spaces
 
 import com.twitter.servo.util.Gate
@@ -114,4 +115,8 @@ object SpaceVisibilityLibrary {
       StitchHelpers.profileStitch(resp, Seq(vfLatencyStatsReceiver))
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

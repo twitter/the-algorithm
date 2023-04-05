@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.scalding.offline
 
 import com.twitter.ann.common.Metric
@@ -105,4 +106,8 @@ object KnnOfflineJob extends TwitterExecutionApp {
       case None => neighborsExecution
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

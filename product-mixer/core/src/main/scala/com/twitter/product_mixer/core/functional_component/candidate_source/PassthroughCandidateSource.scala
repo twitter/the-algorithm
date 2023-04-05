@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.candidate_source
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -56,4 +57,8 @@ case class PassthroughCandidateSource[-Request, +Candidate](
     extends CandidateSource[Request, Candidate] {
 
   def apply(query: Request): Stitch[Seq[Candidate]] = Stitch.value(candidateExtractor(query))
+}
+
+} catch {
+  case e: Exception =>
 }

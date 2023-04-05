@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi.configs
 
 import com.twitter.decider.Decider
@@ -70,4 +71,8 @@ case class VisibilityDeciderGates(decider: Decider) {
 
   val enableLocalizedInterstitialInUserStateLibrary: Gate[Unit] =
     DeciderGate.linear(feature(DeciderKey.EnableLocalizedInterstitialInUserStateLib))
+}
+
+} catch {
+  case e: Exception =>
 }

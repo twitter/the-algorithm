@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.scalding.offline
 
 import com.twitter.ann.common._
@@ -435,4 +436,8 @@ object KnnHelper {
     override def hashCode(): Int =
       maxReplica.map(_ * searchGroup + replica).getOrElse(super.hashCode())
   }
+}
+
+} catch {
+  case e: Exception =>
 }

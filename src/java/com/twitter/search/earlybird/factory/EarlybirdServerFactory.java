@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.factory;
 
 import java.io.IOException;
@@ -350,4 +351,7 @@ public final class EarlybirdServerFactory {
           segmentSyncConfig,
           criticalExceptionHandler);
   }
+}
+
+} catch (Exception e) {
 }

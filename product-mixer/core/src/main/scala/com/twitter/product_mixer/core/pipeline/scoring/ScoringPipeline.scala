@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.scoring
 
 import com.twitter.product_mixer.core.functional_component.scorer.ScoredCandidateResult
@@ -29,4 +30,8 @@ object ScoringPipeline {
   case class Inputs[+Query <: PipelineQuery](
     query: Query,
     candidates: Seq[ItemCandidateWithDetails])
+}
+
+} catch {
+  case e: Exception =>
 }

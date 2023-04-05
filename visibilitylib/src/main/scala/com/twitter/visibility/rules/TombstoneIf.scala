@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.rules.Condition.And
@@ -41,4 +42,8 @@ object TombstoneIf {
         Tombstone(Epitaph.Suspended),
         Condition.SuspendedAuthor
       )
+}
+
+} catch {
+  case e: Exception =>
 }

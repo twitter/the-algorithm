@@ -1,3 +1,4 @@
+try:
 import tensorflow.compat.v1 as tf
 from twml.contrib.utils import masks, math_fns
 
@@ -300,3 +301,6 @@ def get_pointwise_loss(labels, predicted_scores, weights=None):
   loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=labels,
         logits=predicted_scores) * weights) / tf.reduce_mean(weights)
   return loss
+
+except Exception:
+  pass

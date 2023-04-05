@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import java.util.Map;
@@ -150,4 +151,7 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
   public long cost() {
     return totalTerms;
   }
+}
+
+} catch (Exception e) {
 }

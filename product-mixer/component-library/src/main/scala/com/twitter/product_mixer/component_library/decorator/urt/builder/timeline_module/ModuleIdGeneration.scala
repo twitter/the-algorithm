@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
 
 /**
@@ -48,4 +49,8 @@ object AutomaticUniqueModuleId {
 case class ManualModuleId(override val moduleId: Long) extends ModuleIdGeneration {
   // Negative module IDs are reserved for internal usage
   if (moduleId < 0) throw new IllegalArgumentException("moduleId must be a positive number")
+}
+
+} catch {
+  case e: Exception =>
 }

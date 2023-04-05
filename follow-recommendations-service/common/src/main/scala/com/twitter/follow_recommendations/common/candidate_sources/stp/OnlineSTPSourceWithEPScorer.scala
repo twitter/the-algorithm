@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.stp
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -55,4 +56,8 @@ class OnlineSTPSourceWithEPScorer @Inject() (
 
     Stitch.collect(possibleCandidates).map { _.flatten.sortBy(-_.score.getOrElse(0.0)) }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.repository
 
 import com.twitter.timelineranker.config.RuntimeConfiguration
@@ -15,4 +16,8 @@ object RoutingTimelineRepositoryBuilder {
 
     new RoutingTimelineRepository(reverseChronTimelineRepository, rankedTimelineRepository)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

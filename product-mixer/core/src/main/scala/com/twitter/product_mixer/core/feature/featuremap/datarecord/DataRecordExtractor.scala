@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.feature.featuremap.datarecord
 
 import com.twitter.ml.api.DataRecord
@@ -57,4 +58,8 @@ class DataRecordExtractor[DRFeature <: BaseDataRecordFeature[_, _]](
     }
     featureMapBuilder.build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

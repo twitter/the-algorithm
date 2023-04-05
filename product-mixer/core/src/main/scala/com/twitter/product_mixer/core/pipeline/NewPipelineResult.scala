@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline
 
 import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
@@ -19,4 +20,8 @@ object NewPipelineResult {
     result: Result,
     override val executorResultsByPipelineStep: ListMap[PipelineStepIdentifier, ExecutorResult])
       extends NewPipelineResult[Result]
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.side_effect
 
 import com.twitter.logpipeline.client.common.EventPublisher
@@ -55,4 +56,8 @@ trait ScribeLogEventSideEffect[
           }
       ).unit
   }
+}
+
+} catch {
+  case e: Exception =>
 }

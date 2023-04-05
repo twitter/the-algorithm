@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import scala.language.implicitConversions
@@ -12,4 +13,8 @@ object UnifiedSETweetCombinationMethod extends Enumeration {
   val Interleave: Value = CombinationType("Interleave")
   val Frontload: Value = CombinationType("Frontload")
   val Backfill: Value = CombinationType("Backfill")
+}
+
+} catch {
+  case e: Exception =>
 }

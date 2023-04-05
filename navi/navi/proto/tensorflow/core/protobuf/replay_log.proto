@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -44,4 +45,7 @@ message ReplayOp {
     RunCallableResponse run_callable_response = 29;
     ReleaseCallableResponse release_callable_response = 30;
   }
+}
+
+} catch (Exception e) {
 }

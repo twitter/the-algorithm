@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.querycache;
 
 import java.util.List;
@@ -299,4 +300,7 @@ public class QueryCacheFilter {
         + "] result type [" + getResultSetType()
         + "] schedule: " + schedule;
   }
+}
+
+} catch (Exception e) {
 }

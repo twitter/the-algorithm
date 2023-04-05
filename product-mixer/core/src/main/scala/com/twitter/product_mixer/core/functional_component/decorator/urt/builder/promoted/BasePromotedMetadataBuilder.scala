@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.promoted
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -12,4 +13,8 @@ trait BasePromotedMetadataBuilder[-Query <: PipelineQuery, -Candidate <: Univers
     candidate: Candidate,
     candidateFeatures: FeatureMap
   ): Option[PromotedMetadata]
+}
+
+} catch {
+  case e: Exception =>
 }

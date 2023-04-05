@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.config
 
 import com.twitter.util.Duration
@@ -22,3 +23,7 @@ case class TimeoutConfig(
   topicTweetEndpointTimeout: Duration,
   // Timeout Settings for Navi gRPC Client
   naviRequestTimeout: Duration)
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.event_processors
 
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
@@ -147,4 +148,8 @@ class TimelineEventProcessor(
         Future.Unit
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.list_recommended_users.param
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -20,4 +21,8 @@ object ListRecommendedUsersParam {
         min = 0,
         max = 5000
       )
+}
+
+} catch {
+  case e: Exception =>
 }

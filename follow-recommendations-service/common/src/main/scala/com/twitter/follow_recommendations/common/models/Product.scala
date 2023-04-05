@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
@@ -12,4 +13,8 @@ object Product {
   case object PlaceholderProductMixerProduct extends ProductMixerProduct {
     override val identifier: ProductIdentifier = ProductIdentifier("PlaceholderProductMixerProduct")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

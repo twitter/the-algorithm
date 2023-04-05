@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.graph_common
 
 import com.twitter.finagle.stats.Counter
@@ -12,4 +13,8 @@ import com.twitter.graphjet.stats.{Counter => GraphCounter}
 class FinagleCounterWrapper(counter: Counter) extends GraphCounter {
   def incr() = counter.incr()
   def incr(delta: Int) = counter.incr(delta)
+}
+
+} catch {
+  case e: Exception =>
 }

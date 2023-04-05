@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.util.Date;
@@ -168,4 +169,7 @@ public class PartitionConfig {
         EarlybirdConfig.getInt("num_partitions_for_tests", -1)
     );
   }
+}
+
+} catch (Exception e) {
 }

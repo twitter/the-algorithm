@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.gate
 
 import com.twitter.home_mixer.model.request.DeviceContext.RequestContext
@@ -19,4 +20,8 @@ case class RequestContextGate(requestContexts: Seq[RequestContext.Value])
   override def shouldContinue(query: PipelineQuery with HasDeviceContext): Stitch[Boolean] =
     Stitch.value(
       requestContexts.exists(query.deviceContext.flatMap(_.requestContextValue).contains))
+}
+
+} catch {
+  case e: Exception =>
 }

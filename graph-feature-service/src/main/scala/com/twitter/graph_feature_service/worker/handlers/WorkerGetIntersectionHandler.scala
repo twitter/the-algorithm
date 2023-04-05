@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.worker.handlers
 
 import com.twitter.finagle.stats.{Stat, StatsReceiver}
@@ -102,4 +103,8 @@ class WorkerGetIntersectionHandler @Inject() (
 
 object WorkerGetIntersectionHandler {
   val EmptyWorkerIntersectionValue: WorkerIntersectionValue = WorkerIntersectionValue(0, 0, 0, Nil)
+}
+
+} catch {
+  case e: Exception =>
 }

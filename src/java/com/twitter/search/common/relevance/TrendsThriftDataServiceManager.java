@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance;
 
 import java.util.List;
@@ -350,4 +351,7 @@ public final class TrendsThriftDataServiceManager {
         updateFailureCounter.get(),
         numTrendsReceived.get()));
   }
+}
+
+} catch (Exception e) {
 }

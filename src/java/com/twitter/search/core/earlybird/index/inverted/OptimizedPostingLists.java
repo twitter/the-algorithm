@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -38,4 +39,7 @@ public abstract class OptimizedPostingLists implements Flushable {
   public final int getLargestDocID(int postingListPointer, int numPostings) throws IOException {
     return postings(postingListPointer, numPostings, PostingsEnum.NONE).getLargestDocID();
   }
+}
+
+} catch (Exception e) {
 }

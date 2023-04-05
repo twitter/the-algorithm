@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates
 
 import com.twitter.ml.api.FeatureContext
@@ -34,4 +35,8 @@ object AggregateFeatureInfo {
       "requested AggregateType must be backed by exactly one physical store.")
     filtered.head
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.core.functional_component.common.CandidateScope
@@ -102,4 +103,8 @@ case class InsertAppendPatternResults[-Query <: PipelineQuery, Bucket](
       remainingCandidates = otherCandidates,
       result = result ++ newResult ++ notABucketInThePattern)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

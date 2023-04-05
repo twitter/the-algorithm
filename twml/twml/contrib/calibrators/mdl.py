@@ -1,3 +1,4 @@
+try:
 # pylint: disable=arguments-differ,no-member,too-many-statements
 ''' Contains MDLFeature and MDLCalibrator used for MDL calibration '''
 
@@ -116,3 +117,6 @@ class MDLCalibrator(PercentileDiscretizerCalibrator):
     with tf.Session(graph=graph) as sess:
       self.write_summary(writer, sess)
     writer.flush()
+
+except Exception:
+  pass

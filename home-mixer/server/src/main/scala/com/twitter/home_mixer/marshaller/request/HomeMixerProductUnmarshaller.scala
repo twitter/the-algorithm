@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.marshaller.request
 
 import com.twitter.home_mixer.model.request.FollowingProduct
@@ -25,4 +26,8 @@ class HomeMixerProductUnmarshaller @Inject() () {
     case t.Product.EnumUnknownProduct(value) =>
       throw new UnsupportedOperationException(s"Unknown product: $value")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.search.common.constants.thriftscala.ThriftLanguage
@@ -27,4 +28,8 @@ class UserLanguagesTransform(handler: FailOpenHandler, userMetadataClient: UserM
       userMetadataClient.getUserLanguages(request.userId)
     } { _: Throwable => EmptyUserLanguagesFuture }
   }.map(LanguageUtils.computeLanguages(_))
+}
+
+} catch {
+  case e: Exception =>
 }

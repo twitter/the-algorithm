@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -229,4 +230,7 @@ public class SkipListPostingList implements Flushable {
       return SENTINEL_VALUE;
     }
   }
+}
+
+} catch (Exception e) {
 }

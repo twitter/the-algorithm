@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.richtext
 
 sealed trait RichTextFormat {
@@ -10,4 +11,8 @@ case object Plain extends RichTextFormat {
 
 case object Strong extends RichTextFormat {
   override val name: String = "Strong"
+}
+
+} catch {
+  case e: Exception =>
 }

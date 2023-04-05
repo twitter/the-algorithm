@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance.collectors;
 
 import java.io.IOException;
@@ -164,4 +165,7 @@ public class RelevanceTopCollector extends AbstractRelevanceCollector {
     results.setNumHits(numResults);
     return results;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance;
 
 import java.util.Arrays;
@@ -301,4 +302,7 @@ public class LinearScoringParams {
             && searchQuery.getResultMetadataOptions().isSetGetInReplyToStatusId()
             && searchQuery.getResultMetadataOptions().isGetInReplyToStatusId();
   }
+}
+
+} catch (Exception e) {
 }

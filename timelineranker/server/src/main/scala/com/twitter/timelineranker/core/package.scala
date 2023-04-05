@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker
 
 import com.twitter.timelineranker.model.RecapQuery
@@ -10,4 +11,8 @@ package object core {
 
   type DependencyTransformer[-U, +V] = configapi.DependencyTransformer[RecapQuery, U, V]
   object DependencyTransformer extends configapi.DependencyTransformerFunctions[RecapQuery]
+}
+
+} catch {
+  case e: Exception =>
 }

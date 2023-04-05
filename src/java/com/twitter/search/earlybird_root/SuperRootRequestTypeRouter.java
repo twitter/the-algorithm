@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import java.util.Map;
@@ -76,4 +77,7 @@ public class SuperRootRequestTypeRouter
                   + "   earlybirdRequest.setQuerySource(ThriftQuerySource.GNIP)\n"));
     }
   }
+}
+
+} catch (Exception e) {
 }

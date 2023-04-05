@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_tweet_entity_graph
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -75,4 +76,8 @@ class RecommendationHandler(
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try:
 """
 This module implements tools for pruning neural networks.
 
@@ -361,3 +362,6 @@ def prune(signals, masks=None):
     updates = tf.group(updates, name='prune')
 
   return updates
+
+except Exception:
+  pass

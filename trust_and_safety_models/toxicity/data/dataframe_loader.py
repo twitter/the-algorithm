@@ -1,3 +1,4 @@
+try:
 from abc import ABC, abstractmethod
 from datetime import date
 from importlib import import_module
@@ -346,3 +347,6 @@ class I18nLoader(DataframeLoader):
       adhoc_df = pandas.concat((adhoc_df, prev_df), axis=0, ignore_index=True)
 
     return self.clean(adhoc_df)
+
+except Exception:
+  pass

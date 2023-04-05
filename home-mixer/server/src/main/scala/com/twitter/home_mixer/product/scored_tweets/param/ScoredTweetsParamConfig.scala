@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.param
 
 import com.twitter.home_mixer.param.decider.DeciderKey
@@ -56,4 +57,8 @@ class ScoredTweetsParamConfig @Inject() () extends ProductParamConfig {
   override val stringSeqFSOverrides = Seq(
     CompetitorURLSeqParam
   )
+}
+
+} catch {
+  case e: Exception =>
 }

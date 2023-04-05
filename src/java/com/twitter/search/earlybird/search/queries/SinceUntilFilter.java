@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.queries;
 
 import java.io.IOException;
@@ -134,4 +135,7 @@ public final class SinceUntilFilter extends Query {
       return docTime >= minTimeInclusive && docTime < maxTimeExclusive;
     }
   }
+}
+
+} catch (Exception e) {
 }

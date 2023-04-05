@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.promoted_accounts
 
 import com.twitter.adserver.thriftscala.AdServerException
@@ -108,4 +109,8 @@ object PromotedAccountsCandidateSource {
   val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
     Algorithm.PromotedAccount.toString)
   val NumIntersections = 3
+}
+
+} catch {
+  case e: Exception =>
 }

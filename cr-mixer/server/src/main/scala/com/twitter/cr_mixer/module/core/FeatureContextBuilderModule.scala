@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module.core
 
 import com.google.inject.Provides
@@ -13,4 +14,8 @@ object FeatureContextBuilderModule extends TwitterModule {
   def providesFeatureContextBuilder(featureSwitches: FeatureSwitches): FeatureContextBuilder = {
     FeatureContextBuilder(featureSwitches)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

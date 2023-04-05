@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -178,4 +179,8 @@ case class PipelineStep[
           NewStepData(updatedPipelineState)
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.queries;
 
 import org.apache.lucene.index.Term;
@@ -26,4 +27,7 @@ public final class TermQueryWithSafeToString extends TermQuery {
     buffer.append(termValueForToString);
     return buffer.toString();
   }
+}
+
+} catch (Exception e) {
 }

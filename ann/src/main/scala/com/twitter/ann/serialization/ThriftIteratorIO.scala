@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.serialization
 
 import com.twitter.scrooge.{ThriftStruct, ThriftStructCodec}
@@ -54,4 +55,8 @@ object ThriftIteratorIO {
       // It should be safe to call get on here since we are only take the defined ones.
       .map(_.get)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

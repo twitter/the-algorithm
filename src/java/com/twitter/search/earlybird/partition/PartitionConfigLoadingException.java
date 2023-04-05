@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 /**
@@ -9,4 +10,7 @@ public class PartitionConfigLoadingException extends Exception {
   public PartitionConfigLoadingException(String message) {
     super(message);
   }
+}
+
+} catch (Exception e) {
 }

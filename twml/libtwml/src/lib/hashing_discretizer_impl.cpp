@@ -1,3 +1,4 @@
+try {
 #include "internal/linear_search.h"
 #include "internal/error.h"
 #include <twml/hashing_discretizer_impl.h>
@@ -239,3 +240,6 @@ namespace twml {
     }
   }
 }  // namespace twml
+
+} catch (const std::exception& e) {
+}

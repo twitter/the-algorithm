@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.stores
 
 import com.twitter.bijection.Injection
@@ -260,4 +261,8 @@ object UserInterestedInReadableStore {
 
     SimClustersEmbedding(embedding)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

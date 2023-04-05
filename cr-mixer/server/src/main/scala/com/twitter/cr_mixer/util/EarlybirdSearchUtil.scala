@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.util
 
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
@@ -127,4 +128,8 @@ object EarlybirdSearchUtil {
       Some(Map(EXCLUDE_TWEET_IDS -> tweetIds.toSeq))
     } else None
   }
+}
+
+} catch {
+  case e: Exception =>
 }

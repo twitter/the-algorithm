@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.label
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.label._
@@ -12,4 +13,8 @@ class LabelDisplayTypeMarshaller @Inject() () {
     case InlineHeaderLabelDisplayType => urt.LabelDisplayType.InlineHeader
     case OtherRepliesSectionHeaderLabelDisplayType => urt.LabelDisplayType.OtherRepliesSectionHeader
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import java.util.concurrent.TimeUnit;
@@ -57,4 +58,7 @@ public class EarlybirdServiceLoggingSupport extends
   public void logExceptions(EarlybirdRequest req, Throwable t) {
     ExceptionHandler.logException(req, t);
   }
+}
+
+} catch (Exception e) {
 }

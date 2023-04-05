@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.sources
 
 import com.github.benmanes.caffeine.cache.Caffeine
@@ -185,4 +186,8 @@ object FeatureStoreGizmoduckSource {
         ),
       ))
 
+}
+
+} catch {
+  case e: Exception =>
 }

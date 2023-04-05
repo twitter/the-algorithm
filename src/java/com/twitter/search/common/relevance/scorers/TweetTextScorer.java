@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.scorers;
 
 import java.util.Map;
@@ -239,4 +240,7 @@ public class TweetTextScorer extends TweetScorer {
     }
     return rateCounter;
   }
+}
+
+} catch (Exception e) {
 }

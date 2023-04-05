@@ -1,3 +1,4 @@
+try {
 # Deciders that can be used to control load on TLR or its backends.
 enable_max_concurrency_limiting:
   comment: "When enabled, limit maxConcurrency filter. Note: Requires system property maxConcurrency to be set."
@@ -151,3 +152,6 @@ recap_hydration_enable_content_features_hydration:
 uteg_liked_by_tweets_enable_content_features_hydration:
   comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for rectweet+recycled utegLikedBy Tweets. Otherwise those features are not set"
   default_availability: 0
+
+} catch (Exception e) {
+}

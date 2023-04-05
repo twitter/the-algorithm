@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.optout
 
 import com.twitter.dal.client.dataset.{KeyValDALDataset, SnapshotDALDataset}
@@ -266,4 +267,8 @@ object InterestedInOptOutAdhocJob extends AdhocExecutionApp {
       output.writeExecution(TypedTsv(outputDir))
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

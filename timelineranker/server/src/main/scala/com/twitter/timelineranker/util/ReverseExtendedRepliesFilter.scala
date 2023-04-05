@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.util
 
 import com.twitter.timelines.model.TweetId
@@ -29,4 +30,8 @@ object ReverseExtendedRepliesFilter {
       } // and the author has not been muted
       .exists(sourceTweet => !mutedUserIds.contains(sourceTweet.userId))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

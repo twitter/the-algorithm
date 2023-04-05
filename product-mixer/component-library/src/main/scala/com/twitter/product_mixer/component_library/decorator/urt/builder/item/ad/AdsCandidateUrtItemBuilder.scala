@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.ad
 
 import com.twitter.ads.adserver.{thriftscala => ads}
@@ -272,3 +273,7 @@ class UnsupportedSponsorshipTypeException(sponsorshipType: ads.SponsorshipType)
     extends UnsupportedOperationException(
       s"Unsupported SponsorshipType: $sponsorshipType"
     )
+
+} catch {
+  case e: Exception =>
+}

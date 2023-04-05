@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.quality_factor
 
 import com.twitter.util.Duration
@@ -18,4 +19,8 @@ case class QueriesPerSecondBasedQualityFactorObserver(
         case _ => qualityFactor.update(Int.MaxValue)
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

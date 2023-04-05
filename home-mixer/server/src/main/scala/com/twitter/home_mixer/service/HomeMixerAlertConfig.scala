@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.service
 
 import com.twitter.conversions.DurationOps._
@@ -62,4 +63,8 @@ object HomeMixerAlertConfig {
         TriggerIfLatencyAbove(latencyThreshold, criticalDatapointsPastThreshold, duration)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

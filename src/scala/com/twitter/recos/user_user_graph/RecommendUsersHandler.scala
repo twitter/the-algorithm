@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_user_graph
 
 import java.util.Random
@@ -218,4 +219,8 @@ case class RecommendUsersHandlerImpl(
     val MaxRightNodeAgeThreshold: Long = Long.MaxValue
     val MaxEdgeAgeThreshold: Long = Long.MaxValue
   }
+}
+
+} catch {
+  case e: Exception =>
 }

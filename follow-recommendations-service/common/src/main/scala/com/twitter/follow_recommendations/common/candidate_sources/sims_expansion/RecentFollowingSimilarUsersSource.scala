@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
 
 import com.google.inject.Singleton
@@ -96,4 +97,8 @@ class RecentFollowingSimilarUsersSource @Inject() (
     calibratedScoreCounter.incr()
     candidateScore / calibrateDivisor(req)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

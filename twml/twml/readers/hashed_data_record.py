@@ -1,3 +1,4 @@
+try:
 # checkstyle: noqa
 # pylint: disable=invalid-name
 """
@@ -10,3 +11,6 @@ from twitter.deepbird.io.legacy.readers.hashed_data_record import (
   _FEATURE_TYPES,
   HashedDataRecord,
 )
+
+except Exception:
+  pass

@@ -1,3 +1,4 @@
+try:
 # pylint: disable=invalid-name
 """
 This module includes facilities for manipulating data records.
@@ -13,3 +14,6 @@ from twitter.deepbird.io.legacy.readers.data_record import (
   _BaseDataRecord,  # noqa: F401
   DataRecord,  # noqa: F401
 )
+
+except Exception:
+  pass

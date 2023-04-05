@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.similarity_engine
 
 import com.twitter.cr_mixer.model.CandidateGenerationInfo
@@ -959,4 +960,8 @@ object TweetBasedUnifiedSimilarityEngine {
       params
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

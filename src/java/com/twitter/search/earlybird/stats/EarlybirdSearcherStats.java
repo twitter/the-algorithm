@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.stats;
 
 import java.util.EnumMap;
@@ -210,4 +211,7 @@ public class EarlybirdSearcherStats {
     return String.format(
         "model_%s_%s", modelName, getStatsNameByType(ThriftScoringFunctionType.TENSORFLOW_BASED));
   }
+}
+
+} catch (Exception e) {
 }

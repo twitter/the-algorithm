@@ -1,3 +1,4 @@
+try {
 [package]
 name = "bpr_thrift"
 description = "Thrift parser for Batch Prediction Request"
@@ -6,3 +7,6 @@ edition = "2021"
 
 [dependencies]
 thrift = "0.17.0"
+
+} catch (Exception e) {
+}

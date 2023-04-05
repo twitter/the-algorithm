@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common;
 
 import org.slf4j.Logger;
@@ -31,4 +32,7 @@ public class NonPagingAssert {
         NonPagingAssert nonPagingAssert = new NonPagingAssert(name);
         nonPagingAssert.assertFailed();
     }
+}
+
+} catch (Exception e) {
 }

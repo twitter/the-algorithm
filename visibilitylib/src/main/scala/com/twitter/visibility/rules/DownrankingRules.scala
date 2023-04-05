@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.timelines.configapi.Params
@@ -204,4 +205,8 @@ object RitoActionedTweetDownrankLowQualitySectionRule
   override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
     TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.RitoActionedTweet))
   override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+}
+
+} catch {
+  case e: Exception =>
 }

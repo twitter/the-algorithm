@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
@@ -22,3 +23,7 @@ class TimelineOperationMarshaller @Inject() (
 class UnsupportedTimelineOperationException(operation: TimelineOperation)
     extends UnsupportedOperationException(
       "Unsupported timeline operation " + TransportMarshaller.getSimpleName(operation.getClass))
+
+} catch {
+  case e: Exception =>
+}

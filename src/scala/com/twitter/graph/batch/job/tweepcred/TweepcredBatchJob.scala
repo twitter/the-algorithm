@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph.batch.job.tweepcred
 
 import com.twitter.scalding._
@@ -61,4 +62,8 @@ class TweepcredBatchJob(args: Args) extends AnalyticsIterativeBatchJob(args) {
     classOf[TweepcredBatchJob].getSimpleName +
       (if (WEIGHTED) " weighted " else " unweighted ") + dateString
   }
+}
+
+} catch {
+  case e: Exception =>
 }

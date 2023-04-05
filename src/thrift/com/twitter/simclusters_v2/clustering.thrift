@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.simclusters_v2.thriftjava
 namespace py gen.twitter.simclusters_v2.clustering
 #@namespace scala com.twitter.simclusters_v2.thriftscala
@@ -16,3 +17,6 @@ struct OrderedClustersAndMembers {
 struct ClusterMembers {
   1: required set<i64> clusterMembers (personalDataType = 'UserId')
 }(persisted = 'true', hasPersonalData = 'true')
+
+} catch (Exception e) {
+}

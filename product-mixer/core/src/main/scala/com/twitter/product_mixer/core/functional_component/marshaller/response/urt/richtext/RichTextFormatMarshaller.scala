@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Plain
@@ -14,4 +15,8 @@ class RichTextFormatMarshaller @Inject() () {
     case Plain => urt.RichTextFormat.Plain
     case Strong => urt.RichTextFormat.Strong
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.filters
 
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
@@ -50,4 +51,8 @@ class SimClustersAnnVariantFilter @Inject() (
           expectedServiceName)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try:
 import numpy as np
 import tensorflow.compat.v1 as tf
 
@@ -59,3 +60,6 @@ def clear_init_feed_collection():
   init_feed_collection = tf.get_collection_ref(TWML_INIT_FEED_KEY)
   while init_feed_collection:
     init_feed_collection.pop()
+
+except Exception:
+  pass

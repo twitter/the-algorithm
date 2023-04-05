@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_video_graph.util
 
 import com.twitter.graphjet.bipartite.MultiSegmentIterator
@@ -32,4 +33,8 @@ object SampleLHSUsersUtil {
     }
     userIds
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import org.slf4j.Logger;
@@ -38,4 +39,7 @@ public class TopTweetsServicePostProcessor
         CACHE_AGE_IN_MS,
         NO_RESULT_CACHE_AGE_IN_MS);
   }
+}
+
+} catch (Exception e) {
 }

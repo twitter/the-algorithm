@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.decorator
 
 import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
@@ -52,4 +53,8 @@ case class MuteUserChildFeedbackActionBuilder @Inject() (
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

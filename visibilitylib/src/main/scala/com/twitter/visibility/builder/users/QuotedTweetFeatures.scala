@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.users
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -49,4 +50,8 @@ class QuotedTweetFeatures(
         innerAuthorId == outerAuthorId
       )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

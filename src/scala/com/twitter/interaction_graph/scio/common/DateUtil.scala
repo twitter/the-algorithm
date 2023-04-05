@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.common
 
 import com.twitter.util.Duration
@@ -24,4 +25,8 @@ object DateUtil {
     val newStart = dateInterval.getStart.minusDays(days)
     new Interval(newStart, dateInterval.getEnd.toInstant)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

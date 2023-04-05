@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
 
 import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
@@ -73,4 +74,8 @@ object RelevancePromptConversions {
           throw new NoSuchElementException(s"Callback must be provided for the Relevance Prompt")
         ))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

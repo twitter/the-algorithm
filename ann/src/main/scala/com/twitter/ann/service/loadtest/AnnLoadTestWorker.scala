@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.loadtest
 
 import com.google.common.annotations.VisibleForTesting
@@ -113,4 +114,8 @@ class AnnLoadTestWorker(
       .unit
       .liftToTry
   }
+}
+
+} catch {
+  case e: Exception =>
 }

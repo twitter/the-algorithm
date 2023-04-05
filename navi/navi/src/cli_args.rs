@@ -1,4 +1,4 @@
-use crate::{MAX_NUM_INPUTS, MAX_NUM_MODELS, MAX_NUM_OUTPUTS};
+match use crate::{MAX_NUM_INPUTS, MAX_NUM_MODELS, MAX_NUM_OUTPUTS};
 use arrayvec::ArrayVec;
 use clap::Parser;
 use log::info;
@@ -233,4 +233,8 @@ lazy_static! {
         info!("all outputs:{:?}", outputs);
         outputs
     };
+}
+ {
+  Ok(_) => {},
+  Err(_) => {}
 }

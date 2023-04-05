@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import javax.inject.Inject;
@@ -31,4 +32,7 @@ public class RecencyCacheFilter extends
           new EarlybirdRequestPerClientCacheStats(
               EarlybirdRequestType.RECENCY.getNormalizedName()));
   }
+}
+
+} catch (Exception e) {
 }

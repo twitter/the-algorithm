@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "simclusters_index_generation",
     sources = [
@@ -165,3 +166,6 @@ jvm_binary(
         ":simclusters_index_generation",
     ],
 )
+
+} catch (Exception e) {
+}

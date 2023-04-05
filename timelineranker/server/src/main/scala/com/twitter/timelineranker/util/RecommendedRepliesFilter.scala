@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.util
 
 import com.twitter.timelines.model.UserId
@@ -25,4 +26,8 @@ object RecommendedRepliesFilter {
 
     isRecommendedReply(tweet, followedUserIds) && !isValidRecommendedReply
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition.freshstartup;
 
 class KafkaOffsetPair {
@@ -20,4 +21,7 @@ class KafkaOffsetPair {
   public long getEndOffset() {
     return endOffset;
   }
+}
+
+} catch (Exception e) {
 }

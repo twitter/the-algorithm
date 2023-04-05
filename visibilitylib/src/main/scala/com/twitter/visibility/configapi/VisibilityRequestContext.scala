@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi
 
 import com.twitter.timelines.configapi._
@@ -12,3 +13,7 @@ case class VisibilityRequestContext(
     with WithGuestId
     with WithExperimentContext
     with WithFeatureContext
+
+} catch {
+  case e: Exception =>
+}

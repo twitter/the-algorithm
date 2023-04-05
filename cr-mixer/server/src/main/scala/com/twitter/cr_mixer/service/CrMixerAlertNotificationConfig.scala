@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.service
 
 import com.twitter.product_mixer.core.functional_component.common.alert.Destination
@@ -23,4 +24,8 @@ object CrMixerAlertNotificationConfig {
     warn = Destination(emails = Seq("no-reply@twitter.com")),
     critical = Destination(emails = Seq("no-reply@twitter.com"))
   )
+}
+
+} catch {
+  case e: Exception =>
 }

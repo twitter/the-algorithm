@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.util
 
 import com.twitter.frigate.common.base.TweetUtil
@@ -123,4 +124,8 @@ case class TweetDetails(tweet: Tweet) {
 
   // nullcast tweet is one that is purposefully not broadcast to followers, ex. an ad tweet.
   val isNullCastTweet: Boolean = tweet.coreData.exists(_.nullcast)
+}
+
+} catch {
+  case e: Exception =>
 }

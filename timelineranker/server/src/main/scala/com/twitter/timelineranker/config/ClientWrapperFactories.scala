@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.config
 
 import com.twitter.servo.util.Gate
@@ -83,4 +84,8 @@ class ClientWrapperFactories(config: RuntimeConfiguration) {
 
   val realGraphClientFactory =
     new ScopedRealGraphClientFactory(config.underlyingClients.stratoClient, statsReceiver)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.column;
 
 import java.io.IOException;
@@ -76,4 +77,7 @@ public abstract class AbstractColumnStrideMultiIntIndex
     int p = pos;
     return (b.bytes[p++] << 24) | (b.bytes[p++] << 16) | (b.bytes[p++] << 8) | (b.bytes[p] & 0xFF);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.decorator
 
 import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
@@ -52,4 +53,8 @@ case class NotRelevantChildFeedbackActionBuilder @Inject() (
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

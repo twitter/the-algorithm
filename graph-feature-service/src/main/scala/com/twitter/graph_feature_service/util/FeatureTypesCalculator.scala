@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.util
 
 import com.twitter.graph_feature_service.thriftscala.EdgeType._
@@ -55,4 +56,8 @@ object FeatureTypesCalculator {
     }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

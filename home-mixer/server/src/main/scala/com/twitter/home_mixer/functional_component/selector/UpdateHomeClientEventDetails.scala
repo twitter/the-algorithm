@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.selector
 
 import com.twitter.home_mixer.functional_component.decorator.HomeClientEventDetailsBuilder
@@ -134,4 +135,8 @@ case class UpdateHomeClientEventDetails(candidatePipelines: Set[CandidatePipelin
     }
     item.copy(presentation = updatedPresentation, features = updatedItemCandidateFeatures)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

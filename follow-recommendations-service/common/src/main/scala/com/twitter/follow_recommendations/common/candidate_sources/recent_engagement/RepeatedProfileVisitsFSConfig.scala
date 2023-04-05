@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.recent_engagement
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -19,4 +20,8 @@ class RepeatedProfileVisitsFSConfig @Inject() () extends FeatureSwitchConfig {
       RepeatedProfileVisitsParams.RecommendationThreshold,
       RepeatedProfileVisitsParams.BucketingThreshold,
     )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -178,4 +179,7 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
   private boolean degradationEnded() {
     return Math.abs(qualityFactor - 1.0) < 0.01 && previousQualityFactor < qualityFactor;
   }
+}
+
+} catch (Exception e) {
 }

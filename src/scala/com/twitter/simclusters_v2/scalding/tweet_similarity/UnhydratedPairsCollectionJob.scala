@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.tweet_similarity
 
 import com.twitter.ads.dataservice_account.snapshot.jobs.DbSnapshotsPromotedTweetsScalaDataset
@@ -206,4 +207,8 @@ object UnhydratedPairsCollection120MinScheduledApp extends ScheduledExecutionApp
       TweetSimilarityUnhydratedPairs120MinScalaDataset,
       outputPath)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

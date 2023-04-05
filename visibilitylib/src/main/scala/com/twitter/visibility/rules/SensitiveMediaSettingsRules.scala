@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.rules.Condition.ViewerHasAdultMediaSettingLevel
@@ -274,4 +275,8 @@ case object SensitiveMediaTweetDropSettingLevelTombstoneRules {
       extends OtherSensitiveMediaTweetLabelDropSettingLevelTombstoneRule(
         TweetHasNsfwAdminAuthor
       )
+}
+
+} catch {
+  case e: Exception =>
 }

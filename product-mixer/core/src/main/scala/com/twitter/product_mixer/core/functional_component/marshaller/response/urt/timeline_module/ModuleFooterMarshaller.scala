@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
@@ -13,4 +14,8 @@ class ModuleFooterMarshaller @Inject() (urlMarshaller: UrlMarshaller) {
     text = footer.text,
     landingUrl = footer.landingUrl.map(urlMarshaller(_))
   )
+}
+
+} catch {
+  case e: Exception =>
 }

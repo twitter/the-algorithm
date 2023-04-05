@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 package multi_type_graph.assemble_multi_type_graph
 
@@ -182,4 +183,8 @@ trait AssembleMultiTypeGraphBaseApp extends DateRangeExecutionApp {
     }
 
   }
+}
+
+} catch {
+  case e: Exception =>
 }

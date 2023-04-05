@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.modules
 
 import com.google.inject.Provides
@@ -107,4 +108,8 @@ object EmbeddingStoreModule extends TwitterModule {
       statsReceiver = stats
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

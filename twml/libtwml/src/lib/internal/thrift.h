@@ -1,3 +1,4 @@
+try {
 // For details of how to encode and decode thrift, check
 // https://github.com/apache/thrift/blob/master/doc/specs/thrift-binary-protocol.md
 
@@ -67,3 +68,6 @@ typedef enum {
   DATA_TYPE_BYTE   ,
   DATA_TYPE_BOOL   ,
 } DATA_TYPES;
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.configapi
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -135,4 +136,8 @@ class FeatureSwitchConfigs @Inject() (
       enumSeqOverrides
 
   val config = BaseConfigBuilder(overrides).build("FollowRecommendationServiceFeatureSwitches")
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking
 
 import com.twitter.follow_recommendations.common.rankers.common.RankerId
@@ -27,4 +28,8 @@ object MlRankerParams {
 
   case object ScribeRankingInfoInMlRanker
       extends FSParam[Boolean]("post_nux_ml_flow_scribe_ranking_info_in_ml_ranker", true)
+}
+
+} catch {
+  case e: Exception =>
 }

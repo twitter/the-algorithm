@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates.gizmoduck
 
 import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicateParams._
@@ -14,4 +15,8 @@ class GizmoduckPredicateFSConfig @Inject() () extends FeatureSwitchConfig {
   override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
     GizmoduckGetTimeout
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 scala_library(
     platform = "java11",
     strict_deps = False,
@@ -34,3 +35,6 @@ scala_library(
         "util/util-logging/src/main/scala",
     ],
 )
+
+} catch (Exception e) {
+}

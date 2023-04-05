@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema.earlybird;
 
 import com.twitter.search.common.encoding.docvalues.CSFTypeUtil;
@@ -33,4 +34,7 @@ public final class EarlybirdEncodedFeaturesUtil {
     }
     return features;
   }
+}
+
+} catch (Exception e) {
 }

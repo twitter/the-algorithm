@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -109,4 +110,7 @@ public class LowDFPackedIntsPostingsEnum extends EarlybirdOptimizedPostingsEnum 
     final int cost = lastPostingPointer - nextPostingPointer + 1;
     return cost < 0 ? 0 : cost;
   }
+}
+
+} catch (Exception e) {
 }

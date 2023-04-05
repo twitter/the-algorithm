@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.mergers;
 
 import java.util.Collections;
@@ -685,4 +686,7 @@ public class SuperRootResponseMerger {
           }
         });
   }
+}
+
+} catch (Exception e) {
 }

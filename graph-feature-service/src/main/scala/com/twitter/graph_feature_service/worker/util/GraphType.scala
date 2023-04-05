@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.worker.util
 
 //These classes are to help the GraphContainer choose the right data structure to answer queries
@@ -14,3 +15,7 @@ object ReplyGraph extends GraphType
 object MentionGraph extends GraphType
 
 object MutualFollowGraph extends GraphType
+
+} catch {
+  case e: Exception =>
+}

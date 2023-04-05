@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.common
 
 import com.twitter.algebird._
@@ -27,4 +28,8 @@ case class QTreeMultiAggregator[T](percentiles: Seq[Double])(implicit val num: N
 
   def present(qt: QTree[Unit]): Map[String, Double] =
     percentiles.map { p => p.toString -> getPercentile(qt, p) }.toMap
+}
+
+} catch {
+  case e: Exception =>
 }

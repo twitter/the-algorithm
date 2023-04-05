@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.selector
 
 import com.twitter.product_mixer.core.functional_component.common.CandidateScope
@@ -21,4 +22,8 @@ trait Selector[-Query <: PipelineQuery] {
     remainingCandidates: Seq[CandidateWithDetails],
     result: Seq[CandidateWithDetails]
   ): SelectorResult
+}
+
+} catch {
+  case e: Exception =>
 }

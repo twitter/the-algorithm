@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.stp
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -12,4 +13,8 @@ class OnlineSTPSourceFSConfig @Inject() () extends FeatureSwitchConfig {
     OnlineSTPSourceParams.DisableHeavyRanker,
     OnlineSTPSourceParams.UseDBv2Scorer,
   )
+}
+
+} catch {
+  case e: Exception =>
 }

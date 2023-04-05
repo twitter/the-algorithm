@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.candidate_decorator_executor
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -35,4 +36,8 @@ class CandidateDecoratorExecutor @Inject() (override val statsReceiver: StatsRec
 
     decoratorArrow.map(CandidateDecoratorExecutorResult)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph.batch.job.tweepcred
 
 /**
@@ -47,4 +48,8 @@ object Reputation {
       mass
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

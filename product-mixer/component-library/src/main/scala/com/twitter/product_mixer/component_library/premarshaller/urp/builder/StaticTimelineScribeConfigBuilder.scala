@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urp.builder
 
 import com.twitter.product_mixer.core.model.marshalling.response.urp.PageBody
@@ -16,4 +17,8 @@ case class StaticTimelineScribeConfigBuilder(
     pageHeader: Option[PageHeader],
     pageNavBar: Option[PageNavBar]
   ): Option[TimelineScribeConfig] = Some(timelineScribeConfig)
+}
+
+} catch {
+  case e: Exception =>
 }

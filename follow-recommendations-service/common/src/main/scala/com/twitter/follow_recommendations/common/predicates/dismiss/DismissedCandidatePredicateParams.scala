@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates.dismiss
 
 import com.twitter.conversions.DurationOps._
@@ -6,4 +7,8 @@ import com.twitter.util.Duration
 
 object DismissedCandidatePredicateParams {
   case object LookBackDuration extends Param[Duration](180.days)
+}
+
+} catch {
+  case e: Exception =>
 }

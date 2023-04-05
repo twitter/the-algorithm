@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.tweets
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -207,4 +208,8 @@ class TweetFeatures(tweetLabels: TweetLabels, statsReceiver: StatsReceiver) {
       case _ => false
     })
   }
+}
+
+} catch {
+  case e: Exception =>
 }

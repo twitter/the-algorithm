@@ -1,3 +1,4 @@
+try {
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- Ingesters process tweet create events from TweetyPie and write them to a queue for Earlybird
@@ -197,3 +198,6 @@ to index. -->
       kafkaTopicName=""
       driverFactoryId="kafka"/>
 </pipeline>
+
+} catch (Exception e) {
+}

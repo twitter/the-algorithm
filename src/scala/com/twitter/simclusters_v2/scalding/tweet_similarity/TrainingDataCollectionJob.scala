@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.tweet_similarity
 
 import com.twitter.dal.client.dataset.TimePartitionedDALDataset
@@ -225,4 +226,8 @@ object TrainingDataCollection120MinScheduledApp extends ScheduledExecutionApp {
       TweetSimilarityTestDatarecords120MinJavaDataset,
       outputPath)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

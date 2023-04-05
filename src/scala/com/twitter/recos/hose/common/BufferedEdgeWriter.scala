@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.hose.common
 
 import com.twitter.finagle.stats.{Stat, StatsReceiver}
@@ -45,4 +46,8 @@ case class BufferedEdgeWriter(
     }
     logger.info(this.getClass.getSimpleName + " is done")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

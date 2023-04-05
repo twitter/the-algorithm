@@ -1,3 +1,4 @@
+try:
 # pylint: disable=no-member, attribute-defined-outside-init, duplicate-code
 """
 Contains the twml.layers.SparseMaxNorm layer.
@@ -219,3 +220,6 @@ def sparse_max_norm(inputs,
                         _scope=name,
                         _reuse=reuse)
   return layer(inputs)
+
+except Exception:
+  pass

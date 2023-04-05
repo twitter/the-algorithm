@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealGraphFeatureRepository
@@ -45,4 +46,8 @@ class RealGraphQueryFeatureHydrator @Inject() (
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "benchmark",
     sources = ["*.scala"],
@@ -54,3 +55,6 @@ create_datasets(
         "ann/src/main/thrift/com/twitter/ann/knn:thrift-scala",
     ],
 )
+
+} catch (Exception e) {
+}

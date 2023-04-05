@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.util
 
 import com.twitter.cr_mixer.model.Candidate
@@ -177,4 +178,8 @@ object CountWeightedInterleaveUtil {
         Tuple2(candidateSeq, candidateWeightsKeyByFeature.getOrElse(groupingKey, 1.0))
     }.toSeq
   }
+}
+
+} catch {
+  case e: Exception =>
 }

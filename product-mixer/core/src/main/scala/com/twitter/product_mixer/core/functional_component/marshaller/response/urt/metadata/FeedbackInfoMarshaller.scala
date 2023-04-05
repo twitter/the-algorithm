@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
@@ -19,4 +20,8 @@ class FeedbackInfoMarshaller @Inject() (
     displayContext = feedbackActionInfo.displayContext.map(feedbackDisplayContextMarshaller(_)),
     clientEventInfo = feedbackActionInfo.clientEventInfo.map(clientEventInfoMarshaller(_)),
   )
+}
+
+} catch {
+  case e: Exception =>
 }

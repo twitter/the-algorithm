@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
 
 case class AdMetadataContainer(
@@ -9,3 +10,7 @@ case class AdMetadataContainer(
   disclaimerType: Option[DisclaimerType],
   skAdNetworkDataList: Option[Seq[SkAdNetworkData]],
   unifiedCardOverride: Option[String])
+
+} catch {
+  case e: Exception =>
+}

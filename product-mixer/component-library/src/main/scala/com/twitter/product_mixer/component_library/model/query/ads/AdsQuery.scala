@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.query.ads
 
 import com.twitter.adserver.{thriftscala => ads}
@@ -56,4 +57,8 @@ trait AdsQuery {
    * @note used in Search Timelines
    */
   def searchRequestContext: Option[ads.SearchRequestContext] = None
+}
+
+} catch {
+  case e: Exception =>
 }

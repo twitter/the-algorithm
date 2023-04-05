@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates
 
 import com.twitter.home_mixer.functional_component.feature_hydrator.TSPInferredTopicFeature
@@ -104,4 +105,8 @@ object EdgeAggregateFeatures {
           CombineCountPolicies.EngagerGoodClickCountsPolicy),
         getSecondaryKeysFn = candidate => CandidatesUtil.getEngagerUserIds(candidate.features)
       )
+}
+
+} catch {
+  case e: Exception =>
 }

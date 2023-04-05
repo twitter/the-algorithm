@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.CompactPromptMessageContent
@@ -22,4 +23,8 @@ class MessageContentMarshaller @Inject() (
     case compactPromptMessageContent: CompactPromptMessageContent =>
       compactPromptMessageContentMarshaller(compactPromptMessageContent)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

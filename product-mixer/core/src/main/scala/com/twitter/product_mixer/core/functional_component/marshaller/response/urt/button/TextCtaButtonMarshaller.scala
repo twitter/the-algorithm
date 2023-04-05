@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
@@ -15,4 +16,8 @@ class TextCtaButtonMarshaller @Inject() (
       buttonText = textCtaButton.buttonText,
       url = urlMarshaller(textCtaButton.url)
     )
+}
+
+} catch {
+  case e: Exception =>
 }

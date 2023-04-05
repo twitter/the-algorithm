@@ -1,3 +1,4 @@
+try:
 from .parsers import LollyModelFeaturesParser
 
 
@@ -89,3 +90,6 @@ class TFModelInitializerBuilder:
       "bin_boundaries": bin_boundaries,
       "weights": weights
     }
+
+except Exception:
+  pass

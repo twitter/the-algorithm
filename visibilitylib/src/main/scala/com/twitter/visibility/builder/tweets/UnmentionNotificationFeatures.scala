@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.tweets
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -72,4 +73,8 @@ class UnmentionNotificationFeatures(
 
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

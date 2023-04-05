@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.hnsw
 
 import com.google.common.annotations.VisibleForTesting
@@ -103,4 +104,8 @@ private[hnsw] object HnswIOUtil {
       ArrayByteBufferCodec.encode(metadataFile.getByteSource.read())
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

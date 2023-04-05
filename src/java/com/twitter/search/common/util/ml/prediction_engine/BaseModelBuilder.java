@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml.prediction_engine;
 
 import java.util.Collection;
@@ -108,4 +109,7 @@ public abstract class BaseModelBuilder implements ModelBuilder {
 
   @Override
   public abstract LightweightLinearModel build();
+}
+
+} catch (Exception e) {
 }

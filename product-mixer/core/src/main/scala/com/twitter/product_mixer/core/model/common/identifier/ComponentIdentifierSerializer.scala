@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.common.identifier
 
 import com.fasterxml.jackson.core.JsonGenerator
@@ -18,4 +19,8 @@ private[identifier] class ComponentIdentifierSerializer()
   ): Unit = serializers.defaultSerializeValue(
     SerializableComponentIdentifier(componentIdentifier.toString, componentIdentifier.file.value),
     gen)
+}
+
+} catch {
+  case e: Exception =>
 }

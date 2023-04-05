@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -26,4 +27,8 @@ object FrsStoreModule extends TwitterModule {
     ObservedReadableStore(FrsStore(frsClient, statsReceiver, decider))(
       statsReceiver.scope("follow_recommendations_store"))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

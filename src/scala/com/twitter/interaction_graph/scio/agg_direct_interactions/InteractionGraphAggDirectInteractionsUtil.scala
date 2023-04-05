@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_direct_interactions
 
 import com.spotify.scio.ScioMetrics
@@ -165,4 +166,8 @@ object InteractionGraphAggDirectInteractionsUtil {
     FeatureGeneratorUtil.getFeatures(filteredFeatureInput)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

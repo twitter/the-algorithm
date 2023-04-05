@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.features;
 
 /**
@@ -27,4 +28,7 @@ public final class RelevanceSignalConstants {
            && userRep >= MIN_REPUTATION
            && userRep < MAX_REPUTATION;
   }
+}
+
+} catch (Exception e) {
 }

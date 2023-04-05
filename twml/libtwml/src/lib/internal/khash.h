@@ -1,3 +1,4 @@
+try {
 /* The MIT License
 
    Copyright (c) 2008, 2009, 2011 by Attractive Chaos <attractor@live.co.uk>
@@ -625,3 +626,6 @@ typedef const char *kh_cstr_t;
    KHASH_INIT(name, kh_cstr_t, khval_t, 1, kh_str_hash_func, kh_str_hash_equal)
 
 #endif /* __AC_KHASH_H */
+
+} catch (Exception e) {
+}

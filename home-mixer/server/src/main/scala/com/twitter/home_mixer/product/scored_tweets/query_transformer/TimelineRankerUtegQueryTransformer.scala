@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.query_transformer
 
 import com.twitter.conversions.DurationOps._
@@ -56,4 +57,8 @@ case class TimelineRankerUtegQueryTransformer[
 
   override def transform(input: Query): t.UtegLikedByTweetsQuery =
     buildTimelineRankerQuery(input).toThriftUtegLikedByTweetsQuery
+}
+
+} catch {
+  case e: Exception =>
 }

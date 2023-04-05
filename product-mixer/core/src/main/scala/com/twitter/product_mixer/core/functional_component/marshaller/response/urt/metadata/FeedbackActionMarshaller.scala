@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon.HorizonIconMarshaller
@@ -45,4 +46,8 @@ class FeedbackActionMarshaller @Inject() (
       encodedFeedbackRequest = feedbackAction.encodedFeedbackRequest
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

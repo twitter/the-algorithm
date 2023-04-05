@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserLanguagesStore
@@ -32,4 +33,8 @@ case class UserLanguagesFeatureHydrator @Inject() (
         .build()
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

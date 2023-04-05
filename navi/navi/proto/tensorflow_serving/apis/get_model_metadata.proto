@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.serving;
@@ -27,4 +28,7 @@ message GetModelMetadataResponse {
   // field name are listed in GetModelMetadataRequest. Currently supported:
   // "signature_def".
   map<string, google.protobuf.Any> metadata = 2;
+}
+
+} catch (Exception e) {
 }

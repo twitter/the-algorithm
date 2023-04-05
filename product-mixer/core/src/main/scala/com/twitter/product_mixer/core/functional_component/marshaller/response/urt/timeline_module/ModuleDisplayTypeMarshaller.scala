@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Carousel
@@ -26,4 +27,8 @@ class ModuleDisplayTypeMarshaller @Inject() () {
     case CompactCarousel => urt.ModuleDisplayType.CompactCarousel
     case VerticalGrid => urt.ModuleDisplayType.VerticalGrid
   }
+}
+
+} catch {
+  case e: Exception =>
 }

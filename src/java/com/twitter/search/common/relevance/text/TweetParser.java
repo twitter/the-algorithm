@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.text;
 
 import java.util.ArrayList;
@@ -187,4 +188,7 @@ public class TweetParser {
     // all links on twitter are now wrapped into t.co
     return textFeatures.getNormalizedText().contains("?");
   }
+}
+
+} catch (Exception e) {
 }

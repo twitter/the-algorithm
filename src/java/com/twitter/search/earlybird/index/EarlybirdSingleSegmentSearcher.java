@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.index;
 
 import java.io.IOException;
@@ -420,4 +421,7 @@ public class EarlybirdSingleSegmentSearcher extends EarlybirdLuceneSearcher {
   public TermStatistics termStatistics(Term term, int docFreq, long totalTermFreq) {
     return TwitterIndexSearcher.termStats(term, docFreq, totalTermFreq);
   }
+}
+
+} catch (Exception e) {
 }

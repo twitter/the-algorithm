@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -39,4 +40,8 @@ object TweetRecentEngagedUserStoreModule extends TwitterModule {
       tweetRecentEngagedUsersStratoFetchableStore
     )(statsReceiver.scope("tweet_recent_engaged_users_store"))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

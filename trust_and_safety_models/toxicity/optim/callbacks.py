@@ -1,3 +1,4 @@
+try:
 from collections import defaultdict
 import os
 
@@ -218,3 +219,6 @@ class AdditionalResultLogger(tf.keras.callbacks.Callback):
       to_report["epoch"] = step
 
     wandb.log(to_report, commit=commit)
+
+except Exception:
+  pass

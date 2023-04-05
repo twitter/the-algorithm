@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.deepbirdv2
 
 import com.google.inject.Provides
@@ -64,4 +65,8 @@ object DeepBirdV2PredictionServiceClientModule extends TwitterModule {
       serviceIdentifier = serviceIdentifier
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

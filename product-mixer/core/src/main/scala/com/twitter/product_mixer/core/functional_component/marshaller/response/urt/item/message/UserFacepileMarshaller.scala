@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.UserFacepile
@@ -20,4 +21,8 @@ class UserFacepileMarshaller @Inject() (
       displaysFeaturingText = userFacepile.displaysFeaturingText,
       displayType = userFacepile.displayType.map(userFacepileDisplayTypeMarshaller(_))
     )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.exception;
 
 public class TransientException extends Exception {
@@ -12,4 +13,7 @@ public class TransientException extends Exception {
   public TransientException(String message) {
     super(message);
   }
+}
+
+} catch (Exception e) {
 }

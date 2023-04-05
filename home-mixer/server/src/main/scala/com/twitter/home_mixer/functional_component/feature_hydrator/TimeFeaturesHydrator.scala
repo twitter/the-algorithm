@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.conversions.DurationOps._
@@ -248,4 +249,8 @@ object TimeFeaturesHydrator extends CandidateFeatureHydrator[PipelineQuery, Twee
     )
     features.tweetAgeRatio.foreach(record.setFeatureValue(TWEET_AGE_RATIO, _))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

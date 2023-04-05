@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index;
 
 import java.io.IOException;
@@ -77,4 +78,7 @@ public interface TimeMapper extends Flushable {
    */
   TimeMapper optimize(DocIDToTweetIDMapper originalDocIdMapper,
                       DocIDToTweetIDMapper optimizedDocIdMapper) throws IOException;
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 target(
     name = "adapter",
     dependencies = ["timelineranker/common/src/main/scala/com/twitter/timelineranker/adapter"],
@@ -15,3 +16,6 @@ target(
         ":model",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -61,4 +62,7 @@ message AttrValue {
 message NameAttrList {
   string name = 1;
   map<string, AttrValue> attr = 2;
+}
+
+} catch (Exception e) {
 }

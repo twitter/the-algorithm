@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.configapi
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -31,4 +32,8 @@ class ParamsBuilder @Inject() (
 
     config(requestContext, scopedStatsReceiver)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

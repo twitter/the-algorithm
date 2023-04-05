@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.IOException;
@@ -57,4 +58,7 @@ public final class SegmentOptimizer {
 
     return true;
   }
+}
+
+} catch (Exception e) {
 }

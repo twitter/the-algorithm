@@ -1,3 +1,4 @@
+try {
 resources(
     sources = [
         "*.tsv",
@@ -18,3 +19,6 @@ files(
         "**/*",
     ],
 )
+
+} catch (Exception e) {
+}

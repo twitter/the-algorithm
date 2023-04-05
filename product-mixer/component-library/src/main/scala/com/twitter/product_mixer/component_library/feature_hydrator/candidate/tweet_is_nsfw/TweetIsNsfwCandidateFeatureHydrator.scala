@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_is_nsfw
 
 import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
@@ -107,3 +108,7 @@ case class TweetIsNsfwCandidateFeatureHydrator(
 
 case class IsNsfwFeatureHydrationFailure(message: String)
     extends Exception(s"IsNsfwFeatureHydrationFailure(${message})")
+
+} catch {
+  case e: Exception =>
+}

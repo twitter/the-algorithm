@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.annoy
 
 import com.twitter.ann.annoy.AnnoyCommon._
@@ -39,4 +40,8 @@ private[this] class TypedAnnoyQueryIndexWithFile[T, D <: Distance[D]](
     val readableFileStore = ReadableIndexIdFileStore(indexIdFile, injection)
     IndexTransformer.transformQueryable(index, readableFileStore)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

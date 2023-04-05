@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.account_recommendations_mixer
 
 import com.twitter.account_recommendations_mixer.{thriftscala => t}
@@ -54,4 +55,8 @@ class AccountRecommendationsMixerCandidateSource @Inject() (
       .build()
     CandidatesWithSourceFeatures(userRecommendations, features)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

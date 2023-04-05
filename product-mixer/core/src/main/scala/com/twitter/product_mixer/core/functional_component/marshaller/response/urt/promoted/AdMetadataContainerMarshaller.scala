@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.AdMetadataContainer
@@ -23,4 +24,8 @@ class AdMetadataContainerMarshaller @Inject() (
         adMetadataContainer.skAdNetworkDataList.map(_.map(skAdNetworkDataMarshaller(_))),
       unifiedCardOverride = adMetadataContainer.unifiedCardOverride
     )
+}
+
+} catch {
+  case e: Exception =>
 }

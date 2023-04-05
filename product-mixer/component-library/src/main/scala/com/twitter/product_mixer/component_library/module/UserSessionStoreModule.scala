@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.module
 
 import com.google.inject.Provides
@@ -71,4 +72,8 @@ object UserSessionStoreModule extends TwitterModule {
     ReadOnlyManhattanUserSessionStoreBuilder
       .buildReadOnlyUserSessionStore(clientReadOnlyConfig, statsReceiver, scopedStatsReceiver)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

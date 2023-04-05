@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer
 package logging
 
@@ -19,4 +20,8 @@ object TopLevelDdgMetricsMetadata {
       countryCode = request.clientContext.countryCode
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

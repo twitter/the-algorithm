@@ -1,3 +1,4 @@
+try {
 <?xml version="1.0" encoding="UTF-8"?>
   
 
@@ -28,3 +29,6 @@
     environment="prod"
     driverFactoryId="pipeline"/>
 </pipeline>
+
+} catch (Exception e) {
+}

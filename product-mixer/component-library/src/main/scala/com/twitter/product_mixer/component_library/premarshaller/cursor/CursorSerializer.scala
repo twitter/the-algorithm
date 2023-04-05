@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.cursor
 
 import com.twitter.product_mixer.component_library.model.cursor.OrderedCursor
@@ -146,4 +147,8 @@ object CursorSerializer extends PipelineCursorSerializer[PipelineCursor] {
       CursorThriftSerializer,
       deserializePf
     )
+}
+
+} catch {
+  case e: Exception =>
 }

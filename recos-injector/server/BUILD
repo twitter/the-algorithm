@@ -1,3 +1,4 @@
+try {
 target(
     name = "server",
     tags = ["bazel-compatible"],
@@ -41,3 +42,6 @@ jvm_app(
         "bazel-compatible:migrated",
     ],
 )
+
+} catch (Exception e) {
+}

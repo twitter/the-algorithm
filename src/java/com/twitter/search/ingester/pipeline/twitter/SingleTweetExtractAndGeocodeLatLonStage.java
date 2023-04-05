@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import org.apache.commons.pipeline.StageException;
@@ -96,4 +97,7 @@ public class SingleTweetExtractAndGeocodeLatLonStage extends TwitterBaseStage
         ? null
         : new GeoObject(latlon[0], latlon[1], ThriftGeoLocationSource.TWEET_TEXT);
   }
+}
+
+} catch (Exception e) {
 }

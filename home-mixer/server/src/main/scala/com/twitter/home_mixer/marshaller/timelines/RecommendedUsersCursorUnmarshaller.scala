@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.marshaller.timelines
 
 import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
@@ -17,4 +18,8 @@ object RecommendedUsersCursorUnmarshaller {
       case _ => None
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

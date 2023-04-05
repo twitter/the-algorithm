@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.follow_recommendations.thriftscala.DebugDataRecord
@@ -83,4 +84,8 @@ trait HasDataRecord extends Logging {
     )
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

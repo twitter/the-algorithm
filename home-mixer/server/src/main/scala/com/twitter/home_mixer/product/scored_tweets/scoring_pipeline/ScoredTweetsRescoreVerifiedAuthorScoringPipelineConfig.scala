@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.scoring_pipeline
 
 import com.twitter.home_mixer.functional_component.scorer.VerifiedAuthorScalingScorer
@@ -21,4 +22,8 @@ object ScoredTweetsRescoreVerifiedAuthorScoringPipelineConfig
 
   override val scorers: Seq[Scorer[ScoredTweetsQuery, TweetCandidate]] =
     Seq(VerifiedAuthorScalingScorer)
+}
+
+} catch {
+  case e: Exception =>
 }

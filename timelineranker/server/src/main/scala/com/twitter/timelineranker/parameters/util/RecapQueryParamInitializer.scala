@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.util
 
 import com.twitter.servo.util.FunctionArrow
@@ -17,4 +18,8 @@ class RecapQueryParamInitializer(config: Config, runtimeConfig: RuntimeConfigura
       query.copy(params = params)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

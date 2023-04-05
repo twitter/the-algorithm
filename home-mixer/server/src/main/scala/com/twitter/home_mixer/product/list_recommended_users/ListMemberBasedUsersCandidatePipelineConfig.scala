@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.list_recommended_users
 
 import com.twitter.hermit.candidate.{thriftscala => t}
@@ -86,4 +87,8 @@ class ListMemberBasedUsersCandidatePipelineConfig @Inject() (
     val userItemBuilder = UserCandidateUrtItemBuilder(clientEventInfoBuilder)
     Some(UrtItemCandidateDecorator(userItemBuilder))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

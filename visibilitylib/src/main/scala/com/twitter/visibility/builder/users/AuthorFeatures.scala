@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.users
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -218,4 +219,8 @@ class AuthorFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
     authorScreenName.incr()
     userSource.getProfile(authorId).map(profile => profile.screenName)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

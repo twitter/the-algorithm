@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.index;
 
 import java.io.IOException;
@@ -38,4 +39,7 @@ public class TweetSearchLuceneIndexExtensionsData implements EarlybirdIndexExten
     Preconditions.checkState(fieldType.isCsfLoadIntoRam());
     return segmentData.getDocValuesManager().addColumnStrideField(csfFieldName, fieldType);
   }
+}
+
+} catch (Exception e) {
 }

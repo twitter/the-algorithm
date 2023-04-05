@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.recos.recos_injector.thriftjava
 namespace py gen.twitter.recos.recos_injector
 #@namespace scala com.twitter.recos.recos_injector.thriftscala
@@ -19,4 +20,7 @@ struct Features {
   2: optional bool hasVideo
   3: optional bool hasUrl
   4: optional bool hasHashtag
+}
+
+} catch (Exception e) {
 }

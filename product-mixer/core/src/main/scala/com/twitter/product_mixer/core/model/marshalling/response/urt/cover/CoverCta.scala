@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.button.ButtonStyle
@@ -12,3 +13,7 @@ case class CoverCta(
   clientEventInfo: Option[ClientEventInfo],
   icon: Option[HorizonIcon],
   buttonStyle: Option[ButtonStyle])
+
+} catch {
+  case e: Exception =>
+}

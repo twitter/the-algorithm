@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.common
 
 import com.twitter.stitch.Stitch
@@ -10,4 +11,8 @@ trait EmbeddingProducer[T] {
    * @return An embedding Stitch. See go/stitch for details on how to use the Stitch API.
    */
   def produceEmbedding(input: T): Stitch[Option[EmbeddingType.EmbeddingVector]]
+}
+
+} catch {
+  case e: Exception =>
 }

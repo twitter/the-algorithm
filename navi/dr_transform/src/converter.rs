@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+match use std::collections::BTreeSet;
 use std::fmt::{self, Debug, Display};
 use std::fs;
 
@@ -583,4 +583,8 @@ impl Converter for BatchPredictionRequestToTorchTensorConverter {
 
         (vec![t1, t2, t4, t5, t6], batch_ends)
     }
+}
+ {
+  Ok(_) => {},
+  Err(_) => {}
 }

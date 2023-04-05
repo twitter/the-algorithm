@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common.userupdates;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -97,4 +98,7 @@ public class UserScrubGeoMap {
   public boolean isSet(long userId) {
     return map.containsKey(userId);
   }
+}
+
+} catch (Exception e) {
 }

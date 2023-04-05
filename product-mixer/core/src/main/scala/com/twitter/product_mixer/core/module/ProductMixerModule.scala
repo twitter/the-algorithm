@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.module
 
 import com.twitter.inject.TwitterModule
@@ -27,4 +28,8 @@ object ProductMixerModule extends TwitterModule {
     ScalaObjectMapperModule,
     ThriftClientIdModule,
   )
+}
+
+} catch {
+  case e: Exception =>
 }

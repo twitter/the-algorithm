@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.marshaller.timelines
 
 import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
@@ -18,4 +19,8 @@ object TimelineServiceCursorMarshaller {
       case _ => None
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

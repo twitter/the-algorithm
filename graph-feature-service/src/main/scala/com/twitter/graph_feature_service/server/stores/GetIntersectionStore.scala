@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.server.stores
 
 import com.twitter.finagle.RequestTimeoutException
@@ -178,4 +179,8 @@ object GetIntersectionStore {
   private val CountIndex = 0
   private val LeftDegreeIndex = 1
   private val RightDegreeIndex = 2
+}
+
+} catch {
+  case e: Exception =>
 }

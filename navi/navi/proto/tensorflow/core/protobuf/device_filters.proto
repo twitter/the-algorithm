@@ -1,3 +1,4 @@
+try {
 /* Copyright 2020 The TensorFlow Authors. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -70,4 +71,7 @@ message JobDeviceFilters {
 // Defines the device filters for jobs in a cluster.
 message ClusterDeviceFilters {
   repeated JobDeviceFilters jobs = 1;
+}
+
+} catch (Exception e) {
 }

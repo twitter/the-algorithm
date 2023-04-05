@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.list_recommended_users.model
 
 import com.twitter.home_mixer.model.request.HasListId
@@ -27,4 +28,8 @@ case class ListRecommendedUsersQuery(
 
   override def withFeatureMap(features: FeatureMap): ListRecommendedUsersQuery =
     copy(features = Some(features))
+}
+
+} catch {
+  case e: Exception =>
 }

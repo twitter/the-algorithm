@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.feature.featurestorev1
 
 import com.twitter.ml.featurestore.lib.EntityId
@@ -32,4 +33,8 @@ trait FeatureStoreV1CandidateEntity[
     input: Input,
     existingFeatures: FeatureMap
   ): EntityWithId[FeatureStoreEntityId]
+}
+
+} catch {
+  case e: Exception =>
 }

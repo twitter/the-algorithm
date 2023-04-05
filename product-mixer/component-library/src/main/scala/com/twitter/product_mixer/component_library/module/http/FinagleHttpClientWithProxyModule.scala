@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.module.http
 
 import com.google.inject.Provides
@@ -78,4 +79,8 @@ object FinagleHttpClientWithProxyModule extends TwitterModule {
       statsReceiver = statsReceiver
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.tensorbuilder
 
 import inference.GrpcService.InferTensorContents
@@ -58,4 +59,8 @@ case object SparseMapInferInputTensorBuilder
 
     Seq(batchIdsInputTensor, sparseKeysInputTensor, sparseValuesInputTensor)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

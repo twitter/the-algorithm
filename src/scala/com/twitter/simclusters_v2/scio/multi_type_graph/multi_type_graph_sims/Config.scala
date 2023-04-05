@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scio
 package multi_type_graph.multi_type_graph_sims
 
@@ -15,4 +16,8 @@ object Config {
   val maxOutDegree: Int = 10000
   val cosineSimJobOutputDirectory = "right_node/sims/cosine_similarity"
 
+}
+
+} catch {
+  case e: Exception =>
 }

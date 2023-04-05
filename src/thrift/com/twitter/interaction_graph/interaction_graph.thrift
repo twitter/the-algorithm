@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.interaction_graph.thriftjava
 #@namespace scala com.twitter.interaction_graph.thriftscala
 #@namespace strato com.twitter.interaction_graph
@@ -96,3 +97,6 @@ struct EdgeLabel {
   2: required i64 destination_id(personalDataType = 'UserId');
   3: required set<FeatureName> labels(personalDataType = 'AggregateImpressionEngagementData');
 }(persisted="true", hasPersonalData = 'true')
+
+} catch (Exception e) {
+}

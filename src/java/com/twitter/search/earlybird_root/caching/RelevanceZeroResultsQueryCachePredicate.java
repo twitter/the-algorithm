@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import com.twitter.search.common.caching.filter.QueryCachePredicate;
@@ -28,4 +29,7 @@ public class RelevanceZeroResultsQueryCachePredicate
         && decider.isAvailable(relevanceCacheEnabledDeciderKey)
         && decider.isAvailable(relevanceZeroResultsCacheEnabledDeciderKey);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations
 
 import com.twitter.scalding.{DateRange, Days, Stat, TypedPipe, UniqueID}
@@ -71,4 +72,8 @@ object DataSources {
           ((entityId, lang), embedding.embedding.map(_.toTuple).toMap)
       }.forceToDisk
   }
+}
+
+} catch {
+  case e: Exception =>
 }

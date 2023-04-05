@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.phone_storage_service
 
 import com.twitter.cds.contact_consent_state.thriftscala.PurposeOfProcessing
@@ -31,4 +32,8 @@ class PhoneStorageServiceClient @Inject() (
       _.userPhones.map(_.phoneNumber)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.SocialContextMarshaller
@@ -17,4 +18,8 @@ class ModuleConversationMetadataMarshaller @Inject() (
     socialContext = moduleConversationMetadata.socialContext.map(socialContextMarshaller(_)),
     enableDeduplication = moduleConversationMetadata.enableDeduplication
   )
+}
+
+} catch {
+  case e: Exception =>
 }

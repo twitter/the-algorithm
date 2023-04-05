@@ -1,3 +1,4 @@
+try:
 # pylint: disable=arguments-differ, invalid-name
 """
 This module contains the ``DataRecordTrainer``.
@@ -819,3 +820,6 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
     """
     self.train(input_fn=input_fn, steps=1)
     self.evaluate(input_fn, steps, hooks, name)
+
+except Exception:
+  pass

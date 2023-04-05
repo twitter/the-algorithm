@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.features
 
 import com.twitter.gizmoduck.thriftscala.MentionFilter
@@ -22,3 +23,7 @@ case object AuthorHasVerifiedPhone extends Feature[Boolean]
 case object AuthorHasDefaultProfileImage extends Feature[Boolean]
 
 case object AuthorAccountAge extends Feature[Duration]
+
+} catch {
+  case e: Exception =>
+}

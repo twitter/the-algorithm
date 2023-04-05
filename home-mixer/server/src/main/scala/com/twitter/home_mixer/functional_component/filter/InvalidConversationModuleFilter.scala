@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.filter
 
 import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleFocalTweetIdFeature
@@ -47,4 +48,8 @@ object InvalidConversationModuleFilter extends Filter[PipelineQuery, TweetCandid
       candidates.map(_.candidate).partition(candidate => allowedTweetIds.contains(candidate.id))
     Stitch.value(FilterResult(kept = kept, removed = removed))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

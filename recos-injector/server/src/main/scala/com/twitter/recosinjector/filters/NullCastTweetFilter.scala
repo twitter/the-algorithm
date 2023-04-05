@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.filters
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -31,4 +32,8 @@ class NullCastTweetFilter(
         !isNullCastTweet
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

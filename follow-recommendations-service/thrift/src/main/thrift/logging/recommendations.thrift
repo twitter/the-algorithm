@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.follow_recommendations.logging.thriftjava
 #@namespace scala com.twitter.follow_recommendations.logging.thriftscala
 #@namespace strato com.twitter.follow_recommendations.logging
@@ -24,3 +25,6 @@ struct OfflineUserRecommendation {
 union OfflineRecommendation {
     1: OfflineUserRecommendation user
 }(persisted='true', hasPersonalData='true')
+
+} catch (Exception e) {
+}

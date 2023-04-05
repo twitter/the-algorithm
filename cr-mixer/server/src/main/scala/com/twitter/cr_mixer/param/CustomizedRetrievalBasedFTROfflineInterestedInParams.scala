@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 import com.twitter.cr_mixer.model.ModelConfig
 import com.twitter.timelines.configapi.BaseConfig
@@ -28,4 +29,8 @@ object CustomizedRetrievalBasedFTROfflineInterestedInParams {
       .set(stringFSOverrides: _*)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

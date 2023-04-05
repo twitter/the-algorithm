@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.notifications
 
 import com.twitter.visibility.models.ContentId
@@ -7,3 +8,7 @@ case class NotificationVFRequest(
   recipientId: Long,
   subject: ContentId.UserId,
   safetyLevel: SafetyLevel)
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urt.builder
 
 import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
@@ -46,4 +47,8 @@ trait BaseUnorderedExcludeIdsBottomCursorBuilder
 
     serializer.serializeCursor(cursor)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 // This file defines protos that store the results of autotuning various
 // operations.
 //
@@ -103,4 +104,7 @@ message AutotuningLog {
   string blas_version = 6;
 
   // Next ID: 7
+}
+
+} catch (Exception e) {
 }

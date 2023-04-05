@@ -1,3 +1,4 @@
+try:
 # These should coincide with 'enum class DecodeMode' values in HashedDataRecordReader.h
 
 from twitter.deepbird.io.legacy.constants import (
@@ -9,3 +10,6 @@ from twitter.deepbird.io.legacy.constants import (
   DEFAULT_ZOOKEEPER_BASE_ZNODE,  # noqa: F401
   DEFAULT_ZOOKEEPER_HOST,  # noqa: F401
 )
+
+except Exception:
+  pass

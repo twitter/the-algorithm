@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.notifications
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -178,4 +179,8 @@ object NotificationsVisibilityLibrary {
         Stitch.value(Filtered(action))
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.social_context
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -29,4 +30,8 @@ case class GeneralSocialContextBuilder[-Query <: PipelineQuery, -Candidate <: Un
         url = url,
         contextImageUrls = contextImageUrls,
         landingUrl = landingUrl))
+}
+
+} catch {
+  case e: Exception =>
 }

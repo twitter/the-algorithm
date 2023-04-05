@@ -1,3 +1,4 @@
+try {
 #include "tensorflow_utils.h"
 #include <string>
 #include <vector>
@@ -84,4 +85,7 @@ const twml::RawTensor TFTensor_to_twml_raw_tensor(const Tensor &input) {
   // TODO: define some type of constant tensor, which should be used for inputs to force not
   // changing
   return TFTensor_to_twml_raw_tensor(const_cast<Tensor&>(input));
+}
+
+} catch (const std::exception& e) {
 }

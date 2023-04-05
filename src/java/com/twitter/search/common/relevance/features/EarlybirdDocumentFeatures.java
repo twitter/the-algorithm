@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.features;
 
 import java.io.IOException;
@@ -229,4 +230,7 @@ public class EarlybirdDocumentFeatures {
         .setLongValues(longValues)
         .setDoubleValues(doubleValues);
   }
+}
+
+} catch (Exception e) {
 }

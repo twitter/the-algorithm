@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.common;
 
 import javax.inject.Singleton;
@@ -17,4 +18,7 @@ public class TwitterContextProvider {
   public Option<Viewer> get() {
     return TwitterContext.acquire(TwitterContextPermit.get()).apply();
   }
+}
+
+} catch (Exception e) {
 }

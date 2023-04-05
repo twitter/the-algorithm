@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.trend
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
@@ -34,4 +35,8 @@ class TrendItemMarshaller @Inject() (
         }
       )
     )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.timelines_impression_store
 
 import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyFetcherSource
@@ -27,4 +28,8 @@ class TimelinesImpressionStoreCandidateSourceV2 @Inject() (
     stratoResult: t.TweetImpressionsEntries
   ): Seq[t.TweetImpressionsEntry] =
     stratoResult.entries
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common.clustering
 
 import com.twitter.simclusters_v2.common.UserId
@@ -18,4 +19,8 @@ class MaxFavScoreRepresentativeSelectionMethod[T] extends ClusterRepresentativeS
     val key = cluster.maxBy { x: NeighborWithWeights => x.favScoreHalfLife100Days.getOrElse(0.0) }
     key.neighborId
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.core.functional_component.common.AllPipelines
@@ -37,4 +38,8 @@ case class DropMaxResults(
 
     SelectorResult(remainingCandidates = remainingCandidates, result = resultUpdated)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

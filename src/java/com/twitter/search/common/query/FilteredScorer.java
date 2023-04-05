@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import java.io.IOException;
@@ -33,4 +34,7 @@ public class FilteredScorer extends Scorer {
   public float getMaxScore(int upTo) throws IOException {
     return inner.getMaxScore(upTo);
   }
+}
+
+} catch (Exception e) {
 }

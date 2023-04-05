@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1
 
 import com.twitter.ml.api.util.SRichDataRecord
@@ -76,4 +77,8 @@ trait FeatureStoreV1QueryFeatureHydrator[Query <: PipelineQuery]
 
     Stitch.callFuture(featureMap)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

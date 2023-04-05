@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -175,4 +176,7 @@ public abstract class EarlybirdOptimizedPostingsEnum extends EarlybirdPostingsEn
   protected int getCurrentFreq() {
     return currentFreq;
   }
+}
+
+} catch (Exception e) {
 }

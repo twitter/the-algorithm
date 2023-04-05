@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.marshaller.timeline_logging
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
@@ -14,4 +15,8 @@ object PromotedTweetEntryMarshaller {
       displayType = Some(entry.displayType.toString)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.extensions;
 
 import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentWriter;
@@ -17,4 +18,7 @@ public interface EarlybirdRealtimeIndexExtensionsData extends EarlybirdIndexExte
    */
   void createStoredFieldsConsumer(
       EarlybirdRealtimeIndexSegmentWriter.StoredFieldsConsumerBuilder builder);
+}
+
+} catch (Exception e) {
 }

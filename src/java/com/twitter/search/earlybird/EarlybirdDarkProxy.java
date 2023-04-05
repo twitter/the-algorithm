@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird;
 
 import java.util.concurrent.TimeUnit;
@@ -110,4 +111,7 @@ public class EarlybirdDarkProxy {
             .withProtocolFactory(new TCompactProtocol.Factory())
             .withClientId(new ClientId(DARK_REQUESTS_FINAGLE_CLIENT_ID)));
   }
+}
+
+} catch (Exception e) {
 }

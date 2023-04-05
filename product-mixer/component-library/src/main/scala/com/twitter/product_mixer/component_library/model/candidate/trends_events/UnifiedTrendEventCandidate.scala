@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.candidate.trends_events
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -117,3 +118,7 @@ object PromotedTrendDisclosureTypeFeature
     extends Feature[UnifiedTrendCandidate, Option[DisclosureType]]
 
 object PromotedTrendImpressionIdFeature extends Feature[UnifiedTrendCandidate, Option[String]]
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import java.io.IOException;
@@ -53,4 +54,7 @@ public class CSFFacetCountIterator extends FacetCountIterator {
   protected boolean shouldCollect(int internalDocID, long termID) throws IOException {
     return true;
   }
+}
+
+} catch (Exception e) {
 }

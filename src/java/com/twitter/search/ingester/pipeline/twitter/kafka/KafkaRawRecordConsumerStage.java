@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter.kafka;
 
 import org.apache.commons.pipeline.validation.ConsumedTypes;
@@ -33,4 +34,7 @@ public class KafkaRawRecordConsumerStage extends KafkaConsumerStage<KafkaRawReco
     super(kafkaClientId, kafkaTopicName, kafkaConsumerGroupId, kafkaClusterPath, deciderKey,
         getDeserializer());
   }
+}
+
+} catch (Exception e) {
 }

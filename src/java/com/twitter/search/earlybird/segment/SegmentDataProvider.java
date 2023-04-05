@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.segment;
 
 /**
@@ -11,4 +12,7 @@ public interface SegmentDataProvider extends SegmentProvider {
    * Returns the set of segment data record readers.
    */
   SegmentDataReaderSet getSegmentDataReaderSet();
+}
+
+} catch (Exception e) {
 }

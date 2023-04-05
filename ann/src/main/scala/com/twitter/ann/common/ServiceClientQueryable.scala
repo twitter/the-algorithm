@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.common
 
 import com.twitter.ann.common.EmbeddingType._
@@ -61,4 +62,8 @@ class ServiceClientQueryable[T, P <: RuntimeParams, D <: Distance[D]](
           )
         }.toList
       }
+}
+
+} catch {
+  case e: Exception =>
 }

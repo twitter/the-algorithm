@@ -1,3 +1,4 @@
+try {
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 cmake_policy(VERSION 2.8)
@@ -77,3 +78,6 @@ target_link_libraries(twml_tf
   ${LINK_ALL_OPTION} twml ${NO_LINK_ALL_OPTION}
   ${TF_FRAMEWORK_LIB}
   )
+
+} catch (Exception e) {
+}

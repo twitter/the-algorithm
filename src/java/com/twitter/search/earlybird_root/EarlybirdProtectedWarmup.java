@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import com.google.common.base.Preconditions;
@@ -25,4 +26,7 @@ public class EarlybirdProtectedWarmup extends EarlybirdWarmup {
 
     return request;
   }
+}
+
+} catch (Exception e) {
 }

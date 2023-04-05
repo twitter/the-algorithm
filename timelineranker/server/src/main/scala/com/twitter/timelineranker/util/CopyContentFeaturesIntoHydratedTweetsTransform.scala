@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.util
 
 import com.twitter.servo.util.FutureArrow
@@ -56,4 +57,8 @@ object CopyContentFeaturesIntoHydratedTweetsTransform
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

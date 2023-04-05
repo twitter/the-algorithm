@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.constants
 
 import com.twitter.conversions.StorageUnitOps._
@@ -12,4 +13,8 @@ object ServiceConstants {
   val StringLengthLimit: Long =
     10.megabyte.inBytes
   val ContainerLengthLimit: Long = 1.megabyte.inBytes
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.timelines.render.{thriftscala => urt}
@@ -19,4 +20,8 @@ class SocialContextMarshaller @Inject() (
       case topicContextBanner: TopicContext =>
         topicContextMarshaller(topicContextBanner)
     }
+}
+
+} catch {
+  case e: Exception =>
 }

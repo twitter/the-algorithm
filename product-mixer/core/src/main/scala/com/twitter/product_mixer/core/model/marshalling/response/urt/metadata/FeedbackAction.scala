@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
@@ -27,3 +28,7 @@ case class ChildFeedbackAction(
   icon: Option[HorizonIcon],
   richBehavior: Option[RichFeedbackBehavior],
   subprompt: Option[String])
+
+} catch {
+  case e: Exception =>
+}

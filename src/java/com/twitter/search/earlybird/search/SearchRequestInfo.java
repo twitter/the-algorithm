@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search;
 
 import java.util.List;
@@ -177,4 +178,7 @@ public class SearchRequestInfo {
   public boolean isGetFromUserId() {
     return getFromUserId;
   }
+}
+
+} catch (Exception e) {
 }

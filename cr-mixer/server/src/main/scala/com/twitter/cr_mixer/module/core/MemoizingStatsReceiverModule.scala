@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module.core
 
 import com.twitter.finagle.stats.LoadedStatsReceiver
@@ -9,4 +10,8 @@ object MemoizingStatsReceiverModule extends TwitterModule {
   override def configure(): Unit = {
     bind[StatsReceiver].toInstance(new MemoizingStatsReceiver(LoadedStatsReceiver))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

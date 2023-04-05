@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.adapters.inferred_topic
 
 import com.twitter.ml.api.Feature
@@ -22,4 +23,8 @@ object InferredTopicAdapter extends TimelinesMutatingAdapterBase[Map[Long, Doubl
       TimelinesSharedFeatures.INFERRED_TOPIC_IDS,
       inferredTopicFeatures.keys.map(_.toString).toSet.asJava)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

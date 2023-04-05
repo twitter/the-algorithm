@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.logging
 
 import com.twitter.cr_mixer.logging.ScribeLoggerUtils._
@@ -144,4 +145,8 @@ case class UtegTweetScribeLogger @Inject() (
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

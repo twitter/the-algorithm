@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.recos.user_tweet_graph.thriftjava
 namespace py gen.twitter.recos.user_tweet_graph
 #@namespace scala com.twitter.recos.user_tweet_graph.thriftscala
@@ -170,3 +171,6 @@ service UserTweetGraph {
   UserTweetFeatureResponse userTweetFeatures (1: required i64 userId, 2: required i64 tweetId)
 }
 
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance.scoring;
 
 import org.apache.lucene.search.Explanation;
@@ -49,4 +50,7 @@ public class TestScoringFunction extends ScoringFunction {
   @Override
   public void updateRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {
   }
+}
+
+} catch (Exception e) {
 }

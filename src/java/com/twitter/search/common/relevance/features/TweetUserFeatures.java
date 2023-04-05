@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.features;
 
 import java.util.Map;
@@ -111,4 +112,7 @@ public class TweetUserFeatures {
   public void setBot(boolean bot) {
     isBot = bot;
   }
+}
+
+} catch (Exception e) {
 }

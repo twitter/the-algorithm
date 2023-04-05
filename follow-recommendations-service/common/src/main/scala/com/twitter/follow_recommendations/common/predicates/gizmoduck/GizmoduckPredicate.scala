@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates.gizmoduck
 
 import com.twitter.decider.Decider
@@ -281,4 +282,8 @@ object GizmoduckPredicate {
       if (BlinkLabels.contains(label.labelValue))
     } yield Set(Blink)
   }.flatten.toSet
+}
+
+} catch {
+  case e: Exception =>
 }

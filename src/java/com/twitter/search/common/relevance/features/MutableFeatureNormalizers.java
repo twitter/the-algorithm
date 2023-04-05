@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.features;
 
 import com.twitter.search.common.encoding.features.ByteNormalizer;
@@ -20,4 +21,7 @@ public abstract class MutableFeatureNormalizers {
 
   public static final ByteNormalizer SMART_INTEGER_NORMALIZER =
       new SmartIntegerNormalizer(MAX_COUNTER_VALUE_SUPPORTED, 8);
+}
+
+} catch (Exception e) {
 }

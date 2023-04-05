@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.quality_factor
 
 import com.twitter.util.Duration
@@ -31,4 +32,8 @@ case class LinearLatencyQualityFactor(
   private def adjustState(delta: Double): Unit = {
     state = config.qualityFactorBounds.bounds(state + delta)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.common
 
 import com.twitter.ann.common.EmbeddingType.EmbeddingVector
@@ -115,4 +116,8 @@ object IndexTransformer {
       override def toQueryable: Queryable[T, P, D] = appendable.toQueryable
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

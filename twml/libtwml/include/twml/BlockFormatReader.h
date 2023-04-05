@@ -1,3 +1,4 @@
+try {
 #pragma once
 
 #include <string>
@@ -29,4 +30,7 @@ class BlockFormatReader {
 
   virtual uint64_t read_bytes(void *dest, int size, int count) = 0;
 };
+}
+
+} catch (Exception e) {
 }

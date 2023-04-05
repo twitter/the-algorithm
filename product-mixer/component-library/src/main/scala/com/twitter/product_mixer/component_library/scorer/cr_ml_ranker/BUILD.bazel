@@ -1,3 +1,4 @@
+try {
 scala_library(
     compiler_option_sets = ["fatal_warnings"],
     strict_deps = True,
@@ -16,3 +17,6 @@ scala_library(
         "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/scorer",
     ],
 )
+
+} catch (Exception e) {
+}

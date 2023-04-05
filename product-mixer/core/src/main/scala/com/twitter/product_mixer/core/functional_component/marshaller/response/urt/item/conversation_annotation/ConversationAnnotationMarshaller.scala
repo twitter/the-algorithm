@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.conversation_annotation
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.ConversationAnnotation
@@ -19,4 +20,8 @@ class ConversationAnnotationMarshaller @Inject() (
       description = conversationAnnotation.description.map(richTextMarshaller(_))
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

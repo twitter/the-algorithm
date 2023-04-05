@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.features;
 
 import java.util.Map;
@@ -288,4 +289,7 @@ public enum TweetFeatureType {
       return normalizer.normalize(oldValue) != normalizer.normalize(newValue);
     }
   }
+}
+
+} catch (Exception e) {
 }

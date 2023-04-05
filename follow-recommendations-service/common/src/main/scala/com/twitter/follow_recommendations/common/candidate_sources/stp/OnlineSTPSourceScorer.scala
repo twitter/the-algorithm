@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.stp
 
 import com.twitter.follow_recommendations.common.models.CandidateUser
@@ -26,4 +27,8 @@ class OnlineSTPSourceScorer @Inject() (
   }
 
   override val identifier: CandidateSourceIdentifier = BaseOnlineSTPSource.Identifier
+}
+
+} catch {
+  case e: Exception =>
 }

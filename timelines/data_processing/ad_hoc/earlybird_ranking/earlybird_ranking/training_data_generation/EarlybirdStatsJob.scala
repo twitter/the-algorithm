@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.training_data_generation
 
 import com.twitter.ml.api.analytics.DataSetAnalyticsPlugin
@@ -60,4 +61,8 @@ object EarlybirdStatsJob extends TwitterExecutionApp with UTCDateRangeFromArgs {
       _ <- computeStats(data).writeExecution(TypedJson(args("output")))
     } yield ()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

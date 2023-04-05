@@ -1,3 +1,4 @@
+try {
 #include <twml/BlockFormatReader.h>
 #include <cstring>
 #include <stdexcept>
@@ -143,3 +144,6 @@ int BlockFormatReader::read_one_record_size() {
   return -1;
 }
 }  // namespace twml
+
+} catch (const std::exception& e) {
+}

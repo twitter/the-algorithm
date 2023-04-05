@@ -1,3 +1,4 @@
+try:
 # pylint: disable=invalid-name, no-member, unused-argument
 """
 This module contains common calibrate and export functions for calibrators.
@@ -705,3 +706,6 @@ def build_isotonic_graph(features, label, mode, params, config=None, export_disc
     discretizer_signature = params.discretizer_signature
   input_sparse = discretizer(sparse_tf, signature=discretizer_signature)
   return build_isotonic_graph_from_inputs(input_sparse, features, label, mode, params, config)
+
+except Exception:
+  pass

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common.config;
 
 import java.lang.reflect.Modifier;
@@ -387,4 +388,7 @@ public final class EarlybirdProperty<T> {
   public static EarlybirdProperty[] values() {
     return ALL_PROPERTIES.toArray(new EarlybirdProperty[0]);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.cache
 
 import com.google.inject.Provides
@@ -27,4 +28,8 @@ object MemcacheModule extends TwitterModule {
       .withSession.acquisitionTimeout(10.seconds)
       .configured(Retries.Policy(RetryPolicy.tries(1)))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

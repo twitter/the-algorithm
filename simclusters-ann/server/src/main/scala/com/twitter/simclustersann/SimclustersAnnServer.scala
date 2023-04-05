@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann
 
 import com.google.inject.Module
@@ -67,4 +68,8 @@ class SimClustersAnnServer extends ThriftServer with Mtls {
       handle[SimclustersAnnWarmupHandler]()
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

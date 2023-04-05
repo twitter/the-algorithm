@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.finagle.stats.Stat
@@ -195,4 +196,8 @@ class FollowAndRealGraphCombiningTransform(
           }
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.gate
 
 import com.twitter.product_mixer.core.functional_component.gate.Gate
@@ -11,4 +12,8 @@ case class ParamNotGate(name: String, param: Param[Boolean]) extends Gate[Pipeli
 
   override def shouldContinue(query: PipelineQuery): Stitch[Boolean] =
     Stitch.value(!query.params(param))
+}
+
+} catch {
+  case e: Exception =>
 }

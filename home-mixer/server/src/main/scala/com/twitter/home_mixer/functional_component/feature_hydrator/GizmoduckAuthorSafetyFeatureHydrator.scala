@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.gizmoduck.{thriftscala => gt}
@@ -55,4 +56,8 @@ class GizmoduckAuthorSafetyFeatureHydrator @Inject() (gizmoduck: Gizmoduck)
         .build()
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.tensorbuilder
 
 import com.twitter.ml.featurestore.lib.Discrete
@@ -23,4 +24,8 @@ case object Int64InferInputTensorBuilder extends InferInputTensorBuilder[AnyVal]
       featureValues.map(toLong),
       tensorShape)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

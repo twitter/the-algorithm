@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.feature_hydrator
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -76,4 +77,8 @@ trait AsyncHydrator {
    * @note If [[PipelineStepIdentifier]] is a Step which is run in parallel, the [[Feature]]s will be available for all the parallel Steps.
    */
   def hydrateBefore: PipelineStepIdentifier
+}
+
+} catch {
+  case e: Exception =>
 }

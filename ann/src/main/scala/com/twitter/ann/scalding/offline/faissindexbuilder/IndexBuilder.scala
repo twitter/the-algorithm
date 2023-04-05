@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.scalding.offline.faissindexbuilder
 
 import com.twitter.ann.common.Distance
@@ -39,4 +40,8 @@ object IndexBuilder extends FaissIndexer with Logging {
 
     build(annEmbeddingPipe, sampleRate, factoryString, metric, outputDirectory)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.common
 
 import com.fasterxml.jackson.core.JsonGenerator
@@ -302,4 +303,8 @@ object Util {
     val mailCmd = s"cat ${file.getPath}" #| Seq("mail", "-s", subject, toAddress)
     mailCmd.!!
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird;
 
 import java.io.BufferedWriter;
@@ -1084,4 +1085,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
   public AudioSpaceTable getAudioSpaceTable() {
     return audioSpaceTable;
   }
+}
+
+} catch (Exception e) {
 }

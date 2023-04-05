@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.scorer
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -88,4 +89,8 @@ class WeightedScoresSumScorer @Inject() (statsReceiver: StatsReceiver)
 
     weightedScoresSum
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding.producer
 
 import com.twitter.scalding._
@@ -165,4 +166,8 @@ trait AggregatableProducerEmbeddingsBaseApp extends SimClustersEmbeddingBaseJob[
 
     Execution.zip(manhattanExecution, thriftExecution).unit
   }
+}
+
+} catch {
+  case e: Exception =>
 }

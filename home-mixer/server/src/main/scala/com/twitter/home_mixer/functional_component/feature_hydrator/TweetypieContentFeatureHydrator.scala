@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.escherbird.{thriftscala => esb}
@@ -146,4 +147,8 @@ class TweetypieContentFeatureHydrator @Inject() (
     semanticCoreAnnotations
       .filter(MediaUnderstandingAnnotations.isEligibleNonSensitiveHighRecallMUAnnotation)
       .map(_.entityId)
+}
+
+} catch {
+  case e: Exception =>
 }

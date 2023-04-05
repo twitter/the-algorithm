@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.models
 
 import com.twitter.spam.rtf.thriftscala.SafetyLabelSource
@@ -357,4 +358,8 @@ object TweetSafetyLabel {
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

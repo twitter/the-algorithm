@@ -1,3 +1,4 @@
+try {
 #pragma once
 
 #ifdef __cplusplus
@@ -54,3 +55,6 @@ class ThriftReader {
 
 }
 #endif
+
+} catch (Exception e) {
+}

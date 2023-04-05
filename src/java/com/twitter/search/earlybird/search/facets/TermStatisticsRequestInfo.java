@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.facets;
 
 import java.util.LinkedList;
@@ -91,4 +92,7 @@ public class TermStatisticsRequestInfo extends SearchRequestInfo {
   public final boolean isReturnHistogram() {
     return this.histogramSettings != null;
   }
+}
+
+} catch (Exception e) {
 }

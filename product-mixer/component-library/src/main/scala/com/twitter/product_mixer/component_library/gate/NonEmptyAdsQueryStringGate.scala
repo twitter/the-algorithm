@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.gate
 
 import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
@@ -13,4 +14,8 @@ object NonEmptyAdsQueryStringGate extends Gate[PipelineQuery with AdsQuery] {
     val queryString = query.searchRequestContext.flatMap(_.queryString)
     Stitch.value(queryString.exists(_.trim.nonEmpty))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

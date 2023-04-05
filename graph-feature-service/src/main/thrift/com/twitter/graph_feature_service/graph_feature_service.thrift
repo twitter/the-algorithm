@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.graph_feature_service.thriftjava
 #@namespace scala com.twitter.graph_feature_service.thriftscala
 #@namespace strato com.twitter.graph_feature_service.thriftscala
@@ -120,4 +121,7 @@ struct CachedIntersectionResult {
 
 service Worker {
   WorkerIntersectionResponse getIntersection(1: WorkerIntersectionRequest request)
+}
+
+} catch (Exception e) {
 }

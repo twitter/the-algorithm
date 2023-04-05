@@ -1,3 +1,4 @@
+try:
 from abc import ABC
 import re
 
@@ -116,3 +117,6 @@ class Defaulti18nPreprocessor(DataframeCleaner):
     ]
 
     return adhoc_df
+
+except Exception:
+  pass

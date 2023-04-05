@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.addressbook.models
 
 import com.twitter.addressbook.{thriftscala => t}
@@ -21,4 +22,8 @@ case class QueryOption(
     resolveEmails,
     resolvePhoneNumbers
   )
+}
+
+} catch {
+  case e: Exception =>
 }

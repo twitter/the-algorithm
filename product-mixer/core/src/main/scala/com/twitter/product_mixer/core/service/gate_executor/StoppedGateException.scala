@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.gate_executor
 
 import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
@@ -26,4 +27,8 @@ object StoppedGateException {
     case stoppedGateException: StoppedGateException =>
       PipelineFailure(category, stoppedGateException.getMessage, Some(stoppedGateException))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.index;
 
 import java.io.IOException;
@@ -67,4 +68,7 @@ public final class DocValuesHelper {
     }
     return terms.iterator();
   }
+}
+
+} catch (Exception e) {
 }

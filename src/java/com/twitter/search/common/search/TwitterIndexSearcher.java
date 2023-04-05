@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.search;
 
 import java.io.IOException;
@@ -186,4 +187,7 @@ public class TwitterIndexSearcher extends IndexSearcher {
         adjustedDocFreq,
         Math.max(totalTermFreq, adjustedDocFreq));
   }
+}
+
+} catch (Exception e) {
 }

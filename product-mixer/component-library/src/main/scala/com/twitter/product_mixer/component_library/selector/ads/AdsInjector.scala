@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector.ads
 
 import com.google.inject.Inject
@@ -70,4 +71,8 @@ class AdsInjector @Inject() (
       logger = logger
     ).build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

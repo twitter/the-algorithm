@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.filter
 
 import com.twitter.product_mixer.core.functional_component.filter.Filter.SupportsConditionally
@@ -64,4 +65,8 @@ object Filter {
   case class Input[+Query <: PipelineQuery, +Candidate <: UniversalNoun[Any]](
     query: Query,
     candidates: Seq[CandidateWithFeatures[Candidate]])
+}
+
+} catch {
+  case e: Exception =>
 }

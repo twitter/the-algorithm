@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata._
@@ -24,4 +25,8 @@ class FeedbackTypeMarshaller @Inject() () {
     case NotAboutTopic => urt.FeedbackType.NotAboutTopic
     case Generic => urt.FeedbackType.Generic
   }
+}
+
+} catch {
+  case e: Exception =>
 }

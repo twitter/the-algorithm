@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.feature_update_service.modules;
 
 import com.twitter.app.Flaggable;
@@ -10,4 +11,7 @@ public class EarlybirdUtilModule extends TwitterModule {
     flag(PENGUIN_VERSIONS_FLAG, "penguin_6",
         "Comma-separated list of supported Penguin versions.", Flaggable.ofString());
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi.configs
 
 import com.twitter.servo.decider.DeciderKeyEnum
@@ -1064,4 +1065,8 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
   val EnableAuthorBlocksViewerDropRule: Value = Value(
     "visibility_library_enable_author_blocks_viewer_drop_rule"
   )
+}
+
+} catch {
+  case e: Exception =>
 }

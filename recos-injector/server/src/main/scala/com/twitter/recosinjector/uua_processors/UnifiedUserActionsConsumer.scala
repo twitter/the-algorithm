@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.uua_processors
 
 import com.twitter.conversions.DurationOps._
@@ -68,4 +69,8 @@ object UnifiedUserActionsConsumer {
   val uuaTopic = "unified_user_actions_engagements"
   val uuaDest = "/s/kafka/bluebird-1:kafka-tls"
   val uuaRecosInjectorGroupId = "recos-injector"
+}
+
+} catch {
+  case e: Exception =>
 }

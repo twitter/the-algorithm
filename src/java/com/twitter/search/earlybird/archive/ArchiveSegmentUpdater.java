@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive;
 
 import java.io.IOException;
@@ -276,4 +277,7 @@ public class ArchiveSegmentUpdater {
 
     return hdfsSegmentInfo;
   }
+}
+
+} catch (Exception e) {
 }

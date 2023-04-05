@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.PivotVerticalGridItemTopicFunctionalityType
@@ -18,4 +19,8 @@ class VerticalGridItemTopicFunctionalityTypeMarshaller @Inject() () {
     case RecommendationVerticalGridItemTopicFunctionalityType =>
       urt.VerticalGridItemTopicFunctionalityType.Recommendation
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.module
 
 import com.google.inject.Provides
@@ -63,4 +64,8 @@ object TweetImpressionStoreModule extends TwitterModule {
     TweetImpressionsStore.tweetImpressionsStore(client)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

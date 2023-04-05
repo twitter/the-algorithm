@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.assembler.models
 
 import com.twitter.follow_recommendations.{thriftscala => t}
@@ -44,4 +45,8 @@ object Carousel {
   ): Carousel = {
     Carousel(None)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

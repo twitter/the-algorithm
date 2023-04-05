@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.clients
 
 import com.twitter.cortex_core.thriftscala.ModelName
@@ -110,4 +111,8 @@ class ScopedCortexTweetQueryServiceClientFactory(
   override def scope(scope: RequestScope): CortexTweetQueryServiceClient = {
     new CortexTweetQueryServiceClient(cortexClient, scope, statsReceiver)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

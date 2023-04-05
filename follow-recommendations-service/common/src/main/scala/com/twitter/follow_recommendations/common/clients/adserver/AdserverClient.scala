@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.adserver
 
 import com.twitter.adserver.thriftscala.NewAdServer
@@ -13,4 +14,8 @@ class AdserverClient @Inject() (adserverService: NewAdServer.MethodPerEndpoint) 
         adserverService.makeAdRequest(adRequest.toThrift)
       ).map(_.impressions)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.scorer
 
 import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
@@ -45,4 +46,8 @@ object OONTweetScalingScorer extends Scorer[PipelineQuery, TweetCandidate] {
     !candidate.features.getOrElse(InNetworkFeature, false) &&
     !candidate.features.getOrElse(IsRetweetFeature, false)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.model;
 
 import com.twitter.search.common.debug.DebugEventAccumulator;
@@ -10,4 +11,7 @@ public interface IndexerStatus extends DebugEventAccumulator {
    * Needed by the SortStage.
    */
   long getId();
+}
+
+} catch (Exception e) {
 }

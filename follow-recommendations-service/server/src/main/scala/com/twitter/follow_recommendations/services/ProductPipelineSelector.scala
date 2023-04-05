@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.services
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -185,4 +186,8 @@ class ProductPipelineSelector @Inject() (
     if (oldFrsUser.recommendationFlowIdentifier != productMixerUser.recommendationFlowIdentifier)
       userStats.counter("mismatch-recommendationFlowIdentifier").incr()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 tweet_event_transformer_user_tweet_entity_edges:
   comment: "Enables the generation of UserTweetEntity edges in tweet event transformer"
   default_availability: 0
@@ -9,3 +10,6 @@ enable_emit_tweet_edge_from_reply:
 enable_unfavorite_edge:
   comment: "Decides when processing a UnfavoriteEvent from Timeline events, whether to process unfav edges"
   default_availability: 0
+
+} catch (Exception e) {
+}

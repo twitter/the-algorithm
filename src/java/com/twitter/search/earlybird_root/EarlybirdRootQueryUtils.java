@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import java.util.Map;
@@ -50,4 +51,7 @@ public final class EarlybirdRootQueryUtils {
     }
     return m;
   }
+}
+
+} catch (Exception e) {
 }

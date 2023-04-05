@@ -1,3 +1,4 @@
+try {
 python3_library(
     name = "libs_py3",
     sources = ["*.py"],
@@ -16,3 +17,6 @@ python37_binary(
         "twml",
     ],
 )
+
+} catch (Exception e) {
+}

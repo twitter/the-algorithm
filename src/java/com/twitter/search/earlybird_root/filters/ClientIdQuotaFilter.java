@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.Optional;
@@ -271,4 +272,7 @@ public class ClientIdQuotaFilter extends SimpleFilter<EarlybirdRequest, Earlybir
           + "Please request more quota at go/searchquota.",
           quotaClientId, finagleClientId, quota));
   }
+}
+
+} catch (Exception e) {
 }

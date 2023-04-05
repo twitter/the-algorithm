@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.blender
 
 import com.twitter.cr_mixer.blender.ImplicitSignalBackFillBlender.BackFillSourceTypes
@@ -61,4 +62,8 @@ object ImplicitSignalBackFillBlender {
     SourceType.VideoTweetQualityView)
 
   final val BackFillSourceTypes: Set[SourceType] = Set(SourceType.UserRepeatedProfileVisit)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import java.text.ParseException;
@@ -25,4 +26,7 @@ public final class ScrubGenUtil {
       throw new RuntimeException(msg, e);
     }
   }
+}
+
+} catch (Exception e) {
 }

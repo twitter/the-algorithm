@@ -1,3 +1,4 @@
+try {
 WITH
   vars AS (
     SELECT
@@ -36,3 +37,6 @@ WHERE
   line_items.endTime IS NULL
   OR TIMESTAMP_MILLIS(line_items.endTime) >= vars.end_date
 
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.hnsw;
 
 import java.io.IOException;
@@ -130,4 +131,7 @@ public final class HnswIndexIOUtil {
     outputStream.close();
     return nodes.size();
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urp
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
@@ -8,3 +9,7 @@ case class SegmentedTimeline(
   timeline: TimelineKey,
   scribeConfig: Option[TimelineScribeConfig] = None,
   refreshIntervalSec: Option[Long] = None)
+
+} catch {
+  case e: Exception =>
+}

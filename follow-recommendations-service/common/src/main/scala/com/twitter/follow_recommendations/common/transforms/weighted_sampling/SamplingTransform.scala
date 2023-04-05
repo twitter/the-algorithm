@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.transforms.weighted_sampling
 import com.twitter.follow_recommendations.common.base.GatedTransform
 import com.twitter.stitch.Stitch
@@ -135,4 +136,8 @@ class SamplingTransform @Inject() ()
 
     Stitch.value(transformedCandidates)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

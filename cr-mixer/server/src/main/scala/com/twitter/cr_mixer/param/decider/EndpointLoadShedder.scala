@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param.decider
 
 import com.twitter.decider.Decider
@@ -54,4 +55,8 @@ case class EndpointLoadShedder @Inject() (
 
 object EndpointLoadShedder {
   object LoadSheddingException extends Exception with NoStackTrace
+}
+
+} catch {
+  case e: Exception =>
 }

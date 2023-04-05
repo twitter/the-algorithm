@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.Arrays;
@@ -357,4 +358,7 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
     getEmitObjectsRateCounterFor(maybeBranch).increment();
     getEmitBatchObjectsRateCounterFor(maybeBranch).increment(getBatchSizeForStats(obj));
   }
+}
+
+} catch (Exception e) {
 }

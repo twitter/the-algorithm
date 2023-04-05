@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.filter
 
 import com.twitter.cr_mixer.model.CandidateGeneratorQuery
@@ -36,4 +37,8 @@ case class TweetAgeFilter() extends FilterBase {
   ): Duration = {
     query.params(GlobalParams.MaxTweetAgeHoursParam)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

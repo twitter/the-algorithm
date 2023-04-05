@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.Map;
@@ -276,4 +277,7 @@ public class FilterEventsBySafetyTypeStage extends TwitterBaseStage
       }
     }
   }
+}
+
+} catch (Exception e) {
 }

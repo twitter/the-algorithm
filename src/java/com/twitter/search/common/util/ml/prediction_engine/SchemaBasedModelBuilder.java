@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml.prediction_engine;
 
 import java.util.Map;
@@ -102,4 +103,7 @@ public class SchemaBasedModelBuilder extends BaseModelBuilder {
     return LightweightLinearModel.createForSchemaBased(
         modelName, bias, binaryFeatures, continuousFeatures, discretizedFeatures);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common.config;
 
 import java.util.Date;
@@ -360,4 +361,7 @@ public final class EarlybirdConfig {
   public static synchronized void clearForTests() {
     earlybirdConfig = new ConfigFile(EARLYBIRD_CONFIG_DIR, DEFAULT_CONFIG_FILE);
   }
+}
+
+} catch (Exception e) {
 }

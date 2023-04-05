@@ -1,3 +1,4 @@
+try {
 #include "internal/khash.h"
 #include "internal/error.h"
 #include <twml/defines.h>
@@ -377,4 +378,7 @@ twml_err twml_hashmap_to_tensors(twml_tensor keys, twml_tensor vals,
     });
 
   return TWML_ERR_NONE;
+}
+
+} catch (const std::exception& e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.user_user_graph
 
 import com.twitter.timelines.configapi.FSParam
@@ -16,4 +17,8 @@ object UserUserGraphParams {
   case object UserUserGraphCandidateSourceEnabledInTransform
       extends FSParam[Boolean]("user_user_graph_candidate_source_enabled_in_transform", true)
 
+}
+
+} catch {
+  case e: Exception =>
 }

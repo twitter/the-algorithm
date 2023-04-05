@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.common.tweets
 
 import com.twitter.spam.rtf.thriftscala.SafetyLabel
@@ -15,4 +16,8 @@ object StratoSafetyLabelFetcher {
 
     (tweetId, safetyLabelType) => getFetcher(safetyLabelType).fetch(tweetId).map(_.v)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.List;
@@ -110,4 +111,7 @@ public class ResolveCompressedUrlsPink {
       return Throwables.unchecked(e);
     }
   }
+}
+
+} catch (Exception e) {
 }

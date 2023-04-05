@@ -1,3 +1,4 @@
+try {
 scala_library(
     compiler_option_sets = ["fatal_warnings"],
     platform = "java8",
@@ -35,3 +36,6 @@ scala_library(
         "timelines/src/main/scala/com/twitter/timelines/config/configapi",
     ],
 )
+
+} catch (Exception e) {
+}

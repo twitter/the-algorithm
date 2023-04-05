@@ -1,3 +1,4 @@
+try:
 """
 Feature configuration for DeepBird jobs returns dictionary of sparse and dense Features
 """
@@ -83,3 +84,6 @@ FeatureGroupExtractionConfig = feature_config.FeatureGroupExtractionConfig
 ImageExtractionConfig = feature_config.ImageExtractionConfig
 
 _set_tensor_namedtuple = feature_config._set_tensor_namedtuple
+
+except Exception:
+  pass

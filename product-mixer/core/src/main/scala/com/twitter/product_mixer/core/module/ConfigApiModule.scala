@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.module
 
 import com.google.inject.Provides
@@ -18,4 +19,8 @@ object ConfigApiModule extends TwitterModule {
   @Provides
   @Singleton
   def providesConfig(configBuilder: ConfigBuilder): Config = configBuilder.build()
+}
+
+} catch {
+  case e: Exception =>
 }

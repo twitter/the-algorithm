@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder
 
 import com.twitter.spam.rtf.thriftscala.SafetyResult
@@ -109,4 +110,8 @@ object VisibilityResult {
       secondaryVerdicts,
       resolvedFeatureMap)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

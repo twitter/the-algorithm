@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.in_network_tweets
 
 import com.twitter.timelineranker.model.CandidateTweetsResult
@@ -28,4 +29,8 @@ class InNetworkTweetRepository(
   def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
     Future.collect(queries.map(query => get(query)))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

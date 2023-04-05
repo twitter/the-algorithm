@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.model
 
 import com.twitter.home_mixer.model.request.DeviceContext
@@ -36,4 +37,8 @@ case class ScoredTweetsQuery(
   override def withQualityFactorStatus(
     qualityFactorStatus: QualityFactorStatus
   ): ScoredTweetsQuery = copy(qualityFactorStatus = Some(qualityFactorStatus))
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.modules
 
 import com.google.inject.Provides
@@ -17,4 +18,8 @@ object ConfigApiModule extends TwitterModule {
   @Provides
   @Singleton
   def providesConfig(configBuilder: ConfigBuilder): Config = configBuilder.build()
+}
+
+} catch {
+  case e: Exception =>
 }

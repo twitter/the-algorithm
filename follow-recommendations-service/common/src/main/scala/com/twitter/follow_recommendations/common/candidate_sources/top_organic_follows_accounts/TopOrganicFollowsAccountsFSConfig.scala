@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -15,4 +16,8 @@ class TopOrganicFollowsAccountsFSConfig @Inject() () extends FeatureSwitchConfig
   override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
     TopOrganicFollowsAccountsParams.CandidateSourceWeight,
   )
+}
+
+} catch {
+  case e: Exception =>
 }

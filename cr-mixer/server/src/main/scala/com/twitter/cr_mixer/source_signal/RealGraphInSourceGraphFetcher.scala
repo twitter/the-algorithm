@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.source_signal
 
 import com.twitter.cr_mixer.config.TimeoutConfig
@@ -52,4 +53,8 @@ case class RealGraphInSourceGraphFetcher @Inject() (
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

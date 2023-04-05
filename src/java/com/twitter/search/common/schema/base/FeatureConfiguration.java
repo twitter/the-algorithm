@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema.base;
 
 import java.util.Set;
@@ -314,3 +315,6 @@ public final class FeatureConfiguration {
   }
 }
 
+
+} catch (Exception e) {
+}

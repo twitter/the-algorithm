@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding
 
 import com.twitter.dal.client.dataset.KeyValDALDataset
@@ -194,4 +195,8 @@ object GlobalSimClustersLanguageEmbeddingBatchApp extends ScheduledExecutionApp 
         dateRange.`end`
       )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

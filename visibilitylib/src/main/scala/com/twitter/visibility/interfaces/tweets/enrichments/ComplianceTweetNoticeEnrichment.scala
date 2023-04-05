@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.tweets.enrichments
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -52,4 +53,8 @@ object ComplianceTweetNoticeEnrichment {
       case _ => verdict
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

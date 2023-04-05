@@ -1,3 +1,4 @@
+try:
 """
 A custom optimizer to implement Deep Gradient Compression. The general idea of
 gradient compression is to compress the gradients exchanged across machines,
@@ -178,3 +179,6 @@ class DeepGradientCompressionOptimizer(tf.train.GradientDescentOptimizer):
         sparsified_values))
 
       return tf.group(*[update_var, update_g_buffer])
+
+except Exception:
+  pass

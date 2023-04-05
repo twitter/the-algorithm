@@ -1,3 +1,4 @@
+try:
 """
 Implementing Sequential Layer container
 """
@@ -158,3 +159,6 @@ class Sequential(Layer):
 
     """
     raise NotImplementedError
+
+except Exception:
+  pass

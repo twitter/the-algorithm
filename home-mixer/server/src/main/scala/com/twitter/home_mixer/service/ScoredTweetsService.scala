@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.service
 
 import com.twitter.home_mixer.{thriftscala => t}
@@ -21,4 +22,8 @@ class ScoredTweetsService @Inject() (productPipelineRegistry: ProductPipelineReg
   ): Stitch[t.ScoredTweetsResponse] = productPipelineRegistry
     .getProductPipeline[RequestType, t.ScoredTweetsResponse](request.product)
     .process(ProductPipelineRequest(request, params))
+}
+
+} catch {
+  case e: Exception =>
 }

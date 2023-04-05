@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -14,4 +15,8 @@ case class StaticRichTextBuilder(richText: RichText)
     candidate: UniversalNoun[Any],
     candidateFeatures: FeatureMap
   ): RichText = richText
+}
+
+} catch {
+  case e: Exception =>
 }

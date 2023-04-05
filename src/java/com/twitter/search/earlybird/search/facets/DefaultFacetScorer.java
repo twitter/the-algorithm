@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.facets;
 
 import java.io.IOException;
@@ -233,4 +234,7 @@ public class DefaultFacetScorer extends FacetScorer {
     return new HashingAndPruningFacetAccumulator(labelProvider, queryIndependentPenaltyWeight,
             HashingAndPruningFacetAccumulator.getComparator(sortingMode));
   }
+}
+
+} catch (Exception e) {
 }

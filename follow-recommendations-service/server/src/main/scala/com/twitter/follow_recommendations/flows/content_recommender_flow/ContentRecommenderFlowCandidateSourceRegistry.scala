@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.content_recommender_flow
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -75,4 +76,8 @@ class ContentRecommenderFlowCandidateSourceRegistry @Inject() (
     topOrganicFollowsAccountsSource,
     ppmiLocaleFollowSource,
   ).toSet
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.side_effect
 
 import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
@@ -120,4 +121,8 @@ class CachedScoredTweetsSideEffect @Inject() (
   override val alerts = Seq(
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.4)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

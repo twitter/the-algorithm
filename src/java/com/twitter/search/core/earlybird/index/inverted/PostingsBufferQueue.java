@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.util.NoSuchElementException;
@@ -152,4 +153,7 @@ final class PostingsBufferQueue {
   static int getSecondValue(long posting) {
     return (int) posting;
   }
+}
+
+} catch (Exception e) {
 }

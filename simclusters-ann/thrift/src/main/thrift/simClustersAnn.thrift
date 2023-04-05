@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.simclustersann.thriftjava
 #@namespace scala com.twitter.simclustersann.thriftscala
 
@@ -56,4 +57,7 @@ service SimClustersANNService {
       3: finatra_thrift_exceptions.ClientError clientError;
     );
 
+}
+
+} catch (Exception e) {
 }

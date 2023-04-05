@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.util.earlybird
 
 import com.twitter.search.common.constants.{thriftscala => scc}
@@ -366,4 +367,8 @@ object EarlybirdResponseUtil {
       }
       .getOrElse(thriftTweetFeatures)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

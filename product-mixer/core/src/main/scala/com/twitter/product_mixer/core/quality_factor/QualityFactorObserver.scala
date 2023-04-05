@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.quality_factor
 
 import com.twitter.util.Duration
@@ -15,4 +16,8 @@ trait QualityFactorObserver {
    *       [[QualityFactor.config]]'s [[QualityFactorConfig.ignorableFailures]]
    */
   def apply(result: Try[_], latency: Duration): Unit
+}
+
+} catch {
+  case e: Exception =>
 }

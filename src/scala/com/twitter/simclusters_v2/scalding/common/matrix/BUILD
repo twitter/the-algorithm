@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     platform = "java8",
@@ -6,3 +7,6 @@ scala_library(
         "src/scala/com/twitter/scalding_internal/job/analytics_batch",
     ],
 )
+
+} catch (Exception e) {
+}

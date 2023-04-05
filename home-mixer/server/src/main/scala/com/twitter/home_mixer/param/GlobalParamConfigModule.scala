@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.param
 
 import com.twitter.inject.TwitterModule
@@ -7,4 +8,8 @@ object GlobalParamConfigModule extends TwitterModule {
   override def configure(): Unit = {
     bind[GlobalParamConfig].to[HomeGlobalParamConfig]
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 package multi_type_graph.assemble_multi_type_graph
 
@@ -71,4 +72,8 @@ object AssembleMultiTypeGraphBatchApp
     FullMultiTypeGraphScalaDataset
   override val firstTime: RichDate = RichDate("2021-08-21")
   override val batchIncrement: Duration = Days(7)
+}
+
+} catch {
+  case e: Exception =>
 }

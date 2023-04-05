@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.data.experimental;
@@ -79,4 +80,7 @@ message WorkerConfig {
   // process the final requests. This is used to achieve clean shutdown in unit
   // tests.
   int64 shutdown_quiet_period_ms = 9;
+}
+
+} catch (Exception e) {
 }

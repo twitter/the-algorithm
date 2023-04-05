@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml.prediction_engine;
 
 import com.google.common.base.Preconditions;
@@ -61,4 +62,7 @@ public abstract class BaseLegacyScoreAccumulator<D> extends BaseScoreAccumulator
     }
     return this;
   }
+}
+
+} catch (Exception e) {
 }

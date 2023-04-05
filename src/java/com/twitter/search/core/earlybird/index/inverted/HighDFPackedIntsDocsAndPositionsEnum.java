@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -153,4 +154,7 @@ public class HighDFPackedIntsDocsAndPositionsEnum extends HighDFPackedIntsDocsEn
         HighDFPackedIntsPostingLists.getPositionOffsetInSlice(skipListEntryEncodedMetadata));
     numPositionsRemainingForCurrentDocID = 0;
   }
+}
+
+} catch (Exception e) {
 }

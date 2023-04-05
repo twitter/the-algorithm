@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.util
 
 import com.twitter.tweetypie.{thriftscala => tweetypie}
@@ -16,4 +17,8 @@ object TweetAnnotationFeaturesExtractor {
       inputFeatures
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

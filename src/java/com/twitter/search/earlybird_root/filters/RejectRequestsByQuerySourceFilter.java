@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.HashMap;
@@ -91,4 +92,7 @@ public class RejectRequestsByQuerySourceFilter extends
         .setDebugString(String.format(
             "Request with query source %s is blocked by decider %s", querySource, deciderKey));
   }
+}
+
+} catch (Exception e) {
 }

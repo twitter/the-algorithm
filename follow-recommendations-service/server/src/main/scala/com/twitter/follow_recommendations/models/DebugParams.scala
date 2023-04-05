@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.models
 
 import com.twitter.follow_recommendations.common.models.DebugOptions
@@ -25,4 +26,8 @@ object DebugParams {
 
 trait HasFrsDebugParams {
   def frsDebugParams: Option[DebugParams]
+}
+
+} catch {
+  case e: Exception =>
 }

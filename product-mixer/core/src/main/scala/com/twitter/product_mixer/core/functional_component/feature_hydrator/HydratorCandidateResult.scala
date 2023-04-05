@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.feature_hydrator
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -8,3 +9,7 @@ case class HydratorCandidateResult[+Candidate <: UniversalNoun[Any]](
   override val candidate: Candidate,
   override val features: FeatureMap)
     extends CandidateWithFeatures[Candidate]
+
+} catch {
+  case e: Exception =>
+}

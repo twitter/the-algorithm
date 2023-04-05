@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -274,4 +275,8 @@ object CandidateFeatureHydratorExecutor {
   case class Inputs[+Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
     query: Query,
     candidates: Seq[CandidateWithFeatures[Candidate]])
+}
+
+} catch {
+  case e: Exception =>
 }

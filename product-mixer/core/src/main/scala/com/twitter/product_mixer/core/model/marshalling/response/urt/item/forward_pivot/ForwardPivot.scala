@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.color.RosettaColor
@@ -16,3 +17,7 @@ case class ForwardPivot(
   backgroundColorName: Option[RosettaColor],
   engagementNudge: Option[Boolean],
   softInterventionDisplayType: Option[SoftInterventionDisplayType])
+
+} catch {
+  case e: Exception =>
+}

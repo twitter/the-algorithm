@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -187,4 +188,7 @@ public class MPHTermDictionary implements TermDictionary, Flushable {
               termPool, termPointerEncoding);
     }
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.candidate
 
 import com.fasterxml.jackson.annotation.JsonTypeName
@@ -91,3 +92,7 @@ object TweetAuthorIdFeature extends Feature[TweetCandidate, Long]
  * See [[com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder]]
  */
 object IsPinnedFeature extends Feature[TweetCandidate, Boolean]
+
+} catch {
+  case e: Exception =>
+}

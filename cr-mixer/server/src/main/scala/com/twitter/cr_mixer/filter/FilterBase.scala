@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.filter
 
 import com.twitter.cr_mixer.model.CandidateGeneratorQuery
@@ -19,4 +20,8 @@ trait FilterBase {
    * because param() can be slow when called many times
    */
   def requestToConfig[CGQueryType <: CandidateGeneratorQuery](request: CGQueryType): ConfigType
+}
+
+} catch {
+  case e: Exception =>
 }

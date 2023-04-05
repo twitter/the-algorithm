@@ -1,3 +1,4 @@
+try {
 scala_library(
     platform = "java8",
     tags = ["bazel-compatible"],
@@ -9,3 +10,6 @@ scala_library(
         "src/scala/com/twitter/simclusters_v2/common/ml",
     ],
 )
+
+} catch (Exception e) {
+}

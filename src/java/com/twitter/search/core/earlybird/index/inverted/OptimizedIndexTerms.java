@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import org.apache.lucene.index.Terms;
@@ -54,4 +55,7 @@ public class OptimizedIndexTerms extends Terms {
   public boolean hasPayloads() {
     return false;
   }
+}
+
+} catch (Exception e) {
 }

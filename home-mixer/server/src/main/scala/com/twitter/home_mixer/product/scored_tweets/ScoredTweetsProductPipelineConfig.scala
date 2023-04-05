@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets
 
 import com.twitter.home_mixer.model.HomeFeatures.ServedTweetIdsFeature
@@ -69,4 +70,8 @@ class ScoredTweetsProductPipelineConfig @Inject() (
     scoredTweetsRecommendationPipelineConfig.identifier
 
   override val debugAccessPolicies: Set[AccessPolicy] = DefaultHomeMixerAccessPolicy
+}
+
+} catch {
+  case e: Exception =>
 }

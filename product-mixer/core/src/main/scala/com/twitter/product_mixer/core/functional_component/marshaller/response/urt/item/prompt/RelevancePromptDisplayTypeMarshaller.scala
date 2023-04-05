@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt._
@@ -15,4 +16,8 @@ class RelevancePromptDisplayTypeMarshaller {
     case Large => urt.RelevancePromptDisplayType.Large
     case ThumbsUpAndDown => urt.RelevancePromptDisplayType.ThumbsUpAndDown
   }
+}
+
+} catch {
+  case e: Exception =>
 }

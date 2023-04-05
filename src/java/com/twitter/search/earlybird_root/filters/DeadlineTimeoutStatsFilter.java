@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.concurrent.TimeUnit;
@@ -185,4 +186,7 @@ public class DeadlineTimeoutStatsFilter
       return -1;
     }
   }
+}
+
+} catch (Exception e) {
 }

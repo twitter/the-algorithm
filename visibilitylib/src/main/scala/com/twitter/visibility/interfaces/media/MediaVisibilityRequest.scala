@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.media
 
 import com.twitter.mediaservices.media_util.GenericMediaKey
@@ -8,3 +9,7 @@ case class MediaVisibilityRequest(
   mediaKey: GenericMediaKey,
   safetyLevel: SafetyLevel,
   viewerContext: ViewerContext)
+
+} catch {
+  case e: Exception =>
+}

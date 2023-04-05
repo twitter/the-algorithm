@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.common
 
 import com.spotify.scio.ScioMetrics
@@ -90,4 +91,8 @@ object GraphUtil {
   def filterNegative(edge: Edge): Boolean = {
     !edge.features.find(ef => HEALTH_FEATURE_LIST.contains(ef.name)).exists(_.tss.mean > 0.0)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

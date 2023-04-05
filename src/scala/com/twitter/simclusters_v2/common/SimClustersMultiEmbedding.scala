@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common
 
 import com.twitter.simclusters_v2.common.SimClustersMultiEmbeddingId._
@@ -29,4 +30,8 @@ object SimClustersMultiEmbedding {
     }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

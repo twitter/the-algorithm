@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
 
 import com.twitter.product_mixer.component_library.model.candidate.BaseTopicCandidate
@@ -42,4 +43,8 @@ case class TopicNotInterestedFeedbackActionInfoBuilder[-Query <: PipelineQuery](
         clientEventInfo = None
       ))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

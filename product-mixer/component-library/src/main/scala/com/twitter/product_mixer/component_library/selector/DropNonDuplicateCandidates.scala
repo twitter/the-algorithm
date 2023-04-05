@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
@@ -72,4 +73,8 @@ case class DropNonDuplicateCandidates(
       case _ => false
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

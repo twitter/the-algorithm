@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Preroll
@@ -16,4 +17,8 @@ class PrerollMarshaller @Inject() (
       dynamicPrerollType = preroll.dynamicPrerollType.map(dynamicPrerollTypeMarshaller(_)),
       mediaInfo = preroll.mediaInfo.map(mediaInfoMarshaller(_))
     )
+}
+
+} catch {
+  case e: Exception =>
 }

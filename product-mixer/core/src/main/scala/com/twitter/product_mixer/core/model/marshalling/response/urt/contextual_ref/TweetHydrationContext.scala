@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref
 
 import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.SafetyLevel
@@ -5,3 +6,7 @@ import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_leve
 case class TweetHydrationContext(
   safetyLevelOverride: Option[SafetyLevel],
   outerTweetContext: Option[OuterTweetContext])
+
+} catch {
+  case e: Exception =>
+}

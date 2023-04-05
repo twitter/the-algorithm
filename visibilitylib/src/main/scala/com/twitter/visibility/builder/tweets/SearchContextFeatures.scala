@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.tweets
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -41,4 +42,8 @@ class SearchContextFeatures(
         })
       .withConstantFeature(SearchQueryHasUser, searchContext.queryHasUser)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

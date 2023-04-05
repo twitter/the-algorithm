@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urt.builder
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
@@ -91,4 +92,8 @@ trait UrtBuilder[-Query <: PipelineQuery, +Instruction <: TimelineInstruction] {
         entry.withSortIndex(index)
     } ++ cursorEntries
   }
+}
+
+} catch {
+  case e: Exception =>
 }

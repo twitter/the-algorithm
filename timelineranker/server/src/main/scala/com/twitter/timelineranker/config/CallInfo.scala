@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.config
 
 import com.twitter.conversions.DurationOps._
@@ -116,4 +117,8 @@ object GetRecycledTweetCandidatesCall {
       hydrateSourceTweets
     )
   )
+}
+
+} catch {
+  case e: Exception =>
 }

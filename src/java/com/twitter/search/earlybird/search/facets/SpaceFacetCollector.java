@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.facets;
 
 import java.util.ArrayList;
@@ -44,4 +45,7 @@ public class SpaceFacetCollector extends AbstractFacetTermCollector {
     getExtraMetadata(result).setSpaces(ImmutableList.copyOf(spaces));
     spaces.clear();
   }
+}
+
+} catch (Exception e) {
 }

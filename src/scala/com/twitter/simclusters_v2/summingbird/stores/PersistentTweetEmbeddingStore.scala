@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.stores
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -101,4 +102,8 @@ object PersistentTweetEmbeddingStore {
 
   // The tweet embedding store keeps at most 20 LKeys
   private[stores] val DefaultSlice = Slice[Long](from = None, to = None, limit = None)
+}
+
+} catch {
+  case e: Exception =>
 }

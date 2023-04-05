@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import com.twitter.search.common.facets.thriftjava.FacetResponse;
@@ -13,4 +14,7 @@ public interface FacetResponseRewriter {
    * @return the rewrited response
    */
   FacetResponse rewrite(FacetResponse facetResponse);
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.graph_common
 
 import com.twitter.graphjet.stats.StatsReceiver
@@ -61,4 +62,8 @@ object MultiSegmentPowerLawBipartiteGraphBuilder {
       statsReceiver
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

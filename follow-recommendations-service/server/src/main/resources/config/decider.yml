@@ -1,3 +1,4 @@
+try {
 enable_recommendations:
   comment: Proportion of requests where we return an actual response as part. Decreasing the value will increase the portion of empty responses (in order to disable the service) as part of the graceful degradation.
   default_availability: 10000
@@ -127,3 +128,6 @@ enable_traffic_dark_reading:
 enable_graph_feature_service_requests:
   comment: Proportion of requests where we allow request calls to Graph Feature Service
   default_availability: 10000
+
+} catch (Exception e) {
+}

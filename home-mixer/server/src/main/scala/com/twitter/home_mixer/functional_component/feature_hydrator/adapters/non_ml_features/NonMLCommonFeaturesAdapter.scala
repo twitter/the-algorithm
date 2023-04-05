@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.adapters.non_ml_features
 
 import com.twitter.ml.api.constant.SharedFeatures
@@ -45,4 +46,8 @@ object NonMLCommonFeaturesAdapter extends TimelinesMutatingAdapterBase[NonMLComm
       TimelinesSharedFeatures.SERVED_TIMESTAMP,
       nonMLCommonFeatures.servedTimestamp)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

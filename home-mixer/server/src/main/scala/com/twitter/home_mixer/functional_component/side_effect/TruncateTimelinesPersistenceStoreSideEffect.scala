@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.side_effect
 
 import com.twitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
@@ -65,4 +66,8 @@ class TruncateTimelinesPersistenceStoreSideEffect @Inject() (
   override val alerts = Seq(
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.8)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

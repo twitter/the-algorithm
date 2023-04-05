@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.stores
 import com.twitter.bijection.Bufferable
 import com.twitter.bijection.Injection
@@ -284,4 +285,8 @@ object MultiTypeGraphStore {
         mhMtlsParams
       )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

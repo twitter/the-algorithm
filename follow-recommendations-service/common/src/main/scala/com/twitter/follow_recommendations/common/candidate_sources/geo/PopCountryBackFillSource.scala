@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.geo
 
 import com.google.inject.Singleton
@@ -30,4 +31,8 @@ object PopCountryBackFillSource {
     CandidateSourceIdentifier(Algorithm.PopCountryBackFill.toString)
   val MaxResults = 40
   val DefaultKey = "country_US"
+}
+
+} catch {
+  case e: Exception =>
 }

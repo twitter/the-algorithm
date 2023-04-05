@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.search.termination;
 
 import java.io.IOException;
@@ -88,4 +89,7 @@ public class TerminationQueryScorer extends FilteredScorer implements DocIdTrack
   public int getCurrentDocId() {
     return lastSearchedDocId;
   }
+}
+
+} catch (Exception e) {
 }

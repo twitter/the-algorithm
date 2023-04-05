@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates.hss
 
 import com.twitter.follow_recommendations.common.predicates.hss.HssPredicateParams._
@@ -19,4 +20,8 @@ class HssPredicateFSConfig @Inject() () extends FeatureSwitchConfig {
   override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
     HssApiTimeout
   )
+}
+
+} catch {
+  case e: Exception =>
 }

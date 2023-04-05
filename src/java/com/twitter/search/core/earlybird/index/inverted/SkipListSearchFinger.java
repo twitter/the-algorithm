@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 /**
@@ -42,4 +43,7 @@ public class SkipListSearchFinger {
   public boolean isInitialPointer(int pointer) {
     return pointer == INITIAL_POINTER;
   }
+}
+
+} catch (Exception e) {
 }

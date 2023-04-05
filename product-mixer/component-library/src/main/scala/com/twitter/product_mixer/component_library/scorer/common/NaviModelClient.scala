@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.common
 
 import com.twitter.finagle.Http
@@ -47,4 +48,8 @@ case class NaviModelClient(
           }
       )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

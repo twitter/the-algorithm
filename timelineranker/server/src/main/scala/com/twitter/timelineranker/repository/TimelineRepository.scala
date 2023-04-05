@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.repository
 
 import com.twitter.timelineranker.model.Timeline
@@ -13,4 +14,8 @@ class EmptyTimelineRepository extends TimelineRepository {
   def get(queries: Seq[TimelineQuery]): Seq[Future[Timeline]] = {
     queries.map(q => Future.value(Timeline.empty(q.id)))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

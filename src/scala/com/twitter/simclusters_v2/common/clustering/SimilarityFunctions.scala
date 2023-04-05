@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common.clustering
 
 import com.twitter.simclusters_v2.common.SimClustersEmbedding
@@ -29,4 +30,8 @@ object SimilarityFunctions {
   ) => Double = (e1, e2) => {
     e1.fuzzyJaccardSimilarity(e2)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.abdecider.LoggingABDecider
@@ -358,4 +359,8 @@ object NsfwHighPrecisionUserLabelAvoidTweetRule
     ) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(
     NsfwHighPrecisionUserLabelAvoidTweetRuleEnabledParam)
+}
+
+} catch {
+  case e: Exception =>
 }

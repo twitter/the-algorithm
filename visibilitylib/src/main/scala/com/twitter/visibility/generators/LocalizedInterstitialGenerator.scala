@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.generators
 
 import com.twitter.decider.Decider
@@ -148,4 +149,8 @@ class LocalizedInterstitialGenerator private (
       None
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

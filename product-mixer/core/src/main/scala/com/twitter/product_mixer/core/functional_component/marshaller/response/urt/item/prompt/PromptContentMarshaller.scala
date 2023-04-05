@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.PromptContent
@@ -14,4 +15,8 @@ class PromptContentMarshaller @Inject() (
     case relevancePromptContent: RelevancePromptContent =>
       urt.PromptContent.RelevancePrompt(relevancePromptContentMarshaller(relevancePromptContent))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

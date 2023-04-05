@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.util
 
 import com.twitter.cr_mixer.model.CandidateGenerationInfo
@@ -36,4 +37,8 @@ object CandidateGenerationKeyUtil {
           SimilarityEngine(se.similarityEngineType, se.modelId, se.score)))
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

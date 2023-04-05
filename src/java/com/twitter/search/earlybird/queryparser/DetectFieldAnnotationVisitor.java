@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.queryparser;
 
 import java.util.Set;
@@ -96,4 +97,7 @@ public class DetectFieldAnnotationVisitor extends QueryVisitor<Boolean> {
 
     return false;
   }
+}
+
+} catch (Exception e) {
 }

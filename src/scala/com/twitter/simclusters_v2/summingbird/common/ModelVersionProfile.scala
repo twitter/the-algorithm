@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.common
 
 import com.twitter.simclusters_v2.thriftscala.EmbeddingType
@@ -37,4 +38,8 @@ object ModelVersionProfiles {
     ModelVersion.Model20m145kUpdated -> ModelVersion20M145KUpdated,
     ModelVersion.Model20m145k2020 -> ModelVersion20M145K2020
   )
+}
+
+} catch {
+  case e: Exception =>
 }

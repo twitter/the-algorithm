@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import javax.inject.Inject;
@@ -29,4 +30,7 @@ public class FacetsCacheFilter extends
           new FacetsServicePostProcessor(cache),
           new EarlybirdRequestPerClientCacheStats(EarlybirdRequestType.FACETS.getNormalizedName()));
   }
+}
+
+} catch (Exception e) {
 }

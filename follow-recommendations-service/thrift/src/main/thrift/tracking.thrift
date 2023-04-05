@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.follow_recommendations.thriftjava
 #@namespace scala com.twitter.follow_recommendations.thriftscala
 #@namespace strato com.twitter.follow_recommendations
@@ -15,3 +16,6 @@ struct TrackingToken {
   // WTF Algorithm Id (backward compatibility)
   4: optional i32 algoId
 }(hasPersonalData='true')
+
+} catch (Exception e) {
+}

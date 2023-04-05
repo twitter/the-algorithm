@@ -1,3 +1,4 @@
+try:
 # pylint: disable=unused-argument, missing-docstring
 '''
 Common build graphs that can be reused
@@ -30,3 +31,6 @@ def get_saved_modules_graph(input_graph_fn):
       return {'train_op': train_op, 'loss': loss}
     return output
   return build_graph
+
+except Exception:
+  pass

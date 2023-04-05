@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.model
 
 import com.twitter.timelineranker.{thriftscala => thrift}
@@ -18,4 +19,8 @@ class HydratedTweetEntry(tweet: tweetypie.Tweet) extends HydratedTweet(tweet) wi
   override def throwIfInvalid(): Unit = {
     // No validation performed.
   }
+}
+
+} catch {
+  case e: Exception =>
 }

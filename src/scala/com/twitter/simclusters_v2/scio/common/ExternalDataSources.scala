@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scio.common
 
 import com.spotify.scio.ScioContext
@@ -298,4 +299,8 @@ object ExternalDataSources {
     }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

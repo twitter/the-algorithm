@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.common.alert
 
 import com.twitter.util.Try
@@ -34,3 +35,7 @@ case class Destination(
 case class NotificationGroup(
   critical: Destination,
   warn: Destination)
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.tweet
 
 import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
@@ -12,4 +13,8 @@ trait BaseTimelinesScoreInfoBuilder[-Query <: PipelineQuery, -Candidate <: BaseT
     candidate: Candidate,
     candidateFeatures: FeatureMap
   ): Option[TimelinesScoreInfo]
+}
+
+} catch {
+  case e: Exception =>
 }

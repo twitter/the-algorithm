@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.offline_job.adhoc
 
 import com.twitter.bijection.{Bufferable, Injection}
@@ -359,4 +360,8 @@ object TweetSimilarityEvaluationAdhocApp extends AdhocExecutionApp {
       )
       .unit
   }
+}
+
+} catch {
+  case e: Exception =>
 }

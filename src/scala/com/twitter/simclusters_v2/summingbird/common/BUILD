@@ -1,3 +1,4 @@
+try {
 scala_library(
     platform = "java8",
     tags = ["bazel-compatible"],
@@ -60,3 +61,6 @@ scala_library(
         "src/thrift/com/twitter/tweetypie:tweet-scala",
     ],
 )
+
+} catch (Exception e) {
+}

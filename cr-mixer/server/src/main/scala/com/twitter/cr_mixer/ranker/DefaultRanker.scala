@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.ranker
 
 import com.twitter.cr_mixer.model.BlendedCandidate
@@ -20,4 +21,8 @@ class DefaultRanker() {
     }
     Future.value(rankedCandidates)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

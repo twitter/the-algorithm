@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.real_time_real_graph
 
 sealed trait EngagementType
@@ -12,3 +13,7 @@ object EngagementType {
 }
 
 case class Engagement(engagementType: EngagementType, timestamp: Long)
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.candidate.ads
 
 import com.twitter.adserver.{thriftscala => adsthrift}
@@ -92,4 +93,8 @@ final class AdsTweetCandidate private (
 object AdsTweetCandidate {
   def apply(id: Long, adImpression: adsthrift.AdImpression): AdsTweetCandidate =
     new AdsTweetCandidate(id, adImpression)
+}
+
+} catch {
+  case e: Exception =>
 }

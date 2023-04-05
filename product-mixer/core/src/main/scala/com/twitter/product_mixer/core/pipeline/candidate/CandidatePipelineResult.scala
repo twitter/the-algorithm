@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.candidate
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -90,4 +91,8 @@ private[candidate] case class IntermediateCandidatePipelineResult[Candidate <: U
     copy(underlyingResult = underlyingResult.withResult(result))
 
   override def resultSize(): Int = underlyingResult.resultSize
+}
+
+} catch {
+  case e: Exception =>
 }

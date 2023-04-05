@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.queryparser;
 
 import com.twitter.search.common.constants.QueryCacheConstants;
@@ -128,4 +129,7 @@ public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
   public Boolean visit(Term term) throws QueryParserException {
     return false;
   }
+}
+
+} catch (Exception e) {
 }

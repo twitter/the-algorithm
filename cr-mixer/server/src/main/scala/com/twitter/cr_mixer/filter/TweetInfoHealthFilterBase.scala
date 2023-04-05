@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.filter
 
 import com.twitter.contentrecommender.thriftscala.TweetInfo
@@ -36,4 +37,8 @@ trait TweetInfoHealthFilterBase extends FilterBase {
       case _ => HealthThreshold.Enum.Off
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

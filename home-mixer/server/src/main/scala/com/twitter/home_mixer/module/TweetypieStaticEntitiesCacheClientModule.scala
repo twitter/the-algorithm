@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.module
 
 import com.google.inject.name.Named
@@ -66,4 +67,8 @@ object TweetypieStaticEntitiesCacheClientModule extends TwitterModule {
       name = ScopeName
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

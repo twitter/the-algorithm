@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.List;
@@ -147,4 +148,7 @@ public class FieldStatExporter {
   public void updatePenguinVersions(List<PenguinVersion> updatedPenguinVersions) {
     penguinVersions = updatedPenguinVersions;
   }
+}
+
+} catch (Exception e) {
 }

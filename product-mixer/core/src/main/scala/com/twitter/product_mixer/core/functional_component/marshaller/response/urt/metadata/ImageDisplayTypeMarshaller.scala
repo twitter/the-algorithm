@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageDisplayType
@@ -17,4 +18,8 @@ class ImageDisplayTypeMarshaller @Inject() () {
       case FullWidth => urt.ImageDisplayType.FullWidth
       case IconSmall => urt.ImageDisplayType.IconSmall
     }
+}
+
+} catch {
+  case e: Exception =>
 }

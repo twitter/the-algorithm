@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.List;
@@ -116,4 +117,7 @@ public class MetadataTrackingFilter extends SimpleFilter<EarlybirdRequest, Early
 
     return response;
   }
+}
+
+} catch (Exception e) {
 }

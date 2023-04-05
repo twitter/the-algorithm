@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.queryparser;
 
 import java.util.ArrayList;
@@ -208,4 +209,7 @@ public class HighFrequencyTermPairExtractor extends QueryVisitor<Integer> {
 
     return groupList.get(groupIds.get(query));
   }
+}
+
+} catch (Exception e) {
 }

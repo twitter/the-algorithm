@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.mergers;
 
 public interface EarlyTerminateTierMergePredicate {
@@ -6,4 +7,7 @@ public interface EarlyTerminateTierMergePredicate {
    */
   boolean shouldEarlyTerminateTierMerge(int totalResultsFromSuccessfulShards,
                                         boolean foundEarlyTermination);
+}
+
+} catch (Exception e) {
 }

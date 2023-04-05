@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -9,3 +10,6 @@ scala_library(
         "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/constants",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.storm
 
 import com.twitter.simclusters_v2.common.ModelVersions._
@@ -229,4 +230,8 @@ object TweetJob {
     }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

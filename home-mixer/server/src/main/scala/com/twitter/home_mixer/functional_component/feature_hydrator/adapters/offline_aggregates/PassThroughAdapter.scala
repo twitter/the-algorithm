@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.adapters.offline_aggregates
 
 import com.twitter.ml.api.DataRecord
@@ -9,4 +10,8 @@ object PassThroughAdapter extends IRecordOneToOneAdapter[Seq[DataRecord]] {
 
   // This is not necessary and should not be used.
   override def getFeatureContext = ???
+}
+
+} catch {
+  case e: Exception =>
 }

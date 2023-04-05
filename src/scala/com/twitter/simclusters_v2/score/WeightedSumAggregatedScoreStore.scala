@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.score
 
 import com.twitter.simclusters_v2.score.WeightedSumAggregatedScoreStore.WeightedSumAggregatedScoreParameter
@@ -81,4 +82,8 @@ object WeightedSumAggregatedScoreStore {
       ScoreInternalId.GenericPairScoreId(
         GenericPairScoreId(simClustersId.id1.internalId, simClustersId.id2.internalId))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.index;
 
 import java.io.IOException;
@@ -180,4 +181,7 @@ public abstract class TweetIDMapper implements DocIDToTweetIDMapper, Flushable {
    */
   protected abstract int findDocIDBoundInternal(long tweetID,
                                                 boolean findMaxDocID) throws IOException;
+}
+
+} catch (Exception e) {
 }

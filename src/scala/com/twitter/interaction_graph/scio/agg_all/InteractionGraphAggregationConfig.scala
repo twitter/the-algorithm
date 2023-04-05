@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_all
 
 object InteractionGraphScoringConfig {
@@ -11,4 +12,8 @@ object InteractionGraphScoringConfig {
    */
   val ALPHA = 1.0
   val ONE_MINUS_ALPHA = 0.955
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "user_session_inj",
     sources = ["UserSessionInjection.scala"],
@@ -23,3 +24,6 @@ scala_library(
         "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
     ],
 )
+
+} catch (Exception e) {
+}

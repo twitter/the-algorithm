@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.card
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.item.card.CardCandidateUtrItemBuilder.CardClientEventInfoElement
@@ -48,4 +49,8 @@ case class CardCandidateUtrItemBuilder[-Query <: PipelineQuery](
     url = urlBuilder.map(_.apply(query, cardCandidate, candidateFeatures)),
     displayType = cardDisplayType
   )
+}
+
+} catch {
+  case e: Exception =>
 }

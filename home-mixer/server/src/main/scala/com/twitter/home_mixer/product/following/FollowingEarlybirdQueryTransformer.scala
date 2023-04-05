@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.following
 
 import com.twitter.finagle.thrift.ClientId
@@ -81,4 +82,8 @@ case class FollowingEarlybirdQueryTransformer @Inject() (clientId: ClientId)
       clientId = Some(clientId.name),
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

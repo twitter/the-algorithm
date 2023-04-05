@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.filter
 
 import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
@@ -29,4 +30,8 @@ case class UrtUnorderedExcludeIdsCursorFilter[
     val filterResult = FilterResult(kept = kept, removed = removed)
     Stitch.value(filterResult)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import java.io.IOException;
@@ -45,4 +46,7 @@ public class EarlybirdFacetsFactory implements FacetsFactory {
     return facetInfo != null
         && reader.getSegmentData().getPerFieldMap().containsKey(facetInfo.getName());
   }
+}
+
+} catch (Exception e) {
 }

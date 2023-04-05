@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.cortex
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -44,4 +45,8 @@ class CortexManagedInferenceServiceTensorScorerBuilder @Inject() (
       client,
       statsReceiver.scope(scorerIdentifier.name)
     )
+}
+
+} catch {
+  case e: Exception =>
 }

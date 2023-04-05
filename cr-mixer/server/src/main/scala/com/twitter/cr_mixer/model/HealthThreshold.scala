@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.model
 
 object HealthThreshold {
@@ -8,4 +9,8 @@ object HealthThreshold {
     val Stricter: Value = Value(4)
     val StricterPlus: Value = Value(5)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

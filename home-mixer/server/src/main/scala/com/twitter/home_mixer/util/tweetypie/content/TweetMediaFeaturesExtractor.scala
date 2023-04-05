@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.util.tweetypie.content
 
 import com.twitter.home_mixer.model.ContentFeatures
@@ -283,3 +284,7 @@ case class UserDefinedProductMetadataFeatures(
   hasVisitSiteCallToAction: Option[Boolean],
   hasAppInstallCallToAction: Option[Boolean],
   hasWatchNowCallToAction: Option[Boolean])
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.queries;
 
 import java.io.IOException;
@@ -83,4 +84,7 @@ class SimpleTermQuery extends Query {
       return true;
     }
   }
+}
+
+} catch (Exception e) {
 }

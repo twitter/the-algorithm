@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.util;
 
 import com.google.common.base.Preconditions;
@@ -23,4 +24,7 @@ public final class PipelineUtil {
   }
 
   private PipelineUtil() { /* prevent instantiation */ }
+}
+
+} catch (Exception e) {
 }

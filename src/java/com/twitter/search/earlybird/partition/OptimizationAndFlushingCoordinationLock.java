@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.util.concurrent.locks.ReentrantLock;
@@ -43,4 +44,7 @@ public class OptimizationAndFlushingCoordinationLock {
   public boolean hasQueuedThreads() {
     return lock.hasQueuedThreads();
   }
+}
+
+} catch (Exception e) {
 }

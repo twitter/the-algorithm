@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.push_service
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -71,4 +72,8 @@ class PushServiceVisibilityLibraryParity(
     Stitch.callFuture(
       tweetypieStore.get(request.tweet.id).onFailure(_ => failures.incr()).map(x => x.isDefined))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try:
 import tensorflow as tf
 from keras.utils import tf_utils
 from keras.utils import losses_utils
@@ -54,3 +55,6 @@ class MaskedBCE(LossFunctionWrapper):
     reduction=losses_utils.ReductionV2.AUTO,
     name='masked_bce'):
     super().__init__(masked_bce, name=name, reduction=reduction)
+
+except Exception:
+  pass

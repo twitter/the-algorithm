@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
 
 import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
@@ -39,4 +40,8 @@ class RandomScorer @Inject() (
   // `predictionFeature` anyway.
   override val predictionFeature: Feature.Continuous =
     new Feature.Continuous("prediction.pfollow_pengagement")
+}
+
+} catch {
+  case e: Exception =>
 }

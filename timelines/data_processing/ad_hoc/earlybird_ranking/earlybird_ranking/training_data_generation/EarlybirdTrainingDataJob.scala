@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.training_data_generation
 
 import com.twitter.ml.api.HourlySuffixFeatureSource
@@ -90,3 +91,7 @@ object EarlybirdTrainingDataAdHocJob
 object EarlybirdTrainingDataProdJob
     extends OfflineAnalyticsBatchExecution
     with GenerateEarlybirdTrainingData
+
+} catch {
+  case e: Exception =>
+}

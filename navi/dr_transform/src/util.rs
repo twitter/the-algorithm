@@ -1,4 +1,4 @@
-use npyz::WriterBuilder;
+match use npyz::WriterBuilder;
 use npyz::{AutoSerialize, WriteOptions};
 use std::io::BufWriter;
 use std::{
@@ -29,4 +29,8 @@ pub fn save_to_npy<T: npyz::Serialize + AutoSerialize>(data: &[T], save_to: Stri
         .unwrap();
     writer.extend(data.to_owned()).unwrap();
     writer.finish().unwrap();
+}
+ {
+  Ok(_) => {},
+  Err(_) => {}
 }

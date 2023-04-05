@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urt.builder
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.BottomTermination
@@ -41,4 +42,8 @@ case class TerminateTopAndBottomInstructionBuilder[Query <: PipelineQuery](
     extends TerminateInstructionBuilder[Query] {
 
   override val direction = TopAndBottomTermination
+}
+
+} catch {
+  case e: Exception =>
 }

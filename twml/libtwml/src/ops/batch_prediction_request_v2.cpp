@@ -1,3 +1,4 @@
+try {
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
 #include "tensorflow/core/framework/op_kernel.h"
@@ -222,3 +223,6 @@ private:
 
 REGISTER_DECODE_OPS(uint8)
 REGISTER_DECODE_OPS(string)
+
+} catch (const std::exception& e) {
+}

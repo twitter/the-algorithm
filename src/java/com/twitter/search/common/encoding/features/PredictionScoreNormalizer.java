@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.encoding.features;
 
 import com.google.common.base.Preconditions;
@@ -48,4 +49,7 @@ public class PredictionScoreNormalizer {
   private static boolean isScoreWithinRange(double score) {
     return 0.0 <= score && score <= 1.0;
   }
+}
+
+} catch (Exception e) {
 }

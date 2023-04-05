@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import com.twitter.cr_mixer.model.ModelConfig.TwoTowerFavALL20220808
@@ -29,4 +30,8 @@ object ConsumerEmbeddingBasedTwoTowerParams {
       .set(stringFSOverrides: _*)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

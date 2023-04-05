@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urt.builder
 
 import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorUpdater.getCursorByType
@@ -41,4 +42,8 @@ trait UrtCursorUpdater[-Query <: PipelineQuery] extends UrtCursorBuilder[Query] 
         }.getOrElse(entries)
     } else entries
   }
+}
+
+} catch {
+  case e: Exception =>
 }

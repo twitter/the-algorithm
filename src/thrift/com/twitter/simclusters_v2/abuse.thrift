@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.simclusters_v2.thriftjava
 namespace py gen.twitter.simclusters_v2
 #@namespace scala com.twitter.simclusters_v2.thriftscala
@@ -51,3 +52,6 @@ struct AdhocCrossSimClusterInteractionScores {
   1: required i64 clusterId
   2: required list<simclusters_presto.ClustersScore> clusterScores
 }(persisted="true")
+
+} catch (Exception e) {
+}

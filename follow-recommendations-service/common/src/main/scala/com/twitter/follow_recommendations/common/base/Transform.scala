@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.base
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -82,4 +83,8 @@ object Transform {
 
 class IdentityTransform[T, C] extends Transform[T, C] {
   override def transform(target: T, items: Seq[C]): Stitch[Seq[C]] = Stitch.value(items)
+}
+
+} catch {
+  case e: Exception =>
 }

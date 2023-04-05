@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.filter
 
 import com.twitter.product_mixer.component_library.model.candidate.TweetAuthorIdFeature
@@ -24,4 +25,8 @@ case class HasAuthorIdFeatureFilter[Candidate <: TweetCandidate]()
     val (kept, removed) = candidates.partition(_.features.getTry(TweetAuthorIdFeature).isReturn)
     Stitch.value(FilterResult(kept.map(_.candidate), removed.map(_.candidate)))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

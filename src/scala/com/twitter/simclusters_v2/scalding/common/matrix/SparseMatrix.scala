@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.common.matrix
 
 import com.twitter.algebird.Semigroup
@@ -420,4 +421,8 @@ case class SparseMatrix[R, C, V](
       }
     SparseMatrix(filteredPipe)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

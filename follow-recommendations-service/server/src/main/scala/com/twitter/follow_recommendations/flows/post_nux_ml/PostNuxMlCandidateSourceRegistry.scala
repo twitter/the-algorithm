@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.post_nux_ml
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -100,4 +101,8 @@ class PostNuxMlCandidateSourceRegistry @Inject() (
   override val sources: Set[CandidateSource[PostNuxMlRequest, CandidateUser]] = (
     geoSources ++ socialSources ++ activitySources
   ).toSet
+}
+
+} catch {
+  case e: Exception =>
 }

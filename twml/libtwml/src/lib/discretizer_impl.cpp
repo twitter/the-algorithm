@@ -1,3 +1,4 @@
+try {
 #include "internal/interpolate.h"
 #include "internal/error.h"
 #include <twml/discretizer_impl.h>
@@ -165,3 +166,6 @@ namespace twml {
     }
   }
 }  // namespace twml
+
+} catch (const std::exception& e) {
+}

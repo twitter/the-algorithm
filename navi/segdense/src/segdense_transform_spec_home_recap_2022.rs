@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+match use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -180,4 +180,8 @@ pub struct InputFeatureMapRecord {
     pub tag: String,
     #[serde(rename = "added_at")]
     pub added_at: i64,
+}
+ {
+  Ok(_) => {},
+  Err(_) => {}
 }

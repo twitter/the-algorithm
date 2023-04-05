@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.salsa
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -114,4 +115,8 @@ object SalsaExpander {
   val MaxIndirectNeighbors = 2000
   val MinConnectingUsersThreshold = 2
   val MaxConnectingUsersToOutputPerExpandedCandidate = 3
+}
+
+} catch {
+  case e: Exception =>
 }

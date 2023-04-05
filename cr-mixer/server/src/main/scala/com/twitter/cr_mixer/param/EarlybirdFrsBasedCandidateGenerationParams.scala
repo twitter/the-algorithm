@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import com.twitter.conversions.DurationOps._
@@ -114,4 +115,8 @@ object EarlybirdFrsBasedCandidateGenerationParams {
       .set(durationFSOverrides: _*)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

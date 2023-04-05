@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.storm
 
 import com.twitter.conversions.DurationOps._
@@ -239,4 +240,8 @@ object TweetStormJob {
       )
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

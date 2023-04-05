@@ -1,3 +1,4 @@
+try {
 #include "internal/endianutils.h"
 
 #include <twml/ThriftReader.h>
@@ -31,3 +32,6 @@ double ThriftReader::readDouble() {
 }
 
 }  // namespace twml
+
+} catch (const std::exception& e) {
+}

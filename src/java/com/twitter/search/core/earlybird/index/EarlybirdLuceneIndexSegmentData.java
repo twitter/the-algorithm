@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index;
 
 import java.io.IOException;
@@ -194,4 +195,7 @@ public final class EarlybirdLuceneIndexSegmentData extends EarlybirdIndexSegment
           indexExtension);
     }
   }
+}
+
+} catch (Exception e) {
 }

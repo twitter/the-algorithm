@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.common.alert.predicate
 
 /**
@@ -50,3 +51,7 @@ trait Predicate {
 
 /** [[ThroughputPredicate]]s are predicates that can trigger when the throughput is too low or high */
 trait ThroughputPredicate extends Predicate
+
+} catch {
+  case e: Exception =>
+}

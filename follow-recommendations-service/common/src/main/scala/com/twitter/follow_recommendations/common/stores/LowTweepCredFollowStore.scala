@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.stores
 
 import com.twitter.follow_recommendations.common.models.CandidateUser
@@ -36,4 +37,8 @@ class LowTweepCredFollowStore @Inject() (tweepCredOnUserClientColumn: TweepCredO
 object LowTweepCredFollowStore {
   val NumFlockToRetrieve = 500
   val TweepCredThreshold = 40
+}
+
+} catch {
+  case e: Exception =>
 }
