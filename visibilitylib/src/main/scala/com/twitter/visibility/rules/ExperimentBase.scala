@@ -7,12 +7,7 @@ import com.twitter.visibility.models.LabelSource
 object ExperimentBase {
   val sourceToParamMap: Map[LabelSource, LabelSourceParam] = Map.empty
 
-  final def shouldFilterForSource(params: Params, labelSourceOpt: Option[LabelSource]): Boolean = {
+  final def shouldFilterForSource(params: Params, labelSourceOpt: Option[LabelSource]): Boolean =
     labelSourceOpt
-      .map { source =>
-        val param = ExperimentBase.sourceToParamMap.get(source)
-        param.map(params.apply).getOrElse(true)
-      }
-      .getOrElse(true)
-  }
+      .fold(true)(source => ExperimentBase.sourceToParamMap.get(source).fold(true)(params.apply))
 }
