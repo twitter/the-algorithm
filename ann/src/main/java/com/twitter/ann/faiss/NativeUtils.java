@@ -45,6 +45,9 @@ public final class NativeUtils {
     } catch (NullPointerException e) {
       temp.delete();
       throw new FileNotFoundException("File " + path + " was not found inside JAR.");
+    } catch (Exception e) {
+      file.delete();
+      throw e;
     }
 
     return temp;
