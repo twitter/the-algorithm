@@ -4,7 +4,7 @@ import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackT
 import com.twitter.hermit.model.Algorithm._
 import com.twitter.follow_recommendations.common.models.AlgorithmType
 
-object AlgorithmTypeConstants {
+object CandidateAlgorithmTypeConstants {
   type AlgorithmTypeSet = Set[AlgorithmType.Value]
   type AlgorithmToTypeMap = Map[String, AlgorithmTypeSet]
 
