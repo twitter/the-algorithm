@@ -1,4 +1,4 @@
-Tweepcred
+# Tweepcred
 
 Tweepcred is a social network analysis tool that calculates the influence of Twitter users based on their interactions with other users. The tool uses the PageRank algorithm to rank users based on their influence.
 
@@ -16,9 +16,7 @@ The iteration stage involves repeatedly calculating and updating the PageRank sc
 
 The Tweepcred PageRank implementation also includes a number of optimizations to improve performance and reduce memory usage. These optimizations include block compression, lazy loading, and in-memory caching.
 
-
-========================================== TweepcredBatchJob.scala ==========================================
-
+## TweepcredBatchJob.scala
 
 This is a Scala class that represents a batch job for computing the "tweepcred" (Twitter credibility) score for Twitter users using weighted or unweighted PageRank algorithm. The class extends the AnalyticsIterativeBatchJob class, which is part of the Scalding framework used for data processing on Hadoop.
 
@@ -26,7 +24,7 @@ The class defines various properties and methods that are used to configure and 
 
 The run method overrides the run method of the base class and prints the batch statistics after the job has finished. The children method defines a list of child jobs that need to be executed as part of the batch job. The messageHeader method returns a string that represents the header of the batch job message.
 
-========================================== ExtractTweepcred.scala ==========================================
+## ExtractTweepcred.scala
 
 This class is a Scalding job that calculates "tweepcred" from a given pagerank file. Tweepcred is a measure of reputation for Twitter users that takes into account the number of followers they have and the number of people they follow. If the optional argument post_adjust is set to true (default value), then the pagerank values are adjusted based on the user's follower-to-following ratio.
 
@@ -34,8 +32,7 @@ The class takes several command-line arguments specifying input and output files
 
 The code makes use of the MostRecentCombinedUserSnapshotSource class from the com.twitter.pluck.source.combined_user_source package to obtain user information from the user mass file. It also uses the Reputation class to perform the tweepcred calculations and adjustments.
 
-
-========================================== UserMass.scala ==========================================
+## UserMass.scala
 
 The UserMass class is a helper class used to calculate the "mass" of a user on Twitter, as defined by a certain algorithm. The mass score represents the user's reputation and is used in various applications, such as in determining which users should be recommended to follow or which users should have their content highlighted.
 
@@ -43,8 +40,7 @@ The getUserMass method of the UserMass class takes in a CombinedUser object, whi
 
 The algorithm used to calculate the mass score takes into account various factors such as the user's account age, number of followers and followings, device usage, and safety status (restricted, suspended, verified). The calculation involves adding and multiplying weight factors and adjusting the mass score based on a threshold for the number of friends and followers.
 
-
-========================================== PreparePageRankData.scala ==========================================
+## PreparePageRankData.scala
 
 The PreparePageRankData class prepares the graph data for the page rank calculation. It generates the initial pagerank and then starts the WeightedPageRank job. It has the following functionalities:
 
@@ -56,7 +52,7 @@ It has several options like weighted, flock_edges_only, and input_pagerank to fi
 It also has options for the WeightedPageRank and ExtractTweepcred jobs, like output_pagerank, output_tweepcred, maxiterations, jumpprob, threshold, and post_adjust.
 The PreparePageRankData class has several helper functions like getFlockEdges, getRealGraphEdges, getFlockRealGraphEdges, and getCsvEdges that read the graph data from different sources like DAL, InteractionGraph, or CSV files. It also has the generateInitialPagerank function that generates the initial pagerank from the graph data.
 
-========================================== WeightedPageRank.scala ==========================================
+## WeightedPageRank.scala
 
 WeightedPageRank is a class that performs the weighted PageRank algorithm on a given graph.
 
@@ -68,7 +64,7 @@ The algorithm reads a nodes file that includes the source node ID, destination n
 
 The algorithm tests for convergence by calculating the total difference between the input and output PageRank masses. If convergence has not been reached, the algorithm clones itself and starts the next PageRank job. If convergence has been reached, the algorithm starts the ExtractTweepcred job.
 
-========================================== Reputation.scala ==========================================
+## Reputation.scala
 
 This is a helper class called Reputation that contains methods for calculating a user's reputation score. The first method called scaledReputation takes a Double parameter raw which represents the user's page rank, and returns a Byte value that represents the user's reputation on a scale of 0 to 100. This method uses a formula that involves converting the logarithm of the page rank to a number between 0 and 100.
 
