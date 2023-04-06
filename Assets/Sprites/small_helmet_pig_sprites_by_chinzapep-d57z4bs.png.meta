@@ -1,0 +1,194 @@
+fileFormatVersion: 2
+guid: 48b9a7d0cd9d52247a469bfd3e3e3c0a
+timeCreated: 1434729966
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: small_helmet_pig_sprites_by_chinzapep-d57z4bs_0
+    21300002: small_helmet_pig_sprites_by_chinzapep-d57z4bs_1
+    21300004: small_helmet_pig_sprites_by_chinzapep-d57z4bs_2
+    21300006: small_helmet_pig_sprites_by_chinzapep-d57z4bs_3
+    21300008: small_helmet_pig_sprites_by_chinzapep-d57z4bs_4
+    21300010: small_helmet_pig_sprites_by_chinzapep-d57z4bs_5
+    21300012: small_helmet_pig_sprites_by_chinzapep-d57z4bs_6
+    21300014: small_helmet_pig_sprites_by_chinzapep-d57z4bs_7
+    21300016: small_helmet_pig_sprites_by_chinzapep-d57z4bs_8
+  serializedVersion: 4
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: -3
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 60
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: small_helmet_pig_sprites_by_chinzapep-d57z4bs_0
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 139
+        width: 64
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: small_helmet_pig_sprites_by_chinzapep-d57z4bs_1
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 138
+        width: 64
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: small_helmet_pig_sprites_by_chinzapep-d57z4bs_2
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 138
+        width: 64
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: small_helmet_pig_sprites_by_chinzapep-d57z4bs_3
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 78
+        width: 66
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: small_helmet_pig_sprites_by_chinzapep-d57z4bs_4
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 79
+        width: 66
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: small_helmet_pig_sprites_by_chinzapep-d57z4bs_5
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 80
+        width: 66
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: small_helmet_pig_sprites_by_chinzapep-d57z4bs_6
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 22
+        width: 64
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: small_helmet_pig_sprites_by_chinzapep-d57z4bs_7
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 21
+        width: 63
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: small_helmet_pig_sprites_by_chinzapep-d57z4bs_8
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 19
+        width: 65
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    outline: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
