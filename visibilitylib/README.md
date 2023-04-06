@@ -1,51 +1,47 @@
 Overview
 ========
 
-Visibility Filtering is a centralized rule engine that instructs clients how to alter the display of certain Twitter content on read time. The Visibility Filtering library is responsible for filtering Twitter content to support legal compliance, improve product quality, increase user trust, protect revenue through the use of hard-filtering, visible product treatments, and coarse-grained downranking.
+The Visibility Filtering algorithm is a tool that instructs Twitter clients on how to adjust the display of certain content in real-time. This library aims to filter Twitter content to ensure compliance with laws and regulations, enhance product quality, promote user trust, and safeguard revenue. The Visibility Filtering algorithm identifies potentially harmful content that breaches Twitter's policies. This includes content flagged by users or algorithms and content automatically detected by the platform as potentially harmful.
 
-Notice
-======
+The algorithm employs a multifaceted approach to identify and categorize potentially harmful content on Twitter. It utilizes several concepts such as `SafetyLevel`, `SafetyLabel`, and `SafetyLabelType`. Twitter uses labeling mechanisms to apply various remediation techniques, such as reducing the visibility of flagged content or employing interstitials to alert users of potentially harmful content. This effort is aimed at enhancing the safety and trust of Twitter's platform for all its users.
 
-Visibility Filtering library is currently being reviewed and rebuilt, and part of the code has been removed and is not ready to be shared yet. The remaining part of the code needs further review and will be shared once it’s ready. Also code comments have been sanitized.
 
-SafetyLevel
-===========
+## Table of Contents
 
-Represents the product context in which the Viewer is requesting to view the Content (e.g. Timeline, Profile).
+- [Overview](#overview)
+  * [Notice](#notice)
+  * [Features](#features)
+- [Action](#action)
+- [Condition](#condition)
+- [Policy](#policy)
+  * [RuleEngine](#ruleengine)
+    + [SafetyLevel](#safetylevel)
+    + [SafetyLabel](#safetylabel)
+    + [SafetyLabelType](#safetylabeltype)
 
-Features
-========
+## Notice
+The Visibility Filtering library is currently undergoing a review and reconstruction process, resulting in the removal of certain segments of the code that remain inaccessible. The remaining code necessitates additional review and will be made available upon completion. Furthermore, the code comments have undergone sanitization.
 
-Include safety labels and other metadata of a Tweet, flags set on a User (including the Viewer), relationships between Users (e.g. block, follow), User settings, relationships between Users and Content (e.g. reported for spam).
+## Features
+The Visibility Filtering algorithm uses features and metadata to identify potentially harmful content on Twitter. These features include safety labels attached to Tweets and other entities to indicate potential risks or violations of platform policies. The algorithm considers flags that may be set on individual users, including the Viewer, to highlight potential risks or concerns. Relationships between Users, such as block or follow relationships, may also be considered when filtering content. User settings and relationships between Users and Content, such as spam reports, may also be considered.
 
-Action
-======
+## Action
+The action refers to how the Visibility Framework instructs the client to respond to a Viewer's request for content. It involves various forms of filtering, such as hard filtering (content removal), soft filtering (adding labels and interstitials to content), or providing ranking clues to adjust the order in which content is displayed.
 
-The way the Visibility Framework instructs the client to respond to the Viewer’s request for Content, and can include hard filtering (e.g. Drop), soft filtering (e.g. Labels and Interstitials), ranking clues, etc.
+## Condition
+A condition evaluates a given map of features and returns a `boolean` value. For example, the conditions can determine whether a rule should return an action or allow content to be displayed by default.
 
-Condition
-=========
+## Policy
+The Visibility Filtering algorithm uses a set of rules to establish a Visibility Policy. The rules are in priority order, and each SafetyLevel has its policy, which determines the actions that the Visibility Framework takes based on the conditions evaluated.
 
-Returns a boolean when given map of Features. Conditions can be combined to determine if a Rule should return an Action or the default (Allow).
+## RuleEngine
+The RuleEngine evaluates the requested Action by processing the rules in the Visibility Policy in a specific order.
 
-Policy
-======
+### SafetyLevel
+`SafetyLevel` refers to the product context in which a user requests to view the Content, such as Timeline or Profile. The Visibility Filtering algorithm uses an essential concept to determine the appropriate remediation action to respond to potentially harmful content.
 
-Rules are expressed as a sequence in priority order to create a Visibility Policy. The library has one policy
-per SafetyLevel.
+### SafetyLabel
+`SafetyLabel` is a critical labeling mechanism used to identify potentially harmful content on Twitter. This mechanism allows the platform to associate a safety label with different entities, including tweets, users, direct messages, media, and spaces. Safety labels power various remediations such as applying a safety label that results in tweet interstitial or notice, reducing the visibility of harmful content, or providing a warning to users of potentially harmful content.
 
-RuleEngine
-===========
-
-Evaluates the Action for a Request.
-
-SafetyLabel
-===========
-
-A primary labeling mechanism for Safety. A labeled entity associates with tweet, user, Direct Message, media, space etc. Safety labels power different ways of remediations (e.g. applying a SafetyLabel that results in tweet interstitial or notice).
-
-SafetyLabelType
-===============
-
-Describes a particular policy violation for a given noun instance, and usually leads to reduced visibility of the
-labeled entity in product surfaces. There are many deprecated, and experimental safety label types. Labels with these safety label types have no effect on VF. Additionally, some safety label types are not used, and not designed for VF.
+### SafetyLabelType
+In the Visibility Filtering algorithm, `SafetyLabelType` refers to a specific policy violation associated with a particular noun instance. This violation leads to a reduction in the visibility of the labeled entity on product surfaces. Some safety label types have no effect on VF as they are deprecated or experimental. Additionally, some safety label types are not intended for use in VF and therefore, are not utilized.
