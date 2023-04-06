@@ -1,4 +1,4 @@
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<(), anyhow::Error> {
     //::compile_protos("proto/tensorflow_serving/apis/prediction_service.proto")?;
     tonic_build::configure().compile(
         &[
