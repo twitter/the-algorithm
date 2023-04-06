@@ -21,16 +21,12 @@ object IntersectionValueCalculator {
     x.remaining() >> 3 // divide 8
   }
 
-  /**
-   *
-   */
   def apply(x: ByteBuffer, y: ByteBuffer, intersectionIdLimit: Int): WorkerIntersectionValue = {
 
     val xSize = computeArraySize(x)
     val ySize = computeArraySize(y)
 
-    val largerArray = if (xSize > ySize) x else y
-    val smallerArray = if (xSize > ySize) y else x
+    val (largerArray, smallerArray) = if (xSize > ySize) (x, y) else (y, x)
 
     if (intersectionIdLimit == 0) {
       val result = computeIntersectionUsingBinarySearchOnLargerByteBuffer(smallerArray, largerArray)
