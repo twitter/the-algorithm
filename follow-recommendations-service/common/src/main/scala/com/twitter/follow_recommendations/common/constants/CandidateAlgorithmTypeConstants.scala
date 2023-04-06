@@ -54,6 +54,7 @@ object AlgorithmTypeConstants {
     AlgorithmToFeedbackTokenMap(PopCountryBackFill) -> Set(AlgorithmType.Geo),
     AlgorithmToFeedbackTokenMap(PopCountry) -> Set(AlgorithmType.Geo),
     AlgorithmToFeedbackTokenMap(PopGeohash) -> Set(AlgorithmType.Geo),
+    AlgorithmToFeedbackTokenMap(PopGeohashRealGraph) -> Set(AlgorithmType.Geo),
     AlgorithmToFeedbackTokenMap(EngagedFollowerRatio) -> Set(AlgorithmType.Geo),
     AlgorithmToFeedbackTokenMap(CrowdSearchAccounts) -> Set(AlgorithmType.Geo),
     AlgorithmToFeedbackTokenMap(OrganicFollowAccounts) -> Set(AlgorithmType.Geo),
