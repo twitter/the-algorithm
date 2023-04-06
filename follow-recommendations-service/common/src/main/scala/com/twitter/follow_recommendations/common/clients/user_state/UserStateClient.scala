@@ -17,26 +17,22 @@ import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
 import com.twitter.stitch.Stitch
 import com.twitter.strato.client.Fetcher
 import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 import java.lang.{Long => JLong}
 
 @Singleton
 class UserStateClient @Inject() (
-  @Named(GuiceNamedConstants.USER_STATE_FETCHER) userStateFetcher: Fetcher[
-    Long,
-    Unit,
-    CondensedUserState
-  ],
+  @Named(GuiceNamedConstants.USER_STATE_FETCHER) userStateFetcher: Fetcher[Long, Unit, CondensedUserState],
   client: Client,
   statsReceiver: StatsReceiver,
-  decider: Decider = Decider.False) {
+  decider: Decider = Decider.False
+) {
 
-  private val stats: StatsReceiver = statsReceiver.scope("user_state_client")
+  private val stats = statsReceiver.scope("user_state_client")
 
-  // client to memcache cluster
-  val bijection = new ThriftEnumOptionBijection[UserState](UserState.apply)
-  val memcacheClient = MemcacheClient[Option[UserState]](
+  // Client to memcache cluster
+  private val bijection = new ThriftEnumOptionBijection[UserState](UserState.apply)
+  private val memcacheClient = MemcacheClient[Option[UserState]](
     client = client,
     dest = "/s/cache/follow_recos_service:twemcaches",
     valueBijection = bijection,
@@ -45,32 +41,27 @@ class UserStateClient @Inject() (
   )
 
   def getUserState(userId: Long): Stitch[Option[UserState]] = {
-    val deciderKey: String = DeciderKey.EnableDistributedCaching.toString
-    val enableDistributedCaching: Boolean = decider.isAvailable(deciderKey, Some(RandomRecipient))
-    val userStateStitch: Stitch[Option[UserState]] = 
-      enableDistributedCaching match {
-        // read from memcache
-        case true => memcacheClient.readThrough(
-          // add a key prefix to address cache key collisions
-          key = "UserStateClient" + userId.toString,
-          underlyingCall = () => fetchUserState(userId)
-        )
-        case false => fetchUserState(userId)
+    val deciderKey = DeciderKey.EnableDistributedCaching.toString
+    val enableDistributedCaching = decider.isAvailable(deciderKey, Some(RandomRecipient))
+    val userStateStitch = enableDistributedCaching match {
+      // Read from memcache
+      case true => memcacheClient.readThrough(
+        // Add a key prefix to address cache key collisions
+        key = "UserStateClient$userId",
+        underlyingCall = () => fetchUserState(userId)
+      )
+      case false => fetchUserState(userId)
+    }
+    val userStateStitchWithTimeout = userStateStitch
+      // Set a 150ms timeout limit for user state fetches
+      .within(150.milliseconds)(DefaultTimer)
+      .rescue {
+        case e: Exception =>
+          stats.scope("rescued").counter(e.getClass.getSimpleName).incr()
+          Stitch(None)
       }
-    val userStateStitchWithTimeout: Stitch[Option[UserState]] = 
-      userStateStitch
-        // set a 150ms timeout limit for user state fetches
-        .within(150.milliseconds)(DefaultTimer)
-        .rescue {
-          case e: Exception =>
-            stats.scope("rescued").counter(e.getClass.getSimpleName).incr()
-            Stitch(None)
-        }
-    // profile the latency of stitch call and return the result
-    StatsUtil.profileStitch(
-      userStateStitchWithTimeout,
-      stats.scope("getUserState")
-    )
+    // Profile the latency of the Stitch call and return the result
+    StatsUtil.profileStitch(userStateStitchWithTimeout, stats.scope("getUserState"))
   }
 
   def fetchUserState(userId: JLong): Stitch[Option[UserState]] = {
