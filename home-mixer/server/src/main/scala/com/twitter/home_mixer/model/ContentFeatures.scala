@@ -5,16 +5,7 @@ import com.twitter.tweetypie.{thriftscala => tp}
 
 object ContentFeatures {
   val Empty: ContentFeatures = ContentFeatures(
-    0.toShort,
-    false,
-    0.toShort,
-    0.toShort,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
+    0.toSho
     None,
     None,
     None,
