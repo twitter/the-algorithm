@@ -72,11 +72,7 @@ case class ContentFeatures(
   isEmbeddable: Option[Boolean],
   hasSelectedPreviewImage: Option[Boolean],
   hasTitle: Option[Boolean],
-  hasDescription: Option[Boolean],
-  hasVisitSiteCallToAction: Option[Boolean],
-  hasAppInstallCallToAction: Option[Boolean],
-  hasWatchNowCallToAction: Option[Boolean],
-  media: Option[Seq[tp.MediaEntity]],
+  hasDescription: Opt
   dominantColorPercentage: Option[Double],
   posUnigrams: Option[Set[String]],
   posBigrams: Option[Set[String]],
