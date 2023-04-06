@@ -1,0 +1,12 @@
+*.o
+*.s
+*.dump
+*.aiff
+*.aifc
+*.table
+/vadpcm_dec_irix
+/vadpcm_enc_irix
+/vadpcm_dec_native
+/vadpcm_enc_native
+/vadpcm_dec_orig
+/vadpcm_enc_orig

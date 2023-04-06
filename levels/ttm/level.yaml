@@ -1,0 +1,13 @@
+# Tall Tall Mountain
+short-name: ttm
+full-name: Tall Tall Mountain
+texture-file: ["/texture.inc.c"]
+area-count: 4
+objects: [blue_smiley, moon_smiley, rolling_log, slide_exit_podium, star_cage, star_smiley, yellow_smiley]
+shared-path: []
+# loaded files
+skybox-bin: water
+texture-bin: mountain
+effects: false
+actor-bins: [group6]
+common-bin: [common0]

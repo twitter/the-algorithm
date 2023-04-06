@@ -1,0 +1,8 @@
+#include "anim_0500D270.inc.c"
+#include "anim_0500DF50.inc.c"
+#include "anim_0500E1D8.inc.c"
+#include "anim_0500E99C.inc.c"
+#include "anim_0500F3D8.inc.c"
+#include "anim_0500F3F0.inc.c"
+#include "anim_0500FCCC.inc.c"
+#include "anim_050116CC.inc.c"

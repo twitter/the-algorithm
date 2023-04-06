@@ -1,0 +1,34 @@
+{
+    "date": "1996-02-14",
+    "sample_bank": "sfx_water",
+    "envelopes": {
+        "envelope0": [
+            [2, 32700],
+            [1, 32700],
+            [32700, 29430],
+            "hang"
+        ]
+    },
+    "instruments": {
+        "inst0": {
+            "release_rate": 208,
+            "envelope": "envelope0",
+            "sound": "00_plunge"
+        },
+        "inst1": {
+            "release_rate": 208,
+            "envelope": "envelope0",
+            "sound": "01_splash"
+        },
+        "inst2": {
+            "release_rate": 208,
+            "envelope": "envelope0",
+            "sound": "02_swim"
+        }
+    },
+    "instrument_list": [
+        "inst0",
+        "inst1",
+        "inst2"
+    ]
+}

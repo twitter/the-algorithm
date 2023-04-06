@@ -1,0 +1,167 @@
+{
+    "date": "1996-02-14",
+    "sample_bank": "sfx_5",
+    "envelopes": {
+        "envelope0": [
+            [2, 32700],
+            [10, 29000],
+            [32700, 26430],
+            "hang"
+        ],
+        "envelope1_unused": [
+            "stop",
+            [1, 0],
+            [1, 32700],
+            [1, 32700],
+            [32700, 29430],
+            ["goto", 3]
+        ],
+        "envelope2": [
+            [2, 32700],
+            [10, 29000],
+            [32700, 26430],
+            "hang"
+        ],
+        "envelope3": [
+            [2, 32700],
+            [10, 29000],
+            [32700, 26430],
+            "hang"
+        ],
+        "envelope4": [
+            [2, 32700],
+            [10, 29000],
+            [32700, 26430],
+            "hang"
+        ],
+        "envelope5": [
+            [2, 32700],
+            [10, 29000],
+            [32700, 26430],
+            "hang"
+        ],
+        "envelope6": [
+            [2, 32700],
+            [10, 29000],
+            [32700, 26430],
+            "hang"
+        ],
+        "envelope7_unused": [
+            "stop",
+            [1, 0],
+            [3, 32700],
+            [10, 29000],
+            [32700, 26430],
+            ["goto", 3]
+        ],
+        "envelope8": [
+            [1, 0],
+            [3, 32700],
+            [10, 29000],
+            [32700, 26430],
+            "hang"
+        ],
+        "envelope9": [
+            [2, 32700],
+            [10, 29000],
+            [32700, 26430],
+            "hang"
+        ],
+        "envelope10": [
+            [2, 32700],
+            [10, 29000],
+            [32700, 26430],
+            "hang"
+        ]
+    },
+    "instruments": {
+        "inst0": {
+            "release_rate": 123,
+            "envelope": "envelope0",
+            "sound": "00"
+        },
+        "inst1": {
+            "release_rate": 137,
+            "envelope": "envelope2",
+            "sound": "01"
+        },
+        "inst2": {
+            "release_rate": 142,
+            "envelope": "envelope3",
+            "sound": "02"
+        },
+        "inst3": {
+            "release_rate": 114,
+            "envelope": "envelope4",
+            "sound": "03"
+        },
+        "inst4": {
+            "release_rate": 137,
+            "envelope": "envelope2",
+            "sound": "04"
+        },
+        "inst5": {
+            "release_rate": 128,
+            "envelope": "envelope5",
+            "sound": "05"
+        },
+        "inst6": {
+            "release_rate": 119,
+            "envelope": "envelope6",
+            "sound": "06"
+        },
+        "inst7": {
+            "release_rate": 123,
+            "envelope": "envelope0",
+            "sound": "07"
+        },
+        "inst8": {
+            "release_rate": 161,
+            "envelope": "envelope8",
+            "sound": "08"
+        },
+        "inst9": {
+            "release_rate": 114,
+            "envelope": "envelope4",
+            "sound": "09"
+        },
+        "inst10": {
+            "release_rate": 128,
+            "envelope": "envelope5",
+            "sound": "0A"
+        },
+        "inst11": {
+            "release_rate": 137,
+            "envelope": "envelope2",
+            "sound": "0B"
+        },
+        "inst12": {
+            "release_rate": 133,
+            "envelope": "envelope9",
+            "sound": "0C"
+        },
+        "inst13": {
+            "release_rate": 152,
+            "envelope": "envelope10",
+            "sound": "0D"
+        }
+    },
+    "instrument_list": [
+        "inst0",
+        "inst1",
+        "inst2",
+        "inst3",
+        "inst4",
+        "inst5",
+        "inst6",
+        null,
+        "inst7",
+        "inst8",
+        "inst9",
+        "inst10",
+        null,
+        "inst11",
+        "inst12",
+        "inst13"
+    ]
+}

@@ -1,0 +1,13 @@
+# Hazy Maze Cave
+short-name: hmc
+full-name: Hazy Maze Cave
+texture-file: ["/texture.inc.c"]
+area-count: 1
+objects: [arrow_platform, arrow_platform_button, elevator_platform, rolling_rock, rolling_rock_fragment_1, rolling_rock_fragment_2]
+shared-path: []
+# loaded files
+skybox-bin: null
+texture-bin: cave
+effects: false
+actor-bins: [group6, group17]
+common-bin: [common0]

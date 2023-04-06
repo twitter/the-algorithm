@@ -1,0 +1,13 @@
+# Cavern of the Metal Cap
+short-name: cotmc
+full-name: Cavern of the Metal Cap
+texture-file: ["/texture.inc.c"]
+area-count: 1
+objects: []
+shared-path: []
+# loaded files
+skybox-bin: null
+texture-bin: cave
+effects: true
+actor-bins: [group8, group17]
+common-bin: [common0]

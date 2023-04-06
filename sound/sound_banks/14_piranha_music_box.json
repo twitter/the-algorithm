@@ -1,0 +1,70 @@
+{
+    "date": "1996-03-19",
+    "sample_bank": "piranha_music_box",
+    "envelopes": {
+        "envelope0": [
+            [6, 32700],
+            [298, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope1": [
+            [6, 32700],
+            [298, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope2": [
+            [6, 32700],
+            [298, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope3": [
+            [6, 32700],
+            [298, 32700],
+            [32700, 29430],
+            "hang"
+        ],
+        "envelope4": [
+            [6, 32700],
+            [298, 32700],
+            [32700, 29430],
+            "hang"
+        ]
+    },
+    "instruments": {
+        "inst0": {
+            "release_rate": 119,
+            "envelope": "envelope0",
+            "sound": "00_pling"
+        },
+        "inst1": {
+            "release_rate": 119,
+            "envelope": "envelope1",
+            "sound": "00_pling"
+        },
+        "inst2": {
+            "release_rate": 119,
+            "envelope": "envelope2",
+            "sound": "00_pling"
+        },
+        "inst3": {
+            "release_rate": 119,
+            "envelope": "envelope3",
+            "sound": "00_pling"
+        },
+        "inst4": {
+            "release_rate": 119,
+            "envelope": "envelope4",
+            "sound": "00_pling"
+        }
+    },
+    "instrument_list": [
+        "inst0",
+        "inst1",
+        "inst2",
+        "inst3",
+        "inst4"
+    ]
+}

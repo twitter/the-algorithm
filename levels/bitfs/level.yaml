@@ -1,0 +1,13 @@
+# Bowser in the Fire Sea
+short-name: bitfs
+full-name: Bowser in the Fire Sea
+texture-file: ["/texture.inc.c"]
+area-count: 1
+objects: [elevator, moving_square_platform, platform_on_track, seesaw_platform, sinking_cage_platform, sinking_cage_pole, sinking_platforms, sliding_platform, stretching_platform, tilting_square_platform, tumbling_platform_far, tumbling_platform_near]
+shared-path: []
+# loaded files
+skybox-bin: bitfs
+texture-bin: sky
+effects: true
+actor-bins: [group2, group17]
+common-bin: [common0]

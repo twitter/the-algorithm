@@ -1,0 +1,6 @@
+---
+Checks: '-*,readability-braces-around-statements'
+WarningsAsErrors: ''
+HeaderFilterRegex: '(src|include|enhancements)\/.*\.h$'
+FormatStyle: 'file'
+CheckOptions:

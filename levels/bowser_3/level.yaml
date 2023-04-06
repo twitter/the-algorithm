@@ -1,0 +1,13 @@
+# Bowser in the Sky (Boss Area)
+short-name: bowser_3
+full-name: Bowser in the Sky (Boss Area)
+texture-file: ["/texture.inc.c"]
+area-count: 1
+objects: [falling_platform_1, falling_platform_2, falling_platform_3, falling_platform_4, falling_platform_5, falling_platform_6, falling_platform_7, falling_platform_8, falling_platform_9, falling_platform_10]
+shared-path: []
+# loaded files
+skybox-bin: bits
+texture-bin: null
+effects: false
+actor-bins: [group12]
+common-bin: []
