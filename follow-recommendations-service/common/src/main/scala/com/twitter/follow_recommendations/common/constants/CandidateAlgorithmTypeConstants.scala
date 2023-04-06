@@ -4,88 +4,79 @@ import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackT
 import com.twitter.hermit.model.Algorithm._
 import com.twitter.follow_recommendations.common.models.AlgorithmType
 
-object CandidateAlgorithmTypeConstants {
+object AlgorithmTypeConstants {
+  type AlgorithmTypeSet = Set[AlgorithmType.Value]
+  type AlgorithmToTypeMap = Map[String, AlgorithmTypeSet]
+
+  // Map algorithm IDs to their types
+  private val AlgorithmIdToType: AlgorithmToTypeMap = Map(
+    // Activity Algorithms:
+    AlgorithmToFeedbackTokenMap(NewFollowingSimilarUser) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(Sims) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(NewFollowingSimilarUserSalsa) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(RecentEngagementNonDirectFollow) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(RecentEngagementSimilarUser) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(RecentEngagementSarusOcCur) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(RecentSearchBasedRec) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(TwistlyTweetAuthors) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(Follow2VecNearestNeighbors) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(EmailTweetClick) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(RepeatedProfileVisits) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(GoodTweetClickEngagements) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(TweetShareEngagements) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(TweetSharerToShareRecipientEngagements) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(TweetAuthorToShareRecipientEngagements) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(LinearRegressionFollow2VecNearestNeighbors) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(NUXLOHistory) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(TrafficAttributionAccounts) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(RealGraphOonV2) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(MagicRecsRecentEngagements) -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(NotificationEngagement) -> Set(AlgorithmType.Activity),
+
+    // Social Algorithms:
+    AlgorithmToFeedbackTokenMap(TwoHopRandomWalk) -> Set(AlgorithmType.Social),
+    AlgorithmToFeedbackTokenMap(RealTimeMutualFollow) -> Set(AlgorithmType.Social),
+    AlgorithmToFeedbackTokenMap(ForwardPhoneBook) -> Set(AlgorithmType.Social),
+    AlgorithmToFeedbackTokenMap(ForwardEmailBook) -> Set(AlgorithmType.Social),
+    AlgorithmToFeedbackTokenMap(NewFollowingNewFollowingExpansion) -> Set(AlgorithmType.Social),
+    AlgorithmToFeedbackTokenMap(NewFollowingSarusCoOccurSocialProof) -> Set(AlgorithmType.Social),
+    AlgorithmToFeedbackTokenMap(ReverseEmailBookIbis) -> Set(AlgorithmType.Social),
+    AlgorithmToFeedbackTokenMap(ReversePhoneBook) -> Set(AlgorithmType.Social),
+    AlgorithmToFeedbackTokenMap(StrongTiePredictionRec) -> Set(AlgorithmType.Social),
+    AlgorithmToFeedbackTokenMap(StrongTiePredictionRecWithSocialProof) -> Set(AlgorithmType.Social),
+    AlgorithmToFeedbackTokenMap(OnlineStrongTiePredictionRec) -> Set(AlgorithmType.Social),
+    AlgorithmToFeedbackTokenMap(OnlineStrongTiePredictionRecNoCaching) -> Set(AlgorithmType.Social),
+    AlgorithmToFeedbackTokenMap(TriangularLoop) -> Set(AlgorithmType.Social),
+    AlgorithmToFeedbackTokenMap(StrongTiePredictionPmi) -> Set(AlgorithmType.Social),
+    AlgorithmToFeedbackTokenMap(OnlineStrongTiePredictionRAB) -> Set(AlgorithmType.Social),
+
+    // Geo Algorithms:
+    AlgorithmToFeedbackTokenMap(PopCountryBackFill) -> Set(AlgorithmType.Geo),
+    AlgorithmToFeedbackTokenMap(PopCountry) -> Set(AlgorithmType.Geo),
+    AlgorithmToFeedbackTokenMap(PopGeohash) -> Set(AlgorithmType.Geo),
+    AlgorithmToFeedbackTokenMap(EngagedFollowerRatio) -> Set(AlgorithmType.Geo),
+    AlgorithmToFeedbackTokenMap(CrowdSearchAccounts) -> Set(AlgorithmType.Geo),
+    AlgorithmToFeedbackTokenMap(OrganicFollowAccounts) -> Set(AlgorithmType.Geo),
+    AlgorithmToFeedbackTokenMap(PopGeohashQualityFollow) -> Set(AlgorithmType.Geo),
+    AlgorithmToFeedbackTokenMap(PPMILocaleFollow) -> Set(AlgorithmType.Geo),
+
+    // Interest Algorithms:
+    AlgorithmToFeedbackTokenMap(TttInterest) -> Set(AlgorithmType.Interest),
+    AlgorithmToFeedbackTokenMap(UttInterestRelatedUsers) -> Set(AlgorithmType.Interest),
+    AlgorithmToFeedbackTokenMap(UttSeedAccounts) -> Set(AlgorithmType.Interest),
+    AlgorithmToFeedbackTokenMap(UttProducerExpansion) -> Set(AlgorithmType.Interest),
+
+    // Hybrid (more than one type) Algorithms:
+    AlgorithmToFeedbackTokenMap(UttProducerOfflineMbcgV1) -> Set(AlgorithmType.Interest, AlgorithmType.Geo),
+    AlgorithmToFeedbackTokenMap(CuratedAccounts) -> Set(AlgorithmType.Interest, AlgorithmType.Geo),
+    AlgorithmToFeedbackTokenMap(UserUserGraph) -> Set(AlgorithmType.Social, AlgorithmType.Activity),
+  )
 
   /**
-   * Each algorithm is based on one, or more, of the 4 types of information we have on users,
-   * described in [[AlgorithmType]]. Assignment of algorithms to these categories are based on
+   * Returns the types of algorithms associated with a given algorithm ID.
+   * @param algoId the ID of the algorithm
+   * @return a set of strings representing the algorithm types
    */
-  private val AlgorithmIdToType: Map[String, Set[AlgorithmType.Value]] = Map(
-    // Activity Algorithms:
-    AlgorithmToFeedbackTokenMap(NewFollowingSimilarUser).toString -> Set(AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(Sims).toString -> Set(AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(NewFollowingSimilarUserSalsa).toString -> Set(
-      AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(RecentEngagementNonDirectFollow).toString -> Set(
-      AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(RecentEngagementSimilarUser).toString -> Set(
-      AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(RecentEngagementSarusOcCur).toString -> Set(AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(RecentSearchBasedRec).toString -> Set(AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(TwistlyTweetAuthors).toString -> Set(AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(Follow2VecNearestNeighbors).toString -> Set(AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(EmailTweetClick).toString -> Set(AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(RepeatedProfileVisits).toString -> Set(AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(GoodTweetClickEngagements).toString -> Set(AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(TweetShareEngagements).toString -> Set(AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(TweetSharerToShareRecipientEngagements).toString -> Set(
-      AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(TweetAuthorToShareRecipientEngagements).toString -> Set(
-      AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(LinearRegressionFollow2VecNearestNeighbors).toString -> Set(
-      AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(NUXLOHistory).toString -> Set(AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(TrafficAttributionAccounts).toString -> Set(AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(RealGraphOonV2).toString -> Set(AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(MagicRecsRecentEngagements).toString -> Set(AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(NotificationEngagement).toString -> Set(AlgorithmType.Activity),
-    // Social Algorithms:
-    AlgorithmToFeedbackTokenMap(TwoHopRandomWalk).toString -> Set(AlgorithmType.Social),
-    AlgorithmToFeedbackTokenMap(RealTimeMutualFollow).toString -> Set(AlgorithmType.Social),
-    AlgorithmToFeedbackTokenMap(ForwardPhoneBook).toString -> Set(AlgorithmType.Social),
-    AlgorithmToFeedbackTokenMap(ForwardEmailBook).toString -> Set(AlgorithmType.Social),
-    AlgorithmToFeedbackTokenMap(NewFollowingNewFollowingExpansion).toString -> Set(
-      AlgorithmType.Social),
-    AlgorithmToFeedbackTokenMap(NewFollowingSarusCoOccurSocialProof).toString -> Set(
-      AlgorithmType.Social),
-    AlgorithmToFeedbackTokenMap(ReverseEmailBookIbis).toString -> Set(AlgorithmType.Social),
-    AlgorithmToFeedbackTokenMap(ReversePhoneBook).toString -> Set(AlgorithmType.Social),
-    AlgorithmToFeedbackTokenMap(StrongTiePredictionRec).toString -> Set(AlgorithmType.Social),
-    AlgorithmToFeedbackTokenMap(StrongTiePredictionRecWithSocialProof).toString -> Set(
-      AlgorithmType.Social),
-    AlgorithmToFeedbackTokenMap(OnlineStrongTiePredictionRec).toString -> Set(AlgorithmType.Social),
-    AlgorithmToFeedbackTokenMap(OnlineStrongTiePredictionRecNoCaching).toString -> Set(
-      AlgorithmType.Social),
-    AlgorithmToFeedbackTokenMap(TriangularLoop).toString -> Set(AlgorithmType.Social),
-    AlgorithmToFeedbackTokenMap(StrongTiePredictionPmi).toString -> Set(AlgorithmType.Social),
-    AlgorithmToFeedbackTokenMap(OnlineStrongTiePredictionRAB).toString -> Set(AlgorithmType.Social),
-    // Geo Algorithms:
-    AlgorithmToFeedbackTokenMap(PopCountryBackFill).toString -> Set(AlgorithmType.Geo),
-    AlgorithmToFeedbackTokenMap(PopCountry).toString -> Set(AlgorithmType.Geo),
-    AlgorithmToFeedbackTokenMap(PopGeohash).toString -> Set(AlgorithmType.Geo),
-//    AlgorithmToFeedbackTokenMap(PopGeohashRealGraph).toString -> Set(AlgorithmType.Geo),
-    AlgorithmToFeedbackTokenMap(EngagedFollowerRatio).toString -> Set(AlgorithmType.Geo),
-    AlgorithmToFeedbackTokenMap(CrowdSearchAccounts).toString -> Set(AlgorithmType.Geo),
-    AlgorithmToFeedbackTokenMap(OrganicFollowAccounts).toString -> Set(AlgorithmType.Geo),
-    AlgorithmToFeedbackTokenMap(PopGeohashQualityFollow).toString -> Set(AlgorithmType.Geo),
-    AlgorithmToFeedbackTokenMap(PPMILocaleFollow).toString -> Set(AlgorithmType.Geo),
-    // Interest Algorithms:
-    AlgorithmToFeedbackTokenMap(TttInterest).toString -> Set(AlgorithmType.Interest),
-    AlgorithmToFeedbackTokenMap(UttInterestRelatedUsers).toString -> Set(AlgorithmType.Interest),
-    AlgorithmToFeedbackTokenMap(UttSeedAccounts).toString -> Set(AlgorithmType.Interest),
-    AlgorithmToFeedbackTokenMap(UttProducerExpansion).toString -> Set(AlgorithmType.Interest),
-    // Hybrid (more than one type) Algorithms:
-    AlgorithmToFeedbackTokenMap(UttProducerOfflineMbcgV1).toString -> Set(
-      AlgorithmType.Interest,
-      AlgorithmType.Geo),
-    AlgorithmToFeedbackTokenMap(CuratedAccounts).toString -> Set(
-      AlgorithmType.Interest,
-      AlgorithmType.Geo),
-    AlgorithmToFeedbackTokenMap(UserUserGraph).toString -> Set(
-      AlgorithmType.Social,
-      AlgorithmType.Activity),
-  )
-  def getAlgorithmTypes(algoId: String): Set[String] = {
-    AlgorithmIdToType.get(algoId).map(_.map(_.toString)).getOrElse(Set.empty)
-  }
+  def getAlgorithmTypes(algoId: String): Set[String] =
+    AlgorithmIdToType.getOrElse(algoId, Set.empty).map(_.toString)
 }
