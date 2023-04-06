@@ -1,0 +1,13 @@
+# Cool Cool Mountain
+short-name: ccm
+full-name: Cool Cool Mountain
+texture-file: ["/texture.inc.c"]
+area-count: 2
+objects: [ropeway_lift, snowman_base, snowman_head]
+shared-path: []
+# loaded files
+skybox-bin: ccm
+texture-bin: snow
+effects: true
+actor-bins: [group7, group16]
+common-bin: [common0]

@@ -1,0 +1,13 @@
+# Jolly Roger Bay
+short-name: jrb
+full-name: Jolly Roger Bay
+texture-file: ["/texture.inc.c"]
+area-count: 2
+objects: [falling_pillar, falling_pillar_base, floating_platform, rock, sliding_box, unused_lid, wooden_ship]
+shared-path: []
+# loaded files
+skybox-bin: clouds
+texture-bin: water
+effects: true
+actor-bins: [group4, group13]
+common-bin: [common0]

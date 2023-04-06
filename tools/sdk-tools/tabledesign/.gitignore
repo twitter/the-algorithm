@@ -1,0 +1,9 @@
+*.o
+*.s
+*.dump
+*.aiff
+*.aifc
+*.table
+/tabledesign_irix
+/tabledesign_native
+/tabledesign_orig

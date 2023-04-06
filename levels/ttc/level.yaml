@@ -1,0 +1,13 @@
+# Tick Tock Clock
+short-name: ttc
+full-name: Tick Tock Clock
+texture-file: ["/texture.inc.c"]
+area-count: 1
+objects: [clock_hand, elevator_platform, large_gear, large_treadmill, pendulum, pit_block, pit_block_2, push_block, rotating_cube, rotating_hexagon, rotating_prism, rotating_triangle, small_gear, small_treadmill, spinner]
+shared-path: []
+# loaded files
+skybox-bin: null
+texture-bin: machine
+effects: false
+actor-bins: [group1]
+common-bin: [common0]

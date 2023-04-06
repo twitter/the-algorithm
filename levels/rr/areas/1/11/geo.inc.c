@@ -1,0 +1,9 @@
+// 0x0E000738
+const GeoLayout rr_geo_000738[] = {
+   GEO_CULLING_RADIUS(4000),
+   GEO_OPEN_NODE(),
+      GEO_DISPLAY_LIST(LAYER_OPAQUE, rr_seg7_dl_0700DBD8),
+      GEO_DISPLAY_LIST(LAYER_ALPHA, rr_seg7_dl_0700DE88),
+   GEO_CLOSE_NODE(),
+   GEO_END(),
+};

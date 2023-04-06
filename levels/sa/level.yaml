@@ -1,0 +1,13 @@
+# Secret Aquarium
+short-name: sa
+full-name: Secret Aquarium
+texture-file: ["/texture.inc.c"]
+area-count: 1
+objects: []
+shared-path: []
+# loaded files
+skybox-bin: cloud_floor
+texture-bin: inside
+effects: true
+actor-bins: [group4, group13]
+common-bin: []

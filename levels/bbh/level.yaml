@@ -1,0 +1,13 @@
+# Big Boo's Haunt
+short-name: bbh
+full-name: Big Boo's Haunt
+texture-file: ["/texture.inc.c"]
+area-count: 1
+objects: [coffin, merry_go_round, mesh_elevator, moving_bookshelf, staircase_step, tilting_trap_platform, tumbling_platform_far, tumbling_platform_near]
+shared-path: []
+# loaded files
+skybox-bin: bbh
+texture-bin: spooky
+effects: false
+actor-bins: [group9, group17]
+common-bin: [common0]

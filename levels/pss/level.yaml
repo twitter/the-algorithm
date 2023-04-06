@@ -1,0 +1,13 @@
+# Princess's Secret Slide
+short-name: pss
+full-name: The Princess's Secret Slide
+texture-file: ["/texture.inc.c"]
+area-count: 1
+objects: []
+shared-path: []
+# loaded files
+skybox-bin: null
+texture-bin: mountain
+effects: false
+actor-bins: [group8]
+common-bin: [common0]

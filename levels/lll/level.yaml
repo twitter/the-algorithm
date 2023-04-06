@@ -1,0 +1,13 @@
+# Lethal Lava Land
+short-name: lll
+full-name: Lethal Lava Land
+texture-file: ["/texture.inc.c"]
+area-count: 2
+objects: [collapsing_wooden_platform, drawbridge_part, long_wooden_bridge, moving_octagonal_mesh_platform, puzzle_piece, rolling_log, rotating_block_fire_bars, rotating_hexagonal_ring, sinking_rectangular_platform, sinking_rock_block, sinking_square_platform, tilting_square_platform, volcano_falling_trap, wooden_float_large, wooden_float_small]
+shared-path: []
+# loaded files
+skybox-bin: bitfs
+texture-bin: fire
+effects: true
+actor-bins: [group2, group17]
+common-bin: [common0]

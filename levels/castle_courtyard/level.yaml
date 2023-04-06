@@ -1,0 +1,13 @@
+# Princess Peach's Castle (Castle Courtyard)
+short-name: castle_courtyard
+full-name: Princess Peach's Castle (Castle Courtyard)
+texture-file: ["/texture.inc.c"]
+area-count: 1
+objects: []
+shared-path: []
+# loaded files
+skybox-bin: water
+texture-bin: outside
+effects: false
+actor-bins: [group9]
+common-bin: [common0]

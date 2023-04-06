@@ -1,0 +1,13 @@
+# Princess Peach's Castle (Castle Grounds)
+short-name: castle_grounds
+full-name: Princess Peach's Castle (Castle Grounds)
+texture-file: ["/texture.inc.c"]
+area-count: 1
+objects: []
+shared-path: []
+# loaded files
+skybox-bin: water
+texture-bin: outside
+effects: false
+actor-bins: [group10, group15]
+common-bin: [common0]

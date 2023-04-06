@@ -1,0 +1,13 @@
+# Bob-Omb Battlefield
+short-name: bob
+full-name: Bob-Omb Battlefield
+texture-file: ["/texture.inc.c"]
+area-count: 1
+objects: [chain_chomp_gate, grate_door, seesaw_platform]
+shared-path: []
+# loaded files
+skybox-bin: water
+texture-bin: generic
+effects: false
+actor-bins: [group3, group14]
+common-bin: [common0]
