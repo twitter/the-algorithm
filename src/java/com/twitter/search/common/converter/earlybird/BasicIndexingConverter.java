@@ -554,12 +554,12 @@ public class BasicIndexingConverter {
    * </pre>
    */
   public static void buildRetweetAndReplyFields(
-          long retweetUserIdVal,
-          long sharedStatusIdVal,
-          long inReplyToStatusIdVal,
-          long inReplyToUserIdVal,
-          boolean strict,
-          EarlybirdThriftDocumentBuilder builder) {
+      long retweetUserIdVal,
+      long sharedStatusIdVal,
+      long inReplyToStatusIdVal,
+      long inReplyToUserIdVal,
+      boolean strict,
+      EarlybirdThriftDocumentBuilder builder) {
     Predicate<Long> isGreaterThanZero = id -> id > 0;
     Optional<Long> retweetUserId = Optional.of(retweetUserIdVal).filter(isGreaterThanZero);
     Optional<Long> sharedStatusId = Optional.of(sharedStatusIdVal).filter(isGreaterThanZero);
