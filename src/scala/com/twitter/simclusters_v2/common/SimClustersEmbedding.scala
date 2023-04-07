@@ -78,7 +78,7 @@ sealed trait SimClustersEmbedding extends Equals {
     CosineSimilarityUtil.applyNormArray(sortedScores, expScaledNorm)
 
   /**
-   * The Standard Deviation of a Embedding.
+   * The Standard Deviation of an Embedding.
    */
   lazy val std: Double = {
     if (scores.isEmpty) {

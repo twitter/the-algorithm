@@ -1,6 +1,6 @@
 # Navi: High-Performance Machine Learning Serving Server in Rust
 
-Navi is a high-performance, versatile machine learning serving server implemented in Rust, tailored for production usage. It's designed to efficiently serve within the Twitter tech stack, offering top-notch performance while focusing on core features.
+Navi is a high-performance, versatile machine learning serving server implemented in Rust and tailored for production usage. It's designed to efficiently serve within the Twitter tech stack, offering top-notch performance while focusing on core features.
 
 ## Key Features
 
@@ -23,12 +23,14 @@ While Navi's features may not be as comprehensive as its open-source counterpart
 - `thrift_bpr_adapter`: generated thrift code for BatchPredictionRequest
 
 ## Content
-We include all *.rs source code that makes up the main navi binaries for you to examine. The test and benchmark code, as well as configuration files are not included due to data security concerns.
+We have included all *.rs source code files that make up the main Navi binaries for you to examine. However, we have not included the test and benchmark code, or various configuration files, due to data security concerns.
 
 ## Run
-in navi/navi you can run. Note you need to create a models directory and create some versions, preferably using epoch time, e.g., 1679693908377
-- scripts/run_tf2.sh
-- scripts/run_onnx.sh
+In navi/navi, you can run the following commands:
+- `scripts/run_tf2.sh` for [TensorFlow](https://www.tensorflow.org/)
+- `scripts/run_onnx.sh` for [Onnx](https://onnx.ai/)
+
+Do note that you need to create a models directory and create some versions, preferably using epoch time, e.g., `1679693908377`.
 
 ## Build
-you can adapt the above scripts to build using Cargo
+You can adapt the above scripts to build using Cargo.
