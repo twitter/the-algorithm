@@ -1,3 +1,17 @@
+
+<!-- Table of content -->
+# Table of content
+- [Overview](#overview)
+- [Notice](#notice)
+- [SafetyLevel](#safetylevel)
+- [Features](#features)
+- [Action](#action)
+- [Condition](#condition)
+- [Policy](#policy)
+- [RuleEngine](#ruleengine)
+- [SafetyLabel](#safetylabel)
+- [SafetyLabelType](#safetylabeltype)
+
 Overview
 ========
 
@@ -7,6 +21,8 @@ Notice
 ======
 
 Visibility Filtering library is currently being reviewed and rebuilt, and part of the code has been removed and is not ready to be shared yet. The remaining part of the code needs further review and will be shared once it’s ready. Also code comments have been sanitized.
+
+
 
 SafetyLevel
 ===========
