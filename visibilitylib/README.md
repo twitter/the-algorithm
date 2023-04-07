@@ -1,16 +1,5 @@
 
-<!-- Table of content -->
-# Table of content
-- [Overview](#overview)
-- [Notice](#notice)
-- [SafetyLevel](#safetylevel)
-- [Features](#features)
-- [Action](#action)
-- [Condition](#condition)
-- [Policy](#policy)
-- [RuleEngine](#ruleengine)
-- [SafetyLabel](#safetylabel)
-- [SafetyLabelType](#safetylabeltype)
+
 
 Overview
 ========
