@@ -3,7 +3,8 @@ from twml.feature_config import FeatureConfigBuilder
 
 
 def get_feature_config(data_spec_path, label):
-  return FeatureConfigBuilder(data_spec_path=data_spec_path, debug=True) \
+  return (
+    FeatureConfigBuilder(data_spec_path=data_spec_path, debug=True)
     .batch_add_features(
     [
       ("ebd.author_specific_score", "A"),
@@ -72,3 +73,4 @@ def get_feature_config(data_spec_path, label):
   ]) \
     .define_weight("meta.record_weight/type=earlybird") \
     .build()
+  )
