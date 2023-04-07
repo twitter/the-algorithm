@@ -82,16 +82,17 @@ def get_bq_query():
 
 def parse_metric(config):
   metric_str = config["metric"].lower()
-  if metric_str == "l2":
-    return faiss.METRIC_L2
-  elif metric_str == "ip":
-    return faiss.METRIC_INNER_PRODUCT
-  elif metric_str == "l1":
-    return faiss.METRIC_L1
-  elif metric_str == "linf":
-    return faiss.METRIC_Linf
-  else:
-    raise Exception(f"Uknown metric: {metric_str}")
+  match  metric_str:
+    case "12":
+      return faiss.METRIC_L2
+    case "ip":
+      return faiss.METRIC_INNER_PRODUCT
+    case "l1":
+      return faiss.METRIC_L1
+    case "linf":
+      return faiss.METRIC_Linf
+    case _:
+      raise Exception(f"Uknown metric: {metric_str}")
 
 
 def run_pipeline(argv=[]):
