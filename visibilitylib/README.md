@@ -1,7 +1,7 @@
 Overview
 ========
 
-The Visibility Filtering algorithm is a tool that instructs Twitter clients on how to adjust the display of certain content in real-time. This library aims to filter Twitter content to ensure compliance with laws and regulations, enhance product quality, promote user trust, and safeguard revenue. The Visibility Filtering algorithm identifies potentially harmful content that breaches Twitter's policies. This includes content flagged by users or algorithms and content automatically detected by the platform as potentially harmful.
+The Visibility Filtering algorithm is a tool that instructs Twitter clients on how to adjust the display of certain content in read time. This library aims to filter Twitter content to ensure compliance with laws and regulations, enhance product quality, promote user trust, and safeguard revenue. The Visibility Filtering algorithm identifies potentially harmful content that breaches Twitter's policies. This includes content flagged by users or algorithms and content automatically detected by the platform as potentially harmful.
 
 The algorithm employs a multifaceted approach to identify and categorize potentially harmful content on Twitter. It utilizes several concepts such as `SafetyLevel`, `SafetyLabel`, and `SafetyLabelType`. Twitter uses labeling mechanisms to apply various remediation techniques, such as reducing the visibility of flagged content or employing interstitials to alert users of potentially harmful content. This effort is aimed at enhancing the safety and trust of Twitter's platform for all its users.
 
