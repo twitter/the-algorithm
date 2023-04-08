@@ -32,6 +32,7 @@ object SpaceSafetyLabelType extends SafetyLabelType {
     s.SpaceSafetyLabelType.CivicIntegrityMisinfo -> CivicIntegrityMisinfo,
     s.SpaceSafetyLabelType.MedicalMisinfo -> MedicalMisinfo,
     s.SpaceSafetyLabelType.GenericMisinfo -> GenericMisinfo,
+    s.SpaceSafetyLabelType.WarMisinfo -> WarMisinfo,
     s.SpaceSafetyLabelType.DmcaWithheld -> DmcaWithheld,
     s.SpaceSafetyLabelType.HatefulHighRecall -> HatefulHighRecall,
     s.SpaceSafetyLabelType.ViolenceHighRecall -> ViolenceHighRecall,
@@ -63,6 +64,7 @@ object SpaceSafetyLabelType extends SafetyLabelType {
   case object NsfwHighRecall extends SpaceSafetyLabelType
   case object CivicIntegrityMisinfo extends SpaceSafetyLabelType
   case object MedicalMisinfo extends SpaceSafetyLabelType
+  case object WarMisinfo extends SpaceSafetyLabelType
   case object GenericMisinfo extends SpaceSafetyLabelType
   case object DmcaWithheld extends SpaceSafetyLabelType
   case object HatefulHighRecall extends SpaceSafetyLabelType
