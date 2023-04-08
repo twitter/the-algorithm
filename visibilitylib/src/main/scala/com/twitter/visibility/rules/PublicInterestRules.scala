@@ -53,6 +53,7 @@ object PublicInterest {
     PolicyInViolation.MisinformationCivic -> MisinfoCivic,
     PolicyInViolation.MisinformationGeneric -> MisinfoGeneric,
     PolicyInViolation.MisinformationMedical -> MisinfoMedical,
+    PolicyInViolation.MisinformationWar -> MisinfoWar,
   )
 
   val reasonToPolicyInViolation: Map[Reason, PolicyInViolation] = Map(
@@ -77,6 +78,7 @@ object PublicInterest {
     MisinfoCivic -> PolicyInViolation.MisinformationCivic,
     MisinfoGeneric -> PolicyInViolation.MisinformationGeneric,
     MisinfoMedical -> PolicyInViolation.MisinformationMedical,
+    MisinfoWar -> PolicyInViolation.MisinformationWar,
   )
 
   val ReasonToSafetyResultReason: Map[Reason, SafetyResultReason] = Map(
@@ -115,6 +117,7 @@ object PublicInterest {
     TweetSafetyLabelType.MisinfoCivic,
     TweetSafetyLabelType.MisinfoGeneric,
     TweetSafetyLabelType.MisinfoMedical,
+    TweetSafetyLabelType.MisinfoWar,
     TweetSafetyLabelType.IpiDevelopmentOnly
   )
 
@@ -175,6 +178,9 @@ class PublicInterestActionBuilder[T <: Action]() extends ActionBuilder[T] {
         case Some((TweetSafetyLabelType.MisinfoMedical, source)) =>
           (Reason.MisinfoMedical, LimitedEngagementReason.fromString(source.map(_.name)))
 
+        case Some((TweetSafetyLabelType.MisinfoWar, source)) =>
+          (Reason.MisinfoWar, LimitedEngagementReason.fromString(source.map(_.name)))
+
         case Some((TweetSafetyLabelType.IpiDevelopmentOnly, _)) =>
           (Reason.IpiDevelopmentOnly, Some(LimitedEngagementReason.NonCompliant))
 
@@ -219,6 +225,9 @@ class PublicInterestComplianceTweetNoticeActionBuilder
         case Some((TweetSafetyLabelType.MisinfoMedical, _)) =>
           Reason.MisinfoMedical
 
+        case Some((TweetSafetyLabelType.MisinfoWar, _)) =>
+          Reason.MisinfoWar
+
         case Some((TweetSafetyLabelType.IpiDevelopmentOnly, _)) =>
           Reason.IpiDevelopmentOnly
 
@@ -252,6 +261,9 @@ class PublicInterestDropActionBuilder extends ActionBuilder[Drop] {
 
       case Some(TweetSafetyLabelType.MisinfoMedical) =>
         Reason.MisinfoMedical
+
+      case Some(TweetSafetyLabelType.MisinfoWar) =>
+        Reason.MisinfoWar
 
       case _ =>
         Reason.OneOff
