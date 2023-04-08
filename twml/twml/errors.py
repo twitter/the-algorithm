@@ -9,5 +9,5 @@ class EarlyStopError(Exception):
 
 
 class CheckpointNotFoundError(Exception):
-  """Exception used to indicate a checkpoint hasnt been found."""
+  """Exception used to indicate a checkpoint hasn't been found."""
   pass

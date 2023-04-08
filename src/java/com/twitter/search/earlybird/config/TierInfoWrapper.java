@@ -5,7 +5,7 @@ import java.util.Date;
 import com.google.common.base.Preconditions;
 
 /**
- * A simple wrapper around TierInfo that returns the "real" or the "overriden" values from the given
+ * A simple wrapper around TierInfo that returns the "real" or the "overridden" values from the given
  * {@code TierInfo} instance, based on the given {@code useOverrideTierConfig} flag.
  */
 public class TierInfoWrapper implements ServingRange {

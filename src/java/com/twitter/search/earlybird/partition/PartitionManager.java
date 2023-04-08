@@ -91,7 +91,7 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
       testHookAfterSleep();
       indexingLoop(partitionManagerFirstLoop);
     } catch (InterruptedException e) {
-      LOG.warn("PartitionManager thread interrupted, stoping scheduler", e);
+      LOG.warn("PartitionManager thread interrupted, stopping scheduler", e);
       shutDownIndexing();
       throw new RuntimeException("PartitionManager thread interrupted", e);
     } catch (Exception e) {
@@ -215,7 +215,7 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
 
   /**
    * An interface that allows tests to run code at various points in the PartitionManager's
-   * lyfecycle.
+   * lifecycle.
    */
   @VisibleForTesting
   public interface TestHook {

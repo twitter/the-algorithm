@@ -37,7 +37,7 @@ The data is a read from multiple ``part-*.[compression]`` files.
 The default behavior of ``DataRecordTrainer`` is to read sparse features from ``DataRecords``.
 This is a legacy default piping format at Twitter.
 The ``DataRecordTrainer`` is flexible enough for research and yet simple enough
-for a new beginner ML practioner.
+for a new beginner ML practitioner.
 
 By means of the feature string to key hashing function,
 the ``[train,eval]_feature_config`` constructor arguments
@@ -230,7 +230,7 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
                         start_datetime, end_datetime, datetime_format,
                         data_threads, hour_resolution, maybe_save, overwrite):
     '''
-    When specifying DAL datasets, only data_dir, start_dateime, and end_datetime
+    When specifying DAL datasets, only data_dir, start_datetime, and end_datetime
     should be given with the format:
 
     dal://{cluster}/{role}/{dataset_name}/{env}

@@ -32,7 +32,7 @@ public class FuturePoolModule extends TwitterModule {
 
   /**
    * Create a future pool backed by executor service, with bounded thread pool and bounded backing
-   * queue. ONLY VISIBILE FOR TESTING; don't invoke outside this class.
+   * queue. ONLY VISIBLE FOR TESTING; don't invoke outside this class.
    */
   @VisibleForTesting
   public static ExecutorServiceFuturePool createFuturePool(

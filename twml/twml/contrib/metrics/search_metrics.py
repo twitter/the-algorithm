@@ -31,7 +31,7 @@ def ndcg(labels, predictions,
   # pylint: disable=unused-argument
   """
   Compute full normalized discounted cumulative gain (ndcg) based on predictions
-  ndcg = dcg_k/idcg_k, k is a cut off ranking postion
+  ndcg = dcg_k/idcg_k, k is a cut off ranking position
   There are a few variants of ndcg
   The dcg (discounted cumulative gain) formula used in
   twml.contrib.metrics.ndcg is::
@@ -151,7 +151,7 @@ def get_search_metric_fn(binary_metrics=None, search_metrics=None,
       the raw predictions. Required.
     threshold:
       Only used in SUPPORTED_BINARY_CLASS_METRICS
-      If the lables are 0s and 1s
+      If the labels are 0s and 1s
       A value between 0 and 1 used to threshold the output into a hard_output.
       Defaults to 0.5 when threshold and hard_output are missing.
       Either threshold or hard_output can be provided, but not both.
@@ -189,7 +189,7 @@ def get_search_metric_fn(binary_metrics=None, search_metrics=None,
       Supported metrics:
         - ndcg
 
-      NOTE: ndcg works for ranking-relatd problems.
+      NOTE: ndcg works for ranking-related problems.
       A batch contains all DataRecords that belong to the same query
       If pair_in_batch_mode used in scalding -- a batch contains a pair of DataRecords
       that belong to the same query and have different labels -- ndcg does not apply in here.
@@ -198,7 +198,7 @@ def get_search_metric_fn(binary_metrics=None, search_metrics=None,
       currently only 'ndcg'
 
     ndcg_top_ks (list of integers):
-      The cut-off ranking postions for a query
+      The cut-off ranking positions for a query
       When ndcg_top_ks is None or empty (the default), it defaults to [1, 3, 5, 10]
 
     use_binary_metrics:

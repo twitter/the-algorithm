@@ -11,7 +11,7 @@ import tensorflow.compat.v1 as tf
 
 class Stitch(Layer):
   """
-  This layer is responsible for stitching a partioned layer together.
+  This layer is responsible for stitching a partitioned layer together.
 
   Output:
     A layer that performs stitching
@@ -29,18 +29,18 @@ class Stitch(Layer):
     """
     raise NotImplementedError
 
-  def call(self, partioned_val, partioned_keys,
-           partioned_indices, **kwargs):  # pylint: disable=unused-argument, arguments-differ
+  def call(self, partitioned_val, partitioned_keys,
+           partitioned_indices, **kwargs):  # pylint: disable=unused-argument, arguments-differ
     """
-    This layer is responsible for stitching a partioned layer together.
+    This layer is responsible for stitching a partitioned layer together.
 
     Input:
-      partioned_val:
-        a list of partioned Tensors which represent the vals of the hashmap
-      partioned_keys:
-        a list of partioned Tensors which represent the keys of the hashmap
-      partioned_indices:
-        a list of partioned Tensors which represent the indices of the hashmap
+      partitioned_val:
+        a list of partitioned Tensors which represent the vals of the hashmap
+      partitioned_keys:
+        a list of partitioned Tensors which represent the keys of the hashmap
+      partitioned_indices:
+        a list of partitioned Tensors which represent the indices of the hashmap
     Output:
       List which contains: [output_vals, output_keys]
         output_vals:
@@ -48,7 +48,7 @@ class Stitch(Layer):
         output_keys:
           Keys of HashMap (float)
     """
-    indices = [tf.to_int32(index) for index in partioned_indices]
-    concat_keys = tf.dynamic_stitch(indices, partioned_keys)
-    concat_vals = tf.dynamic_stitch(indices, partioned_val)
+    indices = [tf.to_int32(index) for index in partitioned_indices]
+    concat_keys = tf.dynamic_stitch(indices, partitioned_keys)
+    concat_vals = tf.dynamic_stitch(indices, partitioned_val)
     return [concat_vals, concat_keys]

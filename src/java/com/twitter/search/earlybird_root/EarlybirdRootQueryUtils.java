@@ -45,7 +45,7 @@ public final class EarlybirdRootQueryUtils {
         // Should not happen, put and log error here just in case
         m.put(i, query);
         LOG.error(
-            "MultiTermDisjuctionPerPartitionVisitor cannot process query: " + query.serialize());
+            "MultiTermDisjunctionPerPartitionVisitor cannot process query: " + query.serialize());
       }
     }
     return m;

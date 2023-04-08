@@ -27,6 +27,6 @@ jvm_binary(
 #     https://docbird.twitter.biz/core_libraries_guide/logging/twitter_server.html
 #     without these, c.t.l.Logger become silent/null logger since no proper
 #     configuration can be found. This can be removed once there are no
-#     depdency from service to c.t.l.Logger
+#     dependency from service to c.t.l.Logger
 #
 # [2] incur logback implementation

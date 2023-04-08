@@ -112,7 +112,7 @@ public class AnalyzerFactory {
 
   private CharFilter resolveCharFilterClass(ThriftClassInstantiater classDef, Reader input) {
     if (classDef.getClassName().equals(HTML_STRIP_CHAR_FILTER)) {
-      String escapedTags = getArg(classDef.getParams(), "excapedTags");
+      String escapedTags = getArg(classDef.getParams(), "escapedTags");
       if (escapedTags != null) {
         return new HTMLStripCharFilter(input, Sets.newHashSet(Splitter.on(",").split(escapedTags)));
       } else {

@@ -188,7 +188,7 @@ object TweetSimilarityEvaluationAdhocApp extends AdhocExecutionApp {
 
     // compute approximate similar tweets for each sampled tweets.
     // this is achieved by multiplying "sampled_tweets -> top clusters" matrix with "cluster -> top tweets" matrix.
-    // note that in the implementation, we first compute the transponse of this matrix in order to ultlize the optimization done on skinny matrices
+    // note that in the implementation, we first compute the transpose of this matrix in order to utilize the optimization done on skinny matrices
     val predictionData = clusterTopTweets.toSparseMatrix.transpose
       .multiplySkinnySparseRowMatrix(
         tweetEmbeddingSubset.toSparseMatrix.transpose.toSparseRowMatrix(true),

@@ -27,7 +27,7 @@ import com.twitter.twml.runtime.models.ModelLocator$;
 import com.twitter.util.Await;
 
 /**
- * TensorflowModelsManager manages the lifecyle of TF models.
+ * TensorflowModelsManager manages the lifecycle of TF models.
  */
 public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
 

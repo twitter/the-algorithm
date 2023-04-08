@@ -380,8 +380,8 @@ public final class EarlybirdProperty<T> {
     return type.getter.apply(name);
   }
 
-  public T get(T devaultValue) {
-    return type.getterWithDefault.apply(name, devaultValue);
+  public T get(T defaultValue) {
+    return type.getterWithDefault.apply(name, defaultValue);
   }
 
   public static EarlybirdProperty[] values() {

@@ -12,7 +12,7 @@ import com.twitter.scalding.UniqueID
 import com.twitter.scalding_internal.job.TwitterExecutionApp
 
 /**
- * This job reads index embedding data, query embeddings data, and split into index set, query set and true nearest neigbor set
+ * This job reads index embedding data, query embeddings data, and split into index set, query set and true nearest neighbor set
  * from query to index.
  */
 object KnnTruthSetGenerator extends TwitterExecutionApp {

@@ -17,7 +17,7 @@ def _get_config_version(config_dict):
   if "class" not in doc:
     raise ValueError("'class' key not found")
   if doc["class"] not in supported_classes.keys():
-    raise ValueError("Class %s not supported. Supported clases are %s"
+    raise ValueError("Class %s not supported. Supported classes are %s"
                      % (doc["class"], supported_classes.keys()))
   return supported_classes[doc["class"]]
 

@@ -19,7 +19,7 @@ class SparseMaxNorm(Layer):
     bias_x (optional):
       vector of shape [input_size]. Learned through gradient descent.
     max_x:
-      vector of shape [input_size]. Holds the maximas of input ``x`` for normalization.
+      vector of shape [input_size]. Holds the maxima of input ``x`` for normalization.
       Either calibrated through SparseMaxNorm calibrator, or calibrated online, or both.
 
   The pseudo-code for this layer looks like:
@@ -38,7 +38,7 @@ class SparseMaxNorm(Layer):
     bias_x_initializer:
       initializer vector of shape [input_size] used by parameter `bias_x`
     is_training:
-      Are we training the layer to learn the normalization maximas.
+      Are we training the layer to learn the normalization maxima.
       If set to True, max_x will be able to learn. This is independent of bias_x
     epsilon:
       The minimum value used for max_x. Defaults to 1E-5.
@@ -167,7 +167,7 @@ class SparseMaxNorm(Layer):
     with tf.device(self.max_x.device):
       return self._call(inputs, **kwargs)
 
-# For backwards compatiblity and also because I don't want to change all the tests.
+# For backwards compatibility and also because I don't want to change all the tests.
 MaxNorm = SparseMaxNorm
 
 
@@ -181,7 +181,7 @@ def sparse_max_norm(inputs,
                     name=None,
                     reuse=None):
   """
-  Functional inteface to SparseMaxNorm.
+  Functional interface to SparseMaxNorm.
 
   Args:
     inputs:
@@ -193,7 +193,7 @@ def sparse_max_norm(inputs,
     bias_x_initializer:
       initializer vector of shape [input_size] used by parameter `bias_x`
     is_training:
-      Are we training the layer to learn the normalization maximas.
+      Are we training the layer to learn the normalization maxima.
       If set to True, max_x will be able to learn. This is independent of bias_x
     epsilon:
       The minimum value used for max_x. Defaults to 1E-5.

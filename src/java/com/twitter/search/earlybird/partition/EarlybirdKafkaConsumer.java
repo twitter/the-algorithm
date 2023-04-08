@@ -183,7 +183,7 @@ public class EarlybirdKafkaConsumer implements Closeable {
     return totalRecordsRead;
   }
 
-  // This method is overriden in MockEarlybirdKafkaConsumer.
+  // This method is overridden in MockEarlybirdKafkaConsumer.
   public boolean isCurrent(boolean current) {
     return current;
   }

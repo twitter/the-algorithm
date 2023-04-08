@@ -20,7 +20,7 @@ import com.twitter.search.common.metrics.SearchTimerStats;
  * Abstracts details of making time limited calls to hadoop.
  *
  * During IM-3556 we discovered that hadoop API calls can take a long time (seconds, minutes)
- * if the Hadoop clsuter is in a bad state. Our code was generally not prepared for that and
+ * if the Hadoop cluster is in a bad state. Our code was generally not prepared for that and
  * this caused various issues. This class is a fix on top of the Hadoop API's exists call and
  * it introduces a timeout.
  *

@@ -14,7 +14,7 @@ object InteractionGraphAddressBookUtil {
   val BOTH = "both"
 
   val DefaultAge = 1
-  val DegaultFeatureValue = 1.0
+  val DefaultFeatureValue = 1.0
 
   def process(
     addressBook: SCollection[UserMatchesRecord]
@@ -71,19 +71,19 @@ object InteractionGraphAddressBookUtil {
           // construct the TypedPipe for feature calculation
           if (isMutualFollow) {
             Iterator(
-              InteractionGraphRawInput(srcId, dstId, featureName, DefaultAge, DegaultFeatureValue),
-              InteractionGraphRawInput(dstId, srcId, featureName, DefaultAge, DegaultFeatureValue),
+              InteractionGraphRawInput(srcId, dstId, featureName, DefaultAge, DefaultFeatureValue),
+              InteractionGraphRawInput(dstId, srcId, featureName, DefaultAge, DefaultFeatureValue),
               InteractionGraphRawInput(
                 srcId,
                 dstId,
                 mfFeatureName,
                 DefaultAge,
-                DegaultFeatureValue),
-              InteractionGraphRawInput(dstId, srcId, mfFeatureName, DefaultAge, DegaultFeatureValue)
+                DefaultFeatureValue),
+              InteractionGraphRawInput(dstId, srcId, mfFeatureName, DefaultAge, DefaultFeatureValue)
             )
           } else {
             Iterator(
-              InteractionGraphRawInput(srcId, dstId, featureName, DefaultAge, DegaultFeatureValue))
+              InteractionGraphRawInput(srcId, dstId, featureName, DefaultAge, DefaultFeatureValue))
           }
       }
 

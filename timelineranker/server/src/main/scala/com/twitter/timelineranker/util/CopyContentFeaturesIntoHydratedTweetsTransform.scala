@@ -17,13 +17,13 @@ object CopyContentFeaturesIntoHydratedTweetsTransform
   ): Future[HydratedCandidatesAndFeaturesEnvelope] = {
 
     request.contentFeaturesFuture.map { sourceTweetContentFeaturesMap =>
-      val updatedHyratedTweets = request.candidateEnvelope.hydratedTweets.outerTweets.map {
+      val updatedHydratedTweets = request.candidateEnvelope.hydratedTweets.outerTweets.map {
         hydratedTweet =>
           val contentFeaturesOpt = request.tweetSourceTweetMap
             .get(hydratedTweet.tweetId)
             .flatMap(sourceTweetContentFeaturesMap.get)
 
-          val updatedHyratedTweet = contentFeaturesOpt match {
+          val updatedHydratedTweet = contentFeaturesOpt match {
             case Some(contentFeatures: ContentFeatures) =>
               copyContentFeaturesIntoHydratedTweets(
                 contentFeatures,
@@ -32,13 +32,13 @@ object CopyContentFeaturesIntoHydratedTweetsTransform
             case _ => hydratedTweet
           }
 
-          updatedHyratedTweet
+          updatedHydratedTweet
       }
 
       request.copy(
         candidateEnvelope = request.candidateEnvelope.copy(
           hydratedTweets = request.candidateEnvelope.hydratedTweets.copy(
-            outerTweets = updatedHyratedTweets
+            outerTweets = updatedHydratedTweets
           )
         )
       )

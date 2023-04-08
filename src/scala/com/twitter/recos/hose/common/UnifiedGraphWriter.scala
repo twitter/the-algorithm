@@ -79,7 +79,7 @@ trait UnifiedGraphWriter[
       val queuelimit: Semaphore = new Semaphore(1024)
 
       initRecosHoseKafka(queue, queuelimit)
-      initGrpahWriters(liveGraph, queue, queuelimit)
+      initGraphWriters(liveGraph, queue, queuelimit)
     } else {
       throw new RuntimeException("attempt to re-init kafka hose")
     }
@@ -135,7 +135,7 @@ trait UnifiedGraphWriter[
    * by first creating catch up writers to bootstrap the older segments,
    * and then assigning a live writer to populate the live segment.
    */
-  private def initGrpahWriters(
+  private def initGraphWriters(
     liveGraph: TGraph,
     queue: java.util.Queue[Array[RecosHoseMessage]],
     queuelimit: Semaphore

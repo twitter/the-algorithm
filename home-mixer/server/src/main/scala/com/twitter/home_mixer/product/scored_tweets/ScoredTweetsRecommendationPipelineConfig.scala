@@ -212,10 +212,10 @@ class ScoredTweetsRecommendationPipelineConfig @Inject() (
 
   override val scoringPipelines: Seq[ScoringPipelineConfig[ScoredTweetsQuery, TweetCandidate]] =
     Seq(
-      // scoring pipielines - run on non-cached candidates only since cached ones are already scored
+      // scoring pipelines - run on non-cached candidates only since cached ones are already scored
       scoredTweetsScoringPipelineConfig,
       scoredTweetsWeightedScoresSumScoringPipelineConfig,
-      // re-scoring pipielines - run on all candidates since these are request specific
+      // re-scoring pipelines - run on all candidates since these are request specific
       ScoredTweetsRescoreOONScoringPipelineConfig,
       ScoredTweetsRescoreVerifiedAuthorScoringPipelineConfig,
       ScoredTweetsDiversityScoringPipelineConfig

@@ -133,7 +133,7 @@ public class TweetParser {
                             TokenizerResult result,
                             PenguinVersion penguinVersion) {
     if (message.getHashtags().isEmpty()) {
-      // add hashtags to TwitterMessage if it doens't already have them, from
+      // add hashtags to TwitterMessage if it doesn't already have them, from
       // JSON entities, this happens when we do offline indexing
       for (String hashtag : sanitizeTokenizerResults(result.hashtags, '#')) {
         message.addHashtag(hashtag);
@@ -141,7 +141,7 @@ public class TweetParser {
     }
 
     if (message.getMentions().isEmpty()) {
-      // add mentions to TwitterMessage if it doens't already have them, from
+      // add mentions to TwitterMessage if it doesn't already have them, from
       // JSON entities, this happens when we do offline indexing
       for (String mention : sanitizeTokenizerResults(result.mentions, '@')) {
         message.addMention(mention);

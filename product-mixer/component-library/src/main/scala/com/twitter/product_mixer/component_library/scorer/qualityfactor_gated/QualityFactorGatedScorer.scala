@@ -18,7 +18,7 @@ import com.twitter.timelines.configapi.Param
 /**
  * A [[scorer]] with [[Conditionally]] based on quality factor value and threshold
  *
- * @param qualityFactorThreshold quliaty factor threshold that turn off the scorer
+ * @param qualityFactorThreshold quality factor threshold that turn off the scorer
  * @param pipelineIdentifier identifier of the pipeline that quality factor is based on
  * @param scorer the underlying [[scorer]] to run when `enabledParam` is true
  * @tparam Query The domain model for the query or request

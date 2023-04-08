@@ -1229,13 +1229,13 @@ struct EarlybirdRequest {
   26: optional query.ThriftQuerySource querySource
 
   // Whether to get archive results This flag is advisory. A request may still be restricted from
-  // getting reqults from the archive based on the requesting client, query source, requested
+  // getting results from the archive based on the requesting client, query source, requested
   // time/id range, etc.
   27: optional bool getOlderResults
 
   // The list of users followed by the current user.
   // Used to restrict the values in the fromUserIDFilter64 field when sending a request
-  // to the protectected cluster.
+  // to the protected cluster.
   28: optional list<i64> followedUserIds
 
   // The adjusted parameters for the protected request.
@@ -1248,7 +1248,7 @@ struct EarlybirdRequest {
   // results that contain only protected tweets.
   31: optional bool getProtectedTweetsOnly
 
-  // Tokenize serialized queries with the appropriate Pengin version(s).
+  // Tokenize serialized queries with the appropriate Penguin version(s).
   // Only has an effect on superroot.
   32: optional bool retokenizeSerializedQuery
 

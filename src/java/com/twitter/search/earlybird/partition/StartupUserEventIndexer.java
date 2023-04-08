@@ -181,7 +181,7 @@ public class StartupUserEventIndexer {
 
   /**
    * For realtime/protected: Compute the timestamp 14 days from the current time. This will account
-   * for all events that have occurred during the lifecylce of the current index.
+   * for all events that have occurred during the lifecycle of the current index.
    *
    * See go/realtime-geo-filtering
    */

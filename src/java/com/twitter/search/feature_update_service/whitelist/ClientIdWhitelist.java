@@ -44,7 +44,7 @@ public class ClientIdWhitelist extends PeriodicFileLoader {
 
   /**
    * Creates clock and executor service needed to create a periodic file loading object
-   * then returns object that accpets file.
+   * then returns object that accepts file.
    * @param clientWhitelistPath
    * @return ClientIdWhitelist
    * @throws Exception

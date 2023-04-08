@@ -138,7 +138,7 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
       //      thread_running_future_{i-1} and thread_running_future_i is crossed. This guarantees
       //      that thread_running_future_i will see the updates to mergeHelper before it sees the
       //      callbacks. (Or thread_running_future_{i-1} == thread_running_future_i, in which case
-      //      synchronization is not an issue, and correctness is guarateed by the order in which
+      //      synchronization is not an issue, and correctness is guaranteed by the order in which
       //      things will run.)
       //   4. The same reasoning applies to currentFutureIndex.
 

@@ -399,7 +399,7 @@ public final class TwitterMessageUtil {
    *
    * @param text The text to truncate
    * @param maxLength The maximum length of the string after truncation
-   * @param field The field from which this string cames
+   * @param field The field from which this string came
    * @param splitEmojisAtMaxLength If true, don't worry about emojis and just truncate at maxLength,
    * potentially splitting them. If false, truncate before the emoji if truncating at maxLength
    * would cause the emoji to be split.

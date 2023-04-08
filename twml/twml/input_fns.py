@@ -117,7 +117,7 @@ def data_record_input_fn(
     tf.add_to_collection(tf.GraphKeys.SUMMARIES, stats_summary)
 
   if initializable:
-    # when the data parsing dpends on some HashTable or Tensor, the iterator is initalizable and
+    # when the data parsing depends on some HashTable or Tensor, the iterator is initializable and
     # therefore we need to be run explicitly
     iterator = dataset.make_initializable_iterator()
     tf.add_to_collection(tf.GraphKeys.TABLE_INITIALIZERS, iterator.initializer)

@@ -36,7 +36,7 @@ namespace shape_inference {
 // TODO: The `a_value` is supposed to be all ones.
 // Users should not call this op directly but to use it from `sparse_op` python library. 
 // To make it consistent with original op, the signature remains the same currently,
-//  we will think a better way to contrain correct use of this op.
+//  we will think a better way to constrain correct use of this op.
 // CX-18174
 REGISTER_OP("BinarySparseTensorDenseMatMul")
     .Input("a_indices: Tindices")

@@ -13,7 +13,7 @@ import com.twitter.util.Time
 
 /**
  * Compared with ApproximateCosineSimilarity, this implementation:
- * - moves some computation aroudn to reduce allocations
+ * - moves some computation around to reduce allocations
  * - uses a single hashmap to store both scores and normalization coefficients
  * - uses some java collections in place of scala ones
  * Testing is still in progress, but this implementation shows significant (> 2x) improvements in

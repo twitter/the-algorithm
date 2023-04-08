@@ -269,7 +269,7 @@ RawSparseTensor TensorRecordReader::readCOOSparseTensor() {
         values = readGeneralTensor();
         break;
       default:
-        throw twml::Error(TWML_ERR_THRIFT, "Invalid field when deocidng COOSparseTensor");
+        throw twml::Error(TWML_ERR_THRIFT, "Invalid field when decoding COOSparseTensor");
     }
   }
 

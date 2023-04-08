@@ -180,7 +180,7 @@ class CrMixerServer extends ThriftServer with Mtls with HttpServer with HttpMtls
         TripCandidateStoreModule,
         TwiceClustersMembersStoreModule,
         TweetBasedQigSimilarityEngineModule,
-        TweetBasedTwHINSimlarityEngineModule,
+        TweetBasedTwHINSimilarityEngineModule,
         TweetBasedUnifiedSimilarityEngineModule,
         TweetBasedUserAdGraphSimilarityEngineModule,
         TweetBasedUserTweetGraphSimilarityEngineModule,

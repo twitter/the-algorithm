@@ -5,7 +5,7 @@ import com.twitter.timelineranker.model.RecapQuery
 import com.twitter.util.Future
 
 /**
- * A repository of YML tweets candidiates
+ * A repository of YML tweets candidates
  */
 class UtegLikedByTweetsRepository(source: UtegLikedByTweetsSource) {
   def get(query: RecapQuery): Future[CandidateTweetsResult] = {

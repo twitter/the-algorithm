@@ -117,7 +117,7 @@ pub fn to_feature_info(input_feature: &seg_dense::InputFeature) -> Option<Featur
     // This part needs to be schema driven
     //
     //   tensor index : Which of these tensors this feature is part of
-    //      [Continious, Binary, Discrete, User_embedding, user_eng_embedding, author_embedding]
+    //      [Continuous, Binary, Discrete, User_embedding, user_eng_embedding, author_embedding]
     //      Note that this order is fixed/hardcoded here, and need to be schematized
     //
     let tensor_idx: i8 = match input_feature.feature_id {
@@ -134,7 +134,7 @@ pub fn to_feature_info(input_feature: &seg_dense::InputFeature) -> Option<Featur
         _ => match input_feature.feature_type {
             //   feature_type : src/thrift/com/twitter/ml/api/data.thrift
             //       BINARY = 1, CONTINUOUS = 2, DISCRETE = 3,
-            //    Map to slots in [Continious, Binary, Discrete, ..]
+            //    Map to slots in [Continuous, Binary, Discrete, ..]
             1 => 1,
             2 => 0,
             3 => 2,

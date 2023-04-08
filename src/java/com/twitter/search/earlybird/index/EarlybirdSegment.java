@@ -686,7 +686,7 @@ public class EarlybirdSegment {
   }
 
   /**
-   * Update the data backing this EarlyirdSegment.
+   * Update the data backing this EarlybirdSegment.
    */
   public void setSegmentData(
       EarlybirdIndexSegmentData segmentData,

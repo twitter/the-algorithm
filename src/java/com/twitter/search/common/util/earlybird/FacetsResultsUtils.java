@@ -54,10 +54,10 @@ public final class FacetsResultsUtils {
 
   /**
    * Prepare facet fields with empty entries and check if we need termStats for filtering.
-   * Returns true if termStats filtering is needed (thus the termStats servie call).
+   * Returns true if termStats filtering is needed (thus the termStats service call).
    * @param facetRequest The related facet request.
    * @param facetFieldInfoMap The facet field info map to fill, a map from facet type to the facet
-   * fiels results info.
+   * field results info.
    * @return {@code true} if termstats request is needed afterwards.
    */
   public static boolean prepareFieldInfoMap(
@@ -81,7 +81,7 @@ public final class FacetsResultsUtils {
    * Extract information from one ThriftFacetResults into facetFieldInfoMap and userIDWhitelist.
    * @param facetResults Related facets results.
    * @param facetFieldInfoMap The facets field info map to fill, a map from facet type to the facet
-   * fiels results info.
+   * field results info.
    * @param userIDWhitelist The user whitelist to fill.
    */
   public static void fillFacetFieldInfo(

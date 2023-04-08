@@ -16,7 +16,7 @@ import com.twitter.stitch.Arrow
 import javax.inject.Inject
 
 /**
- * A candidate source step, which takes the query and gets csandidates from the candidate source.
+ * A candidate source step, which takes the query and gets candidates from the candidate source.
  *
  * @param candidateSourceExecutor Candidate Source Executor
  * @tparam Query Type of PipelineQuery domain model

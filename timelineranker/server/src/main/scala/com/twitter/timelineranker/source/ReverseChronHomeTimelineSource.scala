@@ -95,7 +95,7 @@ class ReverseChronHomeTimelineSource(
         .flatMap { followGraphData =>
           // We return an empty timeline if a given user follows more than the limit
           // on the number of users. This is because, such a user's timeline will quickly
-          // fill up displacing materialized tweets wasting the materialation work.
+          // fill up displacing materialized tweets wasting the materialization work.
           // This behavior can be disabled via featureswitches to support non-materialization
           // use cases when we should always return a timeline.
           if (followGraphData.filteredFollowedUserIds.isEmpty ||

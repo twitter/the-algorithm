@@ -50,7 +50,7 @@ enum FullTypeId {
   // Parametrization:
   //   TFT_NAMED[<type>]{<name>}
   //   * <type> is the type of the field
-  //   * <name> is the field name, as string (thpugh can theoretically be an int
+  //   * <name> is the field name, as string (though can theoretically be an int
   //     as well)
   //
   // Example:
@@ -202,7 +202,7 @@ enum FullTypeId {
   TFT_STRING = 214;
 
   // Other types that we don't know yet whether they will become part of the
-  // core type system or be consisdered third-party (and consequently moved to
+  // core type system or be considered third-party (and consequently moved to
   // user-defined type mechanisms). Presently, they are effectively in the core
   // type system, because key compilation passes like Placer account for their
   // existence.
@@ -221,9 +221,9 @@ enum FullTypeId {
   //     the data type of the elements produced by the dataset.
   //
   // Examples:
-  //   TFT_DATSET[TFT_TENSOR[TFT_INT32]] is a Dataset producing single int32
+  //   TFT_DATASET[TFT_TENSOR[TFT_INT32]] is a Dataset producing single int32
   //     Tensors of unknown shape.
-  //   TFT_DATSET[TFT_PRODUCT[TFT_TENSOR[TFT_INT32], TFT_TENSOR[TFT_FLOAT32]] is
+  //   TFT_DATASET[TFT_PRODUCT[TFT_TENSOR[TFT_INT32], TFT_TENSOR[TFT_FLOAT32]] is
   //     a Dataset producing pairs of Tensors, one integer and one float.
   // Note: The high ID number is to prepare for the eventuality that Datasets
   // will be supported by user types in the future.

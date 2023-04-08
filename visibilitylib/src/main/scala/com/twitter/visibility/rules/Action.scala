@@ -779,7 +779,7 @@ case class TweetVisibilityNudge(
   override def toHealthActionTypeThrift: Option[HealthActionType] =
     Some(HealthActionType.TweetVisibilityNudge)
 
-  def toTweetVisbilityNudgeThrift(): thriftscala.TweetVisibilityNudge =
+  def toTweetVisibilityNudgeThrift(): thriftscala.TweetVisibilityNudge =
     thriftscala.TweetVisibilityNudge(tweetVisibilityNudgeActions =
       localizedNudge.map(_.localizedNudgeActions.map(_.toThrift())))
 }

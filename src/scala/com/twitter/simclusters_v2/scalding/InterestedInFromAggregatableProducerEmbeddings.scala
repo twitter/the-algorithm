@@ -62,7 +62,7 @@ object InterestedInFromAPE2020BatchApp extends InterestedInFromAggregatableProdu
     KeyVal[UserId, ClustersUserIsInterestedIn]
   ] = SimclustersV2InterestedInFromAggregatableProducerEmbeddings20M145K2020ScalaDataset
 
-  override def interestedInFromAPEOutputThriftDatset: SnapshotDALDataset[
+  override def interestedInFromAPEOutputThriftDataset: SnapshotDALDataset[
     UserToInterestedInClusters
   ] = SimclustersV2UserToInterestedInFromAggregatableProducerEmbeddings20M145K2020ScalaDataset
 }
@@ -78,7 +78,7 @@ trait InterestedInFromAggregatableProducerEmbeddingsBase extends ScheduledExecut
     KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]
   ]
 
-  def interestedInFromAPEOutputThriftDatset: SnapshotDALDataset[UserToInterestedInClusters]
+  def interestedInFromAPEOutputThriftDataset: SnapshotDALDataset[UserToInterestedInClusters]
 
   override def runOnDateRange(
     args: Args
@@ -137,7 +137,7 @@ trait InterestedInFromAggregatableProducerEmbeddingsBase extends ScheduledExecut
               clusters.clusterIdToScores)
         }
         .writeDALSnapshotExecution(
-          interestedInFromAPEOutputThriftDatset,
+          interestedInFromAPEOutputThriftDataset,
           D.Daily,
           D.Suffix(interestedInFromProducersThriftPath),
           D.EBLzo(),

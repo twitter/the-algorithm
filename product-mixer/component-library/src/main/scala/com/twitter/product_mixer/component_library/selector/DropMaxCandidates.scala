@@ -60,7 +60,7 @@ object DropMaxCandidates {
  *
  * Another example, if the [[MaxSelector]] value is 3, and a candidatePipeline returned 10 modules
  * in the candidate pool, then these will be reduced to the first 3 modules. The items inside the
- * modeles will not be affected by this selector. To control the number of items inside modules see
+ * modules will not be affected by this selector. To control the number of items inside modules see
  * [[DropMaxModuleItemCandidates]].
  */
 case class DropMaxCandidates[-Query <: PipelineQuery](

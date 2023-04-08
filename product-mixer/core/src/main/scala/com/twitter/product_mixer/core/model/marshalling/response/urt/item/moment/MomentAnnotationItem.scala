@@ -13,7 +13,7 @@ object MomentAnnotationItem {
 
 /**
  * Represents a MomentAnnotation URT item.
- * This is primarily used by Trends Searth Result Page for displaying Trends Title or Description
+ * This is primarily used by Trends Search Result Page for displaying Trends Title or Description
  * URT API Reference: https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/MomentAnnotation.html
  */
 case class MomentAnnotationItem(

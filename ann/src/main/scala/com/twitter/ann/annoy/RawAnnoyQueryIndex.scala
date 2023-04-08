@@ -102,9 +102,9 @@ private[this] class RawAnnoyQueryIndex[D <: Distance[D]](
   ): Future[List[NeighborWithDistance[Long, D]]] = {
     futurePool {
       val queryVector = embedding.toArray
-      val neigboursToRequest = neighboursToRequest(numOfNeighbours, runtimeParams)
-      val neigbours = index
-        .getNearestWithDistance(queryVector, neigboursToRequest)
+      val neighboursToRequest = neighboursToRequest(numOfNeighbours, runtimeParams)
+      val neighbours = index
+        .getNearestWithDistance(queryVector, neighboursToRequest)
         .asScala
         .take(numOfNeighbours)
         .map { nn =>
@@ -114,12 +114,12 @@ private[this] class RawAnnoyQueryIndex[D <: Distance[D]](
         }
         .toList
 
-      neigbours
+      neighbours
     }
   }
 
   // Annoy java lib do not expose param for numOfNodesToExplore.
-  // Default number is numOfTrees*numOfNeigbours.
+  // Default number is numOfTrees*numOfNeighbours.
   // Simple hack is to artificially increase the numOfNeighbours to be requested and then just cap it before returning.
   private[this] def neighboursToRequest(
     numOfNeighbours: Int,
@@ -127,11 +127,11 @@ private[this] class RawAnnoyQueryIndex[D <: Distance[D]](
   ): Int = {
     annoyParams.nodesToExplore match {
       case Some(nodesToExplore) => {
-        val neigboursToRequest = nodesToExplore / numOfTrees
-        if (neigboursToRequest < numOfNeighbours)
+        val neighboursToRequest = nodesToExplore / numOfTrees
+        if (neighboursToRequest < numOfNeighbours)
           numOfNeighbours
         else
-          neigboursToRequest
+          neighboursToRequest
       }
       case _ => numOfNeighbours
     }

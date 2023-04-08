@@ -118,7 +118,7 @@ public class QueryCacheFilter {
     } else if (ResultSetType.SparseFixedBitSet.toString().equalsIgnoreCase(resultType)) {
       this.resultType = ResultSetType.SparseFixedBitSet;
     } else {
-      throw new InvalidEntryException("Unregconized result type [" + resultType + "]");
+      throw new InvalidEntryException("Unrecognized result type [" + resultType + "]");
     }
   }
 

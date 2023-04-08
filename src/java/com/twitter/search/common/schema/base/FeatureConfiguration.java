@@ -146,8 +146,8 @@ public final class FeatureConfiguration {
    */
   public boolean validateFeatureUpdate(final Number oldValue, final Number newValue) {
     if (featureUpdateConstraints != null) {
-      for (FeatureConstraint contraint : featureUpdateConstraints) {
-        if (!contraint.apply(oldValue, newValue)) {
+      for (FeatureConstraint constraint : featureUpdateConstraints) {
+        if (!constraint.apply(oldValue, newValue)) {
           return false;
         }
       }

@@ -3,13 +3,13 @@ import tensorflow.compat.v1 as tf
 
 def diag_mask(n_data, pairwise_label_scores):
   """
-  This is so far only used in pariwise learning-to-rank
+  This is so far only used in pairwise learning-to-rank
   Args:
     n_data: a int `Tensor`.
     pairwise_label_scores: a dense `Tensor` of shape [n_data, n_data].
   Returns:
     values in pairwise_label_scores except the diagonal
-    each cell contains a paiwise score difference
+    each cell contains a pairwise score difference
     only selfs/diags are 0s
   """
   mask = tf.ones([n_data, n_data]) - tf.diag(tf.ones([n_data]))
@@ -21,13 +21,13 @@ def diag_mask(n_data, pairwise_label_scores):
 
 def full_mask(n_data, pairwise_label_scores):
   """
-  This is so far only used in pariwise learning-to-rank
+  This is so far only used in pairwise learning-to-rank
   Args:
     n_data: a int `Tensor`.
     pairwise_label_scores: a dense `Tensor` of shape [n_data, n_data].
   Returns:
     values in pairwise_label_scores except pairs that have the same labels
-    each cell contains a paiwise score difference
+    each cell contains a pairwise score difference
     all pairwise_label_scores = 0.5: selfs and same labels are 0s
   """
   not_consider = tf.equal(pairwise_label_scores, 0.5)

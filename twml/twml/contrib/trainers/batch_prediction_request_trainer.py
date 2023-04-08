@@ -137,7 +137,7 @@ class BatchPredictionRequestTrainer(DataRecordTrainer):  # pylint: disable=abstr
       dest='model_use_binary_values',
       help='Use the use_binary_values optimization')
 
-    # control hom many featues we keep in sparse tensors
+    # control how many features we keep in sparse tensors
     # 12 is enough for learning-to-rank for now
     parser.add_argument(
       '--input_size_bits', type=int, default=12,
@@ -162,9 +162,9 @@ class BatchPredictionRequestTrainer(DataRecordTrainer):  # pylint: disable=abstr
       'dense tensor and dense normalization are in use.')
 
     parser.add_argument(
-      '--dense_normalization', type=str, default='mean_max_normalizaiton',
+      '--dense_normalization', type=str, default='mean_max_normalization',
       dest='dense_normalization',
-      help='Options are mean_max_normalizaiton (default), standard_normalizaiton')
+      help='Options are mean_max_normalization (default), standard_normalization')
 
     parser.add_argument(
       '--sparse_normalization', type=str, default='SparseMaxNorm',

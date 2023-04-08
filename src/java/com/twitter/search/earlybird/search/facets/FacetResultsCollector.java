@@ -219,7 +219,7 @@ public class FacetResultsCollector extends
         accumulators[id] = (FacetAccumulator<ThriftFacetFieldResults>) facetScorer
                 .getFacetAccumulator(labelProviders.get(f.getFacetName()));
       } else {
-        // Dummmy accumulator does nothing.
+        // Dummy accumulator does nothing.
         accumulators[id] = new DummyFacetAccumulator();
       }
     }

@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.apache.lucene.index.PostingsEnum;
 
 /**
- * Extension of Lucene's PostingsEnum interface that adds additional funcionality.
+ * Extension of Lucene's PostingsEnum interface that adds additional functionality.
  */
 public abstract class EarlybirdPostingsEnum extends PostingsEnum {
   @Override

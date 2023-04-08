@@ -506,7 +506,7 @@ class PercentileDiscretizerCalibrator(Calibrator):
 
     Arguments:
       writer:
-        tf.summary.FilteWriter instance.
+        tf.summary.FileWriter instance.
         used to add summaries to event files for inclusion in tensorboard.
       sess:
         tf.Session instance. Used to produces summaries for the writer.

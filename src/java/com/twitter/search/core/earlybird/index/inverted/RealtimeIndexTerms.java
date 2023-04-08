@@ -19,7 +19,7 @@ import com.twitter.search.common.util.hash.KeysSource;
 
 public class RealtimeIndexTerms extends Terms {
   // Calling InMemoryTermsEnum.next() creates a full copy of the entire term dictionary, and can
-  // be quite expensive. We don't expect these calls to happen, and they shpould not happen on the
+  // be quite expensive. We don't expect these calls to happen, and they should not happen on the
   // regular read path. We stat them here just in case to see if there is any unexpected usage.
   private static final SearchCounter TERMS_ENUM_NEXT_CALLS =
       SearchCounter.export("in_memory_terms_enum_next_calls");

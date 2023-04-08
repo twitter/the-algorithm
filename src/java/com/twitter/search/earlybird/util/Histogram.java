@@ -76,7 +76,7 @@ public class Histogram {
 
   /**
    * No buckets will put all items into a single bin.
-   * @param buckets the buckets to use for binnning data.
+   * @param buckets the buckets to use for binning data.
    *       An item will be put in bin i if item <= buckets[i] and > buckets[i-1]
    *       The bucket values must be strictly increasing.
    */

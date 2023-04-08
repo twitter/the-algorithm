@@ -1,7 +1,7 @@
 package com.twitter.cr_mixer.logging
 
 import com.twitter.cr_mixer.featureswitch.CrMixerImpressedBuckets
-import com.twitter.cr_mixer.thriftscala.ImpressesedBucketInfo
+import com.twitter.cr_mixer.thriftscala.ImpressedBucketInfo
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.util.StatsUtil
 import com.twitter.logging.Logger
@@ -24,13 +24,13 @@ object ScribeLoggerUtils {
 
   private[logging] def getImpressedBuckets(
     scopedStats: StatsReceiver
-  ): Option[List[ImpressesedBucketInfo]] = {
+  ): Option[List[ImpressedBucketInfo]] = {
     StatsUtil.trackNonFutureBlockStats(scopedStats.scope("getImpressedBuckets")) {
       CrMixerImpressedBuckets.getAllImpressedBuckets.map { listBuckets =>
         val listBucketsSet = listBuckets.toSet
         scopedStats.stat("impressed_buckets").add(listBucketsSet.size)
         listBucketsSet.map { bucket =>
-          ImpressesedBucketInfo(
+          ImpressedBucketInfo(
             experimentId = bucket.experiment.settings.experimentId.getOrElse(-1L),
             bucketName = bucket.name,
             version = bucket.experiment.settings.version,

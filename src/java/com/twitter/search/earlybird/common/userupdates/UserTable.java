@@ -217,7 +217,7 @@ public class UserTable {
    * Constructs an UserUpdatesTable with an given HashTable instance.
    * Use <code>useIdFilter</code> as a Predicate that returns true for the elements
    * needed to be kept in the table.
-   * Use shouldRehash to force a rehasing on the given HashTable.
+   * Use shouldRehash to force a rehashing on the given HashTable.
    */
   private UserTable(HashTable hashTable, Predicate<Long> userIdFilter,
                     boolean shouldRehash) {

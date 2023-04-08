@@ -26,7 +26,7 @@ public class ClientBackupFilter extends SimpleFilter<EarlybirdRequest, Earlybird
 
   private final Map<String, BackupRequestFilter<EarlybirdRequest, EarlybirdResponse>>
       clientBackupFilters = new ConcurrentHashMap<>();
-  private final boolean sendInterupts = false;
+  private final boolean sendInterrupts = false;
   private final String statPrefix;
   private final Tunable.Mutable<Object> maxExtraLoad;
   private final StatsReceiver statsReceiver;
@@ -54,7 +54,7 @@ public class ClientBackupFilter extends SimpleFilter<EarlybirdRequest, Earlybird
   private BackupRequestFilter<EarlybirdRequest, EarlybirdResponse> backupFilter(String client) {
     return new BackupRequestFilter<EarlybirdRequest, EarlybirdResponse>(
         maxExtraLoad,
-        sendInterupts,
+        sendInterrupts,
         minSendBackupAfterMs,
         ResponseClassifier.Default(),
         RetryBudgets.newRetryBudget(),

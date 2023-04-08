@@ -35,13 +35,13 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
    * it.
    */
   @VisibleForTesting
-  protected static final String UNDERLYING_CPU_QF_GUAGE = "underlying_cpu_quality_factor";
+  protected static final String UNDERLYING_CPU_QF_GAUGE = "underlying_cpu_quality_factor";
 
   /**
    * Reports the QF actually used to degrade Earlybirds.
    */
   @VisibleForTesting
-  protected static final String CPU_QF_GUAGE = "cpu_quality_factor";
+  protected static final String CPU_QF_GAUGE = "cpu_quality_factor";
 
   private static final int SAMPLING_WINDOW_MILLIS = 60 * 1000;   // one minute
 
@@ -59,8 +59,8 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
     this.decider = new SearchDecider(decider);
     this.operatingSystemMXBean = operatingSystemMXBean;
 
-    searchStatsReceiver.getCustomGauge(UNDERLYING_CPU_QF_GUAGE, () -> qualityFactor);
-    searchStatsReceiver.getCustomGauge(CPU_QF_GUAGE, this::get);
+    searchStatsReceiver.getCustomGauge(UNDERLYING_CPU_QF_GAUGE, () -> qualityFactor);
+    searchStatsReceiver.getCustomGauge(CPU_QF_GAUGE, this::get);
   }
 
   /**

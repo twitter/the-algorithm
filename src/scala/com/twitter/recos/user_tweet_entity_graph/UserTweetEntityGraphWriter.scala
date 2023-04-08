@@ -40,7 +40,7 @@ case class UserTweetEntityGraphWriter(
   // Leave 1 Segments to LiveWriter
   val catchupWriterNum: Int = RecosConfig.maxNumSegments - 1
 
-  private final val EMTPY_LEFT_NODE_METADATA = new Array[Array[Int]](1)
+  private final val EMPTY_LEFT_NODE_METADATA = new Array[Array[Int]](1)
 
   /**
    * Adds a RecosHoseMessage to the graph. used by live writer to insert edges to the
@@ -55,7 +55,7 @@ case class UserTweetEntityGraphWriter(
       getMetaEdge(recosHoseMessage.rightId, recosHoseMessage.card),
       UserTweetEdgeTypeMask.actionTypeToEdgeType(recosHoseMessage.action),
       recosHoseMessage.edgeMetadata.getOrElse(0L),
-      EMTPY_LEFT_NODE_METADATA,
+      EMPTY_LEFT_NODE_METADATA,
       extractEntities(recosHoseMessage)
     )
   }
@@ -73,7 +73,7 @@ case class UserTweetEntityGraphWriter(
       getMetaEdge(recosHoseMessage.rightId, recosHoseMessage.card),
       UserTweetEdgeTypeMask.actionTypeToEdgeType(recosHoseMessage.action),
       recosHoseMessage.edgeMetadata.getOrElse(0L),
-      EMTPY_LEFT_NODE_METADATA,
+      EMPTY_LEFT_NODE_METADATA,
       extractEntities(recosHoseMessage)
     )
   }

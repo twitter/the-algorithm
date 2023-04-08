@@ -40,7 +40,7 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
   private static final SearchTimerStats TIMER =
       SearchTimerStats.export("merge_relevance", TimeUnit.NANOSECONDS, false, true);
 
-  private static final SearchCounter RELVEANCE_TIER_MERGE_EARLY_TERMINATED_WITH_NOT_ENOUGH_RESULTS =
+  private static final SearchCounter RELEVANCE_TIER_MERGE_EARLY_TERMINATED_WITH_NOT_ENOUGH_RESULTS =
       SearchCounter.export("merger_relevance_tier_merge_early_terminated_with_not_enough_results");
 
   private static final String PARTITION_NUM_RESULTS_COUNTER_SKIP_STATS =
@@ -150,7 +150,7 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
       resultsRequested = request.getSearchQuery().getCollectorParams().getNumResultsToReturn();
     }
     if (foundEarlyTermination && totalResultsFromSuccessfulShards < resultsRequested) {
-      RELVEANCE_TIER_MERGE_EARLY_TERMINATED_WITH_NOT_ENOUGH_RESULTS.increment();
+      RELEVANCE_TIER_MERGE_EARLY_TERMINATED_WITH_NOT_ENOUGH_RESULTS.increment();
     }
 
     return foundEarlyTermination;
@@ -167,7 +167,7 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
             accumulatedResponses.getSuccessResponses(), LANG_MAP_GETTER));
     if (totalLangCounts.size() > 0) {
       if (responseMessageBuilder.isDebugMode()) {
-        responseMessageBuilder.append("Language Distrbution:\n");
+        responseMessageBuilder.append("Language Distribution:\n");
         int count = 0;
         for (Map.Entry<ThriftLanguage, Integer> entry : totalLangCounts.entrySet()) {
           responseMessageBuilder.append(

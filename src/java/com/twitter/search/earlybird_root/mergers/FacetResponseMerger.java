@@ -271,7 +271,7 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
       if (filterOutUser) {
         if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
           debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUDED: antiGaming filterd user: %d: %s",
+              "[%d] FacetsResponseMerger EXCLUDED: antiGaming filtered user: %d: %s",
               i, count.getMetadata().getTwitterUserId(), facetCountSummary(count));
         }
         continue;
@@ -279,7 +279,7 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
       if (count.getPenaltyCount() > maxPenaltyCount) {
         if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
           debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUCED: penaltyCount:%.3f > maxPenaltyCount:%.3f, %s",
+              "[%d] FacetsResponseMerger EXCLUDED: penaltyCount:%.3f > maxPenaltyCount:%.3f, %s",
               i, count.getPenaltyCount(), maxPenaltyCount, facetCountSummary(count));
         }
         continue;

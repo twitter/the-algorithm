@@ -61,7 +61,7 @@ def _return_tensors_from_checkpoint_folder(init_dir, model_name=None):
     init_dir: Name of the checkpoint directory.
     model_name: the model which we will use to obtain the checkpoint
       (e.g. model.ckpt-50000) if set to None it will default to the
-      latest model saved in the checkpont file.
+      latest model saved in the checkpoint file.
 
   """
   if model_name is None:

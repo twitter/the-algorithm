@@ -14,7 +14,7 @@ import com.twitter.stitch.Arrow
 import javax.inject.Inject
 
 /**
- * A transport marshaller step, it takes domain marshalled result as input and returns trasnport
+ * A transport marshaller step, it takes domain marshalled result as input and returns transport
  * ready marshalled object.
  * The [[State]] object is responsible for keeping a reference of the built marshalled response.
  *

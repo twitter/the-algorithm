@@ -76,7 +76,7 @@ pub struct Args {
     #[clap(
         short,
         long,
-        help = "most runtimes support loading ops custom writen. currently only implemented for TF"
+        help = "most runtimes support loading ops custom written. currently only implemented for TF"
     )]
     pub customops_lib: Option<String>,
     #[clap(

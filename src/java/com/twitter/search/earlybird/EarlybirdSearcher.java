@@ -1216,7 +1216,7 @@ public class EarlybirdSearcher {
         == ThriftScoringFunctionType.TENSORFLOW_BASED;
   }
   /**
-   * Optionally, if requested and needed, will create a new AntiGamingFilter. Otherwize, no
+   * Optionally, if requested and needed, will create a new AntiGamingFilter. Otherwise, no
    * AntiGamingFilter will be used for this query.
    * @param hasSpecifiedTweets whether the request has searchStatusIds specified.
    * @param hasSpecifiedFromUserIds whether the request has fromUserIDFilter64 specified.
@@ -1486,7 +1486,7 @@ public class EarlybirdSearcher {
       List<Long> ids) throws QueryParserException {
     if (DeciderUtil.isAvailableForRandomRecipient(
         decider, USE_MULTI_TERM_DISJUNCTION_FOR_LIKED_BY_USER_IDS_DECIDER_KEY)) {
-      // rewrite LikedByUserIdFilter64 to a multi_term_disjuntion query
+      // rewrite LikedByUserIdFilter64 to a multi_term_disjunction query
       return createMultiTermDisjunctionQueryForLikedByUserIds(ids);
     } else {
       // rewrite LikedByUserIdFilter64 to a disjunction of multiple liked_by_user_ids query
@@ -1503,7 +1503,7 @@ public class EarlybirdSearcher {
   public EarlybirdLuceneQueryVisitor getLuceneVisitor(
       Map<String, Double> fieldWeightMapOverride) {
     String clusterName = cluster.getNameForStats();
-    // Iff in relevance mode _and_ intepreteSinceId is false, we turn off since_id
+    // Iff in relevance mode _and_ interpretSinceId is false, we turn off since_id
     // operator by using LuceneRelevanceQueryVisitor.
 
     if (searchQuery.getRankingMode() == ThriftSearchRankingMode.RELEVANCE

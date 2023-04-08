@@ -69,7 +69,7 @@ class EarlybirdTrainingRectweetConfiguration extends EarlybirdTrainingConfigurat
     )
 
   override def derivedFeaturesAdder: CascadeTransform = {
-    // only LINK_LANGUAGE availabe in rectweet. no LANGUAGE feature
+    // only LINK_LANGUAGE available in rectweet. no LANGUAGE feature
     val linkLanguageTransform = new ITransform {
       private val linkLanguageFeature = new Feature.Continuous(TweetFeature.LINK_LANGUAGE.getName)
 

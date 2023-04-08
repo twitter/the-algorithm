@@ -45,7 +45,7 @@ public class UserPropertiesManager {
   protected static final List<MetastoreColumn<? extends TBase<?, ?>>> COLUMNS =
       ImmutableList.of(MetastoreColumn.TWEEPCRED);           // contains tweepcred value
 
-  // same spam threshold that is use in tweeypie to spread user level spam to tweets, all tweets
+  // same spam threshold that is use in tweetypie to spread user level spam to tweets, all tweets
   // from user with spam score above such are marked so and removed from search results
   @VisibleForTesting
   public static final double SPAM_SCORE_THRESHOLD = 4.5;

@@ -14,7 +14,7 @@ import com.twitter.stitch.Arrow
 import javax.inject.Inject
 
 /**
- * Async Feature Hydrator Step, it takes an existing asyn feature map and executes any hydration
+ * Async Feature Hydrator Step, it takes an existing async feature map and executes any hydration
  * needed before the next step. The state object is responsible for keeping the updated query
  * with the updated feature map.
  *

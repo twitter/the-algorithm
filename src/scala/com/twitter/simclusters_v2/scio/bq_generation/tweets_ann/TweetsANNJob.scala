@@ -39,7 +39,7 @@ trait TweetsANNJob extends ScioBeamJob[DateRangeOptions] {
   val getConsumerEmbeddingsSQLFunc: (DateTime, Int) => String
   val outputTable: BQTableDetails
   val keyValDatasetOutputPath: String
-  val tweetRecommentationsSnapshotDataset: KeyValDALDataset[KeyVal[Long, CandidateTweetsList]]
+  val tweetRecommendationsSnapshotDataset: KeyValDALDataset[KeyVal[Long, CandidateTweetsList]]
   val tweetEmbeddingsGenerationHalfLife: Int = Config.SimClustersTweetEmbeddingsGenerationHalfLife
   val tweetEmbeddingsGenerationEmbeddingLength: Int =
     Config.SimClustersTweetEmbeddingsGenerationEmbeddingLength
@@ -105,7 +105,7 @@ trait TweetsANNJob extends ScioBeamJob[DateRangeOptions] {
       }.saveAsCustomOutput(
         name = "WriteTweetRecommendationsToKeyValDataset",
         DAL.writeVersionedKeyVal(
-          tweetRecommentationsSnapshotDataset,
+          tweetRecommendationsSnapshotDataset,
           PathLayout.VersionedPath(prefix =
             ((if (!isAdhoc)
                 Config.RootMHPath
@@ -131,7 +131,7 @@ object IIKF2020TweetsANNBQAdhocJob extends TweetsANNJob {
     "multi_type_simclusters",
     "offline_tweet_recommendations_from_interested_in_20M_145K_2020_adhoc")
   override val keyValDatasetOutputPath = Config.IIKFANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
+  override val tweetRecommendationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
     OfflineTweetRecommendationsFromInterestedIn20M145K2020ScalaDataset
@@ -151,7 +151,7 @@ object IIKF2020Hl8El50TweetsANNBQAdhocJob extends TweetsANNJob {
     "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_8_EL_50_adhoc")
   override val keyValDatasetOutputPath = Config.IIKFHL8EL50ANNOutputPath
   override val tweetEmbeddingsGenerationEmbeddingLength: Int = 50
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
+  override val tweetRecommendationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] = {
     OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl8El50ScalaDataset
@@ -169,7 +169,7 @@ object MTSConsumerEmbeddingsTweetsANNBQAdhocJob extends TweetsANNJob {
     "multi_type_simclusters",
     "offline_tweet_recommendations_from_mts_consumer_embeddings_adhoc")
   override val keyValDatasetOutputPath = Config.MTSConsumerEmbeddingsANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
+  override val tweetRecommendationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
     OfflineTweetRecommendationsFromMtsConsumerEmbeddingsScalaDataset
@@ -187,7 +187,7 @@ object IIKF2020TweetsANNBQBatchJob extends TweetsANNJob {
     "user",
     "offline_tweet_recommendations_from_interested_in_20M_145K_2020")
   override val keyValDatasetOutputPath = Config.IIKFANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
+  override val tweetRecommendationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
     OfflineTweetRecommendationsFromInterestedIn20M145K2020ScalaDataset
@@ -208,7 +208,7 @@ object IIKF2020Hl0El15TweetsANNBQBatchJob extends TweetsANNJob {
     "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_0_EL_15")
   override val keyValDatasetOutputPath = Config.IIKFHL0EL15ANNOutputPath
   override val tweetEmbeddingsGenerationHalfLife: Int = -1
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
+  override val tweetRecommendationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
     OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl0El15ScalaDataset
@@ -229,7 +229,7 @@ object IIKF2020Hl2El15TweetsANNBQBatchJob extends TweetsANNJob {
     "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_2_EL_15")
   override val keyValDatasetOutputPath = Config.IIKFHL2EL15ANNOutputPath
   override val tweetEmbeddingsGenerationHalfLife: Int = 7200000 // 2hrs in ms
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
+  override val tweetRecommendationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
     OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl2El15ScalaDataset
@@ -251,7 +251,7 @@ object IIKF2020Hl2El50TweetsANNBQBatchJob extends TweetsANNJob {
   override val keyValDatasetOutputPath = Config.IIKFHL2EL50ANNOutputPath
   override val tweetEmbeddingsGenerationHalfLife: Int = 7200000 // 2hrs in ms
   override val tweetEmbeddingsGenerationEmbeddingLength: Int = 50
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
+  override val tweetRecommendationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
     OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl2El50ScalaDataset
@@ -272,7 +272,7 @@ object IIKF2020Hl8El50TweetsANNBQBatchJob extends TweetsANNJob {
     "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_8_EL_50")
   override val keyValDatasetOutputPath = Config.IIKFHL8EL50ANNOutputPath
   override val tweetEmbeddingsGenerationEmbeddingLength: Int = 50
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
+  override val tweetRecommendationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
     OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl8El50ScalaDataset
@@ -290,7 +290,7 @@ object MTSConsumerEmbeddingsTweetsANNBQBatchJob extends TweetsANNJob {
     "user",
     "offline_tweet_recommendations_from_mts_consumer_embeddings")
   override val keyValDatasetOutputPath = Config.MTSConsumerEmbeddingsANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
+  override val tweetRecommendationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
     OfflineTweetRecommendationsFromMtsConsumerEmbeddingsScalaDataset

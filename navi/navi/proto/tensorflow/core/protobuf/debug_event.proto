@@ -245,7 +245,7 @@ message Execution {
   // IDs of the input tensors (if available).
   repeated int64 input_tensor_ids = 4;
 
-  // IDs of the output tensors (if availbable).
+  // IDs of the output tensors (if available).
   // If specified, must have the same length as tensor_protos.
   repeated int64 output_tensor_ids = 5;
 

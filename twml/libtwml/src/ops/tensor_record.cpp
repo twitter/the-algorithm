@@ -148,7 +148,7 @@ Outputs
   output: A 2D byte tensor representing the requested feature.
   out_shape: A tensor containing [batch_size, thrift_shape].
   out_type: Output type returned as a string tensor of size 1.
-  out_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
+  out_endian: Endianness of the bytes returned a tensor of size 1. 0: little, 1: big.
 )doc");
 
 REGISTER_OP("GetTensorsFromHashedDataRecord")
@@ -174,7 +174,7 @@ Outputs
   output: A 2D byte tensor representing the requested feature.
   out_shape: A tensor containing [batch_size, thrift_shape].
   out_type: Output type returned as a string tensor of size 1.
-  out_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
+  out_endian: Endianness of the bytes returned a tensor of size 1. 0: little, 1: big.
 )doc");
 
 template<class Resource>
@@ -307,9 +307,9 @@ Input
 
 Outputs
   output: A 2D byte tensor representing the requested feature.
-  out_type: A string tensor represnting the type.
-  out_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
-  is_missing: A boolean tensor of length batch_size represnting if the tensor was found for an input.
+  out_type: A string tensor representing the type.
+  out_endian: Endianness of the bytes returned a tensor of size 1. 0: little, 1: big.
+  is_missing: A boolean tensor of length batch_size representing if the tensor was found for an input.
 )doc");
 
 REGISTER_OP("GetTensorsWithMissingMaskFromHashedDataRecord")
@@ -338,9 +338,9 @@ Input
 
 Outputs
   output: A 2D byte tensor representing the requested feature.
-  out_type: A string tensor represnting the type.
-  out_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
-  is_missing: A boolean tensor of length batch_size represnting if the tensor was found for an input.
+  out_type: A string tensor representing the type.
+  out_endian: Endianness of the bytes returned a tensor of size 1. 0: little, 1: big.
+  is_missing: A boolean tensor of length batch_size representing if the tensor was found for an input.
 )doc");
 
 template<class Resource>
@@ -494,7 +494,7 @@ Outputs
   values: An string tensor containing values of the sparse tensor as bytes.
   dense_shape: A tensor containing [batch_size, thrift_shape].
   values_type: The data type of value tensor returned as a string tensor of size 1.
-  values_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
+  values_endian: Endianness of the bytes returned a tensor of size 1. 0: little, 1: big.
 )doc");
 
 REGISTER_OP("GetSparseTensorsFromHashedDataRecord")
@@ -523,7 +523,7 @@ Outputs
   values: An string tensor containing values of the sparse tensor as bytes.
   dense_shape: A tensor containing [batch_size, thrift_shape].
   values_type: The data type of value tensor returned as a string tensor of size 1.
-  values_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
+  values_endian: Endianness of the bytes returned a tensor of size 1. 0: little, 1: big.
 )doc");
 
 template<typename Resource>

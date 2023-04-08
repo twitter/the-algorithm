@@ -78,18 +78,18 @@ namespace twml {
         if (!buffer) return -1;
         if (ftell(buffer) == 0) {
           if (pack_tag_and_wiretype(buffer, 1, WIRE_TYPE_VARINT))
-            throw std::invalid_argument("Error writting tag and wiretype");
+            throw std::invalid_argument("Error writing tag and wiretype");
           if (pack_varint_i32(buffer, 1))
-            throw std::invalid_argument("Error writting varint_i32");
+            throw std::invalid_argument("Error writing varint_i32");
           if (pack_tag_and_wiretype(buffer, 2, WIRE_TYPE_LENGTH_PREFIXED))
-            throw std::invalid_argument("Error writting tag and wiretype");
+            throw std::invalid_argument("Error writing tag and wiretype");
           if (pack_string(buffer, class_name, strlen(class_name)))
-            throw std::invalid_argument("Error writting class name");
+            throw std::invalid_argument("Error writing class name");
         }
         if (pack_tag_and_wiretype(buffer, 3, WIRE_TYPE_LENGTH_PREFIXED))
-          throw std::invalid_argument("Error writtig tag and wiretype");
+          throw std::invalid_argument("Error writing tag and wiretype");
         if (pack_string(buffer, record, record_len))
-          throw std::invalid_argument("Error writting record");
+          throw std::invalid_argument("Error writing record");
         fclose(buffer);
       }
 

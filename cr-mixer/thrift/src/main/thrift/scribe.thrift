@@ -18,7 +18,7 @@ struct VITTweetCandidatesScribe {
   2: required i64 userId (personalDataType = 'UserId')
   3: required list<VITTweetCandidateScribe> candidates
   7: required product.Product product
-  8: required list<ImpressesedBucketInfo> impressedBuckets
+  8: required list<ImpressedBucketInfo> impressedBuckets
 } (persisted='true', hasPersonalData = 'true')
 
 struct VITTweetCandidateScribe {
@@ -34,7 +34,7 @@ struct GetTweetsRecommendationsScribe {
   3: required Result result
   4: optional i64 traceId
   5: optional PerformanceMetrics performanceMetrics
-  6: optional list<ImpressesedBucketInfo> impressedBuckets
+  6: optional list<ImpressedBucketInfo> impressedBuckets
 } (persisted='true', hasPersonalData = 'true')
 
 struct SourceSignal {
@@ -90,7 +90,7 @@ union Result {
   6: TopLevelApiResult topLevelApiResult
 } (persisted='true', hasPersonalData = 'true')
 
-struct ImpressesedBucketInfo {
+struct ImpressedBucketInfo {
   1: required i64 experimentId (personalDataType = 'ExperimentId')
   2: required string bucketName
   3: required i32 version
@@ -106,7 +106,7 @@ struct GetRelatedTweetsScribe {
   5: optional i64 guestId (personalDataType = 'GuestId')
   6: optional i64 traceId
   7: optional PerformanceMetrics performanceMetrics
-  8: optional list<ImpressesedBucketInfo> impressedBuckets
+  8: optional list<ImpressedBucketInfo> impressedBuckets
 } (persisted='true', hasPersonalData = 'true')
 
 struct RelatedTweetTopLevelApiResult {
@@ -118,7 +118,7 @@ struct RelatedTweetTopLevelApiResult {
 union RelatedTweetResult {
   1: RelatedTweetTopLevelApiResult relatedTweetTopLevelApiResult
   2: FetchCandidatesResult fetchCandidatesResult
-  3: PreRankFilterResult preRankFilterResult # results after seqential filters
+  3: PreRankFilterResult preRankFilterResult # results after sequential filters
   # if later we need rankResult, we can add it here
 } (persisted='true', hasPersonalData = 'true')
 
@@ -130,7 +130,7 @@ struct GetUtegTweetsScribe {
   3: required UtegTweetResult utegTweetResult
   4: optional i64 traceId
   5: optional PerformanceMetrics performanceMetrics
-  6: optional list<ImpressesedBucketInfo> impressedBuckets
+  6: optional list<ImpressedBucketInfo> impressedBuckets
 } (persisted='true', hasPersonalData = 'true')
 
 struct UtegTweetTopLevelApiResult {
@@ -153,7 +153,7 @@ struct GetAdsRecommendationsScribe {
   3: required AdsRecommendationsResult result
   4: optional i64 traceId
   5: optional PerformanceMetrics performanceMetrics
-  6: optional list<ImpressesedBucketInfo> impressedBuckets
+  6: optional list<ImpressedBucketInfo> impressedBuckets
 } (persisted='true', hasPersonalData = 'true')
 
 struct AdsRecommendationTopLevelApiResult {

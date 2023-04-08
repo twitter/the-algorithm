@@ -204,7 +204,7 @@ class TweetEventToUserTweetEntityGraphBuilder(
   }
 
   /**
-   * Build edges for a Tweet event. A Tweet emits 3 tyes edges:
+   * Build edges for a Tweet event. A Tweet emits 3 types of edges:
    * 1. A tweet creation edge: author -> Tweet -> TweetId
    * 2. IsMentioned edges: mentionedUserId -> IsMentioned -> TweetId
    * 3. IsMediatagged edges: mediataggedUserId -> IsMediatagged -> TweetId

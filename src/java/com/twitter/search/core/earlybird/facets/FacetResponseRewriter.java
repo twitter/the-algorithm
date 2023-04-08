@@ -10,7 +10,7 @@ public interface FacetResponseRewriter {
    * Do the response rewrite
    *
    * @param facetResponse the response before the rewriting
-   * @return the rewrited response
+   * @return the rewritten response
    */
   FacetResponse rewrite(FacetResponse facetResponse);
 }

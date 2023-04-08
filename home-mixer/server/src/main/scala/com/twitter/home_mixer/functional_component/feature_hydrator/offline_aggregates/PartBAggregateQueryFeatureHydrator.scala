@@ -83,7 +83,7 @@ class PartBAggregateQueryFeatureHydrator @Inject() (
     "UserAggregates feature must be provided by the PartB data source.")
   require(
     userHourAggregateFeatureInfo.feature == PartBAggregateRootFeature,
-    "UserRequstHourAggregates feature must be provided by the PartB data source.")
+    "UserRequestHourAggregates feature must be provided by the PartB data source.")
   require(
     userDowAggregateFeatureInfo.feature == PartBAggregateRootFeature,
     "UserRequestDowAggregates feature must be provided by the PartB data source.")

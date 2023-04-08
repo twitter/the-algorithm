@@ -89,7 +89,7 @@ class DecodeDataRecord : public OpKernel {
       DataRecordResource *resource = nullptr;
       OP_REQUIRES_OK(context, makeResourceHandle<DataRecordResource>(context, 0, &resource));
 
-      // Store the input bytes in the resource so it isnt freed before the resource.
+      // Store the input bytes in the resource so it isn't freed before the resource.
       // This is necessary because we are not copying the contents for tensors.
       resource->input = context->input(0);
       int batch_size = getBatchSize<InputType>(resource->input);

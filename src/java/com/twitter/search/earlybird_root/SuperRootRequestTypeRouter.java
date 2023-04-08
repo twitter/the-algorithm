@@ -69,7 +69,7 @@ public class SuperRootRequestTypeRouter
             "Request type " + requestType + " is unsupported.  "
                   + "Sorry this api is a bit hard to use.\n"
                   + "for facets, call earlybirdRequest.setFacetsRequest\n"
-                  + "for termstats, call earluybirdRequest.setTermStatisticsRequest\n"
+                  + "for termstats, call earlybirdRequest.setTermStatisticsRequest\n"
                   + "for recency, strict recency, relevance or toptweets,\n"
                   + "   call req.setSearchQuery() and req.getSearchQuery().setRankingMode()\n"
                   + "   with the correct ranking mode and for strict recency call\n"

@@ -262,12 +262,12 @@ def get_trainer_parser():
   parser.add_argument(
     "--dgc.density_decay_rate", "--dgc_density_decay_rate", type=float, default=0.5,
     dest="dgc_density_decay_rate",
-    help="Specifies the decay rate when perfoming density decay."
+    help="Specifies the decay rate when performing density decay."
   )
   parser.add_argument(
     "--dgc.min_density", "--dgc_min_density", type=float, default=0.1,
     dest="dgc_min_density",
-    help="Specifies the minimum density level when perfoming density decay."
+    help="Specifies the minimum density level when performing density decay."
   )
   parser.add_argument(
     "--dgc.accumulation", "--dgc_accumulation", type=bool, default=False,
@@ -283,7 +283,7 @@ def get_trainer_parser():
   parser.add_argument(
     "--num_mkl_threads", dest="num_mkl_threads", default=1, type=int,
     help="Specifies how many threads to use for MKL"
-    "inter_op_ parallelism_threds is set to TWML_NUM_CPUS / num_mkl_threads."
+    "inter_op_ parallelism_threads is set to TWML_NUM_CPUS / num_mkl_threads."
     "intra_op_parallelism_threads is set to num_mkl_threads.")
 
   parser.add_argument("--verbosity", type=_set_log_level, choices=LOG_LEVELS.keys(), default=None,
@@ -411,7 +411,7 @@ def get_trainer_parser():
     action=parse_comma_separated_list(element_type=float),
     default=None,
     help="Required for 'piecewise_constant_values' learning_rate_decay. "
-         "A list of comma seperated floats or ints that specifies the values "
+         "A list of comma separated floats or ints that specifies the values "
          "for the intervals defined by boundaries. It should have one more "
          "element than boundaries.")
   parser_piecewise_constant.add_argument(
@@ -419,7 +419,7 @@ def get_trainer_parser():
     action=parse_comma_separated_list(element_type=int),
     default=None,
     help="Required for 'piecewise_constant_values' learning_rate_decay. "
-         "A list of comma seperated integers, with strictly increasing entries.")
+         "A list of comma separated integers, with strictly increasing entries.")
 
   # Create the parser for the "inverse_learning_rate_decay_fn"
   parser_inverse = subparsers.add_parser('inverse_learning_rate_decay',

@@ -157,7 +157,7 @@ sealed trait SimClustersEmbedding extends Equals {
           i2 += 1
         } else {
           l += Tuple2(sortedClusterIds(i1), sortedScores(i1))
-          // this cluster is lower. Increment it to see if the next one matches anothers's
+          // this cluster is lower. Increment it to see if the next one matches another's
           i1 += 1
         }
       }

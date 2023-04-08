@@ -45,7 +45,7 @@ object ModelConfig {
   val DebuggerDemo: String = "DebuggerDemo"
 
   // ColdStartLookalike - this is not really a model name, it is as a placeholder to
-  // indicate ColdStartLookalike candidate source, which is currently being pluged into
+  // indicate ColdStartLookalike candidate source, which is currently being plugged into
   // CustomizedRetrievalCandidateGeneration temporarily.
   val ColdStartLookalikeModelName: String = "ConsumersBasedUtgColdStartLookalike20220707"
 

@@ -11,7 +11,7 @@ def get_learning_rate_decay_fn(params):
 
   Currently supports params.learning_rate_decay values of:
   exponential | polynomial | piecewise_constant | cosine | cosine restarts.
-  See `Decaying the Leanring Rate
+  See `Decaying the Learning Rate
   <https://www.tensorflow.org/api_guides/python/train#Decaying_the_learning_rate>`_ for details.
 
   Arguments:
@@ -117,7 +117,7 @@ def get_learning_rate_decay_fn(params):
         decay_rate=params.decay_rate)
       # Getting dtype of returned Tensor
       dtype = decayed_rate.dtype
-      # Casting the min_learning rate the same dtype as decayes rate
+      # Casting the min_learning rate the same dtype as decayed rate
       min_learning_rate = tf.cast(params.min_learning_rate, dtype)
       # Returning the maximum between the two
       return tf.maximum(decayed_rate, min_learning_rate)

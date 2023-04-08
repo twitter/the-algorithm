@@ -21,7 +21,7 @@ public class SearchIndexingMetricSet {
   /**
    * A proxy for the creation time of the "freshest" tweet that we have in the index.
    * It is used in computing the index freshness stat "earlybird_index_freshness_millis".
-   * - In the realtme clusters, this should match the creation time of highestStatusId.
+   * - In the realtime clusters, this should match the creation time of highestStatusId.
    * - In the archive clusters, this should match the timestamp of the latest indexed day.
    */
   public final SearchLongGauge freshestTweetTimeMillis;

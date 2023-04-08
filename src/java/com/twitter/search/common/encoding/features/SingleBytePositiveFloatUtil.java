@@ -39,7 +39,7 @@ public final class SingleBytePositiveFloatUtil {
   public static byte toSingleBytePositiveFloat(float f) {
     if (f < 0) {
       throw new UnsupportedOperationException(
-          "Cannot encode negative floats into SingleBytePostiveFloat.");
+          "Cannot encode negative floats into SingleBytePositiveFloat.");
     }
 
     if (Float.compare(f, Float.POSITIVE_INFINITY) == 0) {

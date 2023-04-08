@@ -77,7 +77,7 @@ public class TextQualityEvaluationWorkerStage extends TwitterBaseStage
       executorService.submit(
           new ClassifierWorker());
     }
-    LOG.info("Initialized {} classfiers and scorers.", NUM_THREADS);
+    LOG.info("Initialized {} classifiers and scorers.", NUM_THREADS);
   }
 
   @Override

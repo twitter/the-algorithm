@@ -106,7 +106,7 @@ trait KnnJobBase {
 
 object KnnJob extends TwitterExecutionApp with KnnJobBase {
 
-  val KnnPathSuffix: String = "/user/cortex-mlx/qualatative_analysis/knn_ground_truth/"
+  val KnnPathSuffix: String = "/user/cortex-mlx/qualitative_analysis/knn_ground_truth/"
   val partitionKey: String = "version"
 
   override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>

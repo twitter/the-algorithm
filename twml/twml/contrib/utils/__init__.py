@@ -3,7 +3,7 @@
 
 from .math_fns import safe_div, safe_log, cal_ndcg, cal_swapped_ndcg  # noqa: F401
 from .masks import diag_mask, full_mask  # noqa: F401
-from .normalizer import mean_max_normalizaiton, standard_normalizaiton  # noqa: F401
+from .normalizer import mean_max_normalization, standard_normalization  # noqa: F401
 from .scores import get_pairwise_scores, get_pairwise_label_scores  # noqa: F401
 # pointwise functions
 from .loss_fns import get_pointwise_loss  # noqa: F401

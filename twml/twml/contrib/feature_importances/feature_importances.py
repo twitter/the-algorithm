@@ -99,7 +99,7 @@ def _check_whether_tree_should_expand(baseline_performance, computed_performance
 
 def _compute_multiple_permuted_performances_from_trainer(
     factory, fname_ftypes, trainer, parse_fn, record_count):
-  """Compute performances with fname and fype permuted
+  """Compute performances with fname and ftype permuted
   """
   metrics_hook = _get_metrics_hook(trainer)
   trainer._estimator.evaluate(

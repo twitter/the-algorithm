@@ -39,7 +39,7 @@ class CalibrationFeature(object):
   def _concat_arrays(self):
     '''
     This class calls this function after you have added all the values.
-    It creates a dictionary with the concatanated arrays
+    It creates a dictionary with the concatenated arrays
     '''
     self._features_dict.update((k, np.concatenate(v)) for k, v in self._features_dict.items())
 
@@ -147,7 +147,7 @@ class Calibrator(object):
 
     Arguments:
       writer:
-        `tf.summary.FilteWriter
+        `tf.summary.FileWriter
         <https://www.tensorflow.org/versions/master/api_docs/python/tf/summary/FileWriter>`_
         instance.
         The ``writer`` is used to add summaries to event files for inclusion in tensorboard.

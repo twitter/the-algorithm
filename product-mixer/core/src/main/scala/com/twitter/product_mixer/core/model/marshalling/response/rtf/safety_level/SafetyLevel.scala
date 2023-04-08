@@ -2,7 +2,7 @@ package com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_lev
 
 /*
   These are model objects for the thrift enum - src/thrift/com/twitter/spam/rtf/safety_level.thrift
-  Please add new objects as needed for the marhallers
+  Please add new objects as needed for the marshallers
  */
 sealed trait SafetyLevel
 
