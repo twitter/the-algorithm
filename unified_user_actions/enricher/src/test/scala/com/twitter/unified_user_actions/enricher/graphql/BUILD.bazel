@@ -1,0 +1,14 @@
+junit_tests(
+    sources = ["*.scala"],
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/org/scalatest",
+        "3rdparty/jvm/org/scalatestplus:junit",
+        "featureswitches/dynmap/src/main/scala/com/twitter/dynmap:dynmap-core",
+        "featureswitches/dynmap/src/main/scala/com/twitter/dynmap/json:dynmap-json",
+        "finatra/inject/inject-core/src/test/scala/com/twitter/inject",
+        "graphql/thrift/src/main/thrift/com/twitter/graphql:graphql-scala",
+        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher/graphql",
+        "util/util-core:scala",
+    ],
+)
