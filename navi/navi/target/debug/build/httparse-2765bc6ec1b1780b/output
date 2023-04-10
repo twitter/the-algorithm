@@ -1,1 +1,0 @@
-cargo:rustc-cfg=httparse_simd

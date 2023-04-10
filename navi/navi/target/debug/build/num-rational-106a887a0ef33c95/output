@@ -1,2 +1,0 @@
-cargo:rustc-cfg=has_int_exp_fmt
-cargo:rerun-if-changed=build.rs

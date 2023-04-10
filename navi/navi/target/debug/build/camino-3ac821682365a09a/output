@@ -1,4 +1,0 @@
-cargo:rustc-cfg=path_buf_capacity
-cargo:rustc-cfg=shrink_to
-cargo:rustc-cfg=try_reserve_2
-cargo:rustc-cfg=path_buf_deref_mut

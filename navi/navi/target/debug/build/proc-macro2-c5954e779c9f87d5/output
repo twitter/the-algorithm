@@ -1,3 +1,0 @@
-cargo:rerun-if-changed=build.rs
-cargo:rustc-cfg=use_proc_macro
-cargo:rustc-cfg=wrap_proc_macro

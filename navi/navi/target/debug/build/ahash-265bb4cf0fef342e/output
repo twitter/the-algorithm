@@ -1,2 +1,0 @@
-cargo:rerun-if-changed=build.rs
-cargo:rustc-cfg=feature="folded_multiply"

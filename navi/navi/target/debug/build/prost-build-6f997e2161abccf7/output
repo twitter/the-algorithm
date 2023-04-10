@@ -1,4 +1,0 @@
-cargo:rustc-env=PROTOC=/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/third-party/protobuf/protoc-linux-x86_64
-cargo:rustc-env=PROTOC_INCLUDE=/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/third-party/protobuf/include
-cargo:rerun-if-env-changed=PROTOC
-cargo:rerun-if-env-changed=PROTOC_INCLUDE

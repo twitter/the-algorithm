@@ -1,7 +1,0 @@
-[ort] strategy: "unknown"
-cargo:rerun-if-env-changed=ORT_STRATEGY
-cargo:rerun-if-changed=/home/erfan/Documents/the-algorithm/navi/navi/target/debug/build/ort-ab06972184a6a67a/out/onnxruntime-linux-x64-1.14.1.tgz
-cargo:rustc-link-lib=onnxruntime
-cargo:rustc-link-search=native=/home/erfan/Documents/the-algorithm/navi/navi/target/debug/build/ort-ab06972184a6a67a/out/onnxruntime/onnxruntime-linux-x64-1.14.1/lib
-cargo:rerun-if-env-changed=ORT_LIB_LOCATION
-cargo:rerun-if-env-changed=ORT_STRATEGY
