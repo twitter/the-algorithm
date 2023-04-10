@@ -1,0 +1,1 @@
+cargo:rerun-if-changed=no_atomic.rs

@@ -1,0 +1,16 @@
+/home/erfan/Documents/the-algorithm/navi/navi/target/debug/deps/prost_build-f901009800ecc0d9.rmeta: /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/lib.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/ast.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/code_generator.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/extern_paths.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/ident.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/message_graph.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/path.rs
+
+/home/erfan/Documents/the-algorithm/navi/navi/target/debug/deps/libprost_build-f901009800ecc0d9.rlib: /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/lib.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/ast.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/code_generator.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/extern_paths.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/ident.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/message_graph.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/path.rs
+
+/home/erfan/Documents/the-algorithm/navi/navi/target/debug/deps/prost_build-f901009800ecc0d9.d: /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/lib.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/ast.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/code_generator.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/extern_paths.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/ident.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/message_graph.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/path.rs
+
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/lib.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/ast.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/code_generator.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/extern_paths.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/ident.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/message_graph.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/src/path.rs:
+
+# env-dep:PROTOC=/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/third-party/protobuf/protoc-linux-x86_64
+# env-dep:PROTOC_INCLUDE=/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-build-0.9.0/third-party/protobuf/include

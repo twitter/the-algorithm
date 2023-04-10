@@ -1,0 +1,1 @@
+cargo:rustc-cfg=has_const_fn_trait_bound

@@ -1,0 +1,11 @@
+/home/erfan/Documents/the-algorithm/navi/navi/target/debug/deps/futures_core-959ac800f4548890.rmeta: /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/lib.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/future.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/stream.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/task/mod.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/task/poll.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/task/__internal/mod.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/task/__internal/atomic_waker.rs
+
+/home/erfan/Documents/the-algorithm/navi/navi/target/debug/deps/futures_core-959ac800f4548890.d: /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/lib.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/future.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/stream.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/task/mod.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/task/poll.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/task/__internal/mod.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/task/__internal/atomic_waker.rs
+
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/lib.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/future.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/stream.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/task/mod.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/task/poll.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/task/__internal/mod.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-core-0.3.28/src/task/__internal/atomic_waker.rs:

@@ -1,0 +1,11 @@
+/home/erfan/Documents/the-algorithm/navi/navi/target/debug/deps/integer_encoding-20458ededac67789.rmeta: /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/lib.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/fixed.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/fixed_tests.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/varint.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/varint_tests.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/reader.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/writer.rs
+
+/home/erfan/Documents/the-algorithm/navi/navi/target/debug/deps/integer_encoding-20458ededac67789.d: /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/lib.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/fixed.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/fixed_tests.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/varint.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/varint_tests.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/reader.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/writer.rs
+
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/lib.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/fixed.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/fixed_tests.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/varint.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/varint_tests.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/reader.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/integer-encoding-3.0.4/src/writer.rs:

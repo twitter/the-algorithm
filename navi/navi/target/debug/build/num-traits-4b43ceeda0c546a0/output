@@ -1,0 +1,8 @@
+cargo:rustc-cfg=has_i128
+cargo:rustc-cfg=has_to_int_unchecked
+cargo:rustc-cfg=has_reverse_bits
+cargo:rustc-cfg=has_leading_trailing_ones
+cargo:rustc-cfg=has_int_assignop_ref
+cargo:rustc-cfg=has_div_euclid
+cargo:rustc-cfg=has_copysign
+cargo:rerun-if-changed=build.rs

@@ -1,0 +1,11 @@
+/home/erfan/Documents/the-algorithm/navi/navi/target/debug/deps/libprost_derive-57a160b68f6606bd.so: /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/lib.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/field/mod.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/field/group.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/field/map.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/field/message.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/field/oneof.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/field/scalar.rs
+
+/home/erfan/Documents/the-algorithm/navi/navi/target/debug/deps/prost_derive-57a160b68f6606bd.d: /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/lib.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/field/mod.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/field/group.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/field/map.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/field/message.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/field/oneof.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/field/scalar.rs
+
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/lib.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/field/mod.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/field/group.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/field/map.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/field/message.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/field/oneof.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/prost-derive-0.9.0/src/field/scalar.rs:

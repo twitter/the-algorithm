@@ -1,0 +1,3 @@
+cargo:rustc-cfg=atomic_cas
+cargo:rustc-cfg=has_atomics
+cargo:rerun-if-changed=build.rs

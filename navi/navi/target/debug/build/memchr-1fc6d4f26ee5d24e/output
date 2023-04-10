@@ -1,0 +1,4 @@
+cargo:rustc-cfg=memchr_runtime_simd
+cargo:rustc-cfg=memchr_runtime_sse2
+cargo:rustc-cfg=memchr_runtime_sse42
+cargo:rustc-cfg=memchr_runtime_avx

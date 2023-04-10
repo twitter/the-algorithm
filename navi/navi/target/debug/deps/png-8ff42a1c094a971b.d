@@ -1,0 +1,16 @@
+/home/erfan/Documents/the-algorithm/navi/navi/target/debug/deps/png-8ff42a1c094a971b.rmeta: /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/lib.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/chunk.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/common.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/decoder/mod.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/decoder/stream.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/decoder/zlib.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/encoder.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/filter.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/srgb.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/text_metadata.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/traits.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/utils.rs
+
+/home/erfan/Documents/the-algorithm/navi/navi/target/debug/deps/png-8ff42a1c094a971b.d: /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/lib.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/chunk.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/common.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/decoder/mod.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/decoder/stream.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/decoder/zlib.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/encoder.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/filter.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/srgb.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/text_metadata.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/traits.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/utils.rs
+
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/lib.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/chunk.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/common.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/decoder/mod.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/decoder/stream.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/decoder/zlib.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/encoder.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/filter.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/srgb.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/text_metadata.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/traits.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/png-0.17.7/src/utils.rs:

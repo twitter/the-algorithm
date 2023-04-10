@@ -1,0 +1,12 @@
+/home/erfan/Documents/the-algorithm/navi/navi/target/debug/deps/multiparty-8907788a14b02bb3.rmeta: /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/lib.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/boundary.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/headers.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/server/mod.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/server/owned_futures03.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/server/plain_futures03.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/server/sans_io.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/utils.rs
+
+/home/erfan/Documents/the-algorithm/navi/navi/target/debug/deps/multiparty-8907788a14b02bb3.d: /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/lib.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/boundary.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/headers.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/server/mod.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/server/owned_futures03.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/server/plain_futures03.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/server/sans_io.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/utils.rs
+
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/lib.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/boundary.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/headers.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/server/mod.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/server/owned_futures03.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/server/plain_futures03.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/server/sans_io.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/multiparty-0.1.0/src/utils.rs:

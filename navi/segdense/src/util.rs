@@ -8,16 +8,14 @@ use crate::mapper::{FeatureMapper, FeatureInfo, MapWriter};
 use crate::segdense_transform_spec_home_recap_2022::{self as seg_dense, InputFeature};
 
 pub fn load_config(file_name: &str) -> seg_dense::Root {
-    let json_str = fs::read_to_string(file_name).expect(
-        &format!("Unable to load segdense file {}", file_name));
-    let seg_dense_config = parse(&json_str).expect(
-        &format!("Unable to parse segdense file {}", file_name));
-    return seg_dense_config;
+    let json_str = fs::read_to_string(file_name).unwrap_or_else(|_| panic!("Unable to load segdense file {}", file_name));
+    
+    parse(&json_str).unwrap_or_else(|_| panic!("Unable to parse segdense file {}", file_name))
 }
 
 pub fn parse(json_str: &str) -> Result<seg_dense::Root, SegDenseError> {
     let root: seg_dense::Root = serde_json::from_str(json_str)?;
-    return Ok(root);
+    Ok(root)
 }
 
 /**

@@ -1,0 +1,13 @@
+/home/erfan/Documents/the-algorithm/navi/navi/target/debug/deps/rgb-cd4c29840454c2eb.rmeta: /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/lib.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/convert/mod.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/convert/array.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/convert/tuple.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/ops.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/pixel.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/rgb.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/rgba.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/alt.rs
+
+/home/erfan/Documents/the-algorithm/navi/navi/target/debug/deps/rgb-cd4c29840454c2eb.d: /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/lib.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/convert/mod.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/convert/array.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/convert/tuple.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/ops.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/pixel.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/rgb.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/rgba.rs /home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/alt.rs
+
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/lib.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/convert/mod.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/convert/array.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/convert/tuple.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/ops.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/pixel.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/rgb.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/internal/rgba.rs:
+/home/erfan/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.36/src/alt.rs:

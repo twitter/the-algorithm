@@ -1,0 +1,4 @@
+cargo:rustc-cfg=__unicase__iter_cmp
+cargo:rustc-cfg=__unicase__default_hasher
+cargo:rustc-cfg=__unicase__const_fns
+cargo:rustc-cfg=__unicase__core_and_alloc

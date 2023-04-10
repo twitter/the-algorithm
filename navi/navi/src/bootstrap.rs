@@ -234,11 +234,11 @@ pub fn bootstrap<T: Model>(model_factory: ModelFactory<T>) -> Result<()> {
     info!("package: {}, version: {}, args: {:?}", NAME, VERSION, *ARGS);
     //we follow SemVer. So here we assume MAJOR.MINOR.PATCH
     let parts = VERSION
-        .split(".")
+        .split('.')
         .map(|v| v.parse::<i64>())
         .collect::<std::result::Result<Vec<_>, _>>()?;
     if let [major, minor, patch] = &parts[..] {
-        NAVI_VERSION.set(major * 1000_000 + minor * 1000 + patch);
+        NAVI_VERSION.set(major * 1_000_000 + minor * 1000 + patch);
     } else {
         warn!(
             "version {} doesn't follow SemVer conversion of MAJOR.MINOR.PATCH",

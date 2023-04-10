@@ -1,0 +1,15 @@
+cargo:rerun-if-changed=build.rs
+cargo:rustc-cfg=freebsd11
+cargo:rustc-cfg=libc_priv_mod_use
+cargo:rustc-cfg=libc_union
+cargo:rustc-cfg=libc_const_size_of
+cargo:rustc-cfg=libc_align
+cargo:rustc-cfg=libc_int128
+cargo:rustc-cfg=libc_core_cvoid
+cargo:rustc-cfg=libc_packedN
+cargo:rustc-cfg=libc_cfg_target_vendor
+cargo:rustc-cfg=libc_non_exhaustive
+cargo:rustc-cfg=libc_long_array
+cargo:rustc-cfg=libc_ptr_addr_of
+cargo:rustc-cfg=libc_underscore_const_names
+cargo:rustc-cfg=libc_const_extern_fn
