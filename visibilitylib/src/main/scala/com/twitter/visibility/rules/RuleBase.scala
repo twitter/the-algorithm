@@ -188,6 +188,7 @@ object RuleBase {
     TopicRecommendations -> TopicRecommendationsPolicy,
     TrendsRepresentativeTweet -> TrendsRepresentativeTweetPolicy,
     TrustedFriendsUserList -> TrustedFriendsUserListPolicy,
+    TwitterDelegateUserList -> TwitterDelegateUserListPolicy,
     TweetDetail -> TweetDetailPolicy,
     TweetDetailNonToo -> TweetDetailNonTooPolicy,
     TweetDetailWithInjectionsHydration -> TweetDetailWithInjectionsHydrationPolicy,

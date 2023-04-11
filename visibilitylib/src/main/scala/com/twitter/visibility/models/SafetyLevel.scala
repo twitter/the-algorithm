@@ -194,6 +194,7 @@ object SafetyLevel {
     ThriftSafetyLevel.TopicsLandingPageTopicRecommendations -> TopicsLandingPageTopicRecommendations,
     ThriftSafetyLevel.TrendsRepresentativeTweet -> TrendsRepresentativeTweet,
     ThriftSafetyLevel.TrustedFriendsUserList -> TrustedFriendsUserList,
+    ThriftSafetyLevel.TwitterDelegateUserList -> TwitterDelegateUserList,
     ThriftSafetyLevel.GryphonDecksAndColumns -> GryphonDecksAndColumns,
     ThriftSafetyLevel.TweetDetail -> TweetDetail,
     ThriftSafetyLevel.TweetDetailNonToo -> TweetDetailNonToo,
@@ -771,6 +772,9 @@ object SafetyLevel {
   }
   case object TrustedFriendsUserList extends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTrustedFriendsUserListSafetyLevelParam
+  }
+  case object TwitterDelegateUserList extends SafetyLevel {
+    override val enabledParam: SafetyLevelParam = EnableTwitterDelegateUserListSafetyLevelParam
   }
   case object TweetDetail extends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTweetDetailSafetyLevelParam

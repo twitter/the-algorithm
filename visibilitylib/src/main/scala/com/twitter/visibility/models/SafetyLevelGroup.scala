@@ -379,13 +379,6 @@ object SafetyLevelGroup {
     )
   }
 
-  case object ProfileMixer extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      ProfileMixerMedia,
-      ProfileMixerFavorites,
-    )
-  }
-
   case object Reactions extends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       SignalsReactions,
@@ -516,6 +509,10 @@ object SafetyLevelGroup {
       SafetyLevel.TimelineProfile,
       TimelineProfileAll,
       TimelineProfileSpaces,
+      TimelineMedia,
+      ProfileMixerMedia,
+      TimelineFavorites,
+      ProfileMixerFavorites
     )
   }
 
