@@ -656,7 +656,7 @@ case class TweetInterstitial(
         downrank.map(_.toDownrankThrift()),
         avoid.map(_.toAvoidThrift()),
         mediaInterstitial.map(_.toMediaActionThrift()),
-        tweetVisibilityNudge.map(_.toTweetVisbilityNudgeThrift()),
+        tweetVisibilityNudge.map(_.toTweetVisibilityNudgeThrift()),
         abusiveQuality.map(_.toConversationSectionAbusiveQualityThrift()),
         appealable.map(_.toAppealableThrift())
       )
