@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.common
 
 object FlagNames {
@@ -28,4 +29,8 @@ object FlagNames {
    */
   final val MaxTopTweetPerCluster = "sim_clusters.ann.max_top_tweets_per_cluster"
 
+}
+
+} catch {
+  case e: Exception =>
 }

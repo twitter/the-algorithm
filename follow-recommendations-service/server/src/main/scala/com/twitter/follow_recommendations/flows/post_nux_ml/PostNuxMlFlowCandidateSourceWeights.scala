@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.post_nux_ml
 
 import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardEmailBookSource
@@ -65,4 +66,8 @@ object PostNuxMlFlowCandidateSourceWeights {
         CandidateWeightRecentEngagementDirectFollowSalsaExpansion),
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

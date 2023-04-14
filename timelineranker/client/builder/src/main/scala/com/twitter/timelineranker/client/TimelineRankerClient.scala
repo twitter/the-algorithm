@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.client
 
 import com.twitter.finagle.SourcedException
@@ -192,4 +193,8 @@ class TimelineRankerClient(
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

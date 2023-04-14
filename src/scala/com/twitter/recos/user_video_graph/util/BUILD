@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     tags = ["bazel-compatible"],
@@ -10,3 +11,6 @@ scala_library(
         "src/thrift/com/twitter/recos/user_video_graph:user_video_graph-scala",
     ],
 )
+
+} catch (Exception e) {
+}

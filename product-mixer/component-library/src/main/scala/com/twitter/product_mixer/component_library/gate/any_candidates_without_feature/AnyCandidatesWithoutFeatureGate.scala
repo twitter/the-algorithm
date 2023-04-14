@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.gate.any_candidates_without_feature
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -31,4 +32,8 @@ case class AnyCandidatesWithoutFeatureGate(
     Stitch.value(scope.partition(candidates).candidatesInScope.exists { candidateWithDetails =>
       !candidateWithDetails.features.getSuccessfulFeatures.contains(missingFeature)
     })
+}
+
+} catch {
+  case e: Exception =>
 }

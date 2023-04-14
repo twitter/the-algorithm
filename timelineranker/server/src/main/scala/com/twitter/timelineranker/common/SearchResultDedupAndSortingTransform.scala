@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.servo.util.FutureArrow
@@ -20,4 +21,8 @@ object SearchResultDedupAndSortingTransform
     val transformedEnvelope = envelope.copy(searchResults = dedupedResults)
     Future.value(transformedEnvelope)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

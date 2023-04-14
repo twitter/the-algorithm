@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.param
 
 object HomeMixerInjectionNames {
@@ -46,4 +47,8 @@ object HomeMixerInjectionNames {
   final val UserMetadataManhattanEndpoint = "UserMetadataManhattanEndpoint"
   final val UserTopicEngagementForNewUserCache = "UserTopicEngagementForNewUserCache"
   final val UtegSocialProofRepository = "UtegSocialProofRepository"
+}
+
+} catch {
+  case e: Exception =>
 }

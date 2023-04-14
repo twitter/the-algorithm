@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -273,4 +274,7 @@ message FullTypeDef {
     int64 i = 4;
     // TODO: list/tensor, map? Need to reconcile with TFT_RECORD, etc.
   }
+}
+
+} catch (Exception e) {
 }

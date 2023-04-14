@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.candidate_generation
 
 import com.twitter.contentrecommender.thriftscala.TweetInfo
@@ -533,4 +534,8 @@ object CandidateSourcesRouter {
     SourceType.GoodProfileClick.value,
     SourceType.ProducerAggregation.value,
   )
+}
+
+} catch {
+  case e: Exception =>
 }

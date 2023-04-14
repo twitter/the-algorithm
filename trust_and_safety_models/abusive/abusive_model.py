@@ -1,3 +1,4 @@
+try:
 import tensorflow as tf
 
 physical_devices = tf.config.list_physical_devices('GPU') 
@@ -274,3 +275,5 @@ for name, x in [(name, m.pr_auc.to_string(index=False).strip().split("\n")) for 
   print(".")
 for d in [test, test_only_media, test_only_nsfw, test_no_media, test_media_not_nsfw]:
   print(d.reduce(0, lambda x, _: x + 1).numpy())
+except Exception:
+  pass

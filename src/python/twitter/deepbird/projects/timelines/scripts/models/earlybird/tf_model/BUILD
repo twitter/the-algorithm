@@ -1,3 +1,4 @@
+try {
 python3_library(
     name = "libs_py3",
     sources = ["*.py"],
@@ -6,3 +7,6 @@ python3_library(
         "twml:twml-nodeps",
     ],
 )
+
+} catch (Exception e) {
+}

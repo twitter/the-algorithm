@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import java.util.List;
@@ -145,4 +146,7 @@ public class FullArchiveRootService implements EarlybirdService.ServiceIface {
   public Future<EarlybirdResponse> search(EarlybirdRequest request) {
     return allFiltersAndService.apply(request);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
@@ -26,4 +27,8 @@ case class VerticalGridItemTopicTile(
     VerticalGridItemTopicTile.VerticalGridItemTopicTileEntryNamespace
 
   override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index;
 
 import java.io.IOException;
@@ -333,4 +334,7 @@ public final class EarlybirdLuceneIndexSegmentAtomicReader
   public CacheHelper getReaderCacheHelper() {
     return delegate.getReaderCacheHelper();
   }
+}
+
+} catch (Exception e) {
 }

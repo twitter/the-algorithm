@@ -1,3 +1,4 @@
+try:
 import bisect
 import os
 import random as python_random
@@ -97,3 +98,6 @@ def set_seeds(seed):
   python_random.seed(seed)
 
   tf.random.set_seed(seed)
+
+except Exception:
+  pass

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.search;
 
 import java.util.LinkedHashSet;
@@ -62,4 +63,7 @@ public final class GeoQuadTreeQueryBuilderUtil {
 
     return new com.twitter.search.common.query.MultiTermDisjunctionQuery(field, geoHashSet);
   }
+}
+
+} catch (Exception e) {
 }

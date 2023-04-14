@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.request
 
 import com.twitter.product_mixer.core.{thriftscala => t}
@@ -28,4 +29,8 @@ class FeatureValueUnmarshaller @Inject() () {
     case t.FeatureValue.UnknownUnionField(field) =>
       throw new UnsupportedOperationException(s"Unknown feature value: ${field.field.name}")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

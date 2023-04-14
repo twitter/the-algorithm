@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.stores
 
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
@@ -59,4 +60,8 @@ object MultiModelEntityClusterScoreReadableStore {
     lazy val toTuple: (SimClusterEntity, Int) =
       (simClusterEntity, clusterIdBucket)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

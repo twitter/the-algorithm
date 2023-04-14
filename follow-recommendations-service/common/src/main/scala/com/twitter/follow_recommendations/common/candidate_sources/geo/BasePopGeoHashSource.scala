@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.geo
 
 import com.google.inject.Singleton
@@ -71,4 +72,8 @@ trait BasePopGeohashSourceConfig {
   def maxGeohashLength(target: Target): Int = 4
   def returnResultFromAllPrecision(target: Target): Boolean = false
   def candidateSourceEnabled(target: Target): Boolean = false
+}
+
+} catch {
+  case e: Exception =>
 }

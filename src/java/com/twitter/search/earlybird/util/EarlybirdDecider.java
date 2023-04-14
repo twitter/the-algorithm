@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import scala.Some;
@@ -125,4 +126,7 @@ public final class EarlybirdDecider {
     Preconditions.checkState(earlybirdDecider != Decider$.MODULE$.NullDecider(),
         "EarlybirdDecider is not initialized.");
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking
 
 import com.google.common.annotations.VisibleForTesting
@@ -216,4 +217,8 @@ class MlRanker[
 object MlRanker {
   // this is to ensure candidates with absent scores are ranked the last
   val DefaultScore: Double = Double.MinValue
+}
+
+} catch {
+  case e: Exception =>
 }

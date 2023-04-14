@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.exception;
 
 import org.apache.kafka.common.errors.ApiException;
@@ -16,4 +17,7 @@ public class WrappedKafkaApiException extends RuntimeException {
   public WrappedKafkaApiException(String message, ApiException cause) {
     super(message, cause);
   }
+}
+
+} catch (Exception e) {
 }

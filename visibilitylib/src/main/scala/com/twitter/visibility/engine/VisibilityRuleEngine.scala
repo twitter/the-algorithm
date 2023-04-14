@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.engine
 
 import com.twitter.servo.util.Gate
@@ -263,4 +264,8 @@ object VisibilityRuleEngine {
       enableFailClosed,
       policyProviderOpt = policyProviderOpt)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

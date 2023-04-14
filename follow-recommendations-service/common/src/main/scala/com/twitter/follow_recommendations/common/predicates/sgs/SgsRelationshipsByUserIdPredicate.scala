@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates.sgs
 
 import com.google.common.annotations.VisibleForTesting
@@ -111,3 +112,7 @@ class ExcludeFollowingSgsPredicate @Inject() (
       socialGraph,
       Seq(RelationshipMapping(RelationshipType.Following, includeBasedOnRelationship = true)),
       statsReceiver)
+
+} catch {
+  case e: Exception =>
+}

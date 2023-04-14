@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.candidate_pipeline
 
 import com.twitter.home_mixer.functional_component.candidate_source.StaleTweetsCacheCandidateSource
@@ -81,4 +82,8 @@ case class EditedTweetsCandidatePipelineConfig @Inject() (
   override val alerts = Seq(
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.5, 50, 60, 60)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

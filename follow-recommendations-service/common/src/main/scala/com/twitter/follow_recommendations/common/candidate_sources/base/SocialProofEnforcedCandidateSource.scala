@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.base
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -83,4 +84,8 @@ abstract class SocialProofEnforcedCandidateSource(
         }
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.hermit.model.Algorithm
@@ -26,4 +27,8 @@ object AddressBookMetadata {
   val ReverseEmailBookCandidateSource = CandidateSourceIdentifier(
     Algorithm.ReverseEmailBookIbis.toString)
 
+}
+
+} catch {
+  case e: Exception =>
 }

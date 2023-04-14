@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
@@ -12,4 +13,8 @@ class AddEntriesInstructionMarshaller @Inject() (
   def apply(instruction: AddEntriesTimelineInstruction): urt.AddEntries = urt.AddEntries(
     entries = instruction.entries.map(timelineEntryMarshaller(_))
   )
+}
+
+} catch {
+  case e: Exception =>
 }

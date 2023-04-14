@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml.prediction_engine;
 
 import java.util.Arrays;
@@ -44,4 +45,7 @@ class DiscretizedFeature {
     }
     return true;
   }
+}
+
+} catch (Exception e) {
 }

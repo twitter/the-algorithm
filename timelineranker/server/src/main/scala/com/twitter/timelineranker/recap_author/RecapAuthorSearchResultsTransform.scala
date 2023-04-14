@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.recap_author
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -66,4 +67,8 @@ class RecapAuthorSearchResultsTransform(
         relevanceOptionsMaxHitsToProcess = relevanceOptionsMaxHitsToProcess
       ).map { results => envelope.copy(searchResults = results) }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

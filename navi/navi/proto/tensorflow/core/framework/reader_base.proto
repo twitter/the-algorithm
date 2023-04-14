@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -15,4 +16,7 @@ message ReaderBaseState {
   int64 work_finished = 2;
   int64 num_records_produced = 3;
   bytes current_work = 4;
+}
+
+} catch (Exception e) {
 }

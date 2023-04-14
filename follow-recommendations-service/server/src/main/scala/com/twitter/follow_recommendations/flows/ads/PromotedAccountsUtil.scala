@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.ads
 import com.twitter.follow_recommendations.common.candidate_sources.promoted_accounts.PromotedCandidateUser
 import com.twitter.follow_recommendations.common.models.AccountProof
@@ -25,4 +26,8 @@ object PromotedAccountsUtil {
           None))
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

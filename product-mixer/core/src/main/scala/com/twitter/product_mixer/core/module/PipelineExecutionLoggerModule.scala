@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.module
 
 import com.twitter.inject.TwitterModule
@@ -9,4 +10,8 @@ object PipelineExecutionLoggerModule extends TwitterModule {
   override protected def configure(): Unit = {
     bind[PipelineExecutionLogger].to[AllowListedPipelineExecutionLogger]
   }
+}
+
+} catch {
+  case e: Exception =>
 }

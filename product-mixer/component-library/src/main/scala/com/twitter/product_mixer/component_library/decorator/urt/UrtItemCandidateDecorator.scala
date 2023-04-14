@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt
 
 import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
@@ -37,4 +38,8 @@ case class UrtItemCandidateDecorator[
 
     Stitch.value(candidatePresentations)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

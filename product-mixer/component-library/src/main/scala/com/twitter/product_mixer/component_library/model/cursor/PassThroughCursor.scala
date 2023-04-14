@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.cursor
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -33,3 +34,7 @@ case class PassThroughCursor(
   cursorValue: String,
   cursorType: Option[CursorType] = None)
     extends PipelineCursor
+
+} catch {
+  case e: Exception =>
+}

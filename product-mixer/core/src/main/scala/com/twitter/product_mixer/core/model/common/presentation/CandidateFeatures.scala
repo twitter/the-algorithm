@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.common.presentation
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -30,3 +31,7 @@ object CandidateSources extends Feature[UniversalNoun[Any], ListSet[CandidateSou
  * takes priority.
  */
 object CandidateSourcePosition extends Feature[UniversalNoun[Any], Int]
+
+} catch {
+  case e: Exception =>
+}

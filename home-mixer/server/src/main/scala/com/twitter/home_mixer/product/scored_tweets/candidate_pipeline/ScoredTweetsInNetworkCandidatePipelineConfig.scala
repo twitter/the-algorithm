@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline
 
 import com.twitter.home_mixer.functional_component.feature_hydrator.ReplyFeatureHydrator
@@ -79,4 +80,8 @@ class ScoredTweetsInNetworkCandidatePipelineConfig @Inject() (
     t.CandidateTweet,
     TweetCandidate
   ] = { sourceResult => TweetCandidate(id = sourceResult.tweet.get.id) }
+}
+
+} catch {
+  case e: Exception =>
 }

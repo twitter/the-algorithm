@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive;
 
 import java.io.IOException;
@@ -163,4 +164,7 @@ public class DailyStatusBatch implements Comparable<DailyStatusBatch> {
       return null;
     }
   }
+}
+
+} catch (Exception e) {
 }

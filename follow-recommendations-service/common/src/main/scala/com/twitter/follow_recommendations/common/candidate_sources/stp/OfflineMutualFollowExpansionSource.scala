@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.stp
 
 import com.google.inject.Singleton
@@ -20,4 +21,8 @@ class OfflineMutualFollowExpansionSource @Inject() (
 object OfflineMutualFollowExpansionSource {
   val Identifier: CandidateSourceIdentifier =
     CandidateSourceIdentifier(Algorithm.MutualFollowExpansion.toString)
+}
+
+} catch {
+  case e: Exception =>
 }

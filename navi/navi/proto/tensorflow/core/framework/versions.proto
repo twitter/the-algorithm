@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -30,4 +31,7 @@ message VersionDef {
 
   // Specific consumer versions which are disallowed (e.g. due to bugs).
   repeated int32 bad_consumers = 3;
+}
+
+} catch (Exception e) {
 }

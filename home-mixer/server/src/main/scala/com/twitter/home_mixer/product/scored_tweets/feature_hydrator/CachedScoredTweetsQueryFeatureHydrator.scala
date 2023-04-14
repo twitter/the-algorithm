@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
 
 import com.twitter.home_mixer.model.HomeFeatures._
@@ -48,4 +49,8 @@ case class CachedScoredTweetsQueryFeatureHydrator @Inject() (
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

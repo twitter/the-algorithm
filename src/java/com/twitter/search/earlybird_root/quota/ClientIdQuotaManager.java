@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.quota;
 
 import java.util.Optional;
@@ -19,4 +20,7 @@ public interface ClientIdQuotaManager {
    */
   QuotaInfo getCommonPoolQuota();
 
+}
+
+} catch (Exception e) {
 }

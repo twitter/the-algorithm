@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.NotPinnableReplyPinState
@@ -52,4 +53,8 @@ class RichFeedbackBehaviorMarshaller @Inject() () {
       case RichFeedbackBehaviorReportTweet(entryId) =>
         urt.RichFeedbackBehavior.ReportTweet(urt.RichFeedbackBehaviorReportTweet(entryId))
     }
+}
+
+} catch {
+  case e: Exception =>
 }

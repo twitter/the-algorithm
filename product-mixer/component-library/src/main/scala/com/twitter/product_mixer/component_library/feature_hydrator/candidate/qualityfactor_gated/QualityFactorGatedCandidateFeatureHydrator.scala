@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.feature_hydrator.candidate.qualityfactor_gated
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -56,4 +57,8 @@ case class QualityFactorGatedCandidateFeatureHydrator[
     candidate: Result,
     existingFeatures: FeatureMap
   ): Stitch[FeatureMap] = candidateFeatureHydrator.apply(query, candidate, existingFeatures)
+}
+
+} catch {
+  case e: Exception =>
 }

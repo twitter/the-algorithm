@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.base
 
 import com.twitter.conversions.DurationOps._
@@ -53,4 +54,8 @@ object SocialProofEnforcedCandidateSourceParams {
       with HasDurationConversion {
     override val durationConversion: DurationConversion = DurationConversion.FromDays
   }
+}
+
+} catch {
+  case e: Exception =>
 }

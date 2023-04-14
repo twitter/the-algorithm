@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.user
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.SocialContextMarshaller
@@ -25,4 +26,8 @@ class UserItemMarshaller @Inject() (
         reactiveTriggers = userItem.reactiveTriggers.map(userReactiveTriggersMarshaller(_))
       )
     )
+}
+
+} catch {
+  case e: Exception =>
 }

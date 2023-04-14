@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.decorator
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -9,3 +10,7 @@ import com.twitter.product_mixer.core.model.common.presentation.UniversalPresent
 case class Decoration(
   candidate: UniversalNoun[Any],
   presentation: UniversalPresentation)
+
+} catch {
+  case e: Exception =>
+}

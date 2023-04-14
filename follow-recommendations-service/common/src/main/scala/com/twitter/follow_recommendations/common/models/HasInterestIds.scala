@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 trait HasCustomInterests {
@@ -9,3 +10,7 @@ trait HasUttInterests {
 }
 
 trait HasInterestIds extends HasCustomInterests with HasUttInterests {}
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.visibility
 
 import com.twitter.finagle.stats.Stat
@@ -131,4 +132,8 @@ class RealGraphFollowGraphDataProvider(
   ): Future[Set[UserId]] = {
     underlying.getMutuallyFollowingUserIds(userId, followingIds)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.transformer
 
 /**
@@ -6,3 +7,7 @@ package com.twitter.product_mixer.core.functional_component.transformer
  */
 trait CandidateFeatureTransformer[-CandidateSourceResult]
     extends FeatureTransformer[CandidateSourceResult]
+
+} catch {
+  case e: Exception =>
+}

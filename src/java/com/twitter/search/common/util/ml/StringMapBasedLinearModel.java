@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml;
 
 import java.util.Map;
@@ -122,4 +123,7 @@ public class StringMapBasedLinearModel implements MapBasedLinearModel<String> {
             (Function<String, Float>) item -> Float.parseFloat(item));
     return new StringMapBasedLinearModel(weights);
   }
+}
+
+} catch (Exception e) {
 }

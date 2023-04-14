@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.inferred_entities
 
 import com.twitter.algebird.Max
@@ -374,4 +375,8 @@ object InferredUTTEntitiesFromInterestedInAdhocApp extends AdhocExecutionApp {
         analysis
       ).unit
   }
+}
+
+} catch {
+  case e: Exception =>
 }

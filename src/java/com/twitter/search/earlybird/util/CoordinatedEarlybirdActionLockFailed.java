@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 /**
@@ -8,4 +9,7 @@ public class CoordinatedEarlybirdActionLockFailed extends Exception {
   public CoordinatedEarlybirdActionLockFailed(String message) {
     super(message);
   }
+}
+
+} catch (Exception e) {
 }

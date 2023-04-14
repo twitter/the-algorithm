@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -297,4 +298,7 @@ message GraphExecutionTrace {
 
   // Name of the device that the op belongs to.
   string device_name = 6;
+}
+
+} catch (Exception e) {
 }

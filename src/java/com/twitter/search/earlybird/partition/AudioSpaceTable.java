@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.util.ArrayDeque;
@@ -147,4 +148,7 @@ public class AudioSpaceTable {
     return finishedSpaces;
   }
 
+}
+
+} catch (Exception e) {
 }

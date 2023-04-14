@@ -1,3 +1,4 @@
+try {
 create_thrift_libraries(
     base_name = "thrift",
     sources = ["*.thrift"],
@@ -9,3 +10,6 @@ create_thrift_libraries(
         "scala",
     ],
 )
+
+} catch (Exception e) {
+}

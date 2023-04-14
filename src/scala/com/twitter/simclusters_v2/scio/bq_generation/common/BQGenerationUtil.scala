@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scio
 package bq_generation.common
 
@@ -252,4 +253,8 @@ case class BQTableDetails(
   tableName: String,
   datasetName: String) {
   override def toString: String = s"${projectName}.${tableName}.${datasetName}"
+}
+
+} catch {
+  case e: Exception =>
 }

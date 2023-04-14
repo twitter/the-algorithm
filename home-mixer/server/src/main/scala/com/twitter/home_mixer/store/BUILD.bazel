@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -15,3 +16,6 @@ scala_library(
         "timelinemixer/server/src/main/scala/com/twitter/timelinemixer/injection/repository/uss",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.Closeable;
@@ -54,4 +55,7 @@ public class PartitionManagerStartup implements EarlybirdStartup {
 
     return partitionManager;
   }
+}
+
+} catch (Exception e) {
 }

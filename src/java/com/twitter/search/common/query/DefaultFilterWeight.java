@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import java.io.IOException;
@@ -57,4 +58,7 @@ public abstract class DefaultFilterWeight extends Weight {
    */
   protected abstract DocIdSetIterator getDocIdSetIterator(LeafReaderContext context)
       throws IOException;
+}
+
+} catch (Exception e) {
 }

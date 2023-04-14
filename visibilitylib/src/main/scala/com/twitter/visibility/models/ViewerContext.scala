@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.models
 
 import com.twitter.context.TwitterContext
@@ -50,4 +51,8 @@ object ViewerContext {
     ipTags = viewer.ipTags.toSet,
     isVerifiedCrawler = viewer.isVerifiedCrawler.getOrElse(false)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

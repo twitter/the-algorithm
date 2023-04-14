@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.util
 
 import com.twitter.snowflake.id.SnowflakeId
@@ -14,4 +15,8 @@ object SortIndexBuilder {
 
   /** the first [[SnowflakeId]] possible for a given unix epoch millis  */
   def timeToId(timeMillis: Long): Long = SnowflakeId.firstIdFor(timeMillis)
+}
+
+} catch {
+  case e: Exception =>
 }

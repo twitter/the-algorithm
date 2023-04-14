@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.features;
 
 public final class TweetSignatureUtil {
@@ -12,4 +13,7 @@ public final class TweetSignatureUtil {
     int signature = Integer.parseInt(args[0]);
     System.out.println(TweetIntegerShingleSignature.deserialize(signature).toString());
   }
+}
+
+} catch (Exception e) {
 }

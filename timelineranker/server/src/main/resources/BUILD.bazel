@@ -1,5 +1,9 @@
+try {
 resources(
     sources = [
         "*.xml",
     ],
 )
+
+} catch (Exception e) {
+}

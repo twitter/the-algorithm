@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.interleave_ranker
 
 import com.google.common.annotations.VisibleForTesting
@@ -201,4 +202,8 @@ class InterleaveRanker[Target <: HasParams] @Inject() (
         }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

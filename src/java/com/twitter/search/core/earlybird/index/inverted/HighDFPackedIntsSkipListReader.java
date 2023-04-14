@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import org.apache.lucene.search.DocIdSetIterator;
@@ -197,4 +198,7 @@ class HighDFPackedIntsSkipListReader {
     currentSkipListBlock = skipLists.getBlock(skipListBlockStart);
     skipListBlockIndex = 0;
   }
+}
+
+} catch (Exception e) {
 }

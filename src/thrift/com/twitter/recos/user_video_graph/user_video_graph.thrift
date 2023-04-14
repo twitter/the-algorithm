@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.recos.user_video_graph.thriftjava
 namespace py gen.twitter.recos.user_video_graph
 #@namespace scala com.twitter.recos.user_video_graph.thriftscala
@@ -62,3 +63,6 @@ service UserVideoGraph {
   RelatedTweetResponse consumersBasedRelatedTweets (ConsumersBasedRelatedTweetRequest request)
 }
 
+
+} catch (Exception e) {
+}

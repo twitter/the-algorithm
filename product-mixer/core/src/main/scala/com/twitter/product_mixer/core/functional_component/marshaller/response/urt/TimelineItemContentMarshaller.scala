@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
@@ -128,3 +129,7 @@ object TimelineCoverNotFilteredException
     extends UnsupportedOperationException("AddEntriesInstructionBuilder does not support Cover. " +
       "ShowCoverInstructionBuilder should be used with AddEntriesWithShowCoverInstructionBuilder " +
       "in order to filter out the Cover.")
+
+} catch {
+  case e: Exception =>
+}

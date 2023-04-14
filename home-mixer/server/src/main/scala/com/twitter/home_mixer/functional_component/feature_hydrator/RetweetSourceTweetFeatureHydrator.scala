@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.home_mixer.model.HomeFeatures._
@@ -73,4 +74,8 @@ object RetweetSourceTweetFeatureHydrator
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

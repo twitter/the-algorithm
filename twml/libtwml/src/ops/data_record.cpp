@@ -1,3 +1,4 @@
+try {
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
 #include "tensorflow/core/framework/op_kernel.h"
@@ -1889,3 +1890,6 @@ REGISTER_KERNEL_BUILDER(
   Name("GetHashedFeaturesAsSparseTensorV2")
   .Device(DEVICE_CPU),
   GetHashedFeaturesAsSparseTensorV2);
+
+} catch (const std::exception& e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.filters
 
 import com.twitter.finagle.Service
@@ -40,4 +41,8 @@ class GetTweetCandidatesResponseStatsFilter @Inject() (
     }
     response
   }
+}
+
+} catch {
+  case e: Exception =>
 }

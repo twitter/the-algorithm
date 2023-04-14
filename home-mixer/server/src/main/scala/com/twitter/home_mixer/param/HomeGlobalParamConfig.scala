@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.param
 
 import com.twitter.home_mixer.param.HomeGlobalParams._
@@ -37,4 +38,8 @@ class HomeGlobalParamConfig @Inject() () extends GlobalParamConfig {
   override val longSetFSOverrides = Seq(
     AuthorListForStatsParam
   )
+}
+
+} catch {
+  case e: Exception =>
 }

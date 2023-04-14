@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.ml.scores
 
 import com.google.cloud.bigquery.BigQueryOptions
@@ -131,4 +132,8 @@ object InteractionGraphScoreExportJob extends ScioBeamJob[InteractionGraphScoreE
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

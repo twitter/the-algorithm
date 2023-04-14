@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.config
 
 import com.twitter.storehaus.Store
@@ -8,4 +9,8 @@ class ClientWrappers(config: RuntimeConfiguration) {
 
   val contentFeaturesCache: Store[TweetId, ContentFeatures] =
     backendClientConfiguration.contentFeaturesCache
+}
+
+} catch {
+  case e: Exception =>
 }

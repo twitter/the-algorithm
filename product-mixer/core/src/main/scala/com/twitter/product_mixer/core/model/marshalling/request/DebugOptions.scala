@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.request
 
 import com.twitter.util.Time
@@ -12,4 +13,8 @@ trait DebugOptions {
 
 trait HasDebugOptions {
   def debugOptions: Option[DebugOptions]
+}
+
+} catch {
+  case e: Exception =>
 }

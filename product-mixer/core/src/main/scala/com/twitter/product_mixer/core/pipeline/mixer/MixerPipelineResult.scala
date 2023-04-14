@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.mixer
 
 import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
@@ -67,4 +68,8 @@ object MixerPipelineResult {
     None,
     None
   )
+}
+
+} catch {
+  case e: Exception =>
 }

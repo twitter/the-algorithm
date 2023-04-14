@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema;
 
 import com.google.common.base.Preconditions;
@@ -99,4 +100,7 @@ public final class SchemaUtil {
 
     return new BytesRef(value);
   }
+}
+
+} catch (Exception e) {
 }

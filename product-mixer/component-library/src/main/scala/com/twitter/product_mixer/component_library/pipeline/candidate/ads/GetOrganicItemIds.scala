@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.ads
 
 import com.twitter.product_mixer.core.functional_component.common.CandidateScope
@@ -26,4 +27,8 @@ case class PipelineScopedOrganicItemIds(pipelines: CandidateScope) extends GetOr
 case object EmptyOrganicItemIds extends GetOrganicItemIds {
 
   def apply(previousCandidates: Seq[CandidateWithDetails]): Option[Seq[Long]] = None
+}
+
+} catch {
+  case e: Exception =>
 }

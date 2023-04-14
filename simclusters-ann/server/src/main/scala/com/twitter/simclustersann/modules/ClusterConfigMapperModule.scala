@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.modules
 
 import com.google.inject.Provides
@@ -12,4 +13,8 @@ object ClusterConfigMapperModule extends TwitterModule {
   ): ClusterConfigMapper = {
     ClusterConfigMapper
   }
+}
+
+} catch {
+  case e: Exception =>
 }

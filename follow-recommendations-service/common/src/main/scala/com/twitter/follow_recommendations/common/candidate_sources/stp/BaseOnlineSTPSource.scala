@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.stp
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -52,4 +53,8 @@ abstract class BaseOnlineSTPSource(
 object BaseOnlineSTPSource {
   val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
     Algorithm.OnlineStrongTiePredictionRecNoCaching.toString)
+}
+
+} catch {
+  case e: Exception =>
 }

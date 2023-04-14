@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.List;
@@ -243,4 +244,7 @@ public class RetrieveSpaceAdminsAndTitleStage extends TwitterBaseStage
     }
     twitterMessage.addSpaceAdmin(userBuilder.build());
   }
+}
+
+} catch (Exception e) {
 }

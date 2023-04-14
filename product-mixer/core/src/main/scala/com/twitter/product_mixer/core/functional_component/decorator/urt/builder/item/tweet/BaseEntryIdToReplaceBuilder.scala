@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.tweet
 
 import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
@@ -11,4 +12,8 @@ trait BaseEntryIdToReplaceBuilder[-Query <: PipelineQuery, -Candidate <: BaseTwe
     candidate: Candidate,
     candidateFeatures: FeatureMap
   ): Option[String]
+}
+
+} catch {
+  case e: Exception =>
 }

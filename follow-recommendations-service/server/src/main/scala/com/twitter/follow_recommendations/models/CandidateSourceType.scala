@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.models
 
 object CandidateSourceType extends Enumeration {
@@ -6,4 +7,8 @@ object CandidateSourceType extends Enumeration {
   val GeoAndInterests = Value("geo_and_interests")
   val ActivityContextual = Value("activity_contextual")
   val None = Value("none")
+}
+
+} catch {
+  case e: Exception =>
 }

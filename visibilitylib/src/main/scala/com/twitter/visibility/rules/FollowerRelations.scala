@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.features.AuthorMutesViewer
@@ -17,4 +18,8 @@ object FollowerRelations {
   object ProtectedViewerRule
       extends OnlyWhenNotAuthorViewerRule(action = Drop(Unspecified), condition = ProtectedViewer)
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.dms
 
 import com.twitter.convosvc.thriftscala.Event
@@ -338,4 +339,8 @@ class DmEventFeatures(
           .dmConversationIsOneToOneConversation(conversationId, Some(viewerId))
       case _ => Stitch.False
     }
+}
+
+} catch {
+  case e: Exception =>
 }

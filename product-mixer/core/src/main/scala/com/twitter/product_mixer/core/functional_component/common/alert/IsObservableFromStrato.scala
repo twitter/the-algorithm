@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.common.alert
 
 /**
@@ -8,3 +9,7 @@ package com.twitter.product_mixer.core.functional_component.common.alert
  * @note can only be used in conjunction with [[Alert]]
  */
 trait IsObservableFromStrato { _: Alert => }
+
+} catch {
+  case e: Exception =>
+}

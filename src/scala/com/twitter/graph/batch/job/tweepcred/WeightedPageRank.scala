@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph.batch.job.tweepcred
 
 import com.twitter.scalding._
@@ -232,4 +233,8 @@ class WeightedPageRank(args: Args) extends Job(args) {
           .sum[Double]('mass_n) // take the sum
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

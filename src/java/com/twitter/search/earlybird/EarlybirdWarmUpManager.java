@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -97,4 +98,7 @@ public class EarlybirdWarmUpManager {
       EarlybirdStatus.endEvent("warm_up", startUpInWarmUpMetric);
     }
   }
+}
+
+} catch (Exception e) {
 }

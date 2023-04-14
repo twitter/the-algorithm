@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.service
 
 import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
@@ -10,4 +11,8 @@ object HomeMixerAccessPolicy {
    * to have a common policy.
    */
   val DefaultHomeMixerAccessPolicy: Set[AccessPolicy] = Set(AllowedLdapGroups(Set.empty[String]))
+}
+
+} catch {
+  case e: Exception =>
 }

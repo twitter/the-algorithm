@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.article
 
 sealed trait ArticleSeedType
@@ -16,3 +17,7 @@ case object FriendsOfFriendsSeed extends ArticleSeedType
  * Seed UTEG with a given lists' members
  */
 case object ListIdSeed extends ArticleSeedType
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -16,4 +17,8 @@ trait BaseClientEventDetailsBuilder[-Query <: PipelineQuery, -Candidate <: Unive
     candidate: Candidate,
     candidateFeatures: FeatureMap
   ): Option[ClientEventDetails]
+}
+
+} catch {
+  case e: Exception =>
 }

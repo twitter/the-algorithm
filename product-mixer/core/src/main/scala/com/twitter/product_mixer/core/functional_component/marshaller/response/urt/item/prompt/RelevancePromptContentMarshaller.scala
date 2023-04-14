@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
@@ -26,4 +27,8 @@ class RelevancePromptContentMarshaller @Inject() (
       notRelevantFollowUp = relevancePromptContent.notRelevantFollowUp.map(
         relevancePromptFollowUpFeedbackTypeMarshaller(_))
     )
+}
+
+} catch {
+  case e: Exception =>
 }

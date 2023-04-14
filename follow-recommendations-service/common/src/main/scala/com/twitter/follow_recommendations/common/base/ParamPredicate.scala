@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.base
 
 import com.twitter.follow_recommendations.common.models.FilterReason.ParamReason
@@ -14,4 +15,8 @@ case class ParamPredicate[Request <: HasParams](param: Param[Boolean]) extends P
       Stitch.value(PredicateResult.Invalid(Set(ParamReason(param.statName))))
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

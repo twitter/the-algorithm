@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.filter.tweet_impression
 
 import com.twitter.product_mixer.component_library.feature_hydrator.query.impressed_tweets.ImpressedTweets
@@ -34,4 +35,8 @@ case class TweetImpressionFilter[Candidate <: BaseTweetCandidate](
 
     Stitch.value(FilterResult(keptCandidates.map(_.candidate), removedCandidates.map(_.candidate)))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

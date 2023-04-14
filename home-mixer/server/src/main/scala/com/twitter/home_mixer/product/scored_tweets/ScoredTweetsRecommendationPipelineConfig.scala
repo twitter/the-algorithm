@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets
 
 import com.twitter.conversions.DurationOps._
@@ -251,4 +252,8 @@ class ScoredTweetsRecommendationPipelineConfig @Inject() (
     ScoredTweetsResponse,
     t.ScoredTweetsResponse
   ] = ScoredTweetsResponseTransportMarshaller
+}
+
+} catch {
+  case e: Exception =>
 }

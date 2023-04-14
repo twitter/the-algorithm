@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.recap.model
 
 import com.twitter.escherbird.thriftscala.TweetEntityAnnotation
@@ -219,4 +220,8 @@ object ContentFeatures {
       conversationControl = contentFeaturesV1.conversationControl,
       media = contentFeaturesV1.media
     )
+}
+
+} catch {
+  case e: Exception =>
 }

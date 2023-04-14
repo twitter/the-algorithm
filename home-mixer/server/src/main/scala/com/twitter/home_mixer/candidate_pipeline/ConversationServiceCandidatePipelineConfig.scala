@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.candidate_pipeline
 
 import com.twitter.home_mixer.functional_component.feature_hydrator.NamesFeatureHydrator
@@ -104,4 +105,8 @@ class ConversationServiceCandidatePipelineConfig[Query <: PipelineQuery](
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(),
     HomeMixerAlertConfig.BusinessHours.defaultEmptyResponseRateAlert()
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.util
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -167,4 +168,8 @@ class TweetsPostFilterBasedOnSearchMetadata(
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

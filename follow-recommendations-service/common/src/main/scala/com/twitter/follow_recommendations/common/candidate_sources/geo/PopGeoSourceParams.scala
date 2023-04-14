@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.geo
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -27,4 +28,8 @@ object PopGeoSourceParams {
         default = 200,
         min = 0,
         max = 1000)
+}
+
+} catch {
+  case e: Exception =>
 }

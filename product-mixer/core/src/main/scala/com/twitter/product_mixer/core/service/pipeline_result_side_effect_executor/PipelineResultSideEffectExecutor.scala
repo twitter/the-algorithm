@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -88,4 +89,8 @@ object PipelineResultSideEffectExecutor {
 
   /** The result for when a [[PipelineResultSideEffect]] is turned off by [[Conditionally]]'s [[Conditionally.onlyIf]] */
   case object TurnedOffByConditionally extends SideEffectResultType
+}
+
+} catch {
+  case e: Exception =>
 }

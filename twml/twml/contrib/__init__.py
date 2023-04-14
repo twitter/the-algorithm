@@ -1,3 +1,4 @@
+try:
 # pylint: disable=wildcard-import
 """ experimental and contributed modules """
 
@@ -19,3 +20,6 @@ import tensorflow
 from . import trainers  # noqa: F401
 from . import metrics  # noqa: F401
 from . import hooks  # noqa: F401
+
+except Exception:
+  pass

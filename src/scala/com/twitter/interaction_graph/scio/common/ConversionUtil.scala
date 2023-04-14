@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.common
 
 import com.spotify.scio.ScioMetrics
@@ -107,4 +108,8 @@ object ConversionUtil {
       Some(aggregatedFeature.copy(weight = e.weight.orElse(Some(0.0))))
     else None
   }
+}
+
+} catch {
+  case e: Exception =>
 }

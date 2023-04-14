@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.topic
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -12,4 +13,8 @@ trait BaseTopicFunctionalityTypeBuilder[-Query <: PipelineQuery, -Candidate <: U
     candidate: Candidate,
     candidateFeatures: FeatureMap
   ): Option[TopicFunctionalityType]
+}
+
+} catch {
+  case e: Exception =>
 }

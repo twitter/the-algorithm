@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.tweets
 
 import com.twitter.visibility.models.UserUnavailableStateEnum
@@ -12,3 +13,7 @@ case class UserUnavailableStateVisibilityRequest(
   isRetweet: Boolean,
   isInnerQuotedTweet: Boolean,
 )
+
+} catch {
+  case e: Exception =>
+}

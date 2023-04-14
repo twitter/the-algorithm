@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Amplify
@@ -17,4 +18,8 @@ class DynamicPrerollTypeMarshaller @Inject() () {
       case Marketplace => urt.DynamicPrerollType.Marketplace
       case LiveTvEvent => urt.DynamicPrerollType.LiveTvEvent
     }
+}
+
+} catch {
+  case e: Exception =>
 }

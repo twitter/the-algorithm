@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates
 
 import com.twitter.ml.api.DataRecord
@@ -90,4 +91,8 @@ trait BaseEdgeAggregateFeatureHydrator
       feature.adapter.adaptToDataRecord(dataRecords)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

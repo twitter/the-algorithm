@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.ads
 
 import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
@@ -36,4 +37,8 @@ case class PromotedTweetsOnlyFilter[Query <: PipelineQuery](
         FilterResult(kept, removed)
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

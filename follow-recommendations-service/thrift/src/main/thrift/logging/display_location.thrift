@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.follow_recommendations.logging.thriftjava
 #@namespace scala com.twitter.follow_recommendations.logging.thriftscala
 #@namespace strato com.twitter.follow_recommendations.logging
@@ -53,3 +54,6 @@ enum OfflineDisplayLocation {
     CONTENT_RECOMMENDER = 87
     HOME_TIMELINE_REVERSE_CHRON = 88
 }(persisted='true')
+
+} catch (Exception e) {
+}

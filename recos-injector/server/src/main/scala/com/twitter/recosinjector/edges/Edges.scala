@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.edges
 
 import com.twitter.recos.internal.thriftscala.RecosHoseMessage
@@ -84,4 +85,8 @@ case class UserUserEdge(
       "convertToUserTweetAuthorGraphMessage not implemented in UserUserEdge.")
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.scoring_pipeline
 
 import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
@@ -22,4 +23,8 @@ object ScoredTweetsDiversityScoringPipelineConfig
 
   override val scorers: Seq[Scorer[ScoredTweetsQuery, TweetCandidate]] =
     Seq(DiversityScorer(AuthorDiversityDiscountProvider))
+}
+
+} catch {
+  case e: Exception =>
 }

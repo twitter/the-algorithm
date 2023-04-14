@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.module
 
 import com.twitter.adserver.thriftscala.NewAdServer
@@ -29,4 +30,8 @@ object HomeAdsCandidateSourceModule
   }
 
   override protected def sessionAcquisitionTimeout: Duration = 150.milliseconds
+}
+
+} catch {
+  case e: Exception =>
 }

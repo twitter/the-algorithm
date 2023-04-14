@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.contenthealth.sensitivemediasettings.thriftscala.SensitiveMediaSettingsLevel
@@ -2398,4 +2399,8 @@ object Condition {
     }
 
   }
+}
+
+} catch {
+  case e: Exception =>
 }

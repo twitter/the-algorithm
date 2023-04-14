@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.ranker
 
 import com.twitter.cr_mixer.model.BlendedCandidate
@@ -43,4 +44,8 @@ object SwitchRanker {
           .flatMap(_.sourceEventTime)
           .getOrElse(Time.fromMilliseconds(0L)))
       .reverse
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.geoduck
 
 import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
@@ -9,4 +10,8 @@ object LocationServiceModule
     with MtlsClient {
   override val label = "geoduck_locationservice"
   override val dest = "/s/geo/geoduck_locationservice"
+}
+
+} catch {
+  case e: Exception =>
 }

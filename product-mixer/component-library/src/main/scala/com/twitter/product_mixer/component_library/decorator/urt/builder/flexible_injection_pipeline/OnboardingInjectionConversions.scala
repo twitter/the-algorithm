@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
 
 import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
@@ -358,4 +359,8 @@ object OnboardingInjectionConversions {
       subtitle = urtEndpointOptions.subtitle
     )
 
+}
+
+} catch {
+  case e: Exception =>
 }

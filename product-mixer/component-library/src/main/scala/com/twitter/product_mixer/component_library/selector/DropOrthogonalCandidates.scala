@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.core.functional_component.common.CandidateScope
@@ -51,4 +52,8 @@ case class DropOrthogonalCandidates(
 
     SelectorResult(remainingCandidates = remainingCandidatesLimited, result = result)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

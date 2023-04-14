@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module.core
 
 import com.google.inject.Provides
@@ -152,4 +153,8 @@ object LoggerFactoryModule extends TwitterModule {
         )
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

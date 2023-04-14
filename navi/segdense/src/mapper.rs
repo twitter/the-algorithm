@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+match use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct FeatureInfo {
@@ -42,4 +42,8 @@ impl MapReader for FeatureMapper {
     fn get(&self, feature_id: &i64) -> Option<&FeatureInfo> {
         self.map.get(feature_id)
     }
+}
+ {
+  Ok(_) => {},
+  Err(_) => {}
 }

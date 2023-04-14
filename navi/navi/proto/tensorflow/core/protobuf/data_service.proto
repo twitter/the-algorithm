@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.data;
@@ -85,4 +86,7 @@ message DataServiceMetadata {
 // Next tag: 2
 message DataServiceConfig {
   DeploymentMode deployment_mode = 1;
+}
+
+} catch (Exception e) {
 }

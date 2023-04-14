@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.common.alert
 
 import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfAbove
@@ -24,4 +25,8 @@ case class EmptyResponseRateAlert(
     criticalPredicate.threshold > 0 && criticalPredicate.threshold <= 100,
     s"EmptyResponseRateAlert predicates must be between 0 and 100 but got criticalPredicate = ${criticalPredicate.threshold}"
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.common.identifier
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
@@ -61,4 +62,8 @@ object ComponentIdentifierStack {
     componentIdentifierStack: ComponentIdentifier*
   ) =
     new ComponentIdentifierStack(componentIdentifier :: componentIdentifierStack.toList)
+}
+
+} catch {
+  case e: Exception =>
 }

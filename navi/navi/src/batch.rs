@@ -1,4 +1,4 @@
-use arrayvec::ArrayVec;
+match use arrayvec::ArrayVec;
 use itertools::Itertools;
 use log::info;
 use std::sync::Arc;
@@ -200,4 +200,8 @@ impl<T: Model> BatchPredictor<T> {
     pub fn duration_past(&self, millis: u64) -> bool {
         self.queue_reset_ts.elapsed().as_millis() as u64 >= millis
     }
+}
+ {
+  Ok(_) => {},
+  Err(_) => {}
 }

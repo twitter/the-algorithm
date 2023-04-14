@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.similarity_engine
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -135,4 +136,8 @@ object EarlybirdTensorflowBasedSimilarityEngine {
       authorSpecificScoreAdjustments = None
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

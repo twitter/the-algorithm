@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.dms
 
 import com.twitter.servo.util.Gate
@@ -91,4 +92,8 @@ object DmConversationVisibilityLibrary {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

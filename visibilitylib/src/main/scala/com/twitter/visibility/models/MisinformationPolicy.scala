@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.models
 
 import com.twitter.datatools.entityservice.entities.thriftscala.FleetInterstitial
@@ -176,4 +177,8 @@ object MisinfoPolicyDisplayType {
 
 object SemanticCoreMisinformation {
   val domainId: Long = 148L
+}
+
+} catch {
+  case e: Exception =>
 }

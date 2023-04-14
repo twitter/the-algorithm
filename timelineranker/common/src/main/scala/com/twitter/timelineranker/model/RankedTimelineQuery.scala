@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.model
 
 import com.twitter.timelineranker.{thriftscala => thrift}
@@ -11,4 +12,8 @@ case class RankedTimelineQuery(
     extends TimelineQuery(thrift.TimelineQueryType.Ranked, id, maxCount, range, options) {
 
   throwIfInvalid()
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.twitter.inject.TwitterModule
@@ -53,4 +54,8 @@ object RepresentationScorerModule extends TwitterModule {
       candidateIds = Seq(InternalId.TweetId(t2))
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

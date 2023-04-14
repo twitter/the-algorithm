@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema;
 
 import java.io.IOException;
@@ -225,4 +226,7 @@ public class ThriftDocumentBuilder {
     doc.addToFields(field);
     return this;
   }
+}
+
+} catch (Exception e) {
 }

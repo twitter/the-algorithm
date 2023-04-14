@@ -1,3 +1,4 @@
+try:
 """
 Provides a general optimizer for pruning features of a neural network.
 
@@ -162,3 +163,6 @@ class PruningOptimizer(tf.train.MomentumOptimizer):
 
     # no masks found
     return update_params
+
+except Exception:
+  pass

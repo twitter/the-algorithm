@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.button.CtaButton
@@ -19,3 +20,7 @@ case class CallToActionTileContent(
     extends TileContent
 
 //todo: Add other TileContent types later
+
+} catch {
+  case e: Exception =>
+}

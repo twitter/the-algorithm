@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.recap_hydration
 
 import com.twitter.timelines.configapi.FSParam
@@ -45,4 +46,8 @@ object RecapHydrationParams {
         default = false
       )
 
+}
+
+} catch {
+  case e: Exception =>
 }

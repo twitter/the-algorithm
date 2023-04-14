@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.common
 
 import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
@@ -95,4 +96,8 @@ case class AllExceptPipelines(
     extends CandidateScope {
   override def contains(candidate: CandidateWithDetails): Boolean = !candidate.features
     .get(CandidatePipelines).exists(pipelinesToExclude.contains)
+}
+
+} catch {
+  case e: Exception =>
 }

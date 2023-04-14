@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.model;
 
 import com.twitter.common.text.token.TokenizedCharSequenceStream;
@@ -39,4 +40,7 @@ public class VisibleTokenRatioUtil {
 
     return NORMALIZER.normalize(percent);
   }
+}
+
+} catch (Exception e) {
 }

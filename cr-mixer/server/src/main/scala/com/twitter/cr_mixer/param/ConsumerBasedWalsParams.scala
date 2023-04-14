@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import com.twitter.conversions.DurationOps.richDurationFromInt
@@ -93,4 +94,8 @@ object ConsumerBasedWalsParams {
       .set(boundedDurationFSOverrides: _*)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

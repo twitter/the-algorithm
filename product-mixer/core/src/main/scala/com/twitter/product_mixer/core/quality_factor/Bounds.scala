@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.quality_factor
 
 /**
@@ -30,4 +31,8 @@ case class BoundsWithDefault[T](bounds: Bounds[T], default: T)(implicit ordering
   bounds.throwIfOutOfBounds(default, "default")
 
   def apply(valueOpt: Option[T]): T = valueOpt.map(bounds.apply).getOrElse(default)
+}
+
+} catch {
+  case e: Exception =>
 }

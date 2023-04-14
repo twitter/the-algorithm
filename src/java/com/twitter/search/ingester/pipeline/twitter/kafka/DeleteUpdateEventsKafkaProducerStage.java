@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter.kafka;
 
 import javax.naming.NamingException;
@@ -63,4 +64,7 @@ public class DeleteUpdateEventsKafkaProducerStage extends KafkaProducerStage
   }
 
 
+}
+
+} catch (Exception e) {
 }

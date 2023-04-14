@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -20,3 +21,6 @@ scala_library(
         "util/util-core",
     ],
 )
+
+} catch (Exception e) {
+}

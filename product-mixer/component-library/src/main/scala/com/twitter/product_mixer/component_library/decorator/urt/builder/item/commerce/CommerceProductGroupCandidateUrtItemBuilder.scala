@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.commerce
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.item.commerce.CommerceProductGroupCandidateUrtItemBuilder.CommerceProductGroupClientEventInfoElement
@@ -39,4 +40,8 @@ case class CommerceProductGroupCandidateUrtItemBuilder[-Query <: PipelineQuery](
       feedbackActionInfo =
         feedbackActionInfoBuilder.flatMap(_.apply(query, candidate, candidateFeatures))
     )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.module
 
 import com.google.inject.Provides
@@ -43,4 +44,8 @@ object OptimizedStratoClientModule extends TwitterModule {
       .withStatsReceiver(statsReceiver.scope("strato_client"))
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

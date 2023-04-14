@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.HashMap;
@@ -129,4 +130,7 @@ public class ThriftVersionedEventsConverter {
   public void updatePenguinVersions(List<PenguinVersion> updatePenguinVersions) {
     penguinVersions = updatePenguinVersions;
   }
+}
+
+} catch (Exception e) {
 }

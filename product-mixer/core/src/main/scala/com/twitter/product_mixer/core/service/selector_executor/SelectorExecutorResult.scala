@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.selector_executor
 
 import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
@@ -10,3 +11,7 @@ case class SelectorExecutorResult(
   droppedCandidates: Seq[CandidateWithDetails],
   individualSelectorResults: Seq[SelectorResult])
     extends ExecutorResult
+
+} catch {
+  case e: Exception =>
+}

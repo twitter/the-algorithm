@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.recent_engagement
 
 import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
@@ -35,4 +36,8 @@ class RecentEngagementDirectFollowSource @Inject() (
 
 object RecentEngagementDirectFollowSource {
   val Identifier = CandidateSourceIdentifier(Algorithm.RecentEngagementDirectFollow.toString)
+}
+
+} catch {
+  case e: Exception =>
 }

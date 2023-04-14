@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index;
 
 import java.io.IOException;
@@ -471,4 +472,7 @@ public abstract class EarlybirdIndexSegmentData implements Flushable {
   public int numDocs() {
     return docIdToTweetIdMapper.getNumDocs();
   }
+}
+
+} catch (Exception e) {
 }

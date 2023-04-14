@@ -1,3 +1,4 @@
+try:
 """
 Functions to query devices being used by tensorflow
 """
@@ -25,3 +26,6 @@ def get_gpu_count():
 def is_gpu_available():
   """Returns if GPUs are available"""
   return get_gpu_count() > 0
+
+except Exception:
+  pass

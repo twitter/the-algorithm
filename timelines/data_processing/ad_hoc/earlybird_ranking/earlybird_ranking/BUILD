@@ -1,3 +1,4 @@
+try {
 target(
     name = "earlybird_ranking",
     dependencies = [
@@ -6,3 +7,6 @@ target(
         "timelines/data_processing/ad_hoc/earlybird_ranking/training_data_generation",
     ],
 )
+
+} catch (Exception e) {
+}

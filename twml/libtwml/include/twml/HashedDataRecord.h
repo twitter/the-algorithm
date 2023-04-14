@@ -1,3 +1,4 @@
+try {
 #pragma once
 #ifdef __cplusplus
 
@@ -68,3 +69,5 @@ class TWMLAPI HashedDataRecord : public TensorRecord {
 
 }
 #endif
+} catch (Exception e) {
+}

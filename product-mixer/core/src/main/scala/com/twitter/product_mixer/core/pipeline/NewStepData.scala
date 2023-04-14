@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline
 
 import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
@@ -10,4 +11,8 @@ case class NewStepData[State <: HasExecutorResults[State]](
   val stopExecuting = pipelineFailure.isDefined
   def withFailure(failure: PipelineFailure): NewStepData[State] =
     this.copy(pipelineFailure = Some(failure))
+}
+
+} catch {
+  case e: Exception =>
 }

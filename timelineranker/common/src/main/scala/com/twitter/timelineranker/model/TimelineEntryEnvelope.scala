@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.model
 
 import com.twitter.timelineranker.{thriftscala => thrift}
@@ -21,4 +22,8 @@ case class TimelineEntryEnvelope(entry: TimelineEntry) {
   def throwIfInvalid(): Unit = {
     entry.throwIfInvalid()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

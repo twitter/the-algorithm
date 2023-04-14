@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.quality_factor
 
 import com.twitter.product_mixer.core.pipeline.pipeline_failure.ClientFailure
@@ -118,3 +119,7 @@ case class QueriesPerSecondBasedQualityFactorConfig(
   override val ignorableFailures: PartialFunction[Throwable, Unit] =
     QualityFactorConfig.defaultIgnorableFailures)
     extends QualityFactorConfig
+
+} catch {
+  case e: Exception =>
+}

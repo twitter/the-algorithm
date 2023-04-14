@@ -1,3 +1,4 @@
+try {
 create_thrift_libraries(
     base_name = "thrift",
     sources = ["*.thrift"],
@@ -46,3 +47,6 @@ create_thrift_libraries(
     provides_java_name = "cr-mixer-scribe-java",
     provides_scala_name = "cr-mixer-scribe-scala",
 )
+
+} catch (Exception e) {
+}

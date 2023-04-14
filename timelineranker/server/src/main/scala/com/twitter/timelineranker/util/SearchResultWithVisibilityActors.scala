@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.util
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -58,4 +59,8 @@ case class SearchResultWithVisibilityActors(
       }
     ).flatten
   }
+}
+
+} catch {
+  case e: Exception =>
 }

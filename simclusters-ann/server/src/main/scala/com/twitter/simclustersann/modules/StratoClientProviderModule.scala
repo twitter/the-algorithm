@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.modules
 
 import com.google.inject.Provides
@@ -17,4 +18,8 @@ object StratoClientProviderModule extends TwitterModule {
     .withMutualTls(serviceIdentifier)
     .build()
 
+}
+
+} catch {
+  case e: Exception =>
 }

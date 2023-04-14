@@ -1,3 +1,4 @@
+try {
 java_library(
     name = "earlybird_root-lib",
     sources = ["*.java"],
@@ -73,3 +74,6 @@ jvm_binary(
         "twitter-server/slf4j-log4j12/src/main/scala",
     ],
 )
+
+} catch (Exception e) {
+}

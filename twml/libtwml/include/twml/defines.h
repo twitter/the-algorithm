@@ -1,3 +1,4 @@
+try {
 #pragma once
 #include <stdbool.h>
 #ifdef __cplusplus
@@ -34,3 +35,6 @@ extern "C" {
 #ifndef TWML_INDEX_BASE
 #define TWML_INDEX_BASE 0
 #endif
+
+} catch (Exception e) {
+}

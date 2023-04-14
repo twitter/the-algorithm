@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.twitter_list
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListItem
@@ -16,4 +17,8 @@ class TwitterListItemMarshaller @Inject() (
         displayType = twitterListItem.displayType.map(twitterListDisplayTypeMarshaller(_))
       )
     )
+}
+
+} catch {
+  case e: Exception =>
 }

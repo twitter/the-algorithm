@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclosureType
@@ -18,4 +19,8 @@ class DisclosureTypeMarshaller @Inject() () {
     case Earned => urt.DisclosureType.Earned
     case Issue => urt.DisclosureType.Issue
   }
+}
+
+} catch {
+  case e: Exception =>
 }

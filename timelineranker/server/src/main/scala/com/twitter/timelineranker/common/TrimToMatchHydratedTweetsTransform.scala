@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
@@ -34,4 +35,8 @@ object TrimToMatchHydratedTweetsTransform
     val filteredTweetIds = hydratedTweets.map(_.tweetId).toSet
     searchResults.filter(result => filteredTweetIds.contains(result.id))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

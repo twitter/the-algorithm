@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module.thrift_client
 
 import com.twitter.conversions.DurationOps._
@@ -22,4 +23,8 @@ object HydraPartitionClientModule
     methodBuilder: MethodBuilder
   ): MethodBuilder = methodBuilder.withTimeoutTotal(500.milliseconds)
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.conversations
 
 import com.twitter.gizmoduck.thriftscala.Label
@@ -18,3 +19,7 @@ case class TimelineConversationsVisibilityRequest(
   tweetParentIdMap: Option[Map[Long, Option[Long]]] = None,
   rootAuthorIsVerified: Boolean = false,
   tweetAuthors: Option[KeyValueResult[Long, Long]] = None)
+
+} catch {
+  case e: Exception =>
+}

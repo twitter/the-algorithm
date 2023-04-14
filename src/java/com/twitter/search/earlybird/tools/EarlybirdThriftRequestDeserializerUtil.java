@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.tools;
 
 import java.io.BufferedReader;
@@ -74,4 +75,7 @@ public final class EarlybirdThriftRequestDeserializerUtil {
     }
     return ebRequest;
   }
+}
+
+} catch (Exception e) {
 }

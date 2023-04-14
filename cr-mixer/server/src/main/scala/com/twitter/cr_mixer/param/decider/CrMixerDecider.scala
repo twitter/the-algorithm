@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param.decider
 
 import com.twitter.decider.Decider
@@ -36,4 +37,8 @@ case class CrMixerDecider @Inject() (decider: Decider) {
     decider.isAvailable(deciderConstants, Some(SimpleRecipient(id)))
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common.userupdates;
 
 import java.util.Iterator;
@@ -569,4 +570,7 @@ public class UserTable {
   protected int getNumUsersWithNoBitsSet() {
     return hashTable.get().numUsersWithNoBitsSet;
   }
+}
+
+} catch (Exception e) {
 }

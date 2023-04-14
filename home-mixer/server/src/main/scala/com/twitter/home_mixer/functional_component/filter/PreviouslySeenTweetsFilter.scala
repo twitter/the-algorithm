@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.filter
 
 import com.twitter.home_mixer.util.CandidatesUtil
@@ -34,4 +35,8 @@ object PreviouslySeenTweetsFilter extends Filter[PipelineQuery, TweetCandidate] 
 
     Stitch.value(FilterResult(kept = kept.map(_.candidate), removed = removed.map(_.candidate)))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

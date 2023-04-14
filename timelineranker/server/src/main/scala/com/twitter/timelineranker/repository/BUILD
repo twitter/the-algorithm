@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -30,3 +31,6 @@ scala_library(
         "util/util-stats/src/main/scala/com/twitter/finagle/stats",
     ],
 )
+
+} catch (Exception e) {
+}

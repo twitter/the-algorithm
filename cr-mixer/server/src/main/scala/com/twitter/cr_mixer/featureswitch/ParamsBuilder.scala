@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.featureswitch
 
 import com.twitter.abdecider.LoggingABDecider
@@ -148,4 +149,8 @@ class ParamsBuilder @Inject() (
 object ParamsBuilder {
   private val ProductCustomField = "product_id"
   private val UserStateCustomField = "user_state"
+}
+
+} catch {
+  case e: Exception =>
 }

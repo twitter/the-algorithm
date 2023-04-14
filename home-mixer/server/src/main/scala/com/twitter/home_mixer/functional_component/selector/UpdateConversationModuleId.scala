@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.selector
 
 import com.twitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
@@ -37,4 +38,8 @@ case class UpdateConversationModuleId(
 
     SelectorResult(remainingCandidates = updatedCandidates ++ otherCandidates, result = result)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

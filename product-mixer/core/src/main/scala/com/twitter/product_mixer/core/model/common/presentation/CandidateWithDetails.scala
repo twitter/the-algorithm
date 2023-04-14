@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.common.presentation
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -137,4 +138,8 @@ object ModuleCandidateWithDetails {
 
     ModuleCandidateWithDetails(candidates, presentation, newFeatureMap)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

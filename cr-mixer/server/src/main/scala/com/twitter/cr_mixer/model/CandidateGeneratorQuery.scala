@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.model
 
 import com.twitter.core_workflows.user_model.thriftscala.UserState
@@ -94,3 +95,7 @@ case class TopicTweetCandidateGeneratorQuery(
   requestUUID: Long,
   isVideoOnly: Boolean)
     extends CandidateGeneratorQuery
+
+} catch {
+  case e: Exception =>
+}

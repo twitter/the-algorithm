@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.search.termination;
 
 import com.twitter.common.util.Clock;
@@ -31,4 +32,7 @@ public class QueryTimeoutFactory {
       return null;
     }
   }
+}
+
+} catch (Exception e) {
 }

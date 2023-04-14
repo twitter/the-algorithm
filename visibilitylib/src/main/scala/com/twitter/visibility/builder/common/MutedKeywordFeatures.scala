@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.common
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -225,4 +226,8 @@ class MutedKeywordFeatures(
     }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

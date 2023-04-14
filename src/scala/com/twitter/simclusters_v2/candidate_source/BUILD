@@ -1,3 +1,4 @@
+try {
 scala_library(
     platform = "java8",
     tags = ["bazel-compatible"],
@@ -15,3 +16,6 @@ scala_library(
         "util/util-stats/src/main/scala/com/twitter/finagle/stats",
     ],
 )
+
+} catch (Exception e) {
+}

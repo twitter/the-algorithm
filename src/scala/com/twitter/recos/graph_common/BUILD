@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     platform = "java8",
@@ -10,3 +11,6 @@ scala_library(
         "src/thrift/com/twitter/recos:recos-common-scala",
     ],
 )
+
+} catch (Exception e) {
+}

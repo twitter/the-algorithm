@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.source_signal
 
 import com.twitter.cr_mixer.param.GlobalParams
@@ -206,4 +207,8 @@ object UssStore {
     Set(SourceType.AccountBlock, SourceType.AccountMute)
   private val EnabledNegativeSignalTypes: Set[SignalType] =
     Set(SignalType.AccountBlock, SignalType.AccountMute)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try:
 import io
 import logging
 import subprocess
@@ -117,3 +118,6 @@ class EventBusPipedBinaryRecordReader(BinaryRecordReader):
       self._pipe.terminate()
     except Exception as e:
       logging.error("Error closing reader: {}".format(e))
+
+except Exception:
+  pass

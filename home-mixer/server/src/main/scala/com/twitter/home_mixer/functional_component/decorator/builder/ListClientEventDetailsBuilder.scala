@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.decorator.builder
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -30,4 +31,8 @@ object ListClientEventDetailsBuilder
 
     Some(clientEventDetails)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

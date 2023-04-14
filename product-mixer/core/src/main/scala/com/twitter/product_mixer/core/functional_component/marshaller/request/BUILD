@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -15,3 +16,6 @@ scala_library(
         "product-mixer/core/src/main/thrift/com/twitter/product_mixer/core:thrift-scala",
     ],
 )
+
+} catch (Exception e) {
+}

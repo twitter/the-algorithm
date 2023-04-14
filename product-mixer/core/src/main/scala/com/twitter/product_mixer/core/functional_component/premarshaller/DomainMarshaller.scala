@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.premarshaller
 
 import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
@@ -64,3 +65,7 @@ class UndecoratedModuleDomainMarshallerException(
   candidateSource: ComponentIdentifier)
     extends UnsupportedOperationException(
       s"Domain marshaller does not support undecorated module from source $candidateSource")
+
+} catch {
+  case e: Exception =>
+}

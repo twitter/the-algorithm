@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -64,4 +65,8 @@ class RecapSearchResultsTruncationTransform(
 
     Future.value(envelope.copy(searchResults = allTruncatedResults))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

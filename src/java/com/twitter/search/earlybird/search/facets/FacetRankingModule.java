@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.facets;
 
 import java.util.ArrayList;
@@ -23,4 +24,7 @@ public abstract class FacetRankingModule {
   public abstract void prepareResults(
       EarlybirdLuceneSearcher.FacetSearchResults hits,
       FacetCountState<ThriftFacetFieldResults> facetCountState);
+}
+
+} catch (Exception e) {
 }

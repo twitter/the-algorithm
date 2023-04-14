@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive.segmentbuilder;
 
 import java.io.IOException;
@@ -197,4 +198,7 @@ class SegmentBuilderCoordinator {
   String statusReadyHDFSPath() {
     return syncConfig.getHdfsSegmentSyncRootDir() + "/segment_builder_sync";
   }
+}
+
+} catch (Exception e) {
 }

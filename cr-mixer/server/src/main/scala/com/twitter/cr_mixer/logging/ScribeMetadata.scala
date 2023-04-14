@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.logging
 
 import com.twitter.cr_mixer.model.AdsCandidateGeneratorQuery
@@ -42,4 +43,8 @@ object RelatedTweetScribeMetadata {
       query.clientContext,
       query.product)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

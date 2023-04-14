@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_tweet_graph
 
 import com.twitter.recos.graph_common.MultiSegmentPowerLawBipartiteGraphBuilder.GraphBuilderConfig
@@ -36,4 +37,8 @@ object RecosConfig {
   println("RecosConfig -   expectedNumRightNodes " + expectedNumRightNodes)
   println("RecosConfig -  expectedMaxRightDegree " + expectedMaxRightDegree)
   println("RecosConfig -   rightPowerLawExponent " + rightPowerLawExponent)
+}
+
+} catch {
+  case e: Exception =>
 }

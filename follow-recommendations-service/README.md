@@ -1,3 +1,4 @@
+try {
 # Follow Recommendations Service
 
 ## Introduction to the Follow Recommendations Service (FRS)
@@ -38,3 +39,6 @@ The transformers' folder can be found at `follow-recommendations-service/common/
 During this final step, FRS trims the candidate pool to a specified size. This process ensures that only the most relevant and engaging candidates are presented to users while maintaining an optimal user experience.
 
 By implementing these comprehensive steps and adapting to various use cases, the Follow Recommendations Service (FRS) effectively curates tailored suggestions for Twitter users, enhancing their overall experience and promoting meaningful connections within the platform.
+
+} catch (Exception e) {
+}

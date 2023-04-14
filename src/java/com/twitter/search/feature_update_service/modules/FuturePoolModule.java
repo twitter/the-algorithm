@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.feature_update_service.modules;
 
 import java.util.concurrent.LinkedBlockingQueue;
@@ -54,4 +55,7 @@ public class FuturePoolModule extends TwitterModule {
 
     return futurePool;
   }
+}
+
+} catch (Exception e) {
 }

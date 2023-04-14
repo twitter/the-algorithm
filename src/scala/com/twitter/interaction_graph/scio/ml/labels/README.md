@@ -1,3 +1,4 @@
+try {
 ## InteractionGraphLabels Dataflow Job
 
 #### IntelliJ
@@ -32,3 +33,5 @@ bin/d6w schedule \
   --bind=profile.date=2022-05-15 \
   --bind=profile.output_path=processed/interaction_graph/labels
 ```
+} catch (Exception e) {
+}

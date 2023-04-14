@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.Closeable;
@@ -325,4 +326,7 @@ public class KafkaStartup implements EarlybirdStartup {
 
     return this::shutdownIndexing;
   }
+}
+
+} catch (Exception e) {
 }

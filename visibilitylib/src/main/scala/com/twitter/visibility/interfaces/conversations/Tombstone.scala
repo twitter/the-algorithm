@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.conversations
 
 import com.twitter.timelines.render.thriftscala.TombstoneDisplayType
@@ -32,4 +33,8 @@ case class VfTombstone(
     case _: LocalizedTombstone => true
     case _ => false
   }
+}
+
+} catch {
+  case e: Exception =>
 }

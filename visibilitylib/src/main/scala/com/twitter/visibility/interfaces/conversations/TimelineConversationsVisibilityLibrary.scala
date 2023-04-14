@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.conversations
 
 import com.twitter.decider.Decider
@@ -257,4 +258,8 @@ object TimelineConversationsVisibilityLibrary {
       VerdictLogger.Empty
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

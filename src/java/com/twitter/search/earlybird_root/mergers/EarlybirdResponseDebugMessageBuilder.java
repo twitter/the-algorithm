@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.mergers;
 
 
@@ -173,4 +174,7 @@ class EarlybirdResponseDebugMessageBuilder {
       }
     }
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_negative
 
 import com.google.api.services.bigquery.model.TimePartitioning
@@ -152,4 +153,8 @@ object InteractionGraphNegativeJob extends ScioBeamJob[InteractionGraphNegativeO
       DAL.readMostRecentSnapshotNoOlderThan[T](dataset, 7.days)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,4 +1,4 @@
-use std::fs;
+match use std::fs;
 use log::{debug};
 
 use serde_json::{Value, Map};
@@ -157,3 +157,7 @@ pub fn to_feature_info(input_feature: &seg_dense::InputFeature) -> Option<Featur
     })
 }
 
+ {
+  Ok(_) => {},
+  Err(_) => {}
+}

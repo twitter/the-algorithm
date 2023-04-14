@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.worker.controllers
 
 import com.twitter.discovery.common.stats.DiscoveryStatsFilter
@@ -35,4 +36,8 @@ class WorkerController @Inject() (
 
   handle(GetIntersection) { getIntersection }
 
+}
+
+} catch {
+  case e: Exception =>
 }

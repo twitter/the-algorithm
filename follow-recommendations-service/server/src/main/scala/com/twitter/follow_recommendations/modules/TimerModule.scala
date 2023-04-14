@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.modules
 
 import com.google.inject.Provides
@@ -10,4 +11,8 @@ object TimerModule extends TwitterModule {
   @Provides
   @Singleton
   def providesTimer: Timer = DefaultTimer
+}
+
+} catch {
+  case e: Exception =>
 }

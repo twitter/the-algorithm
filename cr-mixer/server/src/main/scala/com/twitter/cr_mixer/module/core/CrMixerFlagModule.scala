@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module.core
 
 import com.twitter.inject.TwitterModule
@@ -17,4 +18,8 @@ object CrMixerFlagModule extends TwitterModule {
     default = "dark_traffic_filter",
     help = "Dark traffic filter decider key"
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.query_server.common.throttling
 
 import com.twitter.server.filter.CgroupsCpu
@@ -25,4 +26,8 @@ class AuroraCPUStatsReader() {
         case quotaMicros => quotaMicros.toDouble / periodMicros.toDouble
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

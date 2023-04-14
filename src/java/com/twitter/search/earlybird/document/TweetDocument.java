@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.document;
 
 import org.apache.lucene.document.Document;
@@ -49,4 +50,7 @@ public final class TweetDocument {
         + ", document=" + document
         + '}';
   }
+}
+
+} catch (Exception e) {
 }

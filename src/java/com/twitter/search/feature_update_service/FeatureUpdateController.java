@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.feature_update_service;
 
 import java.util.Arrays;
@@ -242,4 +243,7 @@ public class FeatureUpdateController implements FeatureUpdateService.ServiceIfac
     thriftVersionedEvents.setId(thriftIndexingEvent.getUid());
     return thriftVersionedEvents;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.list_recommended_users
 
 import com.twitter.home_mixer.functional_component.feature_hydrator.ListMembersQueryFeatureHydrator
@@ -97,4 +98,8 @@ class ListRecommendedUsersMixerPipelineConfig @Inject() (
 
   override val transportMarshaller: TransportMarshaller[Timeline, urt.TimelineResponse] =
     urtTransportMarshaller
+}
+
+} catch {
+  case e: Exception =>
 }

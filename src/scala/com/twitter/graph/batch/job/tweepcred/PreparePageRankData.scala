@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph.batch.job.tweepcred
 
 import com.twitter.data.proto.Flock
@@ -272,4 +273,8 @@ class PreparePageRankData(args: Args) extends Job(args) {
 
     combined.write(Tsv(PWD + "/pagerank_0"))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

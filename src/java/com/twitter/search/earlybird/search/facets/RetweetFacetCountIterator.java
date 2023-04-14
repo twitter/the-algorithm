@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.facets;
 
 import java.io.IOException;
@@ -33,4 +34,7 @@ public class RetweetFacetCountIterator extends CSFFacetCountIterator {
         && featureReaderIsRetweetFlag.advanceExact(internalDocID)
         && (featureReaderIsRetweetFlag.longValue() != 0);
   }
+}
+
+} catch (Exception e) {
 }

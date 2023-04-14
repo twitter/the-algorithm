@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.follow_recommendations.logging.{thriftscala => offline}
@@ -50,4 +51,8 @@ object ClientContextConverter {
     guestIdAds = clientContext.guestIdAds,
     guestIdMarketing = clientContext.guestIdMarketing
   )
+}
+
+} catch {
+  case e: Exception =>
 }

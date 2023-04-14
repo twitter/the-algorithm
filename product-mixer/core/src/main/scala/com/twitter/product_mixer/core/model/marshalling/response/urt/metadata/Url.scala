@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.ReferenceObject
@@ -15,3 +16,7 @@ case class UrtEndpointOptions(
 
 case class Url(urlType: UrlType, url: String, urtEndpointOptions: Option[UrtEndpointOptions] = None)
     extends ReferenceObject
+
+} catch {
+  case e: Exception =>
+}

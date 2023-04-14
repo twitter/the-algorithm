@@ -1,3 +1,4 @@
+try {
 java_library(
     name = "feature_update_service-lib",
     sources = ["*.java"],
@@ -84,3 +85,6 @@ jvm_binary(
         "twitter-server-internal/src/main/scala",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.search
 
 import com.twitter.tweetypie.thriftscala.Tweet
@@ -8,3 +9,7 @@ case class TweetContext(
   quotedTweet: Option[Tweet],
   retweetSourceTweet: Option[Tweet] = None,
   safetyLevel: SafetyLevel)
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.step
 
 import com.twitter.product_mixer.core.service.Executor
@@ -49,4 +50,8 @@ trait Step[State, -Config, ExecutorInput, ExResult <: ExecutorResult] {
    * @return Updated state object passed.
    */
   def updateState(state: State, executorResult: ExResult, config: Config): State
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.uua_processors
 
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -178,4 +179,8 @@ class UnifiedUserActionProcessor(
           }.getOrElse(Future.Unit)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

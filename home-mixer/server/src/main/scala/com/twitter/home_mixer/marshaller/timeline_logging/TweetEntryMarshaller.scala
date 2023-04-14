@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.marshaller.timeline_logging
 
 import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
@@ -26,4 +27,8 @@ object TweetEntryMarshaller {
       socialContextType = socialContextType
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

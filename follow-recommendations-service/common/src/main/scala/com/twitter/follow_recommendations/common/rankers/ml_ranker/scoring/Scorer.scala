@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
 
 import com.twitter.follow_recommendations.common.models.CandidateUser
@@ -31,4 +32,8 @@ trait Scorer {
     target: HasClientContext with HasParams with HasDisplayLocation with HasDebugOptions,
     candidates: Seq[CandidateUser]
   ): Seq[Option[Score]]
+}
+
+} catch {
+  case e: Exception =>
 }

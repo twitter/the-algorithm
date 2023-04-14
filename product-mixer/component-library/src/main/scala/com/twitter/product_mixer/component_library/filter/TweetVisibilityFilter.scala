@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.filter
 
 import com.twitter.util.logging.Logging
@@ -68,4 +69,8 @@ case class TweetVisibilityFilter[Candidate <: BaseTweetCandidate](
       visibilityPolicy = tweetVisibilityPolicy,
       safetyLevel = Some(safetyLevel)
     )
+}
+
+} catch {
+  case e: Exception =>
 }

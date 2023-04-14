@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -899,4 +900,7 @@ message CallableOptions {
   bool fetch_skip_sync = 8;
 
   // Next: 9
+}
+
+} catch (Exception e) {
 }

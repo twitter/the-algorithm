@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.configapi
 
 import com.twitter.product_mixer.core.functional_component.configapi.registry.GlobalParamRegistry
@@ -14,4 +15,8 @@ class ConfigBuilder @Inject() (
 
   def build(): Config =
     new CompositeConfig(productParamRegistry.build() ++ Seq(globalParamRegistry.build()))
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import com.google.common.base.Optional;
@@ -13,4 +14,7 @@ public class RecencyCacheRequestNormalizer extends
   public Optional<EarlybirdRequest> normalizeRequest(EarlybirdRequestContext requestContext) {
     return Optional.fromNullable(CacheUtil.normalizeRequestForCache(requestContext.getRequest()));
   }
+}
+
+} catch (Exception e) {
 }

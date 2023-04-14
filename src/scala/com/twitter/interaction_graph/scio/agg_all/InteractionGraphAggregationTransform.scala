@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_all
 
 import collection.JavaConverters._
@@ -56,4 +57,8 @@ object InteractionGraphAggregationTransform {
           )
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.search;
 
 import java.io.IOException;
@@ -68,4 +69,7 @@ public class AndNotDocIdSetIterator extends DocIdSetIterator {
   public long cost() {
     return baseIter.cost();
   }
+}
+
+} catch (Exception e) {
 }

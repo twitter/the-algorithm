@@ -1,3 +1,4 @@
+try {
 include "logging/flows.thrift"
 include "logging/recently_engaged_user_id.thrift"
 
@@ -64,3 +65,6 @@ union OfflineDisplayContext {
     9: OfflineSimilarToUser similarToUser
     10: OfflinePostNuxFollowTask postNuxFollowTask
 }(persisted='true', hasPersonalData='true')
+
+} catch (Exception e) {
+}

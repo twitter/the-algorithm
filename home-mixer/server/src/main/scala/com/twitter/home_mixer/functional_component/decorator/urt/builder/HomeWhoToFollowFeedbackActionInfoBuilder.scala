@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.decorator.urt.builder
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.WhoToFollowFeedbackActionInfoBuilder
@@ -48,4 +49,8 @@ case class HomeWhoToFollowFeedbackActionInfoBuilder @Inject() (
     candidateFeatures: FeatureMap
   ): Option[FeedbackActionInfo] =
     whoToFollowFeedbackActionInfoBuilder.apply(query, candidate, candidateFeatures)
+}
+
+} catch {
+  case e: Exception =>
 }

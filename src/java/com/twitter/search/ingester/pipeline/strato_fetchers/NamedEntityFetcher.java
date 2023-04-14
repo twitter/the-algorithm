@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.strato_fetchers;
 
 import scala.Option;
@@ -44,4 +45,7 @@ public class NamedEntityFetcher {
   public Future<Fetch.Result<NamedEntities>> fetch(long tweetId) {
     return Stitch.run(fetcher.fetch(tweetId, REQUEST_OPTIONS));
   }
+}
+
+} catch (Exception e) {
 }

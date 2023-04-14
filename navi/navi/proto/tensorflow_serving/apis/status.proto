@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.serving;
@@ -14,4 +15,7 @@ message StatusProto {
 
   // Error message. Will only be set if an error was encountered.
   string error_message = 2 [json_name = "error_message"];
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.model.request
 
 import com.twitter.dspbidder.commons.thriftscala.DspClientContext
@@ -32,3 +33,7 @@ case class ListRecommendedUsersProductContext(
   selectedUserIds: Option[Seq[Long]],
   excludedUserIds: Option[Seq[Long]])
     extends ProductContext
+
+} catch {
+  case e: Exception =>
+}

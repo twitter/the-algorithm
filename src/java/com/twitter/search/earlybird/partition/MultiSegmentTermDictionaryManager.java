@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.IOException;
@@ -311,4 +312,7 @@ public class MultiSegmentTermDictionaryManager {
     // May change this if we get a better implementation in the future.
     return new MultiSegmentTermDictionaryWithFastutil(field, indexes);
   }
+}
+
+} catch (Exception e) {
 }

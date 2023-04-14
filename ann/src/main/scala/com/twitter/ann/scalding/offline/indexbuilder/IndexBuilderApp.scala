@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.scalding.offline.indexbuilder
 
 import com.twitter.ann.annoy.TypedAnnoyIndex
@@ -88,4 +89,8 @@ object IndexBuilderApp extends TwitterExecutionApp with IndexBuilderExecutable {
   override def job: Execution[Unit] = Execution.getArgs.flatMap { args: Args =>
     indexBuilderExecution(args)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

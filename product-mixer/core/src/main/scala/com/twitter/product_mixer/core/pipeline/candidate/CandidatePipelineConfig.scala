@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.candidate
 
 import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
@@ -261,4 +262,8 @@ object CandidatePipelineConfig extends PipelineConfigCompanion {
     scorersStep,
     decoratorStep
   )
+}
+
+} catch {
+  case e: Exception =>
 }

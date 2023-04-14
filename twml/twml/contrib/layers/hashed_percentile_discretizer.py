@@ -1,3 +1,4 @@
+try:
 # pylint: disable=no-member, attribute-defined-outside-init, too-many-instance-attributes
 """
 Implementing HashedPercentileDiscretizer Layer
@@ -215,3 +216,6 @@ class HashedPercentileDiscretizer(Layer):
     batch_size = tf.to_int64(inputs.dense_shape[0])
     output_shape = [batch_size, self.output_size]
     return twml.SparseTensor(ids, concat_keys, concat_vals, output_shape).to_tf()
+
+except Exception:
+  pass

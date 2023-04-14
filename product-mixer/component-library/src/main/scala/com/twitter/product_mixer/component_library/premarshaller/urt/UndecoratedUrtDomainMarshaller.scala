@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urt
 
 import com.twitter.product_mixer.component_library.model.candidate.ArticleCandidate
@@ -145,4 +146,8 @@ case class UndecoratedUrtDomainMarshaller[Query <: PipelineQuery](
 
     buildTimeline(query, entries)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

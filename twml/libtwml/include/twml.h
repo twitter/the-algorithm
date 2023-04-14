@@ -1,3 +1,4 @@
+try {
 #include <twml/defines.h>
 #include <twml/Error.h>
 #include <twml/functions.h>
@@ -19,3 +20,6 @@
 #include <twml/TensorRecordWriter.h>
 #include <twml/DataRecord.h>
 #include <twml/io/IOError.h>
+
+} catch (Exception e) {
+}

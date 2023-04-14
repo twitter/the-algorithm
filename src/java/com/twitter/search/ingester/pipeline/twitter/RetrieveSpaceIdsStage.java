@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.Set;
@@ -96,4 +97,7 @@ public class RetrieveSpaceIdsStage extends TwitterBaseStage
     }
     return spaceIds;
   }
+}
+
+} catch (Exception e) {
 }

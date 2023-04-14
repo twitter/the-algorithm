@@ -1,3 +1,4 @@
+try:
 """
 Implementing partition Layer
 """
@@ -72,3 +73,6 @@ class Partition(Layer):
     partioned_indices = tf.dynamic_partition(tf.range(tf.shape(partition_ids)[0]),
                                              tf.cast(partition_ids, tf.int32), self.partitions)
     return [partioned_val, partioned_keys, partioned_indices]
+
+except Exception:
+  pass

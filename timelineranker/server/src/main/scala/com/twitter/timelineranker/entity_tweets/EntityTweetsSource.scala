@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.entity_tweets
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -143,4 +144,8 @@ class EntityTweetsSource(
   def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
     Future.collect(queries.map(get))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

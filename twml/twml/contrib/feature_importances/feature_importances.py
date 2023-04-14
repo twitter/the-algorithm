@@ -1,3 +1,4 @@
+try:
 # checkstyle: noqa
 
 import time
@@ -412,3 +413,6 @@ def write_feature_importances_to_ml_dash(trainer, feature_importances, feature_c
   except (HTTPError, RetryError) as err:
     logging.error('Feature importance is not being written due to: '
                   'HTTPError when attempting to write to ML Metastore: \n{}.'.format(err))
+
+except Exception:
+  pass

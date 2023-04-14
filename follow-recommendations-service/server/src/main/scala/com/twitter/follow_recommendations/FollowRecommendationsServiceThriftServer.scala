@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations
 
 import com.google.inject.Module
@@ -115,4 +116,8 @@ class FollowRecommendationsServiceThriftServer
   override def warmup(): Unit = {
     handle[FollowRecommendationsServiceWarmupHandler]()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

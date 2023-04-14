@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.util
 
 import com.twitter.bijection.Injection
@@ -40,4 +41,8 @@ object InjectionTransformerImplicits {
 class InjectionTransformer[A, B](inj: Injection[A, B]) extends Transformer[A, B] {
   override def to(a: A): Try[B] = Return(inj(a))
   override def from(b: B): Try[A] = Try.fromScala(inj.invert(b))
+}
+
+} catch {
+  case e: Exception =>
 }

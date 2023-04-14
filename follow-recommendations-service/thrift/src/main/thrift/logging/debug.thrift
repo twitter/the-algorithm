@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.follow_recommendations.logging.thriftjava
 #@namespace scala com.twitter.follow_recommendations.logging.thriftscala
 #@namespace strato com.twitter.follow_recommendation.logging
@@ -6,3 +7,6 @@ namespace java com.twitter.follow_recommendations.logging.thriftjava
 struct OfflineDebugParams {
     1: optional i64 randomizationSeed // track if the request was randomly ranked or not
 }(persisted='true', hasPersonalData='false')
+
+} catch (Exception e) {
+}

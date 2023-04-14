@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.search;
 
 import java.io.IOException;
@@ -28,4 +29,7 @@ public abstract class TwitterCollector implements Collector {
    * and should not be collected here.
    */
   public abstract void finishSegment(int lastSearchedDocID) throws IOException;
+}
+
+} catch (Exception e) {
 }

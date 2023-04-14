@@ -1,3 +1,4 @@
+try:
 import tensorflow.compat.v1 as tf
 
 
@@ -12,3 +13,6 @@ class PartitionInitializer(tf.keras.initializers.Initializer):
     ix0, ix1 = offset[0], offset[0] + shape[0]
     iy0, iy1 = offset[1], offset[1] + shape[1]
     return self.np_array[ix0:ix1, iy0:iy1]
+
+except Exception:
+  pass

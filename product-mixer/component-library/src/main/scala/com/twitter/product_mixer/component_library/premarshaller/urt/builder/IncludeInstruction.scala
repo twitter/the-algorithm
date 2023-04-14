@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urt.builder
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
@@ -28,4 +29,8 @@ object IncludeAfterFirstPage extends IncludeInstruction[PipelineQuery with HasPi
     query: PipelineQuery with HasPipelineCursor[_],
     entries: Seq[TimelineEntry]
   ): Boolean = !query.isFirstPage
+}
+
+} catch {
+  case e: Exception =>
 }

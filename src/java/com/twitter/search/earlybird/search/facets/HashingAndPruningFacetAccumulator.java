@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.facets;
 
 import java.util.Arrays;
@@ -489,4 +490,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
     }
 
   }
+}
+
+} catch (Exception e) {
 }

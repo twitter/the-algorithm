@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.candidate_feature_transformer_executor
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -90,4 +91,8 @@ class CandidateFeatureTransformerExecutor @Inject() (override val statsReceiver:
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

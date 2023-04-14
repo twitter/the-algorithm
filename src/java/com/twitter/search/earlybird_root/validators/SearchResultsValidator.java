@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.validators;
 
 import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
@@ -34,4 +35,7 @@ public class SearchResultsValidator
       }
     }
   }
+}
+
+} catch (Exception e) {
 }

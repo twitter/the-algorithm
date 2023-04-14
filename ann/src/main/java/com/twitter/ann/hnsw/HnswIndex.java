@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.hnsw;
 
 import java.io.IOException;
@@ -708,4 +709,7 @@ public class HnswIndex<T, Q> {
      */
     Random get();
   }
+}
+
+} catch (Exception e) {
 }

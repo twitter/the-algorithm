@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.adapters.content
 
 import com.twitter.home_mixer.model.ContentFeatures
@@ -257,4 +258,8 @@ object ContentFeatureAdapter extends TimelinesMutatingAdapterBase[Option[Content
       )
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

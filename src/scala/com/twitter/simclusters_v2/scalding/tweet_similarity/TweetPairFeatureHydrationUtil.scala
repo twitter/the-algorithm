@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.tweet_similarity
 
 import com.twitter.ml.api.util.FDsl._
@@ -286,4 +287,8 @@ object TweetPairFeatureHydrationUtil {
       featureDataRecord
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

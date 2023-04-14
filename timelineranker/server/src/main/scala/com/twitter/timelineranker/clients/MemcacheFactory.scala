@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.clients
 
 import com.twitter.finagle.memcached.{Client => FinagleMemcacheClient}
@@ -45,4 +46,8 @@ class ScopedMemcacheFactory(memcacheClient: FinagleMemcacheClient, statsReceiver
       statsReceiver.scope("memcache", scope.scope)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

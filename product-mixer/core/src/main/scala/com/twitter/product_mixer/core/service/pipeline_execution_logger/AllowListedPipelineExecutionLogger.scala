@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.pipeline_execution_logger
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -180,4 +181,8 @@ class AllowListedPipelineExecutionLogger @Inject() (
       )
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

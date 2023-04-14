@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverContent
@@ -16,4 +17,8 @@ class CoverContentMarshaller @Inject() (
     case fullCover: FullCoverContent => fullCoverContentMarshaller(fullCover)
     case halfCover: HalfCoverContent => halfCoverContentMarshaller(halfCover)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

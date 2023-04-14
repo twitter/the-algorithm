@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import java.util.List;
@@ -154,4 +155,7 @@ public class EarlybirdQueryRewriteFilter extends
                          normalizedSearchRootName,
                          requestType.getNormalizedName());
   }
+}
+
+} catch (Exception e) {
 }

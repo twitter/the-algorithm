@@ -1,3 +1,4 @@
+try {
 // Protocol buffer representing slices of a tensor
 
 syntax = "proto3";
@@ -36,4 +37,7 @@ message TensorSliceProto {
   // slice belongs to.  The order of sizes is the same as the order of
   // dimensions in the TensorShape.
   repeated Extent extent = 1;
+}
+
+} catch (Exception e) {
 }

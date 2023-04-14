@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
 
 import com.twitter.account_recommendations_mixer.{thriftscala => t}
@@ -69,4 +70,8 @@ case class WhoToFollowArmCandidatePipelineQueryTransformer[-Query <: PipelineQue
           .map(_.get(feature))),
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

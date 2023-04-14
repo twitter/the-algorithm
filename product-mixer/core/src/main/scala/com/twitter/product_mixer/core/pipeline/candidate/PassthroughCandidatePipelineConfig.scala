@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.candidate
 
 import com.twitter.product_mixer.core.functional_component.candidate_source.PassthroughCandidateSource
@@ -44,4 +45,8 @@ trait PassthroughCandidatePipelineConfig[Query <: PipelineQuery, Candidate <: Un
 
   override val resultTransformer: CandidatePipelineResultsTransformer[Candidate, Candidate] =
     identity
+}
+
+} catch {
+  case e: Exception =>
 }

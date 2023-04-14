@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.query_server.common.warmup
 
 import com.twitter.ann.common.EmbeddingType.EmbeddingVector
@@ -47,4 +48,8 @@ trait Warmup extends Logging {
     Embedding(Array.fill(randomQueryDimension)(-1 + 2 * rng.nextFloat()))
 
   def warmup(): Unit
+}
+
+} catch {
+  case e: Exception =>
 }

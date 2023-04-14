@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.serving;
@@ -85,4 +86,7 @@ message FileSystemStoragePathSourceConfig {
   // contain at least one version under the base path. In addition, if a polling
   // loop find the base path empty, it will not unload existing servables.
   bool servable_versions_always_present = 6;
+}
+
+} catch (Exception e) {
 }

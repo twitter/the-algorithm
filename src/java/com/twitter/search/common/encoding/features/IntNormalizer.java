@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.encoding.features;
 
 /**
@@ -12,4 +13,7 @@ public interface IntNormalizer {
    * The value may be byte-compressed or as-is depending on the normalizer type
    */
   int normalize(double val);
+}
+
+} catch (Exception e) {
 }

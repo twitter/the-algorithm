@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.annoy
 
 import com.spotify.annoy.{ANNIndex, IndexType}
@@ -139,4 +140,8 @@ private[this] class RawAnnoyQueryIndex[D <: Distance[D]](
 
   // To close the memory map based file resource.
   override def close(): Unit = index.close()
+}
+
+} catch {
+  case e: Exception =>
 }

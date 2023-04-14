@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird;
 
 /**
@@ -14,4 +15,7 @@ public interface QualityFactor {
    * Starts a thread to update the quality factor periodically.
    */
   void startUpdates();
+}
+
+} catch (Exception e) {
 }

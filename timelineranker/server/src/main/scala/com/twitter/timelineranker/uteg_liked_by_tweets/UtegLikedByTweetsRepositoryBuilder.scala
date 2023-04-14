@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.uteg_liked_by_tweets
 
 import com.twitter.conversions.DurationOps._
@@ -43,4 +44,8 @@ class UtegLikedByTweetsRepositoryBuilder(config: RuntimeConfiguration, configBui
 
     new UtegLikedByTweetsRepository(utegLikedByTweetsSource)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

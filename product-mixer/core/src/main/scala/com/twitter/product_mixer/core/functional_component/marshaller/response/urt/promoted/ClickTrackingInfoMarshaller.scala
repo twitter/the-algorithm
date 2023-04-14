@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.ClickTrackingInfo
@@ -15,4 +16,8 @@ class ClickTrackingInfoMarshaller @Inject() (
       urlOverride = clickTrackingInfo.urlOverride,
       urlOverrideType = clickTrackingInfo.urlOverrideType.map(urlOverrideTypeMarshaller(_))
     )
+}
+
+} catch {
+  case e: Exception =>
 }

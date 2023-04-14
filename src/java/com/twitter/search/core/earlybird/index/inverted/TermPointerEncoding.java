@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 /**
@@ -35,4 +36,7 @@ public abstract class TermPointerEncoding {
       return hasPayload ? (code | 1) : code;
     }
   };
+}
+
+} catch (Exception e) {
 }

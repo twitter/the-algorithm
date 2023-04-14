@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.models
 
 import com.twitter.spam.rtf.{thriftscala => s}
@@ -87,4 +88,8 @@ case class SpaceSafetyLabel(
       SafetyLabel.fromThrift(thriftLabel)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

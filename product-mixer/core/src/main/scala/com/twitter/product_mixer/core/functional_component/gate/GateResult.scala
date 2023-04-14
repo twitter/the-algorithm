@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.gate
 
 /**
@@ -44,4 +45,8 @@ object GateResult {
   case object Stop extends GateResult {
     override val continue = false
   }
+}
+
+} catch {
+  case e: Exception =>
 }

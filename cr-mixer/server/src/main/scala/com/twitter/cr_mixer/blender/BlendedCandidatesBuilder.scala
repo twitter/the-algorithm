@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.blender
 
 import com.twitter.cr_mixer.model.BlendedCandidate
@@ -45,4 +46,8 @@ object BlendedCandidatesBuilder {
     tweetIdMap.toMap
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

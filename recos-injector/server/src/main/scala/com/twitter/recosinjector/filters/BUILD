@@ -1,3 +1,4 @@
+try {
 scala_library(
     platform = "java11",
     strict_deps = False,
@@ -8,3 +9,6 @@ scala_library(
         "src/thrift/com/twitter/gizmoduck:thrift-scala",
     ],
 )
+
+} catch (Exception e) {
+}

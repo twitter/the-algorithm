@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.component_library.selector.DropSelector.dropDuplicates
@@ -42,4 +43,8 @@ case class DropDuplicateCandidates(
 
     SelectorResult(remainingCandidates = dedupedCandidates, result = result)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

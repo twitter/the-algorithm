@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.serving;
@@ -46,4 +47,7 @@ message PredictionLog {
     MultiInferenceLog multi_inference_log = 4;
     SessionRunLog session_run_log = 5;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.feature.datarecord
 
 import com.twitter.dal.personal_data.thriftjava.PersonalDataType
@@ -314,3 +315,7 @@ trait StringTensorDataRecordCompatible extends TensorDataRecordCompatible[String
 
 class UnexpectedTensorException(tensor: JGeneralTensor)
     extends Exception(s"Unexpected Tensor: $tensor")
+
+} catch {
+  case e: Exception =>
+}

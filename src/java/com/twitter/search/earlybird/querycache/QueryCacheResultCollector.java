@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.querycache;
 
 import java.io.IOException;
@@ -121,4 +122,7 @@ public class QueryCacheResultCollector
         .iterator()
         .nextDoc();
   }
+}
+
+} catch (Exception e) {
 }

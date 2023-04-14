@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -22,3 +23,6 @@ scala_library(
         "src/thrift/com/twitter/recos/user_tweet_entity_graph:user_tweet_entity_graph-scala",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.filter
 
 import com.twitter.product_mixer.core.functional_component.filter.Filter
@@ -24,4 +25,8 @@ case class DropMaxCandidatesFilter[Candidate <: UniversalNoun[Any]](
 
     Stitch.value(FilterResult(kept, removed))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

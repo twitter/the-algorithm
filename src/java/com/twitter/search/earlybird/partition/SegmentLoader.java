@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.File;
@@ -297,4 +298,7 @@ public class SegmentLoader {
       LOG.error("Failed to cleanup unloadable segment directory.");
     }
   }
+}
+
+} catch (Exception e) {
 }

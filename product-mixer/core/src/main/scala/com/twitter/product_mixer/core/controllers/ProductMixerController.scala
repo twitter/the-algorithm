@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.controllers
 
 import com.twitter.finagle.http.Request
@@ -76,4 +77,8 @@ case class ProductMixerController[ServiceIface](
     get(route = "/component-registry")(GetComponentRegistryHandler(injector).apply)
     get(route = "/debug-configuration")(GetDebugConfigurationHandler(debugEndpoint).apply)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 # GetIntersection
 
 ## Request and response syntax
@@ -41,3 +42,6 @@ The `GfsIntersectionResponse` contains in its `results` field a `GfsIntersection
 The `IntersectionValue` contains the size of the intersection between the `leftEdgeType` edges from `userId` and the `rightEdgeType` edges from `candidateId` in the `count` field, as well as their respective degrees in the graphs in `leftNodeDegree` and `rightNodeDegree` respectively.
 
 **Note:** the `intersectionIds` field currently only contains `Nil`.
+
+} catch (Exception e) {
+}

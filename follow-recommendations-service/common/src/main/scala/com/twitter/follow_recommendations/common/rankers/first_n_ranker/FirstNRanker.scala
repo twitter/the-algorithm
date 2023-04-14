@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.first_n_ranker
 
 import com.google.inject.Inject
@@ -112,4 +113,8 @@ class FirstNRanker[Target <: HasClientContext with HasParams with HasQualityFact
       candidates.head.addCandidateSourceScoresMap(allSources).addCandidateSourceRanksMap(allRanks)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 java_library(
     sources = ["*.java"],
     platform = "java8",
@@ -20,3 +21,6 @@ java_library(
         "twitter-context/src/main/scala",
     ],
 )
+
+} catch (Exception e) {
+}

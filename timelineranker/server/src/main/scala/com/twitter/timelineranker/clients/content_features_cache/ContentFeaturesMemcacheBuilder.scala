@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.clients.content_features_cache
 
 import com.twitter.bijection.Injection
@@ -36,4 +37,8 @@ class ContentFeaturesMemcacheBuilder(
     )
 
   def build(): Store[TweetId, ContentFeatures] = underlyingBuilder.build()
+}
+
+} catch {
+  case e: Exception =>
 }

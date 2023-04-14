@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.query_server.common.throttling
 
 import com.twitter.ann.common.RuntimeParams
@@ -70,4 +71,8 @@ class ThrottlingBasedQualityTask(
         ).asInstanceOf[T]
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

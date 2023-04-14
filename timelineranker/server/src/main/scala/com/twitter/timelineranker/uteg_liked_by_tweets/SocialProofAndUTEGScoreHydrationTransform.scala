@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.uteg_liked_by_tweets
 
 import com.twitter.servo.util.FutureArrow
@@ -25,4 +26,8 @@ object SocialProofAndUTEGScoreHydrationTransform
 
     Future.value(request.copy(features = updatedFeatures))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

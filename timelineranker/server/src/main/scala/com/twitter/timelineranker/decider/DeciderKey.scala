@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.decider
 
 import com.twitter.servo.decider.DeciderKeyEnum
@@ -80,4 +81,8 @@ object DeciderKey extends DeciderKeyEnum {
   // Deciders related to uteg liked by tweets
   val UtegLikedByTweetsEnableContentFeaturesHydration: Value = Value(
     "uteg_liked_by_tweets_enable_content_features_hydration")
+}
+
+} catch {
+  case e: Exception =>
 }

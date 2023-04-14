@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.candidate.hubble
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -73,4 +74,8 @@ final class CampaignCandidate private (
 object CampaignCandidate {
   def apply(id: Long, adAccountId: Long): CampaignCandidate =
     new CampaignCandidate(id, adAccountId)
+}
+
+} catch {
+  case e: Exception =>
 }

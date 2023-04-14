@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common
 
 import com.twitter.simclusters_v2.thriftscala.EmbeddingType
@@ -206,4 +207,8 @@ object SimClustersEmbeddingId {
       SimClustersEmbeddingType.LogFavBasedKgoApeTopic)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

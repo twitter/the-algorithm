@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media.MediaMarshaller
@@ -30,4 +31,8 @@ class GenericSummaryItemMarshaller @Inject() (
         promotedMetadata = genericSummaryItem.promotedMetadata.map(promotedMetadataMarshaller(_))
       )
     )
+}
+
+} catch {
+  case e: Exception =>
 }

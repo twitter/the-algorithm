@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.common
 
 object RankerId extends Enumeration {
@@ -24,4 +25,8 @@ object ModelBasedHeavyRankerId {
   val HeavyRankerIds: Set[String] = Set(
     PostNuxProdRanker.toString,
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DeepLink
@@ -16,4 +17,8 @@ class UrlTypeMarshaller @Inject() () {
     case DeepLink => urt.UrlType.DeepLink
     case UrtEndpoint => urt.UrlType.UrtEndpoint
   }
+}
+
+} catch {
+  case e: Exception =>
 }

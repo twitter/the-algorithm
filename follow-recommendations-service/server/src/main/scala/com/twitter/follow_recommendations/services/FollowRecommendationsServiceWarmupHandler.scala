@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.services
 
 import com.twitter.finagle.thrift.ClientId
@@ -98,4 +99,8 @@ class FollowRecommendationsServiceWarmupHandler @Inject() (warmup: ThriftWarmup)
         error(s"Error performing warm-up request: ${exception.getMessage}", exception)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

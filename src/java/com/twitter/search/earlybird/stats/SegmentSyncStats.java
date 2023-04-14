@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.stats;
 
 import com.twitter.search.common.metrics.SearchCounter;
@@ -56,4 +57,7 @@ public class SegmentSyncStats {
   public void recordError() {
     segmentErrorCount.increment();
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.tweets
 
 import com.twitter.stitch.Stitch
@@ -54,4 +55,8 @@ class TrustedFriendsFeatures(trustedFriendsSource: TrustedFriendsSource) {
     _.withConstantFeature(TweetIsTrustedFriendTweet, tweet.trustedFriendsControl.isDefined)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

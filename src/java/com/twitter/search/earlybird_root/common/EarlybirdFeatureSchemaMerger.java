@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.common;
 
 import java.util.List;
@@ -374,4 +375,7 @@ public class EarlybirdFeatureSchemaMerger {
     }
     return stats;
   }
+}
+
+} catch (Exception e) {
 }

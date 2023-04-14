@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.util
 
 import com.twitter.timelines.model.TweetId
@@ -69,4 +70,8 @@ object ExtendedRepliesFilter {
     // filter any invalid extended reply
     isExtendedReply(tweet, followedUserIds) && !isValidExtendedReply
   }
+}
+
+} catch {
+  case e: Exception =>
 }

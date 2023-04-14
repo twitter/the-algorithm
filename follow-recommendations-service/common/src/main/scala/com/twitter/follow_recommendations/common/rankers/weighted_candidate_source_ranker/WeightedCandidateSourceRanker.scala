@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
 import com.twitter.follow_recommendations.common.base.Ranker
 import com.twitter.follow_recommendations.common.models.CandidateUser
@@ -97,4 +98,8 @@ object WeightedCandidateSourceRankerWithoutRandomSampling {
       false,
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

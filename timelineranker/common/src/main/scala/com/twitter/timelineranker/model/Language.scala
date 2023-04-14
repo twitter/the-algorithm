@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.model
 
 import com.twitter.common.text.language.LocaleUtil
@@ -28,4 +29,8 @@ case class Language(language: String, scope: LanguageScope.Value) {
     val result = LocaleUtil.getLocaleOf(language)
     require(result != LocaleUtil.UNKNOWN, s"Language ${language} is unsupported")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

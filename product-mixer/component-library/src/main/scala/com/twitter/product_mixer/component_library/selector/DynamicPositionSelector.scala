@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 private[selector] object DynamicPositionSelector {
@@ -121,4 +122,8 @@ private[selector] object DynamicPositionSelector {
 
     resultUpdated.result()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.filter
 
 import com.twitter.cr_mixer.filter.VideoTweetFilter.FilterConfig
@@ -78,4 +79,8 @@ object VideoTweetFilter {
   // now they are hardcoded according to the prod setting
   case class FilterConfig(
     enableVideoTweetFilter: Boolean)
+}
+
+} catch {
+  case e: Exception =>
 }

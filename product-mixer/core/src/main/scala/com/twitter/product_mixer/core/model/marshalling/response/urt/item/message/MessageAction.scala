@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
@@ -8,3 +9,7 @@ case class MessageAction(
   url: Option[String],
   clientEventInfo: Option[ClientEventInfo],
   onClickCallbacks: Option[Seq[Callback]])
+
+} catch {
+  case e: Exception =>
+}

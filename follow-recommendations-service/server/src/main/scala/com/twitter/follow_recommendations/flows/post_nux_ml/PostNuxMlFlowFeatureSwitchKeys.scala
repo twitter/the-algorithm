@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.post_nux_ml
 
 object PostNuxMlFlowFeatureSwitchKeys {
@@ -24,4 +25,8 @@ object PostNuxMlFlowFeatureSwitchKeys {
   val EnableHssPredicate = "post_nux_ml_flow_enable_hss_predicate"
   val GetFollowersFromSgs = "post_nux_ml_flow_get_followers_from_sgs"
   val TurnOffMLScorerQFThreshold = "post_nux_ml_flow_turn_off_ml_scorer_threhsold"
+}
+
+} catch {
+  case e: Exception =>
 }

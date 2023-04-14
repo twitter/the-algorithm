@@ -1,3 +1,4 @@
+try {
 DECLARE date_latest_tweet, date_latest_follows DATE;
 SET date_latest_tweet = (
   SELECT PARSE_DATE('%Y%m%d', SUBSTRING(MAX(partition_id), 1, 8)) AS partition_id
@@ -26,3 +27,6 @@ WITH tweet_count AS (
   WHERE DATE(F._PARTITIONTIME) = date_latest_follows
 ) SELECT *, date_latest_tweet AS ds FROM all_follows  WHERE rn <= 2000
 ;
+
+} catch (Exception e) {
+}

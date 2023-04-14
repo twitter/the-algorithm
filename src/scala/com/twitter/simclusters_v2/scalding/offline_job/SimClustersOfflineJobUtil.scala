@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.offline_job
 
 import com.twitter.algebird.{DecayedValueMonoid, Monoid, OptionMonoid}
@@ -94,4 +95,8 @@ object SimClustersOfflineJobUtil {
     }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

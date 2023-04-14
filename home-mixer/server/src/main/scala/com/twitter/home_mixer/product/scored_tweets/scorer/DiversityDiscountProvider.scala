@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.scorer
 
 import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
@@ -27,4 +28,8 @@ object AuthorDiversityDiscountProvider extends DiversityDiscountProvider {
   // Provides an exponential decay based discount by position (with a floor)
   override def discount(score: Double, position: Int): Double =
     score * ((1 - Floor) * Math.pow(Decay, position) + Floor)
+}
+
+} catch {
+  case e: Exception =>
 }

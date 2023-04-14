@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -47,4 +48,7 @@ public interface CoordinatedEarlybirdActionInterface {
      * @param action A runnable to be ran.
      */
     void retryActionUntilRan(String description, Runnable action);
+}
+
+} catch (Exception e) {
 }

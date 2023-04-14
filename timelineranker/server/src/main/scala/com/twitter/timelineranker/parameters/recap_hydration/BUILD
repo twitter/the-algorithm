@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -10,3 +11,6 @@ scala_library(
         "timelineranker/server/src/main/scala/com/twitter/timelineranker/parameters/util",
     ],
 )
+
+} catch (Exception e) {
+}

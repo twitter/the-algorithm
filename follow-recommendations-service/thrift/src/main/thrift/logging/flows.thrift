@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.follow_recommendations.logging.thriftjava
 #@namespace scala com.twitter.follow_recommendations.logging.thriftscala
 #@namespace strato com.twitter.follow_recommendations.logging
@@ -14,3 +15,6 @@ struct OfflineRecommendationStep {
 struct OfflineFlowContext {
   1: required list<OfflineRecommendationStep> steps
 }(persisted='true', hasPersonalData='true')
+
+} catch (Exception e) {
+}

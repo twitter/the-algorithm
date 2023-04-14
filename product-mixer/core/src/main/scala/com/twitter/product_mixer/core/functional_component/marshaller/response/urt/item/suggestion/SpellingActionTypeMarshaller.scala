@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.suggestion
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion._
@@ -13,4 +14,8 @@ class SpellingActionTypeMarshaller {
       case ExpandSpellingActionType => urt.SpellingActionType.Expand
       case SuggestSpellingActionType => urt.SpellingActionType.Suggest
     }
+}
+
+} catch {
+  case e: Exception =>
 }

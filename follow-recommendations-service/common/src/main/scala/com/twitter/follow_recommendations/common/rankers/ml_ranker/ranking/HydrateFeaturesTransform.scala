@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking
 
 import com.google.inject.Inject
@@ -54,4 +55,8 @@ class HydrateFeaturesTransform[
         }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

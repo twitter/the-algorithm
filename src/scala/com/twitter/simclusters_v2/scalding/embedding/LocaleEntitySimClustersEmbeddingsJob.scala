@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding
 
 import com.twitter.dal.client.dataset.KeyValDALDataset
@@ -434,4 +435,8 @@ object LocaleEntitySimClustersEmbeddingsJob {
 
     EmbeddingUtil.getHdfsPath(isAdhoc, isManhattanKeyVal, modelVersion, pathSuffix)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

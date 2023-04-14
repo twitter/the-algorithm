@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.features;
 
 public class TweetFeatures {
@@ -16,4 +17,7 @@ public class TweetFeatures {
   public TweetUserFeatures getTweetUserFeatures() {
     return tweetUserFeatures;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_tweet_entity_graph
 
 import java.util.Random
@@ -165,4 +166,8 @@ class TweetSocialProofRunner(
 
     handleSocialProofRequest(socialProofRequest)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

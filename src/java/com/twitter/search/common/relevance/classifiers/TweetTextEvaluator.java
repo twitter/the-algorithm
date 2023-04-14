@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.classifiers;
 
 import java.util.List;
@@ -51,4 +52,7 @@ public class TweetTextEvaluator extends TweetEvaluator {
   private static double log2(double n) {
     return Math.log(n) / Math.log(2);
   }
+}
+
+} catch (Exception e) {
 }

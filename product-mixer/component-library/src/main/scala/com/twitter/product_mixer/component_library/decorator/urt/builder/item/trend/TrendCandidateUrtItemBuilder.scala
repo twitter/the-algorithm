@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend.TrendCandidateUrtItemBuilder.TrendsClientEventInfoElement
@@ -60,4 +61,8 @@ case class TrendCandidateUrtItemBuilder[Query <: PipelineQuery](
       groupedTrends = candidateFeatures.getOrElse(TrendGroupedTrends, None)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

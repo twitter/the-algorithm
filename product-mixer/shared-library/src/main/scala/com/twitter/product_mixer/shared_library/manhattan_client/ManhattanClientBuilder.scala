@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.shared_library.manhattan_client
 
 import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
@@ -113,4 +114,8 @@ object ManhattanClientBuilder {
       .clientWithExperiments(experiments, mtlsParams)
       .build[mh.ManhattanCoordinator.MethodPerEndpoint](cluster.wilyName, label)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

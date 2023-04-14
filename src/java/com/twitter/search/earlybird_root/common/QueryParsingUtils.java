@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.common;
 
 import java.util.concurrent.TimeUnit;
@@ -83,4 +84,7 @@ public final class QueryParsingUtils {
     errorResponse.setDebugString(msg + ": " + e.getMessage());
     return Future.value(errorResponse);
   }
+}
+
+} catch (Exception e) {
 }

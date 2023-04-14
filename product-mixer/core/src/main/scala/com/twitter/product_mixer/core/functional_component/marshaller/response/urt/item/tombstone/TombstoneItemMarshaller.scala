@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet.TweetItemMarshaller
@@ -20,4 +21,8 @@ class TombstoneItemMarshaller @Inject() (
         tweet = tombstoneItem.tweet.map(tweetItemMarshaller(_).tweet)
       )
     )
+}
+
+} catch {
+  case e: Exception =>
 }

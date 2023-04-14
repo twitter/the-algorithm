@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.filter
 
 import com.twitter.cr_mixer.model.CandidateGeneratorQuery
@@ -77,4 +78,8 @@ object InNetworkFilter {
   case class FilterConfig(
     userIdOpt: Option[UserId],
     enableInNetworkFilter: Boolean)
+}
+
+} catch {
+  case e: Exception =>
 }

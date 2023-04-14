@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.common.alert
 
 import com.twitter.product_mixer.core.functional_component.common.alert.predicate.Predicate
@@ -31,4 +32,8 @@ object StratoColumnAlerts {
   ): Seq[Alert] = {
     alerts.map(StratoColumnAlert(column, op, _))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

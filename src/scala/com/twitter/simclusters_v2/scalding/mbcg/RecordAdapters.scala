@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.mbcg
 
 import com.twitter.ml.api.DataRecord
@@ -76,4 +77,8 @@ object UserSimclusterRecordAdapter
 
     dataRecord
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated
 
 import com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated.ParamGatedBulkCandidateFeatureHydrator.IdentifierPrefix
@@ -48,4 +49,8 @@ case class ParamGatedBulkCandidateFeatureHydrator[
 
 object ParamGatedBulkCandidateFeatureHydrator {
   val IdentifierPrefix = "ParamGated"
+}
+
+} catch {
+  case e: Exception =>
 }

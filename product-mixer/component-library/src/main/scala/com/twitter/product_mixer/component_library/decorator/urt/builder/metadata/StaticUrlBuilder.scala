@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -15,4 +16,8 @@ case class StaticUrlBuilder(url: String, urlType: UrlType)
     candidate: UniversalNoun[Any],
     candidateFeatures: FeatureMap
   ): Url = Url(url = url, urlType = urlType)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.side_effect
 
 import com.twitter.conversions.DurationOps._
@@ -174,4 +175,8 @@ private[side_effect] object QueryEventsBuilder extends ClientEventsBuilder {
           .copy(component = Some(servedSizePredicateName), action = Some(queryPredicateName)))
     servedSizeQueryEvents.toSeq
   }
+}
+
+} catch {
+  case e: Exception =>
 }

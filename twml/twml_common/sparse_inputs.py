@@ -1,3 +1,4 @@
+try:
 import numpy as np
 import tensorflow.compat.v1 as tf
 
@@ -22,3 +23,6 @@ def create_reference_input(sparse_input, use_binary_values):
   else:
     sp_a = sparse_input
   return sp_a
+
+except Exception:
+  pass

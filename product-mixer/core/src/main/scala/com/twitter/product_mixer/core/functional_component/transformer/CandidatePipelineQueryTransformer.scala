@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.transformer
 
 import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
@@ -82,4 +83,8 @@ object BaseCandidatePipelineQueryTransformer {
       queryTransformer
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

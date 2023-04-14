@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.users
 
 import com.twitter.finagle.stats.Counter
@@ -242,4 +243,8 @@ class ViewerFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
 
   def viewerCountryCode(viewer: User): Option[String] =
     viewer.account.flatMap(_.countryCode)
+}
+
+} catch {
+  case e: Exception =>
 }

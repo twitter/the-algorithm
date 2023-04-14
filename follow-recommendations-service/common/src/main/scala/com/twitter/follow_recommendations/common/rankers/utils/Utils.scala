@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.utils
 
 import com.twitter.follow_recommendations.common.models.CandidateUser
@@ -25,4 +26,8 @@ object Utils {
 
   def getAllRankerIds(candidates: Seq[CandidateUser]): Seq[RankerId] =
     candidates.flatMap(_.scores.map(_.scores.flatMap(_.rankerId))).flatten.distinct
+}
+
+} catch {
+  case e: Exception =>
 }

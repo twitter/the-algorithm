@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.facets;
 
 import java.util.Iterator;
@@ -29,4 +30,7 @@ public class SimpleCountRankingModule extends FacetRankingModule {
       }
     }
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.config;
 
 /**
@@ -23,4 +24,7 @@ public interface ServingRange {
    * Returns the serving range's latest time, in seconds since epoch.
    */
   long getServingRangeUntilTimeSecondsFromEpoch();
+}
+
+} catch (Exception e) {
 }

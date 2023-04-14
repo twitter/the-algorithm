@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.querycache;
 
 import java.io.File;
@@ -98,4 +99,7 @@ public class QueryCacheConfig {
     }
     LOG.info("Total filters loaded: {}", filters.size());
   }
+}
+
+} catch (Exception e) {
 }

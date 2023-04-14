@@ -1,3 +1,4 @@
+try {
 create_thrift_libraries(
     base_name = "simclusters_v2-thrift",
     sources = ["*.thrift"],
@@ -21,3 +22,6 @@ create_thrift_libraries(
     provides_java_name = "simclusters_v2-thrift-java",
     provides_scala_name = "simclusters_v2-thrift-scala",
 )
+
+} catch (Exception e) {
+}

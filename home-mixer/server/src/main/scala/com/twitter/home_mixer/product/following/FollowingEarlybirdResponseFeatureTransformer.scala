@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.candidate_pipeline
 
 import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
@@ -35,4 +36,8 @@ object FollowingEarlybirdResponseFeatureTransformer
     .add(SourceTweetIdFeature, candidate.sourceTweetypieTweet.map(_.id))
     .add(SourceUserIdFeature, candidate.sourceTweetypieTweet.flatMap(_.coreData.map(_.userId)))
     .build()
+}
+
+} catch {
+  case e: Exception =>
 }

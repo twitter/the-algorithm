@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.servo.util.FutureArrow
@@ -12,4 +13,8 @@ object CreateCandidateEnvelopeTransform extends FutureArrow[RecapQuery, Candidat
   override def apply(query: RecapQuery): Future[CandidateEnvelope] = {
     Future.value(CandidateEnvelope(query))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates.sgs
 
 import com.twitter.follow_recommendations.common.base.Predicate
@@ -33,4 +34,8 @@ object InvalidRelationshipPredicate {
   val ValidStitch: Stitch[PredicateResult.Valid.type] = Stitch.value(PredicateResult.Valid)
   val InvalidRelationshipStitch: PredicateResult.Invalid =
     PredicateResult.Invalid(Set(FilterReason.InvalidRelationship))
+}
+
+} catch {
+  case e: Exception =>
 }

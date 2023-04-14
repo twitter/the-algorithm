@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 /**
@@ -45,4 +46,7 @@ public class FieldRankHitInfo {
   public void resetDocId() {
     this.docId = UNSET_DOC_ID;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive.segmentbuilder;
 
 import java.io.IOException;
@@ -97,4 +98,7 @@ public abstract class SegmentBuilderSegment {
         nodeName,
         expirationTime);
   }
+}
+
+} catch (Exception e) {
 }

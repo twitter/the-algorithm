@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.validators;
 
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
@@ -9,4 +10,7 @@ public class PassThroughResponseValidator implements ServiceResponseValidator<Ea
   public Future<EarlybirdResponse> validate(EarlybirdResponse response) {
     return Future.value(response);
   }
+}
+
+} catch (Exception e) {
 }

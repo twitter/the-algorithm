@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.features;
 
 import java.util.concurrent.TimeUnit;
@@ -36,4 +37,7 @@ public final class IntNormalizers {
 
   public static final PredictionScoreNormalizer PREDICTION_SCORE_NORMALIZER =
       new PredictionScoreNormalizer(3);
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.candidate_source
 
 import com.twitter.home_mixer.util.CachedScoredTweetsHelper
@@ -21,4 +22,8 @@ class CachedScoredTweetsCandidateSource @Inject() ()
     Stitch.value(
       request.features.map(CachedScoredTweetsHelper.unseenCachedScoredTweets).getOrElse(Seq.empty))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

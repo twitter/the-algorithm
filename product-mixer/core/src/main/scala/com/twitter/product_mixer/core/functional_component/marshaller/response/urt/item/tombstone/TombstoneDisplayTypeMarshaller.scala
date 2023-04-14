@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.DisconnectedRepliesAncestor
@@ -21,4 +22,8 @@ class TombstoneDisplayTypeMarshaller @Inject() () {
       case Inline => urt.TombstoneDisplayType.Inline
       case NonCompliant => urt.TombstoneDisplayType.NonCompliant
     }
+}
+
+} catch {
+  case e: Exception =>
 }

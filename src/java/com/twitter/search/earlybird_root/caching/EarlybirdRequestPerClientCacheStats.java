@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import java.util.Map;
@@ -43,4 +44,7 @@ public class EarlybirdRequestPerClientCacheStats
         cl -> SearchRateCounter.export(String.format(cacheHitsByClientStatFormat, cl)));
     counter.increment();
   }
+}
+
+} catch (Exception e) {
 }

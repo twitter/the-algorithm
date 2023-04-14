@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
 
 import com.twitter.pages.render.{thriftscala => urp}
@@ -22,4 +23,8 @@ class TopicPageHeaderMarshaller @Inject() (
         .map(topicPageHeaderDisplayTypeMarshaller(_)).getOrElse(
           urp.TopicPageHeaderDisplayType.Basic)
     )
+}
+
+} catch {
+  case e: Exception =>
 }

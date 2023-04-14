@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.real_graph
 
 import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
@@ -37,4 +38,8 @@ class RealGraphSource @Inject() (
 object RealGraphSource {
   val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
     Algorithm.RealGraphFollowed.toString)
+}
+
+} catch {
+  case e: Exception =>
 }

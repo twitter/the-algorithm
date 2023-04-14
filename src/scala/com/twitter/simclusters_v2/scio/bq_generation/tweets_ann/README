@@ -1,3 +1,4 @@
+try {
 To run iikf-tweets-ann-adhoc-job (adhoc):
 bin/d6w create \
   ${GCP_PROJECT_NAME}/us-central1/iikf-tweets-ann-adhoc-job \
@@ -93,3 +94,6 @@ bin/d6w schedule \
   --bind=profile.job_name="mts-consumer-embeddings-tweets-ann-batch-job"
 
 
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.sources
 
 import com.google.inject.Inject
@@ -33,4 +34,8 @@ class PreFetchedFeatureSource @Inject() () extends FeatureSource {
       candidate -> PreFetchedFeatureAdapter.adaptToDataRecord((target, candidate))
     }.toMap)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

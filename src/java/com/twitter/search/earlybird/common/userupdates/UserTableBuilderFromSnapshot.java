@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common.userupdates;
 
 import java.io.BufferedReader;
@@ -260,4 +261,7 @@ public class UserTableBuilderFromSnapshot {
       isProtectedCount++;
     }
   }
+}
+
+} catch (Exception e) {
 }

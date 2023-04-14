@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import java.io.IOException;
@@ -158,4 +159,7 @@ public final class FacetIDMap implements Flushable {
       return new FacetIDMap(facetIDToFieldMap);
     }
   }
+}
+
+} catch (Exception e) {
 }

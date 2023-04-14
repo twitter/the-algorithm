@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.optout
 
 import com.twitter.scalding.Args
@@ -195,4 +196,8 @@ object KnownForOptOutAdhocJob extends AdhocExecutionApp {
     val outputPath = "/user/recos-platform/adhoc/knownfor_optout"
     output.writeExecution(TypedTsv(outputPath))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

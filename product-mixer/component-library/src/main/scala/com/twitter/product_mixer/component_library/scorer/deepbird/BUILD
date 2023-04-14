@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -40,3 +41,6 @@ scala_library(
         "twml/runtime/src/main/scala/com/twitter/deepbird/runtime/prediction_engine",
     ],
 )
+
+} catch (Exception e) {
+}

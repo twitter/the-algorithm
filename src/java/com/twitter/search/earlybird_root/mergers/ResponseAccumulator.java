@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.mergers;
 
 import java.util.ArrayList;
@@ -353,4 +354,7 @@ public abstract class ResponseAccumulator {
   boolean foundEarlyTermination() {
     return foundEarlyTermination;
   }
+}
+
+} catch (Exception e) {
 }

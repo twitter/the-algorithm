@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.querycache;
 
 import java.util.ArrayList;
@@ -239,4 +240,7 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
   public ScheduledExecutorService getExecutorForTest() {
     return getExecutor();
   }
+}
+
+} catch (Exception e) {
 }

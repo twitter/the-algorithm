@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -25,4 +26,8 @@ case class RichTextBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[
       alignment = alignment,
       linkTypeMap = linkTypeMap)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

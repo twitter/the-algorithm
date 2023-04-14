@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.queries;
 
 import java.io.IOException;
@@ -79,4 +80,7 @@ public class UserScrubGeoFilter implements FilteredQuery.DocIdFilterFactory {
   public int hashCode() {
     return userScrubGeoMap == null ? 0 : userScrubGeoMap.hashCode();
   }
+}
+
+} catch (Exception e) {
 }

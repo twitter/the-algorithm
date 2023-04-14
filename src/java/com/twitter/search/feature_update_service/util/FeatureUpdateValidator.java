@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.feature_update_service.util;
 
 
@@ -38,4 +39,7 @@ public final class FeatureUpdateValidator {
     response.setDetailMessage(errorMsg);
     return response;
   }
+}
+
+} catch (Exception e) {
 }

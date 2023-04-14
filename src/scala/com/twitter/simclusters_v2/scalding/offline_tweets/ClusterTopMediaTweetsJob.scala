@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.offline_tweets
 
 import com.twitter.algebird.Aggregator.size
@@ -264,4 +265,8 @@ object AdhocClusterTopMediaTweetsJob extends AdhocExecutionApp {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

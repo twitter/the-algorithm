@@ -1,3 +1,4 @@
+try:
 """
 Module containing extra tensorflow metrics used at Twitter.
 This module conforms to conventions used by tf.metrics.*.
@@ -290,3 +291,6 @@ def get_search_metric_fn(binary_metrics=None, search_metrics=None,
     return eval_metric_ops
 
   return get_eval_metric_ops
+
+except Exception:
+  pass

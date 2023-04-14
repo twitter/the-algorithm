@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.tweets
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -62,4 +63,8 @@ class ExclusiveTweetFeatures(
   def forTweetOnly(tweet: Tweet): FeatureMapBuilder => FeatureMapBuilder = {
     _.withConstantFeature(TweetIsExclusiveTweet, tweet.exclusiveTweetControl.isDefined)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

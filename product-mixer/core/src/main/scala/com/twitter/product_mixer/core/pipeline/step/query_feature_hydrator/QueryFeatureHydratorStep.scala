@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.step.query_feature_hydrator
 
 import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
@@ -57,3 +58,7 @@ case class QueryFeatureHydratorStep[
 case class QueryFeatureHydratorStepConfig[Query <: PipelineQuery](
   hydrators: Seq[BaseQueryFeatureHydrator[Query, _]],
   validPipelineStepIdentifiers: Set[PipelineStepIdentifier])
+
+} catch {
+  case e: Exception =>
+}

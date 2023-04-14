@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import javax.inject.Inject;
@@ -37,4 +38,7 @@ public class RelevanceZeroResultsCacheFilter
           new RelevanceZeroResultsServicePostProcessor(cache),
           new EarlybirdRequestPerClientCacheStats("relevance_zero_results"));
   }
+}
+
+} catch (Exception e) {
 }

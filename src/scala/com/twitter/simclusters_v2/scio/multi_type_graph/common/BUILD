@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = [
         "*.scala",
@@ -11,3 +12,6 @@ scala_library(
         "src/scala/com/twitter/simclusters_v2/scalding",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.candidate
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -53,4 +54,8 @@ class CandidatePipelineBuilderFactory @Inject() (
       statsReceiver
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

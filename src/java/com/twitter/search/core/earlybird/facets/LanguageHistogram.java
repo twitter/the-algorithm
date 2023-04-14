@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import java.util.Arrays;
@@ -101,4 +102,7 @@ public class LanguageHistogram {
       return false;
     }
   }
+}
+
+} catch (Exception e) {
 }

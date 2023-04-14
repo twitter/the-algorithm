@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.wire;
 
 import java.util.ArrayList;
@@ -360,4 +361,7 @@ public class ProductionWireModule extends WireModule {
     return FinagleKafkaClientUtils.newFinagleKafkaProducer(
         kafkaClusterPath, true, serializer, clientId, partitionerClass);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.server.handlers
 
 import com.twitter.finatra.thrift.routing.ThriftWarmup
@@ -42,4 +43,8 @@ class ServerWarmupHandler @Inject() (warmup: ThriftWarmup) extends Handler {
 
     logger.info("Warmup Done!")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

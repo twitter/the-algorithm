@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.search;
 
 /**
@@ -6,4 +7,7 @@ package com.twitter.search.common.search;
 public interface QueryCostProvider {
   /** Returns the total cost. */
   double getTotalCost();
+}
+
+} catch (Exception e) {
 }

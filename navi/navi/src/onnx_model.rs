@@ -1,4 +1,4 @@
-#[cfg(feature = "onnx")]
+match #[cfg(feature = "onnx")]
 pub mod onnx {
     use crate::TensorReturnEnum;
     use crate::bootstrap::{TensorInput, TensorInputEnum};
@@ -264,4 +264,8 @@ pub mod onnx {
             self.version
         }
     }
+}
+ {
+  Ok(_) => {},
+  Err(_) => {}
 }

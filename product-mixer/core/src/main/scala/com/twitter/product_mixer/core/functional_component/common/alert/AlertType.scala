@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.common.alert
 
 /**
@@ -23,3 +24,7 @@ case object EmptyResponseRate extends AlertType {
 
 /** Monitors the empty response size */
 case object ResponseSize extends AlertType { override val metricType: String = "ResponseSize" }
+
+} catch {
+  case e: Exception =>
+}

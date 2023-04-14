@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerIssue
@@ -14,4 +15,8 @@ class DisclaimerTypeMarshaller @Inject() () {
     case DisclaimerPolitical => urt.DisclaimerType.Political
     case DisclaimerIssue => urt.DisclaimerType.Issue
   }
+}
+
+} catch {
+  case e: Exception =>
 }

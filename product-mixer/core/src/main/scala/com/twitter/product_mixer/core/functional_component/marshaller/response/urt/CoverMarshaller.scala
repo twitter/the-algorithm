@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
@@ -30,3 +31,7 @@ class CoverMarshaller @Inject() (
 class UnsupportedTimelineCoverException(cover: Cover)
     extends UnsupportedOperationException(
       "Unsupported timeline cover " + TransportMarshaller.getSimpleName(cover.getClass))
+
+} catch {
+  case e: Exception =>
+}

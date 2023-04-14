@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.sims
 
 import com.google.inject.Singleton
@@ -66,4 +67,8 @@ object Follow2vecNearestNeighborsStore {
         }
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

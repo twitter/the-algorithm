@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.routers;
 
 import javax.inject.Named;
@@ -30,4 +31,7 @@ public class FacetsRequestRouterModule extends TwitterModule {
     return EarlybirdTimeRangeFilter.newTimeRangeFilterWithoutQueryRewriter(
         getServingRangeProvider(decider));
   }
+}
+
+} catch (Exception e) {
 }

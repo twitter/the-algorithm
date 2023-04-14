@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.concurrent.BlockingQueue;
@@ -145,4 +146,7 @@ public class TextFeatureExtractionWorkersStage extends TwitterBaseStage
       }
     }
   }
+}
+
+} catch (Exception e) {
 }

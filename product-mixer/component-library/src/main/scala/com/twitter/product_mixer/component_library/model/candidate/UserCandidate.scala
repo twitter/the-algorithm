@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.candidate
 
 import com.fasterxml.jackson.annotation.JsonTypeName
@@ -85,3 +86,7 @@ object UserCandidate {
  * [[UserCandidateUrtItemBuilder]] when decorating the candidate.r
  */
 object IsMarkUnreadFeature extends Feature[BaseUserCandidate, Boolean]
+
+} catch {
+  case e: Exception =>
+}

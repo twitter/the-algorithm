@@ -1,3 +1,4 @@
+try {
 #include "internal/endianutils.h"
 #include "internal/error.h"
 #include "internal/thrift.h"
@@ -123,3 +124,6 @@ void BatchPredictionResponse::write(Tensor &result) {
 }
 
 }  // namespace twml
+
+} catch (const std::exception& e) {
+}

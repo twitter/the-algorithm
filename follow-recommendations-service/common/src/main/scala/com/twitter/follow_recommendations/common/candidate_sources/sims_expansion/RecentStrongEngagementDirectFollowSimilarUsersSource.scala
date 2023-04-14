@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
 
 import com.google.inject.Singleton
@@ -50,4 +51,8 @@ object RecentStrongEngagementDirectFollowSimilarUsersSource {
   val Identifier = CandidateSourceIdentifier(Algorithm.RecentStrongEngagementSimilarUser.toString)
   val MaxFirstDegreeNodes = 10
   val MaxResults = 200
+}
+
+} catch {
+  case e: Exception =>
 }

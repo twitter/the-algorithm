@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.pipeline_executor
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -63,4 +64,8 @@ class PipelineExecutor @Inject() (override val statsReceiver: StatsReceiver)
     // no additional error handling needed since we populate the component stack above already
     appliedPipelineArrow
   }
+}
+
+} catch {
+  case e: Exception =>
 }

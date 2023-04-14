@@ -1,3 +1,4 @@
+try:
 """
 Wrappers around tf.estimator.Exporters to export models and save checkpoints.
 """
@@ -143,3 +144,6 @@ class LatestExporter(tf.estimator.LatestExporter):
     # Override the saved_model_exporter with SaveAllmodelsexporter
     self._saved_model_exporter = _AllSavedModelsExporter(
       name, input_receiver_fn_map, backup_checkpoints, assets_extra, as_text)
+
+except Exception:
+  pass

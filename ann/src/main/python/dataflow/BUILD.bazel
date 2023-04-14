@@ -1,3 +1,4 @@
+try {
 resources(
     name = "sql",
     sources = ["bq.sql"],
@@ -36,3 +37,6 @@ python37_binary(
         "3rdparty/python/_closures/ann/src/main/python/dataflow:faiss_indexing_bin",
     ],
 )
+
+} catch (Exception e) {
+}

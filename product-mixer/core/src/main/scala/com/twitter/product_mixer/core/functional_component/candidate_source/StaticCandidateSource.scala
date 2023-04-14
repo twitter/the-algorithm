@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.candidate_source
 
 import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
@@ -12,4 +13,8 @@ case class StaticCandidateSource[Candidate](
     extends CandidateSource[Any, Candidate] {
 
   def apply(request: Any): Stitch[Seq[Candidate]] = Stitch.value(result)
+}
+
+} catch {
+  case e: Exception =>
 }

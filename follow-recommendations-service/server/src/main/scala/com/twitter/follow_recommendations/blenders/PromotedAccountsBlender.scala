@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.blenders
 
 import com.google.common.annotations.VisibleForTesting
@@ -135,4 +136,8 @@ object PromotedAccountsBlender {
   val OutputPromoted = "output_promoted_accounts"
   val NumPromotedAccounts = "num_promoted_accounts"
   val MoreThan5Promoted = "more_than_5"
+}
+
+} catch {
+  case e: Exception =>
 }

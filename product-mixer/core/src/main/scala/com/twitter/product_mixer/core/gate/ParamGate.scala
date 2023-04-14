@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.gate
 
 import com.twitter.product_mixer.core.functional_component.gate.Gate
@@ -19,4 +20,8 @@ case class ParamGate(name: String, param: Param[Boolean])(implicit file: sourcec
 object ParamGate {
   val EnabledGateSuffix = "Enabled"
   val SupportedClientGateSuffix = "SupportedClient"
+}
+
+} catch {
+  case e: Exception =>
 }

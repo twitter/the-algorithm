@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector.ads
 
 import com.twitter.goldfinch.api.AdsInjectionSurfaceAreas.SurfaceAreaName
@@ -92,4 +93,8 @@ case class InsertAdResults(
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

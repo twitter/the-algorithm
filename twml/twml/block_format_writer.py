@@ -1,3 +1,4 @@
+try:
 """Module containing wrapper class to write block format data"""
 import ctypes as ct
 
@@ -63,3 +64,6 @@ class BlockFormatWriter(object):
     """
     if self._handle:
       CLIB.block_format_writer_delete(self._handle)
+
+except Exception:
+  pass

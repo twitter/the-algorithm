@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -23,4 +24,8 @@ class SimsExpansionFSConfig @Inject() () extends FeatureSwitchConfig {
     DBV2SimsExpansionParams.DisableHeavyRanker,
     RecentFollowingSimilarUsersParams.TimestampIntegrated
   )
+}
+
+} catch {
+  case e: Exception =>
 }

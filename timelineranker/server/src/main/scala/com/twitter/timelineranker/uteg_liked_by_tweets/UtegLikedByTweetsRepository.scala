@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.uteg_liked_by_tweets
 
 import com.twitter.timelineranker.model.CandidateTweetsResult
@@ -15,4 +16,8 @@ class UtegLikedByTweetsRepository(source: UtegLikedByTweetsSource) {
   def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
     source.get(queries)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

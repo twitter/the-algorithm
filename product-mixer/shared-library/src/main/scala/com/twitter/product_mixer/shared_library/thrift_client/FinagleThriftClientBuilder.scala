@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.shared_library.thrift_client
 
 import com.twitter.conversions.DurationOps._
@@ -195,4 +196,8 @@ object FinagleThriftClientBuilder {
 
     idempotencyMethodBuilder.servicePerEndpoint[ServicePerEndpoint]
   }
+}
+
+} catch {
+  case e: Exception =>
 }

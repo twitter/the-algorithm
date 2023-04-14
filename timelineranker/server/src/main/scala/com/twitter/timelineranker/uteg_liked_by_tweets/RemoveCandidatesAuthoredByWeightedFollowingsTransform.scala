@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.uteg_liked_by_tweets
 
 import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
@@ -26,4 +27,8 @@ object RemoveCandidatesAuthoredByWeightedFollowingsTransform
       case None => false
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

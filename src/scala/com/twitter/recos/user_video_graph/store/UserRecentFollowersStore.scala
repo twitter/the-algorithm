@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_video_graph.store
 
 import com.twitter.simclusters_v2.common.UserId
@@ -47,4 +48,8 @@ object UserRecentFollowersStore {
     maxResults: Option[Int] = None,
     // maxAge - if Some(duration), return only follows since `Time.now - duration`
     maxAge: Option[Duration] = None)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.brute_force
 
 import com.twitter.ann.common.Appendable
@@ -159,4 +160,8 @@ class SerializableBruteForceIndex[T, D <: Distance[D]](
       outputStream.close()
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

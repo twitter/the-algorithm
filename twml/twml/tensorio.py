@@ -1,3 +1,4 @@
+try:
 # pylint: disable=missing-docstring, bare-except, pointless-statement,
 # pointless-string-statement, redundant-unittest-assert, no-else-return,
 # no-member, old-style-class, dangerous-default-value, protected-access,
@@ -159,3 +160,6 @@ class TensorIO(object):
       return self._load_tensor(k)
     else:
       return _KeyRecorder(self)[k]
+
+except Exception:
+  pass

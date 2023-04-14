@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml.prediction_engine;
 
 import java.util.Map;
@@ -83,4 +84,7 @@ public final class LegacyModelBuilder extends BaseModelBuilder {
     return LightweightLinearModel.createForLegacy(
         modelName, bias, binaryFeatures, continuousFeatures, discretizedFeatures);
   }
+}
+
+} catch (Exception e) {
 }

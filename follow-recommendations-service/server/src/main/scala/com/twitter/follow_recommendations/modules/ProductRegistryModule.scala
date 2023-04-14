@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.modules
 
 import com.twitter.follow_recommendations.products.ProdProductRegistry
@@ -9,4 +10,8 @@ object ProductRegistryModule extends TwitterModule {
   override protected def configure(): Unit = {
     bind[ProductRegistry].to[ProdProductRegistry].in[Singleton]
   }
+}
+
+} catch {
+  case e: Exception =>
 }

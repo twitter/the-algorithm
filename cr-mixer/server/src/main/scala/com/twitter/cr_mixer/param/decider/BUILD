@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -14,3 +15,6 @@ scala_library(
         "src/scala/com/twitter/simclusters_v2/common",
     ],
 )
+
+} catch (Exception e) {
+}

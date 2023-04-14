@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.user_state
 
 import com.google.inject.name.Named
@@ -80,4 +81,8 @@ class UserStateClient @Inject() (
 
 object UserStateClient {
   val CacheTTL: Duration = Duration.fromHours(6)
+}
+
+} catch {
+  case e: Exception =>
 }

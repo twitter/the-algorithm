@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.tweet_similarity
 
 import com.twitter.ml.api.{DataRecord, DataRecordMerger}
@@ -34,4 +35,8 @@ object ModelBasedTweetSimilaritySimClustersEmbeddingAdapter {
       candidateAdapter.adaptToDataRecord(candidateEmbedding))
     featureDataRecord
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml.prediction_engine;
 
 import com.google.common.base.Preconditions;
@@ -30,4 +31,7 @@ public class DiscretizedFeatureRange {
       return Double.parseDouble(value);
     }
   }
+}
+
+} catch (Exception e) {
 }

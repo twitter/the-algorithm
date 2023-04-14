@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.configapi.params.RuleParam
@@ -117,4 +118,8 @@ object UserUnavailableStateTombstoneRules {
     override def enabled: Seq[RuleParam[Boolean]] =
       Seq(EnableInnerQuotedTweetViewerMutesAuthorInterstitialRuleParam)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

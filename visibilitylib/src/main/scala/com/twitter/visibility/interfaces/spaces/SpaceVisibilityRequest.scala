@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.spaces
 
 import com.twitter.visibility.models.SafetyLevel
@@ -8,3 +9,7 @@ case class SpaceVisibilityRequest(
   safetyLevel: SafetyLevel,
   viewerContext: ViewerContext,
   spaceHostAndAdminUserIds: Option[Seq[Long]])
+
+} catch {
+  case e: Exception =>
+}

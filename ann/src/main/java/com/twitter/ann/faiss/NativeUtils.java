@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.faiss;
 
 import java.io.File;
@@ -148,4 +149,7 @@ public final class NativeUtils {
     }
     return detectedOS;
   }
+}
+
+} catch (Exception e) {
 }

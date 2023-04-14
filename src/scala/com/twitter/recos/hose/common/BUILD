@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     strict_deps = False,
@@ -13,3 +14,6 @@ scala_library(
         "src/thrift/com/twitter/recos:recos-internal-scala",
     ],
 )
+
+} catch (Exception e) {
+}

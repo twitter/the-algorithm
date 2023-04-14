@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urt.builder
 
 import com.twitter.product_mixer.component_library.model.cursor.UrtPlaceholderCursor
@@ -31,4 +32,8 @@ case class PlaceholderTopCursorBuilder(
     query: PipelineQuery with HasPipelineCursor[UrtPipelineCursor],
     timelineEntries: Seq[TimelineEntry]
   ): String = serializer.serializeCursor(DefaultPlaceholderCursor)
+}
+
+} catch {
+  case e: Exception =>
 }

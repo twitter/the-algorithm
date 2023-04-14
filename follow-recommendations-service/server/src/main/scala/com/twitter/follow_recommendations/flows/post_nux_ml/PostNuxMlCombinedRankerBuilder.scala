@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.post_nux_ml
 
 import com.google.inject.Inject
@@ -190,4 +191,8 @@ class PostNuxMlCombinedRankerBuilder[
       new IdentityRanker[T, CandidateUser]()
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

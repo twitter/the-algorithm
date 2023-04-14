@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor
 
 import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
@@ -18,3 +19,7 @@ case class FeatureHydratorDisabled[+Result <: UniversalNoun[Any]]()
 case class IndividualFeatureHydratorResult[+Result <: UniversalNoun[Any]](
   result: Seq[CandidateWithFeatures[Result]])
     extends BaseIndividualFeatureHydratorResult[Result]
+
+} catch {
+  case e: Exception =>
+}

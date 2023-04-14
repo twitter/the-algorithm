@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.queryparser;
 
 import java.util.List;
@@ -150,4 +151,7 @@ public class ProtectedOperatorQueryRewriter {
         && (searchOp.getOperatorType() == SearchOperator.Type.INCLUDE
         || searchOp.getOperatorType() == SearchOperator.Type.FILTER);
   }
+}
+
+} catch (Exception e) {
 }

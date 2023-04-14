@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackDisplayContext
@@ -12,4 +13,8 @@ class FeedbackDisplayContextMarshaller @Inject() () {
     urt.FeedbackDisplayContext(
       reason = displayContext.reason
     )
+}
+
+} catch {
+  case e: Exception =>
 }

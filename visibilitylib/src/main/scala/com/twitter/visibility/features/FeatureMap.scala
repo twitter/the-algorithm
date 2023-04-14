@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.features
 
 import com.twitter.finagle.mux.ClientDiscardedRequestException
@@ -118,4 +119,8 @@ object ResolvedFeatureMap {
   def apply(resolvedMap: Map[Feature[_], Any]): ResolvedFeatureMap = {
     new ResolvedFeatureMap(resolvedMap)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

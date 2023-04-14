@@ -1,3 +1,4 @@
+try {
 scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
@@ -12,3 +13,6 @@ scala_library(
         "util/util-stats/src/main/scala/com/twitter/finagle/stats",
     ],
 )
+
+} catch (Exception e) {
+}

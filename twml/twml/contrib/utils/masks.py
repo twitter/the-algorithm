@@ -1,3 +1,4 @@
+try:
 import tensorflow.compat.v1 as tf
 
 
@@ -36,3 +37,6 @@ def full_mask(n_data, pairwise_label_scores):
   pair_count = tf.reduce_sum(mask)
   pair_count = tf.cast(pair_count, dtype=tf.float32)
   return mask, pair_count
+
+except Exception:
+  pass

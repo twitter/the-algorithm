@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.google.inject.name.Named
@@ -158,4 +159,8 @@ class TweetypieStaticEntitiesFeatureHydrator @Inject() (
           DefaultFeatureMap + (AuthorIdFeature, candidate.features.getOrElse(AuthorIdFeature, None))
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

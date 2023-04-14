@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.offline_job
 
 import com.twitter.scalding._
@@ -194,4 +195,8 @@ object DumpClusterTopKTweetsAdhoc extends TwitterExecutionApp {
         }
       }
     }
+}
+
+} catch {
+  case e: Exception =>
 }

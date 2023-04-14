@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.gate
 
 import com.twitter.home_mixer.functional_component.gate.MinCachedTweetsGate.identifierSuffix
@@ -31,4 +32,8 @@ case class MinCachedTweetsGate(
 
 object MinCachedTweetsGate {
   val identifierSuffix = "MinCachedTweets"
+}
+
+} catch {
+  case e: Exception =>
 }

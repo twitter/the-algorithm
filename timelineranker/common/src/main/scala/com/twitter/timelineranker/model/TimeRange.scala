@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.model
 
 import com.twitter.timelineranker.{thriftscala => thrift}
@@ -36,4 +37,8 @@ case class TimeRange(from: Option[Time], to: Option[Time]) extends TimelineRange
   def toTimelineRangeThrift: thrift.TimelineRange = {
     thrift.TimelineRange.TimeRange(toThrift)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

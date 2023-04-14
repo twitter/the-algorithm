@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.exception;
 
 import com.twitter.common.zookeeper.ServerSet;
@@ -9,4 +10,7 @@ public class AlreadyInServerSetUpdateException extends ServerSet.UpdateException
   public AlreadyInServerSetUpdateException(String message) {
     super(message);
   }
+}
+
+} catch (Exception e) {
 }

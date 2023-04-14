@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.brute_force
 
 import com.google.common.annotations.VisibleForTesting
@@ -61,4 +62,8 @@ class BruteForceDeserialization[T, D <: Distance[D]] @VisibleForTesting private[
       temp.delete()
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

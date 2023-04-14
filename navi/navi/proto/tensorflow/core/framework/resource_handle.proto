@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -42,4 +43,7 @@ message ResourceHandleProto {
   repeated DtypeAndShape dtypes_and_shapes = 6;
 
   reserved 7;
+}
+
+} catch (Exception e) {
 }

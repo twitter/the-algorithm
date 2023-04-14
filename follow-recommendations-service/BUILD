@@ -1,3 +1,4 @@
+try {
 # Without this alias, library :follow-recommendations-service_lib would conflict with :bin
 alias(
     name = "follow-recommendations-service",
@@ -46,3 +47,6 @@ jvm_app(
     ],
     tags = ["bazel-compatible"],
 )
+
+} catch (Exception e) {
+}

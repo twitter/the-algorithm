@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.hdfs_sources.injections
 
 import com.twitter.hermit.candidate.thriftscala.Candidates
@@ -42,4 +43,8 @@ object ProducerEmbeddingsInjections {
     KeyValInjection(
       keyCodec = ScalaBinaryThrift(SimClustersEmbeddingId),
       valueCodec = ScalaBinaryThrift(SimClustersEmbedding))
+}
+
+} catch {
+  case e: Exception =>
 }

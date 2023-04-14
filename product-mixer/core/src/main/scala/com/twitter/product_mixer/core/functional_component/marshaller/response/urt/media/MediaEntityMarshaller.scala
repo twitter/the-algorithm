@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ImageVariantMarshaller
@@ -20,4 +21,8 @@ class MediaEntityMarshaller @Inject() (
     case broadcastId: BroadcastId => urt.MediaEntity.BroadcastId(broadcastIdMarshaller(broadcastId))
     case image: Image => urt.MediaEntity.Image(imageVariantMarshaller(image.image))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

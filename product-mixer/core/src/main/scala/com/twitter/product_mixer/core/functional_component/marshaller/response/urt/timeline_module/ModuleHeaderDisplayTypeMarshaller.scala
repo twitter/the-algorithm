@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Classic
@@ -18,4 +19,8 @@ class ModuleHeaderDisplayTypeMarshaller @Inject() () {
       case ClassicNoDivider => urt.ModuleHeaderDisplayType.ClassicNoDivider
     }
 
+}
+
+} catch {
+  case e: Exception =>
 }

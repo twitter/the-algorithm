@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import javax.inject.Inject;
@@ -41,4 +42,7 @@ public class VeryRecentTweetsFilter
 
     return service.apply(request);
   }
+}
+
+} catch (Exception e) {
 }

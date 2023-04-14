@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.model;
 
 import com.twitter.search.common.debug.DebugEventAccumulator;
@@ -16,4 +17,7 @@ public class IngesterTweetEvent extends TweetEvent implements DebugEventAccumula
   public DebugEvents getDebugEvents() {
     return debugEvents;
   }
+}
+
+} catch (Exception e) {
 }

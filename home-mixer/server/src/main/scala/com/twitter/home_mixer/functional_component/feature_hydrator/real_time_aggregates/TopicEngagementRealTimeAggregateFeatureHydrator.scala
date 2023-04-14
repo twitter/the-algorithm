@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.real_time_aggregates
 
 import com.google.inject.name.Named
@@ -50,4 +51,8 @@ class TopicEngagementRealTimeAggregateFeatureHydrator @Inject() (
         .flatten
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

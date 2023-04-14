@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.ads
 
 import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
@@ -51,4 +52,8 @@ case class CountCandidatesFromPipelines(pipelines: CandidateScope)
     previousCandidates: Seq[CandidateWithDetails]
   ): Short =
     previousCandidates.count(pipelines.contains).toShort
+}
+
+} catch {
+  case e: Exception =>
 }

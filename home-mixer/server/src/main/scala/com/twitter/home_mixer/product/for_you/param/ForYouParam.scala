@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.for_you.param
 
 import com.twitter.conversions.DurationOps._
@@ -114,4 +115,8 @@ object ForYouParam {
           max = 35
         )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

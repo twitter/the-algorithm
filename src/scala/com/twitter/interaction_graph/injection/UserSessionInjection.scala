@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.injection
 
 import com.twitter.user_session_store.thriftscala.UserSession
@@ -11,4 +12,8 @@ object UserSessionInjection {
       Long2BigEndian,
       ScalaCompactThrift(UserSession)
     )
+}
+
+} catch {
+  case e: Exception =>
 }

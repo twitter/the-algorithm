@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.forward_pivot
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.CommunityNotes
@@ -17,4 +18,8 @@ class ForwardPivotDisplayTypeMarshaller @Inject() () {
       case SoftIntervention => urt.ForwardPivotDisplayType.SoftIntervention
       case CommunityNotes => urt.ForwardPivotDisplayType.CommunityNotes
     }
+}
+
+} catch {
+  case e: Exception =>
 }

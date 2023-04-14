@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird;
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -111,4 +112,7 @@ public class EarlybirdFuturePoolManager implements FuturePool {
   }
 
 
+}
+
+} catch (Exception e) {
 }

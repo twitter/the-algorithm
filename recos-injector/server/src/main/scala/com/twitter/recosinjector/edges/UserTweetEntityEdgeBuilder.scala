@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.edges
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -77,4 +78,8 @@ class UserTweetEntityEdgeBuilder(
       getEntitiesMap(urlHashIds)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

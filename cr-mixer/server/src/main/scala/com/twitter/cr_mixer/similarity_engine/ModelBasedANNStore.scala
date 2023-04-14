@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.similarity_engine
 
 import com.twitter.ann.common.thriftscala.AnnQueryService
@@ -133,4 +134,8 @@ object ModelBasedANNStore {
       modelId = Some(query.modelId),
       score = Some(score))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

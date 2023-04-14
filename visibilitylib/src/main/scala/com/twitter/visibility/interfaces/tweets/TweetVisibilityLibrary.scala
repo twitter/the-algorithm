@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.tweets
 
 import com.twitter.decider.Decider
@@ -418,4 +419,8 @@ object TweetVisibilityLibrary {
       VerdictLogger.Empty
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.faiss
 
 import com.twitter.ann.common.thriftscala.FaissRuntimeParam
@@ -41,4 +42,8 @@ object FaissCommon {
     path.hasSuccessFile &&
     path.getChild("faiss.index").exists()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

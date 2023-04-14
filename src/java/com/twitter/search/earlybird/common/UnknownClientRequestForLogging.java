@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common;
 
 import org.apache.commons.codec.binary.Base64;
@@ -74,4 +75,7 @@ public final class UnknownClientRequestForLogging {
   public void log() {
     LOG.info("{},{},{},{}", clientId, finagleId, logLine, asBase64());
   }
+}
+
+} catch (Exception e) {
 }

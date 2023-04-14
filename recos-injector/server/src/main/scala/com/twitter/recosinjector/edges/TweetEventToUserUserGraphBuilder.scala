@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.edges
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -62,4 +63,8 @@ class TweetEventToUserUserGraphBuilder(
   ): Future[Seq[UserUserEdge]] = {
     Future(edges)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

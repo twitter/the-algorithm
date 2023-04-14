@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.module
 
 import com.twitter.interests_discovery.thriftscala.InterestsDiscoveryService
@@ -31,4 +32,8 @@ object InterestsDiscoveryServiceModule
   }
 
   override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+}
+
+} catch {
+  case e: Exception =>
 }

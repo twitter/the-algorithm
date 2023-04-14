@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
@@ -24,3 +25,7 @@ class ReplaceEntryInstructionMarshaller @Inject() (
 class MissingEntryToReplaceException(entry: TimelineEntry)
     extends IllegalArgumentException(
       s"Missing entry ID to replace ${TransportMarshaller.getSimpleName(entry.getClass)}")
+
+} catch {
+  case e: Exception =>
+}

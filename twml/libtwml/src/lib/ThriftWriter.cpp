@@ -1,3 +1,4 @@
+try {
 #include "internal/endianutils.h"
 #include "internal/error.h"
 #include "internal/thrift.h"
@@ -89,3 +90,6 @@ TWMLAPI uint64_t ThriftWriter::writeBool(bool val) {
 }
 
 }  // namespace twml
+
+} catch (const std::exception& e) {
+}

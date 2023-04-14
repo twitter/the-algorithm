@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.routers;
 
 import java.util.List;
@@ -104,4 +105,7 @@ public final class RequestRouterUtil {
       }
     };
   }
+}
+
+} catch (Exception e) {
 }

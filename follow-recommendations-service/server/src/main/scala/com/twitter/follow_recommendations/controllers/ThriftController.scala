@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.controllers
 
 import com.twitter.finatra.thrift.Controller
@@ -38,4 +39,8 @@ class ThriftController @Inject() (
     }
     Stitch.run(stitch)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

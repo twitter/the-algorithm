@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.side_effect
 
 import com.twitter.product_mixer.component_library.side_effect.ParamGatedPipelineResultSideEffect.IdentifierPrefix
@@ -73,4 +74,8 @@ object ParamGatedPipelineResultSideEffect {
         new ParamGatedPipelineResultSideEffect(enabledParam, sideEffect)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

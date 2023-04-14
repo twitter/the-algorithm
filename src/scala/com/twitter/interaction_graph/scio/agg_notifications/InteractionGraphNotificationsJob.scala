@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_notifications
 
 import com.spotify.scio.ScioContext
@@ -83,4 +84,8 @@ object InteractionGraphNotificationsJob extends ScioBeamJob[InteractionGraphNoti
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common
 
 import com.twitter.decider.Decider
@@ -18,4 +19,8 @@ class DeciderGateBuilderWithIdHashing(decider: Decider) extends DeciderGateBuild
     idGate(key).contramap[T](convertToHash)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

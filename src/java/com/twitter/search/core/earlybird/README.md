@@ -1,3 +1,4 @@
+try {
 # Search Index (Earlybird) core classes 
 
 > **TL;DR** Earlybird (Search Index) find tweets from people you follow, rank them, and serve tweets to Home.
@@ -19,3 +20,6 @@ The project consists of several packages and files, which can be summarized as f
 
 ## Related Services
 * The Earlybirds main classes. See `src/java/com/twitter/search/earlybird/`
+
+} catch (Exception e) {
+}

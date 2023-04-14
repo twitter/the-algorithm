@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.products.home_timeline.configapi
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -19,4 +20,8 @@ class HomeTimelineFSConfig @Inject() () extends FeatureSwitchConfig {
     DurationGuardrailToForceSuggest,
     SuggestBasedFatigueDuration
   )
+}
+
+} catch {
+  case e: Exception =>
 }

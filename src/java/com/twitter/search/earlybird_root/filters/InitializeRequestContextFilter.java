@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import javax.inject.Inject;
@@ -63,4 +64,7 @@ public class InitializeRequestContextFilter extends
 
     return service.apply(requestContext);
   }
+}
+
+} catch (Exception e) {
 }

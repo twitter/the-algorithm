@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
@@ -39,4 +40,8 @@ case class RealGraphInNetworkScoresQueryFeatureHydrator @Inject() (
       FeatureMapBuilder().add(RealGraphInNetworkScoresFeature, realGraphScoresFeatures).build()
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

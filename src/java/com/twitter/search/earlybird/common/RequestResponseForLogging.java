@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common;
 
 
@@ -52,4 +53,7 @@ public class RequestResponseForLogging {
       }
     });
   }
+}
+
+} catch (Exception e) {
 }

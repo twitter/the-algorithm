@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.dms
 
 import com.twitter.stitch.Stitch
@@ -77,4 +78,8 @@ object DmEventVisibilityLibrary {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

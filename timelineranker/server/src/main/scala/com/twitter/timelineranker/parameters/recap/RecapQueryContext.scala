@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.recap
 
 import com.twitter.timelineranker.model.RecapQuery
@@ -76,4 +77,8 @@ class RecapQueryContextImpl(
   override def onlyRealGraphUsers(): Boolean = { getOnlyRealGraphUsers() }
   override def maxRealGraphAndFollowedUsers(): Int = { getMaxRealGraphAndFollowedUsers() }
   override def enableTextFeatureHydration(): Boolean = { getEnableTextFeatureHydration() }
+}
+
+} catch {
+  case e: Exception =>
 }

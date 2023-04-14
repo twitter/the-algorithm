@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.loadtest
 
 import com.twitter.ann.annoy.AnnoyCommon
@@ -376,4 +377,8 @@ object AnnLoadTestMain extends TwitterServer {
   }
 
   override protected def modules: Seq[com.google.inject.Module] = Seq(ServiceIdentifierModule)
+}
+
+} catch {
+  case e: Exception =>
 }

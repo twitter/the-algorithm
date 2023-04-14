@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common.clustering
 
 import com.twitter.sbf.graph.ConnectedComponents
@@ -64,4 +65,8 @@ class ConnectedComponentsClusteringMethod(
 
     clusters
   }
+}
+
+} catch {
+  case e: Exception =>
 }

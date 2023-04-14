@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.common.alert
 
 import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfLatencyAbove
@@ -16,4 +17,8 @@ case class GenericClientLatencyAlert(
   override val runbookLink: Option[String] = None)
     extends Alert {
   override val alertType: AlertType = Latency
+}
+
+} catch {
+  case e: Exception =>
 }

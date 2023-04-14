@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.common
 
 /**
@@ -11,4 +12,8 @@ object SimClustersHashUtil {
   val numBuckets: Int = 200
 
   val getAllBuckets: Seq[Int] = 0.until(numBuckets)
+}
+
+} catch {
+  case e: Exception =>
 }

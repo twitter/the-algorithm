@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi.configs
 
 import com.twitter.timelines.configapi.Config
@@ -30,4 +31,8 @@ private[visibility] object VisibilityExperimentsConfig {
     experimentConfigs
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.util
 
 import com.twitter.abdecider.ABDeciderFactory
@@ -42,4 +43,8 @@ object DeciderUtil {
       scribeLogger = scribeLogger
     ).buildWithLogging()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

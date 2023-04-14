@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.model
 
 import com.twitter.timelineranker.{thriftscala => thrift}
@@ -20,4 +21,8 @@ case class ReverseChronTimelineQuery(
     extends TimelineQuery(thrift.TimelineQueryType.ReverseChron, id, maxCount, range, options) {
 
   throwIfInvalid()
+}
+
+} catch {
+  case e: Exception =>
 }

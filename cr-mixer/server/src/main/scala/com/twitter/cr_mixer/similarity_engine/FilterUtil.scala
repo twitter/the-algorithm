@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.similarity_engine
 
 import com.twitter.cr_mixer.model.SourceInfo
@@ -39,4 +40,8 @@ object FilterUtil {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

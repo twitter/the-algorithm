@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import org.slf4j.Logger;
@@ -42,4 +43,7 @@ public class EarlybirdProtectedValidationBehavior extends EarlybirdServiceValida
 
     return super.getResponseIfInvalidRequest(request);
   }
+}
+
+} catch (Exception e) {
 }

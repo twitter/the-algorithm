@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.scoring
 
 import com.twitter.product_mixer.core.functional_component.scorer.ScoredCandidateResult
@@ -48,4 +49,8 @@ object ScoringPipelineResult {
       None,
       None
     )
+}
+
+} catch {
+  case e: Exception =>
 }

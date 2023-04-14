@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -82,4 +83,8 @@ class TweetKindOptionHydratedTweetsFilterTransform(
     }
     TweetFilters.ValueSet.empty ++ filters
   }
+}
+
+} catch {
+  case e: Exception =>
 }

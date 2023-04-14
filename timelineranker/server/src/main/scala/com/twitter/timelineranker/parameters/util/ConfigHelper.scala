@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.util
 
 import com.twitter.servo.decider.DeciderGateBuilder
@@ -38,4 +39,8 @@ class ConfigHelper(
       )
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

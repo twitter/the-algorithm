@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.model;
 
 import java.util.List;
@@ -70,4 +71,7 @@ public class IngesterTwitterMessage extends TwitterMessage
   public DebugEvents getDebugEvents() {
     return debugEvents;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.common
 
 import com.twitter.stitch.Stitch
@@ -88,4 +89,8 @@ class QueryableByIdImplementation[T1, T2, P <: RuntimeParams, D <: Distance[D]](
         _.toList.flatten
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

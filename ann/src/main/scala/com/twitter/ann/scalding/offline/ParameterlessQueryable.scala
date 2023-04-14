@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.scalding.offline
 
 import com.twitter.ann.common.EmbeddingType.EmbeddingVector
@@ -21,4 +22,8 @@ private[offline] case class ParameterlessQueryable[T, P <: RuntimeParams, D <: D
     numOfNeighbors: Int
   ): Future[List[NeighborWithDistance[T, D]]] =
     queryable.queryWithDistance(embedding, numOfNeighbors, runtimeParamsForAllQueries)
+}
+
+} catch {
+  case e: Exception =>
 }

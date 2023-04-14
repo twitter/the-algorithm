@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.util
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -490,4 +491,8 @@ class TweetsPostFilterUserIndependent(
     )
     super.filter(tweets, params)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

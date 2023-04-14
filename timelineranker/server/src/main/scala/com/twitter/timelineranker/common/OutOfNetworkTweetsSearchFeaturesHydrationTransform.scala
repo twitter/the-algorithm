@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.servo.util.FutureArrow
@@ -28,4 +29,8 @@ object OutOfNetworkTweetsSearchFeaturesHydrationTransform
 
     Future.value(request.copy(features = featuresByTweetId))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

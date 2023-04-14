@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.util;
 
 import java.io.IOException;
@@ -79,4 +80,7 @@ public class AllDocsIterator extends DocIdSetIterator {
 
     return false;
   }
+}
+
+} catch (Exception e) {
 }

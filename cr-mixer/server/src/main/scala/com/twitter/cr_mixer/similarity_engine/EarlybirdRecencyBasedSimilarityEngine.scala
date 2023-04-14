@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.similarity_engine
 import com.twitter.cr_mixer.config.TimeoutConfig
 import com.twitter.cr_mixer.model.ModuleNames
@@ -83,4 +84,8 @@ object EarlybirdRecencyBasedSimilarityEngine {
     maxTweetAge: Duration,
     filterOutRetweetsAndReplies: Boolean)
 
+}
+
+} catch {
+  case e: Exception =>
 }

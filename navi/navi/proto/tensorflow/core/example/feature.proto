@@ -1,3 +1,4 @@
+try {
 // Protocol messages for describing features for machine learning model
 // training or inference.
 //
@@ -108,3 +109,6 @@ message FeatureLists {
 }
 // LINT.ThenChange(
 //     https://www.tensorflow.org/code/tensorflow/python/training/training.py)
+
+} catch (Exception e) {
+}

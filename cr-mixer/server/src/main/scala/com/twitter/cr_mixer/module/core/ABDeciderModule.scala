@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module.core
 
 import com.google.inject.Provides
@@ -30,4 +31,8 @@ object ABDeciderModule extends TwitterModule {
       environment = Some("production")
     ).buildWithLogging()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

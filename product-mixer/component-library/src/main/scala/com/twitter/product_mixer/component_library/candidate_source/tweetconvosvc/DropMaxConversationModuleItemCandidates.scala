@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc
 
 import com.twitter.product_mixer.core.functional_component.common.CandidateScope
@@ -52,4 +53,8 @@ case class DropMaxConversationModuleItemCandidates[-Query <: PipelineQuery](
       module.copy(candidates = updatedConversation.toSeq)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

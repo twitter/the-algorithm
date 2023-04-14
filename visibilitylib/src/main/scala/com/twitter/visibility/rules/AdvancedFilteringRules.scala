@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.gizmoduck.thriftscala.MentionFilter.Following
@@ -69,3 +70,7 @@ object OnlyPeopleIFollowRule
         Not(NotificationIsOnCommunityTweet)
       )
     )
+
+} catch {
+  case e: Exception =>
+}

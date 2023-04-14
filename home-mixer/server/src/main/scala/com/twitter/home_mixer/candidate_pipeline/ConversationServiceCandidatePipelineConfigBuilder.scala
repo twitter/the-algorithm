@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.candidate_pipeline
 
 import com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc.ConversationServiceCandidateSource
@@ -31,4 +32,8 @@ class ConversationServiceCandidatePipelineConfigBuilder[Query <: PipelineQuery] 
       decorator
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

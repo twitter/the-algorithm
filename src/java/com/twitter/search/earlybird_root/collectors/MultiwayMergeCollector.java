@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.collectors;
 
 import java.util.Collections;
@@ -79,4 +80,7 @@ public abstract class MultiwayMergeCollector<T> {
   }
 
   protected abstract boolean isResponseValid(EarlybirdResponse response);
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.monitoring
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -49,4 +50,8 @@ class UsersSearchResultMonitoringTransform(
   ): Boolean =
     searchResult.metadata.exists(metadata => debugAuthorList.contains(metadata.fromUserId))
 
+}
+
+} catch {
+  case e: Exception =>
 }

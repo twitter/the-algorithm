@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.reaction
 
 sealed abstract class TimelineReactionExecution
@@ -8,3 +9,7 @@ case class RemoteTimelineReaction(
   requestParams: Map[String, String],
   timeoutInSeconds: Option[Short])
     extends TimelineReactionExecution
+
+} catch {
+  case e: Exception =>
+}

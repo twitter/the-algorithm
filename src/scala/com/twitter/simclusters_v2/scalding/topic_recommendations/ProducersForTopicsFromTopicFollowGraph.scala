@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.topic_recommendations
 
 import com.twitter.bijection.Bufferable
@@ -203,4 +204,8 @@ object ProducersForTopicsFromTopicFollowGraph {
 
     producersToLocaleTopicsMatrix.toTypedPipe
   }
+}
+
+} catch {
+  case e: Exception =>
 }

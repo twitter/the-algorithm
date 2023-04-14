@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import com.twitter.finagle.Service;
@@ -27,4 +28,7 @@ public class UnsetSuperRootFieldsFilter extends SimpleFilter<EarlybirdRequest, E
                                          Service<EarlybirdRequest, EarlybirdResponse> service) {
     return service.apply(EarlybirdRequestUtil.unsetSuperRootFields(request, unsetFollowedUserIds));
   }
+}
+
+} catch (Exception e) {
 }

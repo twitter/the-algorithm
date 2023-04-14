@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.topic_recommendations
 
 import com.twitter.bijection.Bufferable
@@ -162,4 +163,8 @@ object GeoPopularTopicsApp {
       .toTypedPipe
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

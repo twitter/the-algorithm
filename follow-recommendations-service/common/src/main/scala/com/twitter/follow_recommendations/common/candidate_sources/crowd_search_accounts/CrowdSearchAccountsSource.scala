@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts
 
 import com.twitter.escherbird.util.stitchcache.StitchCache
@@ -108,4 +109,8 @@ class CrowdSearchAccountsSource @Inject() (
               ).withCandidateSource(identifier)))
           .getOrElse(Seq[CandidateUser]()))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = [
         "*.scala",
@@ -309,3 +310,6 @@ hadoop_binary(
     ],
     dependencies = [":embedding"],
 )
+
+} catch (Exception e) {
+}

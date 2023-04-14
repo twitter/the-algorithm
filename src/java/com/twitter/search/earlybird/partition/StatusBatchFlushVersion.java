@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 /**
@@ -38,4 +39,7 @@ public enum StatusBatchFlushVersion {
   public String getDescription() {
     return description;
   }
+}
+
+} catch (Exception e) {
 }

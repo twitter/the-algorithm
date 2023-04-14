@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.queries;
 
 import java.io.IOException;
@@ -125,4 +126,7 @@ public final class UserFlagsExcludeFilter extends Query {
 
     protected abstract boolean checkUserFlags(UserTable table, long userID);
   }
+}
+
+} catch (Exception e) {
 }

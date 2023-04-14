@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -12,4 +13,8 @@ trait BaseFeedbackActionInfoBuilder[-Query <: PipelineQuery, -Candidate <: Unive
     candidate: Candidate,
     candidateFeatures: FeatureMap
   ): Option[FeedbackActionInfo]
+}
+
+} catch {
+  case e: Exception =>
 }

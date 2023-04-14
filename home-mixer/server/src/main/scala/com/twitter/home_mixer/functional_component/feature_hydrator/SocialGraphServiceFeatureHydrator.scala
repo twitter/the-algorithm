@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
@@ -64,4 +65,8 @@ class SocialGraphServiceFeatureHydrator @Inject() (socialGraphStitchClient: Soci
     }.toSeq,
     Some(sg.PageRequest(selectAll = Some(true)))
   )
+}
+
+} catch {
+  case e: Exception =>
 }

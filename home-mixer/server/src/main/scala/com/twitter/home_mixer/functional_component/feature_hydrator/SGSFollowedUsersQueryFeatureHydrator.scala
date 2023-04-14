@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -43,4 +44,8 @@ case class SGSFollowedUsersQueryFeatureHydrator @Inject() (
         FeatureMapBuilder().add(SGSFollowedUsersFeature, followedUsers).build()
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

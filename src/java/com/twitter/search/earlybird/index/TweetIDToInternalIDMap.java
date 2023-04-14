@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.index;
 
 import java.io.IOException;
@@ -151,4 +152,7 @@ public final class TweetIDToInternalIDMap implements Flushable {
       return new TweetIDToInternalIDMap(hash, numMappings);
     }
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.slice.builder
 
 import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorItem
@@ -59,4 +60,8 @@ trait SliceBuilder[-Query <: PipelineQuery] {
       items = nonCursorItems,
       sliceInfo = SliceInfo(previousCursor = previousCursor, nextCursor = nextCursor))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

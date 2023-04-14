@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.net.URI;
@@ -384,4 +385,7 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
     linksTooLong.increment();
     return null;
   }
+}
+
+} catch (Exception e) {
 }

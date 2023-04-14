@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     platform = "java8",
@@ -7,3 +8,6 @@ scala_library(
         "timelineranker/server/config",
     ],
 )
+
+} catch (Exception e) {
+}

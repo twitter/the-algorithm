@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Center
@@ -14,4 +15,8 @@ class RichTextAlignmentMarshaller @Inject() () {
     case Natural => urt.RichTextAlignment.Natural
     case Center => urt.RichTextAlignment.Center
   }
+}
+
+} catch {
+  case e: Exception =>
 }

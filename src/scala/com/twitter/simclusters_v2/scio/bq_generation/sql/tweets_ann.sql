@@ -1,3 +1,4 @@
+try {
 -- (step 1) Read consumer embeddings
 WITH consumer_embeddings AS (
     {CONSUMER_EMBEDDINGS_SQL}
@@ -62,3 +63,6 @@ results AS (
 
 SELECT *
 FROM results
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.product
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -18,4 +19,8 @@ trait ProductParamConfigBuilder extends ParamConfigBuilder {
       FeatureSwitchOverrideUtil.getBooleanFSOverrides(SupportedClientParam) ++
       super.build(deciderGateBuilder, statsReceiver)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

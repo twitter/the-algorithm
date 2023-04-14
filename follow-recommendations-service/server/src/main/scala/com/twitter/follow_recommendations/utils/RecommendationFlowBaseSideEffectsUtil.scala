@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.utils
 
 import com.twitter.follow_recommendations.common.base.RecommendationFlow
@@ -118,4 +119,8 @@ trait RecommendationFlowBaseSideEffectsUtil[Target <: HasClientContext, Candidat
     target: Target,
     candidates: Seq[Candidate]
   ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+}
+
+} catch {
+  case e: Exception =>
 }

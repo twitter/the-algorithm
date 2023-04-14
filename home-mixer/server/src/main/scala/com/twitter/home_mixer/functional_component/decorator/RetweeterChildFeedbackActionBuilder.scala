@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.decorator
 
 import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
@@ -36,4 +37,8 @@ case class RetweeterChildFeedbackActionBuilder @Inject() (
       }
     } else None
   }
+}
+
+} catch {
+  case e: Exception =>
 }

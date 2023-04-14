@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.decorator.slice.builder
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -11,4 +12,8 @@ trait CandidateSliceItemBuilder[
   BuilderOutput <: SliceItem] {
 
   def apply(query: Query, candidate: BuilderInput, featureMap: FeatureMap): BuilderOutput
+}
+
+} catch {
+  case e: Exception =>
 }

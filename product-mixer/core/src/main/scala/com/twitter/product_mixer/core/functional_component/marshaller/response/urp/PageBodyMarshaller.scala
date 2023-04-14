@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
 
 import com.twitter.pages.render.{thriftscala => urp}
@@ -18,4 +19,8 @@ class PageBodyMarshaller @Inject() (
     case pageBody: SegmentedTimelinesPageBody =>
       urp.PageBody.SegmentedTimelines(segmentedTimelinesMarshaller(pageBody))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

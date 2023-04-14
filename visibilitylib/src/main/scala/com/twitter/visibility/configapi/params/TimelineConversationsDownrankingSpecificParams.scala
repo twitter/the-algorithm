@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi.params
 
 private[visibility] object TimelineConversationsDownrankingSpecificParams {
@@ -10,4 +11,8 @@ private[visibility] object TimelineConversationsDownrankingSpecificParams {
       extends RuleParam(false)
 
   object EnableHighCryptospamScoreConvoDownrankAbusiveQualityRuleParam extends RuleParam(false)
+}
+
+} catch {
+  case e: Exception =>
 }

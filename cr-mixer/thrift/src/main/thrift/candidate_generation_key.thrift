@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.cr_mixer.thriftjava
 #@namespace scala com.twitter.cr_mixer.thriftscala
 #@namespace strato com.twitter.cr_mixer
@@ -19,3 +20,6 @@ struct CandidateGenerationKey {
   5: optional source_type.SimilarityEngineType similarityEngineType
   6: optional list<SimilarityEngine> contributingSimilarityEngine
 } (persisted='true')
+
+} catch (Exception e) {
+}

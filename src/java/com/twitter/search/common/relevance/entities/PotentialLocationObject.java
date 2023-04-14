@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.entities;
 
 import java.util.Locale;
@@ -119,4 +120,7 @@ public class PotentialLocationObject {
         .append("}")
         .toString();
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.pipeline.StageException;
@@ -134,4 +135,7 @@ public class TweetEventDeserializerStage extends TwitterBaseStage
       sb.append(HEX_ARRAY[bytes[j] & 0x0F]);
     }
   }
+}
+
+} catch (Exception e) {
 }

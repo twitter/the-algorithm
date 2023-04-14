@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.geo
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -21,4 +22,8 @@ class PopGeoQualityFollowSourceFSConfig @Inject() () extends FeatureSwitchConfig
     PopGeoQualityFollowSourceParams.CandidateSourceEnabled,
     PopGeoQualityFollowSourceParams.PopGeoSourceReturnFromAllPrecisions
   )
+}
+
+} catch {
+  case e: Exception =>
 }

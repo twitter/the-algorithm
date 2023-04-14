@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import com.twitter.finagle.Service;
@@ -28,3 +29,6 @@ public class StratoAttributionClientIdFilter extends
   }
 }
 
+
+} catch (Exception e) {
+}

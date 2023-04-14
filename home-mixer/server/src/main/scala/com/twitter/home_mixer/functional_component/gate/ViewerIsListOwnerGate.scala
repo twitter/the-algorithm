@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.gate
 
 import com.twitter.home_mixer.model.request.HasListId
@@ -26,4 +27,8 @@ case class ViewerIsListOwnerGate @Inject() (socialGraph: SocialGraph)
       relationships = Seq(relationship))
     socialGraph.exists(request).map(_.exists)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

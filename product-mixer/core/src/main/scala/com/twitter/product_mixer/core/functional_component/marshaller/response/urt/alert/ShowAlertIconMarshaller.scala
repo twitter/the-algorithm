@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.DownArrow
@@ -14,4 +15,8 @@ class ShowAlertIconMarshaller @Inject() () {
     case UpArrow => urt.ShowAlertIcon.UpArrow
     case DownArrow => urt.ShowAlertIcon.DownArrow
   }
+}
+
+} catch {
+  case e: Exception =>
 }

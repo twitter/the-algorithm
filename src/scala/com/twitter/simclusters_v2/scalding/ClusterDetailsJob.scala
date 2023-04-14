@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 
 import com.twitter.algebird.OptionMonoid
@@ -791,4 +792,8 @@ object DumpClusterSimilaritiesAdhoc extends TwitterExecutionApp {
             }.writeExecution(TypedTsv(args("outputDir")))
         }
     }
+}
+
+} catch {
+  case e: Exception =>
 }

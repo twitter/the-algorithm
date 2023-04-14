@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 
 import com.twitter.dal.client.dataset.KeyValDALDataset
@@ -440,4 +441,8 @@ object UpdateKnownForAdhoc extends TwitterExecutionApp {
           )
         }
     }
+}
+
+} catch {
+  case e: Exception =>
 }

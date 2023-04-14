@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorItem
@@ -18,4 +19,8 @@ class CursorItemMarshaller @Inject() (
         displayTreatment = cursorItem.displayTreatment.map(cursorDisplayTreatmentMarshaller(_))
       )
     )
+}
+
+} catch {
+  case e: Exception =>
 }

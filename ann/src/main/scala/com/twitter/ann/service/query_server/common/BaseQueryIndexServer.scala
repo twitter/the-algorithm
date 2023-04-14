@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.query_server.common
 
 import com.google.inject.Module
@@ -50,4 +51,8 @@ abstract class BaseQueryIndexServer extends ThriftServer with Mtls {
 
     addController(router)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

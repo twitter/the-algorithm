@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.column;
 
 import java.io.IOException;
@@ -87,4 +88,7 @@ public class OptimizedColumnStrideMultiIntIndex
           values);
     }
   }
+}
+
+} catch (Exception e) {
 }

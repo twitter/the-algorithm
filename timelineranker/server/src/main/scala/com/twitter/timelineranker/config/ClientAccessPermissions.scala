@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.config
 
 import com.twitter.timelineranker.decider.DeciderKey._
@@ -284,4 +285,8 @@ object ClientAccessPermissions {
       protectedWriteAccess = TrustedPermission
     )
   )
+}
+
+} catch {
+  case e: Exception =>
 }

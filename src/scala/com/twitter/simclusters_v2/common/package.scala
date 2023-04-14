@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2
 
 package object common {
@@ -14,4 +15,8 @@ package object common {
   type TopicId = Long
   type GroupId = Long
   type SpaceId = String
+}
+
+} catch {
+  case e: Exception =>
 }

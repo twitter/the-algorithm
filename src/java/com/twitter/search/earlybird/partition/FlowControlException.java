@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 /**
@@ -13,4 +14,7 @@ public class FlowControlException extends RuntimeException {
   public FlowControlException(String message) {
     super(message);
   }
+}
+
+} catch (Exception e) {
 }

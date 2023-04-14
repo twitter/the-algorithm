@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 package similarity_engine
 
@@ -89,4 +90,8 @@ object TweetBasedUserTweetGraphSimilarityEngineModule extends TwitterModule {
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

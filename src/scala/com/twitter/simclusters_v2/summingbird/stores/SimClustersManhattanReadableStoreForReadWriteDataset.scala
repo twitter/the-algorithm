@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.stores
 import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
 import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
@@ -62,4 +63,8 @@ class SimClustersManhattanReadableStoreForReadWriteDataset(
       case _ => Future.None
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

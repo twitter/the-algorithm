@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.product.registry
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -23,4 +24,8 @@ class ProductParamRegistry @Inject() (
 
     productConfigs
   }
+}
+
+} catch {
+  case e: Exception =>
 }

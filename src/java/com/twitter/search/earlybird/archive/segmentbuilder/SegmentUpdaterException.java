@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive.segmentbuilder;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -10,4 +11,7 @@ class SegmentUpdaterException extends Exception {
   SegmentUpdaterException(String msg) {
     super(msg);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.collectors;
 
 import com.twitter.search.common.relevance.utils.ResultComparators;
@@ -36,4 +37,7 @@ public class RelevanceMergeCollector extends RecencyMergeCollector {
 
     ThriftSearchResultsRelevanceStatsUtil.addRelevanceStats(base, delta);
   }
+}
+
+} catch (Exception e) {
 }

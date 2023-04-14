@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.models
 
 sealed trait ContentId
@@ -19,4 +20,8 @@ object ContentId {
   case class DeleteTweetId(tweetId: Long) extends ContentId
   case class MediaId(id: String) extends ContentId
   case class CommunityId(communityId: Long) extends ContentId
+}
+
+} catch {
+  case e: Exception =>
 }

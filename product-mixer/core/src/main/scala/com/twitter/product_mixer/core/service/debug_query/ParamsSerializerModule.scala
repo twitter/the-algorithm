@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.debug_query
 
 import com.fasterxml.jackson.core.JsonGenerator
@@ -32,4 +33,8 @@ object ParamsConfigSerializer extends StdSerializer[Config](classOf[Config]) {
   ): Unit = {
     gen.writeString(value.simpleName)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

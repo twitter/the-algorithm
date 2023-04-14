@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -63,4 +64,7 @@ message BundleEntryProto {
   //      These information for each slice can be looked up in their own
   //      BundleEntryProto, keyed by each "slice_name".
   repeated TensorSliceProto slices = 7;
+}
+
+} catch (Exception e) {
 }

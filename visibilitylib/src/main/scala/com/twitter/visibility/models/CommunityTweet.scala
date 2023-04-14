@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.models
 
 import com.twitter.tweetypie.thriftscala.Communities
@@ -21,3 +22,7 @@ case class CommunityTweet(
   tweet: Tweet,
   communityId: CommunityId,
   authorId: Long)
+
+} catch {
+  case e: Exception =>
+}

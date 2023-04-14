@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.operation._
@@ -35,4 +36,8 @@ class CursorTypeMarshaller @Inject() () {
     case urt.CursorType.EnumUnknownCursorType(id) =>
       throw new UnsupportedOperationException(s"Unexpected cursor enum field: $id")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

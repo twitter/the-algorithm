@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.SkAdNetworkData
@@ -20,4 +21,8 @@ class SkAdNetworkDataMarshaller @Inject() () {
       signature = skAdNetworkData.signature,
       fidelityType = skAdNetworkData.fidelityType
     )
+}
+
+} catch {
+  case e: Exception =>
 }

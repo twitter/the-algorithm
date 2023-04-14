@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.common
 
 import com.twitter.util.Return
@@ -34,4 +35,8 @@ class MemoizedInEpochs[K, V](f: K => Try[V]) extends Logging {
   }
 
   def currentEpochKeys: Set[K] = memoizedCalls.keySet
+}
+
+} catch {
+  case e: Exception =>
 }

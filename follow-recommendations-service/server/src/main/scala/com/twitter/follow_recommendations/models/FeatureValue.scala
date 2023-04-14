@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.models
 
 import com.twitter.follow_recommendations.{thriftscala => t}
@@ -22,3 +23,7 @@ object FeatureValue {
 
 class UnknownFeatureValueException(fieldName: String)
     extends Exception(s"Unknown FeatureValue name in thrift: ${fieldName}")
+
+} catch {
+  case e: Exception =>
+}

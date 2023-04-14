@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.ads
 import com.twitter.follow_recommendations.common.clients.adserver.AdRequest
 import com.twitter.follow_recommendations.common.models.DisplayLocation
@@ -30,4 +31,8 @@ case class PromotedAccountsFlowRequest(
   override val excludedUserIds: Seq[Long] = {
     excludeIds ++ clientContext.userId.toSeq ++ profileId.toSeq
   }
+}
+
+} catch {
+  case e: Exception =>
 }

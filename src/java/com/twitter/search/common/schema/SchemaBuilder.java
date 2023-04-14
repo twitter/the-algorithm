@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema;
 
 import java.util.Map;
@@ -690,4 +691,7 @@ public class SchemaBuilder {
   protected boolean shouldIncludeField(String fieldName) {
     return true;
   }
+}
+
+} catch (Exception e) {
 }

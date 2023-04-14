@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.media
 
 case class Rect(
@@ -5,3 +6,7 @@ case class Rect(
   top: Int,
   width: Int,
   height: Int)
+
+} catch {
+  case e: Exception =>
+}

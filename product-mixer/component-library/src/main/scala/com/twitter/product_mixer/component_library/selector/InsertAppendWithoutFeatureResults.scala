@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -32,4 +33,8 @@ case class InsertAppendWithoutFeatureResults(
     val updatedResults = result ++ candidatesWithMissingFeature
     SelectorResult(remainingCandidates = candidatesWithFeature, result = updatedResults)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

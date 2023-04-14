@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.queryparser;
 
 import java.util.Map;
@@ -66,4 +67,7 @@ public class LuceneRelevanceQueryVisitor extends EarlybirdLuceneQueryVisitor {
     // since_id is handled by the blender for relevance queries, so don't filter on it.
     return null;
   }
+}
+
+} catch (Exception e) {
 }

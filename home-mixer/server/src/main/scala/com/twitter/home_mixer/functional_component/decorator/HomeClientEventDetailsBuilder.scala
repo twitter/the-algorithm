@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.decorator
 
 import com.twitter.bijection.Base64String
@@ -89,4 +90,8 @@ case class HomeClientEventDetailsBuilder[-Query <: PipelineQuery, -Candidate <: 
 
     Some(clientEventDetails)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

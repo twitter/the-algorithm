@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.candidate.hubble
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -88,4 +89,8 @@ object AdCreativeCandidate {
     adAccountId: Long
   ): AdCreativeCandidate =
     new AdCreativeCandidate(id, adType, adAccountId)
+}
+
+} catch {
+  case e: Exception =>
 }

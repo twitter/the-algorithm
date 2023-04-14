@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
 
 import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleShowMoreBehaviorBuilder
@@ -19,4 +20,8 @@ case class ModuleDynamicShowMoreBehaviorRevealByCountBuilder(
     initialItemsCount = initialItemsCount,
     showMoreItemsCount = showMoreItemsCount
   )
+}
+
+} catch {
+  case e: Exception =>
 }

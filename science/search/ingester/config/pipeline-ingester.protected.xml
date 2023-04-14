@@ -1,3 +1,4 @@
+try {
 <?xml version="1.0" encoding="UTF-8"?>
 
 
@@ -200,3 +201,6 @@ to index. -->
       kafkaTopicName=""
       driverFactoryId="kafka"/>
 </pipeline>
+
+} catch (Exception e) {
+}

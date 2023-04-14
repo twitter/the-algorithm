@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.adserver
 
 import com.twitter.adserver.{thriftscala => t}
@@ -43,3 +44,7 @@ object AdRequest {
 class MissingAdDisplayLocation(displayLocation: DisplayLocation)
     extends Exception(
       s"Display Location ${displayLocation.toString} has no mapped AdsDisplayLocation set.")
+
+} catch {
+  case e: Exception =>
+}

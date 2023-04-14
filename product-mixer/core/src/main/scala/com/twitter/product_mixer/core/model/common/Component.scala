@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.common
 
 import com.twitter.product_mixer.core.functional_component.common.alert.Alert
@@ -15,4 +16,8 @@ trait Component extends HasComponentIdentifier {
 
   /** the [[Alert]]s that will be used for this component. */
   val alerts: Seq[Alert] = Seq.empty
+}
+
+} catch {
+  case e: Exception =>
 }

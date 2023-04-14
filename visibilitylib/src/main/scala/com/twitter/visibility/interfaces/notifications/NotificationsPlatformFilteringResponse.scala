@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.notifications
 
 import com.twitter.visibility.features.Feature
@@ -11,3 +12,7 @@ case class FilteredVerdict(action: Action) extends NotificationsPlatformFilterin
 
 case class FailedVerdict(featuresMap: Map[Feature[_], String])
     extends NotificationsPlatformFilteringResponse
+
+} catch {
+  case e: Exception =>
+}

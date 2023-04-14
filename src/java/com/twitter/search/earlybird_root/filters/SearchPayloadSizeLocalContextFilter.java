@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -40,4 +41,7 @@ public class SearchPayloadSizeLocalContextFilter
 
     return service.apply(request);
   }
+}
+
+} catch (Exception e) {
 }

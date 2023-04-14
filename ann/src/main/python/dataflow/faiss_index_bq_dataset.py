@@ -1,3 +1,4 @@
+try:
 import argparse
 import logging
 import os
@@ -230,3 +231,6 @@ class MergeAndBuildIndex(beam.CombineFn):
 if __name__ == "__main__":
   logging.getLogger().setLevel(logging.INFO)
   run_pipeline(sys.argv)
+
+except Exception:
+  pass

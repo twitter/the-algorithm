@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.Arrays;
@@ -126,4 +127,7 @@ public class ClientIdQueryOperatorStatsFilter
     }
     return detectedOperatorTypes;
   }
+}
+
+} catch (Exception e) {
 }

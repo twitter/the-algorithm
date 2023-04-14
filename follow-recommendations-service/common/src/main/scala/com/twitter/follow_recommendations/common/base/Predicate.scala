@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.base
 
 import com.twitter.finagle.stats.NullStatsReceiver
@@ -279,4 +280,8 @@ abstract class GatedPredicateBase[Q](
     }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

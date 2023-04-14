@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.addressbook
 
 import com.twitter.addressbook.datatypes.thriftscala.QueryType
@@ -218,4 +219,8 @@ object AddressbookClient {
           ))
     }
 
+}
+
+} catch {
+  case e: Exception =>
 }

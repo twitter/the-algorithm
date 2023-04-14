@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urt.builder
 
 import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
@@ -23,4 +24,8 @@ case class UnorderedExcludeIdsBottomCursorBuilder(
 
   override def excludeEntriesCollector(entries: Seq[TimelineEntry]): Seq[Long] =
     entries.collect(excludeIdsSelector)
+}
+
+} catch {
+  case e: Exception =>
 }

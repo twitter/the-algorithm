@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.adserver.thriftscala.{DisplayLocation => AdDisplayLocation}
@@ -418,3 +419,7 @@ object DisplayLocation {
 }
 
 class UnknownDisplayLocationException(message: String) extends Exception(message)
+
+} catch {
+  case e: Exception =>
+}

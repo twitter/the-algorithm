@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -125,4 +126,7 @@ public class OptimizingPostingsEnumWrapper extends PostingsEnum {
     throw new UnsupportedOperationException(
         "OptimizingPostingsEnumWrapper.startOffset() is not supported.");
   }
+}
+
+} catch (Exception e) {
 }

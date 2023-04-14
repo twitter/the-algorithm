@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["com/twitter/timelineranker/client/*.scala"],
     platform = "java8",
@@ -14,3 +15,6 @@ scala_library(
         "util/util-stats/src/main/scala",
     ],
 )
+
+} catch (Exception e) {
+}

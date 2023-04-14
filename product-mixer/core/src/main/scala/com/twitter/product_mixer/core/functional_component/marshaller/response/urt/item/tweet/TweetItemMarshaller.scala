@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref.ContextualTweetRefMarshaller
@@ -49,4 +50,8 @@ class TweetItemMarshaller @Inject() (
       destination = tweetItem.destination.map(urlMarshaller(_))
     )
   )
+}
+
+} catch {
+  case e: Exception =>
 }

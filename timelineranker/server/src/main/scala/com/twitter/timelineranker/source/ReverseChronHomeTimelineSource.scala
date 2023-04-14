@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.source
 
 import com.google.common.annotations.VisibleForTesting
@@ -324,4 +325,8 @@ class ReverseChronHomeTimelineSource(
     val maxCountFromContext = context.maxCount()
     math.min(maxCountFromQuery, maxCountFromContext)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

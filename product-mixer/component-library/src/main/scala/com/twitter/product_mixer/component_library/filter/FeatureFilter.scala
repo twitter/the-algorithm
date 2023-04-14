@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.filter
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -60,4 +61,8 @@ object FeatureFilter {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.encoding.features;
 
 import java.util.Map;
@@ -70,4 +71,7 @@ public class BinByteNormalizer extends ByteNormalizer {
         ? Double.POSITIVE_INFINITY
         : reverseBins.get(reverseBins.floorKey((byte) (1 + norm)));
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.tweets
 
 import com.twitter.servo.util.Gate
@@ -23,4 +24,8 @@ class CommunityTweetFeaturesPartitioned(
     b.forTweetOnly(tweet),
     a.forTweetOnly(tweet),
   )
+}
+
+} catch {
+  case e: Exception =>
 }

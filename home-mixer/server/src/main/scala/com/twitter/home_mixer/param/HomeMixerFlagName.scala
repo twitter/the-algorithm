@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.param
 
 object HomeMixerFlagName {
@@ -9,4 +10,8 @@ object HomeMixerFlagName {
   final val DarkTrafficFilterDeciderKey = "thrift.dark.traffic.filter.decider_key"
   final val TargetFetchLatency = "target.fetch.latency"
   final val TargetScoringLatency = "target.scoring.latency"
+}
+
+} catch {
+  case e: Exception =>
 }

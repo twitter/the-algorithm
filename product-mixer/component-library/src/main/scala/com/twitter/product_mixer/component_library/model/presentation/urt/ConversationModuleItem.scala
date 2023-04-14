@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.presentation.urt
 
 import com.twitter.product_mixer.core.model.common.presentation.urt.BaseUrtItemPresentation
@@ -8,3 +9,7 @@ trait ConversationModuleItem
     extends BaseUrtItemPresentation
     with IsDispensable
     with WithItemTreeDisplay
+
+} catch {
+  case e: Exception =>
+}

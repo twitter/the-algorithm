@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module.grpc_client
 
 import com.google.inject.Provides
@@ -87,4 +88,8 @@ object NaviGRPCClientModule extends TwitterModule {
       .build()
 
   }
+}
+
+} catch {
+  case e: Exception =>
 }

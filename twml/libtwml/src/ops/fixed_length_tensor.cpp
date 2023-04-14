@@ -1,3 +1,4 @@
+try {
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
 #include "tensorflow/core/framework/op_kernel.h"
@@ -188,3 +189,6 @@ REGISTER_SPARSE_TO_FIXED_LENGTH(int64, string)
 REGISTER_SPARSE_TO_FIXED_LENGTH(int32, int64)
 REGISTER_SPARSE_TO_FIXED_LENGTH(int32, int32)
 REGISTER_SPARSE_TO_FIXED_LENGTH(int32, string)
+
+} catch (const std::exception& e) {
+}

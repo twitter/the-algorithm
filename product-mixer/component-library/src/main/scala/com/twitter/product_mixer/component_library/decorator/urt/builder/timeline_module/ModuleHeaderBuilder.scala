@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
 
 import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.icon.BaseHorizonIconBuilder
@@ -38,4 +39,8 @@ case class ModuleHeaderBuilder[-Query <: PipelineQuery, -Candidate <: UniversalN
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

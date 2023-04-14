@@ -1,3 +1,4 @@
+try {
 # The keys in this file correspond to the DeciderValues defined in
 # https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/cr-mixer/server/src/main/scala/com/twitter/cr_mixer/param/decider/DeciderKey.scala
 
@@ -144,3 +145,6 @@ enable_earlybird_traffic:
 enable_scribe_for_blue_verified_tweet_candidates:
   comment: "Enable scribing for tweet candidates from Blue Verified users"
   default_availability: 0
+
+} catch (Exception e) {
+}

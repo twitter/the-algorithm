@@ -1,3 +1,4 @@
+try {
 # TimelineRanker
 
 **TimelineRanker** (TLR) is a legacy service that provides relevance-scored tweets from the Earlybird Search Index and User Tweet Entity Graph (UTEG) service. Despite its name, it no longer performs heavy ranking or model-based ranking itself; it only uses relevance scores from the Search Index for ranked tweet endpoints.
@@ -11,3 +12,6 @@ The following is a list of major services that Timeline Ranker interacts with:
 - **Manhattan:** Timeline Ranker hydrates some tweet features (e.g., user languages) from Manhattan.
 
 **Home Mixer** calls Timeline Ranker to fetch tweets from the Earlybird Search Index and User Tweet Entity Graph (UTEG) service to power both the For You and Following Home Timelines. Timeline Ranker performs light ranking based on Earlybird tweet candidate scores and truncates to the number of candidates requested by Home Mixer based on these scores.
+
+} catch (Exception e) {
+}

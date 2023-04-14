@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import com.twitter.search.common.caching.filter.QueryCachePredicate;
@@ -22,4 +23,7 @@ public class StrictRecencyQueryCachePredicate extends QueryCachePredicate<Earlyb
         && EarlybirdRequestUtil.isCachingAllowed(requestContext.getRequest())
         && decider.isAvailable(strictRecencyCacheEnabledDeciderKey);
   }
+}
+
+} catch (Exception e) {
 }

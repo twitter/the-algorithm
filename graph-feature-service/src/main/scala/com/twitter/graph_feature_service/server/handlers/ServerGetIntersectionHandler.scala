@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.server.handlers
 
 import com.twitter.finagle.stats.Stat
@@ -195,4 +196,8 @@ private[graph_feature_service] object ServerGetIntersectionHandler {
   def isZero(opt: Option[Int]): Boolean = {
     !opt.exists(_ != 0)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

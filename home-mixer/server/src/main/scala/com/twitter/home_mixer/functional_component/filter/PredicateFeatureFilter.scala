@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.filter
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -56,4 +57,8 @@ object PredicateFeatureFilter {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding.abuse
 
 import com.twitter.simclusters_v2.common.ClusterId
@@ -119,4 +120,8 @@ case class PairedInteractionFeatures(
    */
   def smoothedHealthRatio(smoothingFactor: Double, prior: Double): Double =
     PairedInteractionFeatures.smoothedHealthRatio(unhealthySum, healthySum, smoothingFactor, prior)
+}
+
+} catch {
+  case e: Exception =>
 }

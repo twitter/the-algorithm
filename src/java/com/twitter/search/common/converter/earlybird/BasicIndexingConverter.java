@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.converter.earlybird;
 
 import java.io.IOException;
@@ -644,4 +645,7 @@ public class BasicIndexingConverter {
 
     return createdAtMs;
   }
+}
+
+} catch (Exception e) {
 }

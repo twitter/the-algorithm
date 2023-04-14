@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.IOException;
@@ -42,4 +43,7 @@ public final class PartitionConfigLoader {
 
     return PartitionConfigUtil.initPartitionConfigForAurora(numTasks);
   }
+}
+
+} catch (Exception e) {
 }

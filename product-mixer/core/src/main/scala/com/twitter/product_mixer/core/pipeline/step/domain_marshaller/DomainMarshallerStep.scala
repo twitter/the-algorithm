@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.step.domain_marshaller
 
 import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
@@ -51,4 +52,8 @@ case class DomainMarshallerStep[
     config: DomainMarshaller[Query, ResponseType]
   ): State = state
 
+}
+
+} catch {
+  case e: Exception =>
 }

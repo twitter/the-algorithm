@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.urt
 
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -57,4 +58,8 @@ class UrtService @Inject() (productPipelineRegistry: ProductPipelineRegistry) {
         t.PipelineExecutionResult(serializedJSON)
       }
 
+}
+
+} catch {
+  case e: Exception =>
 }

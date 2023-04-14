@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
@@ -26,3 +27,7 @@ case class RelevancePromptContent(
   isRelevantFollowUp: Option[RelevancePromptFollowUpFeedbackType],
   notRelevantFollowUp: Option[RelevancePromptFollowUpFeedbackType])
     extends PromptContent
+
+} catch {
+  case e: Exception =>
+}

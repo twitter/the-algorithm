@@ -1,3 +1,4 @@
+try {
 java_library(
     sources = ["*.java"],
     platform = "java8",
@@ -43,3 +44,6 @@ java_library(
         "util/util-core:scala",
     ],
 )
+
+} catch (Exception e) {
+}

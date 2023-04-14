@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.base
 import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
 import com.twitter.stitch.Stitch
@@ -63,4 +64,8 @@ class ExperimentalCandidateSource[T <: HasParams, V](
       Nil
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.configapi.params.RuleParam
@@ -312,4 +313,8 @@ object RetweetDropRule extends RuleWithConstantAction(Drop(Unspecified), Retweet
 object ViewerIsSoftUserDropRule extends RuleWithConstantAction(Drop(ViewerIsSoftUser), SoftViewer) {
 
   override val enabled: Seq[RuleParam[Boolean]] = Seq(EnableViewerIsSoftUserDropRuleParam)
+}
+
+} catch {
+  case e: Exception =>
 }

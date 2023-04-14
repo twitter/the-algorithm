@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import com.google.common.base.Preconditions;
@@ -102,4 +103,7 @@ public class RequestTypeCountFilter
     return new RequestCountersEventListener<>(
         clientCounters, Clock.SYSTEM_CLOCK, EarlybirdSuccessfulResponseHandler.INSTANCE);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.EnumSet;
@@ -191,4 +192,7 @@ public class QueryOperatorStatFilter
       numVariantRequests.increment();
     }
   }
+}
+
+} catch (Exception e) {
 }

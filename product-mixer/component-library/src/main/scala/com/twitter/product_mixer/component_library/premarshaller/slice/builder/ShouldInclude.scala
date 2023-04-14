@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.slice.builder
 
 import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
@@ -13,4 +14,8 @@ object AlwaysInclude extends ShouldInclude[PipelineQuery] {
 
 object IncludeOnNonEmpty extends ShouldInclude[PipelineQuery] {
   override def apply(query: PipelineQuery, entries: Seq[SliceItem]): Boolean = entries.nonEmpty
+}
+
+} catch {
+  case e: Exception =>
 }

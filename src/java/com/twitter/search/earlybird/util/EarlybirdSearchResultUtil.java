@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import java.util.List;
@@ -179,4 +180,7 @@ public final class EarlybirdSearchResultUtil {
 
     return mergedResults;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.stores
 
 import com.twitter.simclusters_v2.summingbird.common.EntityUtil
@@ -33,4 +34,8 @@ case class TopKClustersForEntityReadableStore(
         }
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

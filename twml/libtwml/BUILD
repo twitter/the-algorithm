@@ -1,3 +1,4 @@
+try {
 python3_library(
     name = "libtwml-python",
     sources = ["libtwml/**/*.py"],
@@ -6,3 +7,6 @@ python3_library(
         "bazel-compatible",
     ],
 )
+
+} catch (Exception e) {
+}

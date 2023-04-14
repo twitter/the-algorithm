@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["**/*.scala"],
     platform = "java8",
@@ -33,3 +34,6 @@ scala_library(
         "util/util-slf4j-api/src/main/scala",
     ],
 )
+
+} catch (Exception e) {
+}

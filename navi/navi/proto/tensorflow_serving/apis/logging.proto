@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.serving;
@@ -14,4 +15,7 @@ message LogMetadata {
   // List of tags used to load the relevant MetaGraphDef from SavedModel.
   repeated string saved_model_tags = 3;
   // TODO: Add more metadata as mentioned in the bug.
+}
+
+} catch (Exception e) {
 }

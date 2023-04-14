@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scio.bq_generation.ftr_tweet
 
 object Config {
@@ -40,4 +41,8 @@ object Config {
   val clusterTopKTweets: Int = 2000
   val maxTweetAgeHours: Int = 24
   val TweetEmbeddingHalfLife: Int = 28800000 // for usage in DecayedValue struct
+}
+
+} catch {
+  case e: Exception =>
 }

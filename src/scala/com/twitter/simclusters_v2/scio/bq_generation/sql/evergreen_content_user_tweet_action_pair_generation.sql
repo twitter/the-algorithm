@@ -1,3 +1,4 @@
+try {
 WITH
   vars AS (
     SELECT
@@ -60,3 +61,6 @@ FROM user_tweet_engagement_pairs, vars
 CROSS JOIN UNNEST(details) AS dt
 WHERE cnt <= 10
   AND dt.doOrUndo = 1
+
+} catch (Exception e) {
+}

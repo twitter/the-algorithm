@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
 
 import com.twitter.product_mixer.core.model.marshalling.response.urp.FollowedTopicsMeTimeline
@@ -51,4 +52,8 @@ class TimelineKeyMarshaller {
     case TrendingExploreMixerTimeline() =>
       graphql.TimelineKey.TrendingExploreMixerTimeline(graphql.Void())
   }
+}
+
+} catch {
+  case e: Exception =>
 }

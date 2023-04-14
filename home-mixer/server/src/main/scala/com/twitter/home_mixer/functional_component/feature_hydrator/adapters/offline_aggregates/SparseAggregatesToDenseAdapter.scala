@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.adapters.offline_aggregates
 
 import com.twitter.ml.api.DataRecord
@@ -14,4 +15,8 @@ class SparseAggregatesToDenseAdapter(policy: CombineCountsPolicy)
 
   override val getFeatureContext: FeatureContext =
     new FeatureContext(policy.outputFeaturesPostMerge.toSeq: _*)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.tweets
 
 import com.twitter.spam.rtf.{thriftscala => t}
@@ -106,4 +107,8 @@ class TweetVisibilityLibraryParityTest(statsReceiver: StatsReceiver, stratoClien
 
       }.unit
   }
+}
+
+} catch {
+  case e: Exception =>
 }

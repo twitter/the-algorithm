@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
 
 import com.twitter.pages.render.{thriftscala => urp}
@@ -15,4 +16,8 @@ class TopicPageNavBarMarshaller @Inject() (
       topicId = topicPageNavBar.topicId,
       clientEventInfo = topicPageNavBar.clientEventInfo.map(clientEventInfoMarshaller(_))
     )
+}
+
+} catch {
+  case e: Exception =>
 }

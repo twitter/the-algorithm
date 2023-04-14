@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.engine
 
 import com.twitter.abdecider.NullABDecider
@@ -153,4 +154,8 @@ object VisibilityRulePreprocessor {
   ): VisibilityRulePreprocessor = {
     new VisibilityRulePreprocessor(metricsRecorder, policyProviderOpt)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

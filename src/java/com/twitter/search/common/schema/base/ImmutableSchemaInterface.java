@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema.base;
 
 import javax.annotation.concurrent.Immutable;
@@ -11,4 +12,7 @@ import javax.annotation.concurrent.ThreadSafe;
 @Immutable
 @ThreadSafe
 public interface ImmutableSchemaInterface extends Schema {
+}
+
+} catch (Exception e) {
 }

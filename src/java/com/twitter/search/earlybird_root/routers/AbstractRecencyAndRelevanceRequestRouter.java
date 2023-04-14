@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.routers;
 
 import java.util.ArrayList;
@@ -439,4 +440,7 @@ public abstract class AbstractRecencyAndRelevanceRequestRouter extends RequestRo
       }
     });
   }
+}
+
+} catch (Exception e) {
 }

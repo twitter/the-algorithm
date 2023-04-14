@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.timelines.configapi.Params
@@ -15,4 +16,8 @@ object ExperimentBase {
       }
       .getOrElse(true)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.pipeline_failure
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
@@ -46,4 +47,8 @@ case class PipelineFailure(
     newPipelineFailure.setStackTrace(this.getStackTrace)
     newPipelineFailure
   }
+}
+
+} catch {
+  case e: Exception =>
 }

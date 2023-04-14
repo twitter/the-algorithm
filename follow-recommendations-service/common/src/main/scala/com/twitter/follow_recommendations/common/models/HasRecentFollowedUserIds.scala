@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 trait HasRecentFollowedUserIds {
@@ -11,4 +12,8 @@ trait HasRecentFollowedUserIds {
   }
 
   lazy val numRecentFollowedUserIds: Int = recentFollowedUserIds.map(_.size).getOrElse(0)
+}
+
+} catch {
+  case e: Exception =>
 }

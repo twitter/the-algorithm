@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.filter.list_visibility
 
 import com.twitter.product_mixer.component_library.model.candidate.TwitterListCandidate
@@ -49,4 +50,8 @@ class ListVisibilityFilter[Candidate <: UniversalNoun[Long]](
         FilterResult(kept, excluded)
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

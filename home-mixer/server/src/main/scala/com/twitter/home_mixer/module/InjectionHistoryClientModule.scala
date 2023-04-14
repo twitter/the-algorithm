@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.module
 
 import com.google.inject.Provides
@@ -85,4 +86,8 @@ object InjectionHistoryClientModule extends TwitterModule {
       mhDatasetConfig
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

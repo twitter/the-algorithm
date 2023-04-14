@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import java.util.HashMap;
@@ -85,4 +86,7 @@ public final class FacetCountState<R> {
       return finished || results != null && numResultsFound >= numResultsRequested;
     }
   }
+}
+
+} catch (Exception e) {
 }

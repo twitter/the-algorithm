@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "multi-type-graph-scio-sims-lib",
     sources = ["*.scala"],
@@ -90,3 +91,6 @@ create_datasets(
         "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
     ],
 )
+
+} catch (Exception e) {
+}

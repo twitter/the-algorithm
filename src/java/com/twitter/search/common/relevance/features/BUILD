@@ -1,3 +1,4 @@
+try {
 # Java library for tweet features and utilities.
 java_library(
     sources = ["*.java"],
@@ -22,3 +23,6 @@ java_library(
         "src/thrift/com/twitter/search/common:schema-java",
     ],
 )
+
+} catch (Exception e) {
+}

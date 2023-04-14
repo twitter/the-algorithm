@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.module
 
 import com.google.inject.Provides
@@ -62,4 +63,8 @@ object ScoredTweetsMemcacheModule extends TwitterModule {
       name = ScopeName
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common;
 
 import com.twitter.decider.Decider;
@@ -29,4 +30,7 @@ public final class EarlybirdRequestPreLogger {
   public void logRequest(EarlybirdRequest request) {
     logger.logRequest(request, null, null);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import java.io.IOException;
@@ -71,4 +72,7 @@ public class DocIdFilter extends Query {
   public String toString(String field) {
     return "DOC_ID_FILTER[docId=" + docid + " + ]";
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.side_effect
 
 import com.twitter.clientapp.thriftscala.LogEvent
@@ -55,4 +56,8 @@ case class HomeScribeClientEventSideEffect(
   override val alerts = Seq(
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.9)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

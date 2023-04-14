@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.PinEntryTimelineInstruction
@@ -12,4 +13,8 @@ class PinEntryInstructionMarshaller @Inject() (
   def apply(instruction: PinEntryTimelineInstruction): urt.PinEntry = {
     urt.PinEntry(entry = timelineEntryMarshaller(instruction.entry))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

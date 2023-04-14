@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.cr_ml_ranker
 
 import com.twitter.cr_ml_ranker.{thriftscala => t}
@@ -76,4 +77,8 @@ class CrMlRankerScoreStitchClient(
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.geo
 import com.google.inject.Singleton
 import com.twitter.escherbird.util.stitchcache.StitchCache
@@ -96,4 +97,8 @@ class PopGeoQualityFollowSource @Inject() (
         }.getOrElse(Nil)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

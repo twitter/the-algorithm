@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module
 
 import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
@@ -11,4 +12,8 @@ trait BaseModuleFooterBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNo
     query: Query,
     candidates: Seq[CandidateWithFeatures[Candidate]]
   ): Option[ModuleFooter]
+}
+
+} catch {
+  case e: Exception =>
 }

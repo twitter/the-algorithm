@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.sims
 
 import com.twitter.escherbird.util.stitchcache.StitchCache
@@ -47,4 +48,8 @@ class CacheBasedSimsStore(
         }
       }.map(_.flatten.distinct.map(_.withCandidateSource(identifier)))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

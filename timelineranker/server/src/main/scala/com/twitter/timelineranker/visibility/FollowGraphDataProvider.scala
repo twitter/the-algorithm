@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.visibility
 
 import com.twitter.timelineranker.core.FollowGraphData
@@ -22,4 +23,8 @@ trait FollowGraphDataProvider {
   def getFollowing(userId: UserId, maxFollowingCount: Int): Future[Seq[UserId]]
 
   def getMutuallyFollowingUserIds(userId: UserId, followingIds: Seq[UserId]): Future[Set[UserId]]
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.following.model
 
 import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
@@ -63,4 +64,8 @@ class HomeMixerExternalStrings @Inject() (
     externalStringRegistryProvider.get().createProdString("SocialContext.extendedReply")
   val socialContextReceivedReply =
     externalStringRegistryProvider.get().createProdString("SocialContext.receivedReply")
+}
+
+} catch {
+  case e: Exception =>
 }

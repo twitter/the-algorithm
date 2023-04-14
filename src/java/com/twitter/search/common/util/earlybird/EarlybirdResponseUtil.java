@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.earlybird;
 
 import java.util.ArrayList;
@@ -201,4 +202,7 @@ public final class EarlybirdResponseUtil {
   private static boolean resultIsNullcast(ThriftSearchResult result) {
     return result.isSetMetadata() && result.getMetadata().isIsNullcast();
   }
+}
+
+} catch (Exception e) {
 }

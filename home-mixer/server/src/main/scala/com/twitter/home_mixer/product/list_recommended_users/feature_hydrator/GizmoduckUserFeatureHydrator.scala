@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.list_recommended_users.feature_hydrator
 
 import com.twitter.gizmoduck.{thriftscala => gt}
@@ -56,4 +57,8 @@ class GizmoduckUserFeatureHydrator @Inject() (gizmoduck: Gizmoduck)
           }
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

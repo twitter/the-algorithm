@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -29,4 +30,7 @@ message CoordinationServiceConfig {
   // The list of jobs that partipate in the coordination service. If empty, all
   // jobs will be included in the coordination service by default.
   repeated string coordinated_jobs = 6;
+}
+
+} catch (Exception e) {
 }

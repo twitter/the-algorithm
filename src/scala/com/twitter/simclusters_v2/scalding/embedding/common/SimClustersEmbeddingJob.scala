@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding.common
 
 import com.twitter.scalding.{Args, DateRange, Execution, TypedPipe, UniqueID}
@@ -245,4 +246,8 @@ object SimClustersEmbeddingJob {
         InternalIdEmbedding(internalIdsWithScore)
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

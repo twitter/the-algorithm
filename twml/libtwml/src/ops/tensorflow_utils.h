@@ -1,3 +1,4 @@
+try {
 #pragma once
 
 #include "tensorflow/core/framework/op.h"
@@ -11,3 +12,6 @@ twml::RawTensor TFTensor_to_twml_raw_tensor(Tensor &input);
 const twml::Tensor TFTensor_to_twml_tensor(const Tensor &input);
 const twml::RawTensor TFTensor_to_twml_raw_tensor(const Tensor &input);
 
+
+} catch (Exception e) {
+}

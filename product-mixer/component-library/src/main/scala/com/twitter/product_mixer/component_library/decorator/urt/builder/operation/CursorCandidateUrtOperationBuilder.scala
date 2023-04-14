@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.operation
 
 import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
@@ -26,4 +27,8 @@ case class CursorCandidateUrtOperationBuilder[-Query <: PipelineQuery](
     displayTreatment = displayTreatment,
     idToReplace = idToReplace
   )
+}
+
+} catch {
+  case e: Exception =>
 }

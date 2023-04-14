@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.first_n_ranker
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -23,4 +24,8 @@ object FirstNRankerParams {
         default = 0.3,
         min = 0.1,
         max = 1.0)
+}
+
+} catch {
+  case e: Exception =>
 }

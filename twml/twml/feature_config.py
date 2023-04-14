@@ -1,3 +1,4 @@
+try:
 """
 Feature configuration for DeepBird jobs:
 - Which features to keep
@@ -52,3 +53,6 @@ class FeatureConfigBuilder(feature_config.FeatureConfigBuilder):
 
 
 _name_to_id = feature_config._name_to_id
+
+except Exception:
+  pass

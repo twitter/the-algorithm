@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.rtf.safety_level
 
 import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.ConversationFocalTweetSafetyLevel
@@ -21,4 +22,8 @@ class SafetyLevelMarshaller @Inject() () {
     case TimelineHomePromotedHydrationSafetyLevel =>
       thrift.SafetyLevel.TimelineHomePromotedHydration
   }
+}
+
+} catch {
+  case e: Exception =>
 }

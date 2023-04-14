@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.LiveEventDetails
@@ -11,4 +12,8 @@ class LiveEventDetailsMarshaller @Inject() () {
   def apply(liveEventDetails: LiveEventDetails): urt.LiveEventDetails = urt.LiveEventDetails(
     eventId = liveEventDetails.eventId
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicItem
@@ -23,4 +24,8 @@ class TopicItemMarshaller @Inject() (
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

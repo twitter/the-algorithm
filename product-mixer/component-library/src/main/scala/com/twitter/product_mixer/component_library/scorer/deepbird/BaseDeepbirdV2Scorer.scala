@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.deepbird
 
 import com.twitter.product_mixer.core.feature.datarecord.BaseDataRecordFeature
@@ -88,4 +89,8 @@ abstract class BaseDeepbirdV2Scorer[
       resultDataRecordExtractor.fromDataRecord(resultDataRecord)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

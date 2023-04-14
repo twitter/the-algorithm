@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.gate
 
 import com.twitter.product_mixer.core.functional_component.gate.Gate
@@ -45,4 +46,8 @@ case class DismissFatigueGate(
   ): Duration =
     // limit to maximum dismissal duration
     dismissDuration * Math.min(dismissCount, DismissFatigueGate.MaximumDismissalCountMultiplier)
+}
+
+} catch {
+  case e: Exception =>
 }

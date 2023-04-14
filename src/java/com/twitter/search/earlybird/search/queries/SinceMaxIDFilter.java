@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.queries;
 
 import java.io.IOException;
@@ -208,4 +209,7 @@ public final class SinceMaxIDFilter extends Query {
       }
     }
   }
+}
+
+} catch (Exception e) {
 }

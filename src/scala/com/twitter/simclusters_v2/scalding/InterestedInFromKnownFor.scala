@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 
 import com.twitter.algebird.Semigroup
@@ -663,4 +664,8 @@ object InterestedInFromKnownFor {
         )
       ).unit
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import org.apache.lucene.util.ByteBlockPool;
@@ -123,4 +124,7 @@ public abstract class ByteTermUtils {
     block[blockUpto++] =  (byte) value;
     termPool.byteUpto = blockUpto;
   }
+}
+
+} catch (Exception e) {
 }

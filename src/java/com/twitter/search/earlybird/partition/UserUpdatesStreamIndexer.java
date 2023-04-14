@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.util.Date;
@@ -86,4 +87,7 @@ public class UserUpdatesStreamIndexer extends SimpleStreamIndexer<Long, Antisoci
       indexingFailures.increment();
     }
   }
+}
+
+} catch (Exception e) {
 }

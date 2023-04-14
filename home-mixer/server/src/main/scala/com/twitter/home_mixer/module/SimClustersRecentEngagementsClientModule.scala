@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.module
 
 import com.google.inject.Provides
@@ -20,4 +21,8 @@ object SimClustersRecentEngagementsClientModule extends TwitterModule {
   ): SimClustersRecentEngagementSimilarityClient = {
     new SimClustersRecentEngagementSimilarityClientImpl(stratoClient, statsReceiver)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

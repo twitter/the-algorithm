@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.common.identifier
 
 /**
@@ -67,4 +68,8 @@ object MixerPipelineIdentifier {
     else
       throw new IllegalArgumentException(s"Illegal MixerPipelineIdentifier: $name")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.IOException;
@@ -819,4 +820,7 @@ public class SegmentManager {
   ArrayList<Long> getTimeSliceIdsForTests() {
     return new ArrayList<Long>(segmentWriters.keySet());
   }
+}
+
+} catch (Exception e) {
 }

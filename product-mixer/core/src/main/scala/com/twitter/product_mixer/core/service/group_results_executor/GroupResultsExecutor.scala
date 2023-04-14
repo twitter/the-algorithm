@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.group_results_executor
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -120,3 +121,7 @@ case class GroupResultsExecutorInput[Candidate <: UniversalNoun[Any]](
 
 case class GroupResultsExecutorResult(candidatesWithDetails: Seq[CandidateWithDetails])
     extends ExecutorResult
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.uteg_liked_by_tweets
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -303,4 +304,8 @@ class UtegLikedByTweetsSource(
     Future.collect(queries.map(get))
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

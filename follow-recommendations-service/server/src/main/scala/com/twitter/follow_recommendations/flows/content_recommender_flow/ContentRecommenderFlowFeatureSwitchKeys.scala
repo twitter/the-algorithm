@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.content_recommender_flow
 
 object ContentRecommenderFlowFeatureSwitchKeys {
@@ -67,4 +68,8 @@ object ContentRecommenderFlowFeatureSwitchKeys {
     "content_recommender_flow_candidate_source_weight_top_organic_follow_account"
   val CrowdSearchAccountSourceWeight =
     "content_recommender_flow_candidate_source_weight_crowd_search_account"
+}
+
+} catch {
+  case e: Exception =>
 }

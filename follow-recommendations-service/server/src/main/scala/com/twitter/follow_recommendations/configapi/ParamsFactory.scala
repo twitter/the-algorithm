@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.configapi
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -26,4 +27,8 @@ class ParamsFactory @Inject() (
     featureOverrides: Map[String, FeatureValue]
   ): Params =
     apply(requestContextFactory(clientContext, displayLocation, featureOverrides))
+}
+
+} catch {
+  case e: Exception =>
 }

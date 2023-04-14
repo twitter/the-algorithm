@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = [
         "*.scala",
@@ -8,3 +9,6 @@ scala_library(
         "src/scala/com/twitter/wtf/beam/bq_embedding_export:bq_embedding_export_lib",
     ],
 )
+
+} catch (Exception e) {
+}

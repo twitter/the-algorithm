@@ -1,3 +1,4 @@
+try {
 scala_library(
     compiler_option_sets = ["fatal_warnings"],
     strict_deps = True,
@@ -19,3 +20,6 @@ scala_library(
         "src/thrift/com/twitter/ads/adserver:ads_shared_types-scala",
     ],
 )
+
+} catch (Exception e) {
+}

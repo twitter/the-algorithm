@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
@@ -46,4 +47,8 @@ case class FullCover(
 
   // Not used for covers
   override def feedbackActionInfo: Option[FeedbackActionInfo] = None
+}
+
+} catch {
+  case e: Exception =>
 }

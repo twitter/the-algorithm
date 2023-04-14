@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition.freshstartup;
 
 import com.twitter.search.earlybird.partition.SegmentWriter;
@@ -43,4 +44,7 @@ class SegmentTweetsIndexingResult {
         segmentWriter.getSegmentInfo().getSegmentName(),
         maxIndexedTweetId);
   }
+}
+
+} catch (Exception e) {
 }

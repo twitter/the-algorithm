@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.similarity_engine
 
 import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
@@ -29,4 +30,8 @@ object SimilaritySourceOrderingUtil {
     //convert result to immutable seq
     result.toList
   }
+}
+
+} catch {
+  case e: Exception =>
 }

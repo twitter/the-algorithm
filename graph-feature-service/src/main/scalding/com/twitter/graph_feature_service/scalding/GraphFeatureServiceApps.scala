@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.scalding
 
 import com.twitter.scalding.DateRange
@@ -49,4 +50,8 @@ object GraphFeatureServiceScheduledApp
       Some(false) // disable key Graphs since we are not using them in production
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

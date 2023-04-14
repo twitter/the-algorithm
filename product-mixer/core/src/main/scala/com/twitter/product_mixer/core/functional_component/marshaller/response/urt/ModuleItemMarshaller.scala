@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItem
@@ -20,4 +21,8 @@ class ModuleItemMarshaller @Inject() (
     dispensable = moduleItem.dispensable,
     treeDisplay = moduleItem.treeDisplay.map(moduleItemTreeDisplayMarshaller.apply)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

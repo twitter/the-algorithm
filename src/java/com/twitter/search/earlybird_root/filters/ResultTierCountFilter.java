@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.Collection;
@@ -111,4 +112,7 @@ public class ResultTierCountFilter
 
     return tierBuckets.floorEntry(timeSinceEpochSec).getValue();
   }
+}
+
+} catch (Exception e) {
 }

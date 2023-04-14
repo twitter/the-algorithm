@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common
 
 import com.twitter.ml.api.Feature
@@ -14,4 +15,8 @@ class EarlybirdTrainingRecapConfiguration extends EarlybirdTrainingConfiguration
     "retweeted" -> RecapFeatures.IS_RETWEETED,
     "video_playback50" -> RecapFeatures.IS_VIDEO_PLAYBACK_50
   )
+}
+
+} catch {
+  case e: Exception =>
 }

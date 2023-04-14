@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.similarity_engine
 
 import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.MemCacheConfig
@@ -75,4 +76,8 @@ class LookupSimilarityEngine[Query, Candidate <: Serializable](
       scopedStats = scopedStats.scope(engineQuery.lookupKey)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

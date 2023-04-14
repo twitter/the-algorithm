@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.update_known_for
 
 import com.twitter.algebird.Max
@@ -682,4 +683,8 @@ object UpdateKnownForSBFRunner {
       Execution.from(knownForAssignmentsFromClusterScores)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

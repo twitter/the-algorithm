@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.util.Optional;
@@ -93,4 +94,7 @@ public class SegmentIndexStats {
     sb.append("Index size: ").append(getIndexSizeOnDiskInBytes());
     return sb.toString();
   }
+}
+
+} catch (Exception e) {
 }

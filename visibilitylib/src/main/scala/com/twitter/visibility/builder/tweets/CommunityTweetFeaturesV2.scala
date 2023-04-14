@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.tweets
 
 import com.twitter.communities.moderation.thriftscala.CommunityTweetModerationState
@@ -126,4 +127,8 @@ class CommunityTweetFeaturesV2(communitiesSource: CommunitiesSource)
       case Some(communityTweet) => forCommunityTweet(communityTweet)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

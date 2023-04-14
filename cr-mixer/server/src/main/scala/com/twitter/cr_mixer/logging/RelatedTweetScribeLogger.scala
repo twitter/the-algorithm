@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.logging
 
 import com.twitter.cr_mixer.model.RelatedTweetCandidateGeneratorQuery
@@ -190,4 +191,8 @@ case class RelatedTweetScribeLogger @Inject() (
   ): Unit = {
     publish(logger = relatedTweetsScribeLogger, codec = GetRelatedTweetsScribe, message = scribeMsg)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

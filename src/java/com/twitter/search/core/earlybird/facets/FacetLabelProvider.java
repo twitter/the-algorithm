@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import org.apache.lucene.util.BytesRef;
@@ -203,4 +204,7 @@ public interface FacetLabelProvider {
       };
     }
   }
+}
+
+} catch (Exception e) {
 }

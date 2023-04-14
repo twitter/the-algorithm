@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 package multi_type_graph.assemble_multi_type_graph
 
@@ -511,4 +512,8 @@ object AssembleMultiTypeGraph {
       getMagicRecsNotifOpenOrClickTweetsGraph(userMRNotifOpenOrClickEvents) ++
       getSearchGraph(userSearchQueryEdges)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

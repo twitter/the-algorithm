@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding.abuse
 
 import com.google.common.annotations.VisibleForTesting
@@ -151,4 +152,8 @@ object SingleSideInteractionTransformation {
     val clusterFeatures = computeClusterFeatures(normalizedUserSimClusters, interactionGraph)
     computeUserFeaturesFromClusters(normalizedUserSimClusters, clusterFeatures)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

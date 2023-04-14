@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.list_recommended_users.param
 
 import com.twitter.home_mixer.param.decider.DeciderKey
@@ -19,4 +20,8 @@ class ListRecommendedUsersParamConfig @Inject() () extends ProductParamConfig {
     ServerMaxResultsParam,
     ExcludedIdsMaxLengthParam
   )
+}
+
+} catch {
+  case e: Exception =>
 }

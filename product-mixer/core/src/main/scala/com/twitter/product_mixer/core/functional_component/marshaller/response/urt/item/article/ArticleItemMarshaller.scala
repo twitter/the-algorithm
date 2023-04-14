@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.article
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.SocialContextMarshaller
@@ -20,4 +21,8 @@ class ArticleItemMarshaller @Inject() (
         articleSeedType = Some(articleSeedTypeMarshaller(articleItem.articleSeedType))
       )
     )
+}
+
+} catch {
+  case e: Exception =>
 }

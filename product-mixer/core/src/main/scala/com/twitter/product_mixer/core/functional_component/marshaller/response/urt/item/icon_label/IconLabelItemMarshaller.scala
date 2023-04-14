@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.icon_label
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon.HorizonIconMarshaller
@@ -19,4 +20,8 @@ class IconLabelItemMarshaller @Inject() (
         icon = iconLabelItem.icon.map(horizonIconMarshaller(_))
       )
     )
+}
+
+} catch {
+  case e: Exception =>
 }

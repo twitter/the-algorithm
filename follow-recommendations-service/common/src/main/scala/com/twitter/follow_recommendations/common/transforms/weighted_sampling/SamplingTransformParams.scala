@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.transforms.weighted_sampling
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -22,4 +23,8 @@ object SamplingTransformParams {
   case object ScribeRankingInfoInSamplingTransform
       extends FSParam[Boolean]("sampling_transform_scribe_ranking_info", false)
 
+}
+
+} catch {
+  case e: Exception =>
 }

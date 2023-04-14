@@ -1,3 +1,4 @@
+try {
 #include "internal/interpolate.h"
 #include "internal/error.h"
 #include <twml/optim.h>
@@ -271,4 +272,7 @@ twml_err twml_optim_nearest_interpolation(
       *getConstTensor(xs),
       *getConstTensor(ys)););
   return TWML_ERR_NONE;
+}
+
+} catch (const std::exception& e) {
 }

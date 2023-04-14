@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.selector
 
 import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
@@ -9,3 +10,7 @@ import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDet
 case class SelectorResult(
   remainingCandidates: Seq[CandidateWithDetails],
   result: Seq[CandidateWithDetails])
+
+} catch {
+  case e: Exception =>
+}

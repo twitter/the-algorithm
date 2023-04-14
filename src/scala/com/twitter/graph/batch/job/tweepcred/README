@@ -1,3 +1,4 @@
+try {
 Tweepcred
 
 Tweepcred is a social network analysis tool that calculates the influence of Twitter users based on their interactions with other users. The tool uses the PageRank algorithm to rank users based on their influence.
@@ -73,3 +74,6 @@ The algorithm tests for convergence by calculating the total difference between 
 This is a helper class called Reputation that contains methods for calculating a user's reputation score. The first method called scaledReputation takes a Double parameter raw which represents the user's page rank, and returns a Byte value that represents the user's reputation on a scale of 0 to 100. This method uses a formula that involves converting the logarithm of the page rank to a number between 0 and 100.
 
 The second method called adjustReputationsPostCalculation takes three parameters: mass (a Double value representing the user's page rank), numFollowers (an Int value representing the number of followers a user has), and numFollowings (an Int value representing the number of users a user is following). This method reduces the page rank of users who have a low number of followers but a high number of followings. It calculates a division factor based on the ratio of followings to followers, and reduces the user's page rank by dividing it by this factor. The method returns the adjusted page rank.
+
+} catch (Exception e) {
+}

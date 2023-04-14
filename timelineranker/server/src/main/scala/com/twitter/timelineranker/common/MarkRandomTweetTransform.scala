@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.servo.util.FutureArrow
@@ -52,4 +53,8 @@ class MarkRandomTweetTransform(
       Future.value(envelope.copy(searchResults = updatedSearchResults))
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

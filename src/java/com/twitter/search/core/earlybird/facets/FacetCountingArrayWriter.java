@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
@@ -52,4 +53,7 @@ public class FacetCountingArrayWriter {
     int poolPointer = AbstractFacetCountingArray.encodePointer(facetsPool.length() - 1);
     facetCountingArray.setFacet(docID, poolPointer);
   }
+}
+
+} catch (Exception e) {
 }

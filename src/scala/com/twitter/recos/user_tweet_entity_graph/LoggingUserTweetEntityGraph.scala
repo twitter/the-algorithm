@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_tweet_entity_graph
 
 import com.twitter.finagle.tracing.Trace
@@ -100,4 +101,8 @@ trait LoggingUserTweetEntityGraph extends thriftscala.UserTweetEntityGraph.Metho
       )
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

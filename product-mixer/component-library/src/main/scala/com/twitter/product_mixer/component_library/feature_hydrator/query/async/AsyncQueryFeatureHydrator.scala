@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.feature_hydrator.query.async
 
 import com.twitter.ml.featurestore.lib.EntityId
@@ -94,4 +95,8 @@ object AsyncQueryFeatureHydrator {
     featureStoreV1QueryFeatureHydrator: FeatureStoreV1QueryFeatureHydrator[Query]
   ): AsyncFeatureStoreV1QueryFeatureHydrator[Query] =
     new AsyncFeatureStoreV1QueryFeatureHydrator(hydrateBefore, featureStoreV1QueryFeatureHydrator)
+}
+
+} catch {
+  case e: Exception =>
 }

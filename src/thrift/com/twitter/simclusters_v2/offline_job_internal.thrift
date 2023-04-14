@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.simclusters_v2.thriftjava
 namespace py gen.twitter.simclusters_v2.offline_job_internal
 #@namespace scala com.twitter.simclusters_v2.thriftscala
@@ -61,3 +62,6 @@ struct QueryTopKClustersWithScores {
   2: required PersistedModelVersion modelVersion
   3: required map<i32, PersistedScores> topKClusters
 }(persisted = 'true', hasPersonalData = 'true')
+
+} catch (Exception e) {
+}

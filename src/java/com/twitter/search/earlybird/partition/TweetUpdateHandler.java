@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.IOException;
@@ -172,4 +173,7 @@ public class TweetUpdateHandler {
     LOG.info(String.format("  dropped cleanup events: %,d", DROPPED_CLEANUP_EVENT.getCount()));
     LOG.info(String.format("  picked events to retry: %,d", PICKED_TO_RETRY.getCount()));
   }
+}
+
+} catch (Exception e) {
 }

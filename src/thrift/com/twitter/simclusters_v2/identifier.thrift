@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.simclusters_v2.thriftjava
 namespace py gen.twitter.simclusters_v2.identifier
 #@namespace scala com.twitter.simclusters_v2.thriftscala
@@ -203,3 +204,6 @@ struct SimClustersMultiEmbeddingId {
   2: required online_store.ModelVersion modelVersion
   3: required InternalId internalId
 }(persisted = 'true', hasPersonalData = 'true')
+
+} catch (Exception e) {
+}

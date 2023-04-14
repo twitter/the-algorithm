@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import java.io.IOException;
@@ -58,4 +59,7 @@ public class MultiTermDisjunctionQuery extends MultiTermQuery {
     builder.append("]");
     return builder.toString();
   }
+}
+
+} catch (Exception e) {
 }

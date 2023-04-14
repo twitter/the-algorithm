@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import com.twitter.conversions.DurationOps._
@@ -103,4 +104,8 @@ object GlobalParams {
       .set(seqOverrides: _*)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

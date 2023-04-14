@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -38,3 +39,6 @@ scala_library(
         "strato/config/src/thrift/com/twitter/strato/graphql/contextual_refs:graphql-refs-scala",
     ],
 )
+
+} catch (Exception e) {
+}

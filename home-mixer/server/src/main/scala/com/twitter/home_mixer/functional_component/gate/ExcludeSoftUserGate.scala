@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.gate
 
 import com.twitter.gizmoduck.{thriftscala => t}
@@ -20,4 +21,8 @@ object ExcludeSoftUserGate extends Gate[PipelineQuery] {
       .exists(_.getOrElse(UserTypeFeature, None).exists(_ == t.UserType.Soft))
     Stitch.value(!softUser)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

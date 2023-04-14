@@ -1,3 +1,4 @@
+try {
 java_library(
     sources = ["*.java"],
     platform = "java8",
@@ -38,3 +39,6 @@ java_library(
         "src/thrift/com/twitter/search:earlybird-java",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import java.io.IOException;
@@ -375,4 +376,7 @@ public class IDDisjunctionQuery extends MultiTermQuery {
       };
     }
   }
+}
+
+} catch (Exception e) {
 }

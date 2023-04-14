@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import com.twitter.timelines.configapi.BaseConfig
@@ -25,4 +26,8 @@ object RecentOriginalTweetsParams {
       .set(booleanOverrides: _*)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

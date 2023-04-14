@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml;
 
 import java.io.IOException;
@@ -138,4 +139,7 @@ public class EnumBasedLinearModel<K extends Enum<K>> implements MapBasedLinearMo
         "Model does not contain weights for all the features");
     return weights;
   }
+}
+
+} catch (Exception e) {
 }

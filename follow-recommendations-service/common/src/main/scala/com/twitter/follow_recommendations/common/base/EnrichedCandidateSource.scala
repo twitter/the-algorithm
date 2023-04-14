@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.base
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -161,4 +162,8 @@ class EnrichedCandidateSource[Target, Candidate](original: CandidateSource[Targe
 object EnrichedCandidateSource {
   implicit def toEnriched[K, V](original: CandidateSource[K, V]): EnrichedCandidateSource[K, V] =
     new EnrichedCandidateSource(original)
+}
+
+} catch {
+  case e: Exception =>
 }

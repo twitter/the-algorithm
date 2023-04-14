@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.step.transport_marshaller
 
 import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
@@ -74,3 +75,7 @@ case class TransportMarshallerStep[
 case class TransportMarshallerConfig[DomainResponseType <: HasMarshalling, TransportResponseType](
   transportMarshaller: TransportMarshaller[DomainResponseType, TransportResponseType],
   domainMarshallerStepIdentifier: PipelineStepIdentifier)
+
+} catch {
+  case e: Exception =>
+}

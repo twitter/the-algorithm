@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.response_transformer
 
 import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
@@ -88,4 +89,8 @@ object TimelineRankerResponseTransformer {
       .add(TweetUrlsFeature, candidate.features.flatMap(_.urlsList).getOrElse(Seq.empty))
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

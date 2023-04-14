@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema.base;
 
 import java.util.Map;
@@ -25,4 +26,7 @@ public abstract class FieldNameToIdMapping {
       }
     };
   }
+}
+
+} catch (Exception e) {
 }

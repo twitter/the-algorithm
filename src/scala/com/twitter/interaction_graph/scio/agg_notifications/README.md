@@ -1,3 +1,4 @@
+try {
 ## InteractionGraphClientEventLogs Dataflow Job
 
 #### IntelliJ
@@ -32,3 +33,6 @@ bin/d6w schedule \
   --bind=profile.date=2022-05-10 \
   --bind=profile.output_path=processed/interaction_graph_agg_notifications_dataflow
 ```
+
+} catch (Exception e) {
+}

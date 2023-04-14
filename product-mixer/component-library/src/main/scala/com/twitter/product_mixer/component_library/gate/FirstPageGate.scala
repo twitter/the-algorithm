@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.gate
 
 import com.twitter.product_mixer.core.functional_component.gate.Gate
@@ -16,4 +17,8 @@ object FirstPageGate extends Gate[PipelineQuery with HasPipelineCursor[_]] {
   // If cursor is first page, then gate should return continue, otherwise return stop
   override def shouldContinue(query: PipelineQuery with HasPipelineCursor[_]): Stitch[Boolean] =
     Stitch.value(query.isFirstPage)
+}
+
+} catch {
+  case e: Exception =>
 }

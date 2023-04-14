@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.follow_recommendations.logging.thriftjava
 #@namespace scala com.twitter.follow_recommendations.logging.thriftscala
 #@namespace strato com.twitter.follow_recommendations.logging
@@ -70,3 +71,6 @@ struct RecommendationFlowLog {
   7: optional list<OfflineRecommendationFlowCandidateSourceCandidates> rankedCandidates
   8: optional list<OfflineRecommendationFlowCandidateSourceCandidates> truncatedCandidates
 }(persisted='true', hasPersonalData='true')
+
+} catch (Exception e) {
+}

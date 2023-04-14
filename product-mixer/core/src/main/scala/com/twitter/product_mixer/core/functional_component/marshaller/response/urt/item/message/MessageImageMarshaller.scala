@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ImageVariantMarshaller
@@ -16,4 +17,8 @@ class MessageImageMarshaller @Inject() (
       backgroundColor = messageImage.backgroundColor
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

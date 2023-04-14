@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.mixer
 
 import com.twitter.product_mixer.core.functional_component.common.alert.Alert
@@ -172,4 +173,8 @@ object MixerPipelineConfig extends PipelineConfigCompanion {
     resultSelectorsStep,
     resultSideEffectsStep
   )
+}
+
+} catch {
+  case e: Exception =>
 }

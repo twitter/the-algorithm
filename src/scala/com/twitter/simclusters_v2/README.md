@@ -1,3 +1,4 @@
+try {
 # SimClusters: Community-based Representations for Heterogeneous Recommendations at Twitter
 
 ## Overview
@@ -110,3 +111,5 @@ All SimClusters related GCP jobs are under [src/scala/com/twitter/simclusters_v2
 |---|---|---|
 | Tweet Embedding Job |  [simclusters_v2/summingbird/storm/TweetJob.scala](summingbird/storm/TweetJob.scala) | Generate the Tweet embedding and index of tweets for the SimClusters |
 | Persistent Tweet Embedding Job|  [simclusters_v2/summingbird/storm/PersistentTweetJob.scala](summingbird/storm/PersistentTweetJob.scala) |  Persistent the tweet embeddings from MemCache into Manhattan.|
+} catch (Exception e) {
+}

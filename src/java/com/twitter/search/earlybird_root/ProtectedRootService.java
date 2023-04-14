@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import javax.inject.Inject;
@@ -107,4 +108,7 @@ public class ProtectedRootService implements EarlybirdService.ServiceIface {
   public Future<EarlybirdResponse> search(EarlybirdRequest request) {
     return allFiltersAndService.apply(request);
   }
+}
+
+} catch (Exception e) {
 }

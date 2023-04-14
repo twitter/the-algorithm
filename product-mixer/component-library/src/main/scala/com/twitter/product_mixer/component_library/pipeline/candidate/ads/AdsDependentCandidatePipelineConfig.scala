@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.ads
 
 import com.twitter.adserver.{thriftscala => ads}
@@ -57,4 +58,8 @@ class AdsDependentCandidatePipelineConfig[Query <: PipelineQuery with AdsQuery](
     ads.AdImpression,
     AdsCandidate
   ] = AdsCandidatePipelineResultsTransformer
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.users
 
 import com.twitter.finagle.stats.Counter
@@ -89,4 +90,8 @@ class ViewerAdvancedFilteringFeatures(userSource: UserSource, statsReceiver: Sta
 
     advancedFilters.map(advancedFilterCheck)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

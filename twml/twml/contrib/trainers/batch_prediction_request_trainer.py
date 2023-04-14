@@ -1,3 +1,4 @@
+try:
 # pylint: disable=arguments-differ, invalid-name
 """
 This file contains the DataRecordTrainer class.
@@ -178,3 +179,6 @@ class BatchPredictionRequestTrainer(DataRecordTrainer):  # pylint: disable=abstr
       help='Options are full_mask (default), diag_mask')
 
     return parser
+
+except Exception:
+  pass

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.component_library.selector.InsertIntoModule.ModuleAndIndex
@@ -53,4 +54,8 @@ case class InsertAppendIntoModuleCandidates(
 
     SelectorResult(remainingCandidates = updatedRemainingCandidates, result = result)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

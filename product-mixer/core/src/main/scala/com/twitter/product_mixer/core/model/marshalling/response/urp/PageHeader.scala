@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urp
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
@@ -13,3 +14,7 @@ case class TopicPageHeader(
   displayType: Option[TopicPageHeaderDisplayType] = Some(BasicTopicPageHeaderDisplayType))
     extends PageHeader
     with HasClientEventInfo
+
+} catch {
+  case e: Exception =>
+}

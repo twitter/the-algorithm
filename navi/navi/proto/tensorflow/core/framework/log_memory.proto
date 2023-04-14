@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -92,4 +93,7 @@ message MemoryLogRawDeallocation {
   // True if the deallocation is queued and will be performed later,
   // e.g. for GPU lazy freeing of buffers.
   bool deferred = 5;
+}
+
+} catch (Exception e) {
 }

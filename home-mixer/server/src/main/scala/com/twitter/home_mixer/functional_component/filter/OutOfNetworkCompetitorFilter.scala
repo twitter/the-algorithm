@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.filter
 
 import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
@@ -35,4 +36,8 @@ object OutOfNetworkCompetitorFilter extends Filter[PipelineQuery, TweetCandidate
     !candidate.features.getOrElse(IsRetweetFeature, false) &&
     candidate.features.getOrElse(AuthorIdFeature, None).exists(competitorAuthors.contains)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

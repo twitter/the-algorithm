@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 trait HasPreviousRecommendationsContext {
@@ -9,4 +10,8 @@ trait HasPreviousRecommendationsContext {
   def skippedFollows: Set[Long] = {
     previouslyRecommendedUserIDs.diff(previouslyFollowedUserIds)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

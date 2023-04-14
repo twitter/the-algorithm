@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -28,3 +29,6 @@ scala_library(
         "src/java/com/twitter/search/common/util/bloomfilter",
     ],
 )
+
+} catch (Exception e) {
+}

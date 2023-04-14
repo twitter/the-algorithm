@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import javax.inject.Inject;
@@ -15,4 +16,7 @@ public class RealtimeCgRootServer extends SearchRootServer<EarlybirdService.Serv
     super(svc, byteSvc);
   }
 
+}
+
+} catch (Exception e) {
 }

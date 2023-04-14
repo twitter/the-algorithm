@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.adapters
 
 import com.twitter.ml.api.DataRecord
@@ -148,4 +149,8 @@ trait PostNuxAlgorithmAdapter extends IRecordOneToOneAdapter[DataRecord] {
   override def getFeatureContext: FeatureContext =
     new FeatureContext()
       .addFeatures(this.getFeatures.asJava)
+}
+
+} catch {
+  case e: Exception =>
 }

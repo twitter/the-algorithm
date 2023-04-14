@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urp
 
 import com.twitter.product_mixer.component_library.premarshaller.urp.builder.PageBodyBuilder
@@ -49,4 +50,8 @@ case class UrpDomainMarshaller[-Query <: PipelineQuery](
       pageNavBar = pageNavBar
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

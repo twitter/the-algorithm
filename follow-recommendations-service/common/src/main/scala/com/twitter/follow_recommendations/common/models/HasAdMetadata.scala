@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.adserver.{thriftscala => t}
@@ -20,4 +21,8 @@ trait HasAdMetadata {
   }
 
   def isPromotedAccount: Boolean = adMetadata.isDefined
+}
+
+} catch {
+  case e: Exception =>
 }

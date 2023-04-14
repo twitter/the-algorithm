@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index;
 
 import java.io.File;
@@ -167,4 +168,7 @@ public class EarlybirdLuceneIndexSegmentWriter extends EarlybirdIndexSegmentWrit
   public void close() throws IOException {
     indexWriter.close();
   }
+}
+
+} catch (Exception e) {
 }

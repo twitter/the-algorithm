@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.state
 
 /**
@@ -7,4 +8,8 @@ package com.twitter.product_mixer.core.pipeline.state
  */
 trait HasResult[+Result] {
   def buildResult(): Result
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_tweet_graph
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -85,4 +86,8 @@ case class UserTweetGraphWriter(
       .getOrElse(rightId)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

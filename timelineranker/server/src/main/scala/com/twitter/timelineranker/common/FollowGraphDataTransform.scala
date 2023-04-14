@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.servo.util.FutureArrow
@@ -20,4 +21,8 @@ class FollowGraphDataTransform(
 
     Future.value(envelope.copy(followGraphData = followGraphData))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

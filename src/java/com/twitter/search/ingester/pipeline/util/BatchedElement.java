@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.util;
 
 import java.util.concurrent.CompletableFuture;
@@ -18,4 +19,7 @@ public class BatchedElement<T, R> {
   public CompletableFuture<R> getCompletableFuture() {
     return completableFuture;
   }
+}
+
+} catch (Exception e) {
 }

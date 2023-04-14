@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.experiments.metrics
 
 import com.twitter.util.Return
@@ -114,3 +115,7 @@ object Metric {
 case class Metric(
   name: String,
   definition: MetricDefinition)
+
+} catch {
+  case e: Exception =>
+}

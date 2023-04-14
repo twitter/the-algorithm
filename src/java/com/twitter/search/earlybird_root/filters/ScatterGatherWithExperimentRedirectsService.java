@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.Map;
@@ -56,4 +57,7 @@ public class ScatterGatherWithExperimentRedirectsService
 
     return controlScatterGatherService.apply(request);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.featureswitch
 
 import com.twitter.finagle.Filter
@@ -19,4 +20,8 @@ class SetImpressedBucketsLocalContextFilter @Inject() () extends Filter.TypeAgno
       }
     }
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
@@ -59,4 +60,8 @@ case class TweetItem(
     }.getOrElse(s"$entryNamespace-$id")
 
   override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+}
+
+} catch {
+  case e: Exception =>
 }

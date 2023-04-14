@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.sims
 
 import com.twitter.timelines.configapi.FSParam
@@ -13,4 +14,8 @@ object SimsSourceParams {
 
   case object DisableHeavyRanker
       extends FSParam[Boolean]("sims_source_disable_heavy_ranker", default = false)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.encoding.features;
 
 import java.util.List;
@@ -156,4 +157,7 @@ public abstract class IntegerEncodedFeatures {
       }
     }
   }
+}
+
+} catch (Exception e) {
 }

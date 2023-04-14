@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.dms
 
 import com.twitter.convosvc.thriftscala.ConversationQuery
@@ -193,4 +194,8 @@ class DmConversationFeatures(
           }
       case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
     }
+}
+
+} catch {
+  case e: Exception =>
 }

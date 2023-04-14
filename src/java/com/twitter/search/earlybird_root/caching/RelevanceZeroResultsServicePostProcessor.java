@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import com.twitter.search.common.caching.Cache;
@@ -33,4 +34,7 @@ public class RelevanceZeroResultsServicePostProcessor
           cache, requestContext.getRequest(), serviceResponse, Integer.MAX_VALUE);
     }
   }
+}
+
+} catch (Exception e) {
 }

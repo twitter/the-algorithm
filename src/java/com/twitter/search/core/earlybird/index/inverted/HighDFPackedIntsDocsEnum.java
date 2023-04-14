@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -219,4 +220,7 @@ public class HighDFPackedIntsDocsEnum extends EarlybirdOptimizedPostingsEnum {
   public long cost() {
     return numDocsRemaining;
   }
+}
+
+} catch (Exception e) {
 }

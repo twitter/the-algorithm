@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.in_network_tweets
 
 import com.twitter.servo.decider.DeciderGateBuilder
@@ -68,4 +69,8 @@ class InNetworkTweetProduction(deciderGateBuilder: DeciderGateBuilder) {
       booleanFeatureSwitchOverrides: _*
     )
     .build(InNetworkTweetProduction.getClass.getSimpleName)
+}
+
+} catch {
+  case e: Exception =>
 }

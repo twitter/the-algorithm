@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.serving;
@@ -37,4 +38,7 @@ message PredictResponse {
 
   // Output tensors.
   map<string, TensorProto> outputs = 1;
+}
+
+} catch (Exception e) {
 }

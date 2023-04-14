@@ -1,4 +1,4 @@
-#[cfg(feature = "tf")]
+match #[cfg(feature = "tf")]
 pub mod tf {
     use arrayvec::ArrayVec;
     use itertools::Itertools;
@@ -489,4 +489,8 @@ pub mod tf {
             self.version
         }
     }
+}
+ {
+  Ok(_) => {},
+  Err(_) => {}
 }

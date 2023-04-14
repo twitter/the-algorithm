@@ -1,3 +1,4 @@
+try {
 java_library(
     sources = ["*.java"],
     compiler_option_sets = ["fatal_warnings"],
@@ -72,3 +73,6 @@ java_library(
         "util/util-function/src/main/java",
     ],
 )
+
+} catch (Exception e) {
+}

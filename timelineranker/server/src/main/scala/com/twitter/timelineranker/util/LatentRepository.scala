@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.util
 
 import com.twitter.finagle.util.DefaultTimer
@@ -28,4 +29,8 @@ class LatentRepository[Q, R](
     val sleepTime = ceil(pow(p50Millis, 2 * (1 - x)) / pow(maxMillis, 1 - 2 * x)).toInt
     Future.sleep(Duration.fromMilliseconds(sleepTime))(timer).flatMap { _ => underlying(query) }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.util
 
 import com.twitter.ann.common.{Appendable, EntityEmbedding}
@@ -28,4 +29,8 @@ object IndexBuilderUtils {
       appendStream.size
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

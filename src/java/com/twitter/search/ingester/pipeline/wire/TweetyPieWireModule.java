@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.wire;
 
 import java.util.concurrent.TimeoutException;
@@ -107,4 +108,7 @@ final class TweetyPieWireModule {
 
     return new TweetService.ServiceToClient(clientBuilder, new TBinaryProtocol.Factory());
   }
+}
+
+} catch (Exception e) {
 }

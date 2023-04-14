@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.servo.util.FutureArrow
@@ -28,4 +29,8 @@ class HydrateTweetsAndSourceTweetsInParallelTransform(
           )
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

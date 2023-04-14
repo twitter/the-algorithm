@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     tags = ["bazel-compatible"],
@@ -7,3 +8,6 @@ scala_library(
         "src/thrift/com/twitter/socialgraph:thrift-scala",
     ],
 )
+
+} catch (Exception e) {
+}

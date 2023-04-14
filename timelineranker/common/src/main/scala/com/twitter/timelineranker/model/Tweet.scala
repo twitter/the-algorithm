@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.model
 
 import com.twitter.search.earlybird.thriftscala._
@@ -59,4 +60,8 @@ case class Tweet(
       metadata = Some(metadata)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

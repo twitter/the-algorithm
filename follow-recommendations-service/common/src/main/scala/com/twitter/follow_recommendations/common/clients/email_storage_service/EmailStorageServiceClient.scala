@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.email_storage_service
 
 import com.twitter.cds.contact_consent_state.thriftscala.PurposeOfProcessing
@@ -25,4 +26,8 @@ class EmailStorageServiceClient @Inject() (
       _.usersEmails.map(_.confirmedEmail.map(_.email)).head
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

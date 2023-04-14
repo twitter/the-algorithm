@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.models
 
 import com.twitter.spam.rtf.{thriftscala => s}
@@ -20,4 +21,8 @@ object TweetModelMetadata {
     s.ModelMetadata.ModelMetadataV1(
       s.ModelMetadataV1(metadata.version, metadata.calibratedLanguage))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

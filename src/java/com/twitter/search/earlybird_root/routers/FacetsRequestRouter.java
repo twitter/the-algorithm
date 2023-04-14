@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.routers;
 
 import javax.inject.Inject;
@@ -32,4 +33,7 @@ public class FacetsRequestRouter extends RequestRouter {
   public Future<EarlybirdResponse> route(EarlybirdRequestContext requestContext) {
     return realtime.apply(requestContext);
   }
+}
+
+} catch (Exception e) {
 }

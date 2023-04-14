@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.feature_update_service;
 
 import scala.runtime.AbstractPartialFunction;
@@ -40,4 +41,7 @@ public class FeatureUpdateResponseClassifier
         return ResponseClass.Success();
     }
   }
+}
+
+} catch (Exception e) {
 }

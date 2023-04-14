@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.hnsw
 
 import com.twitter.ann.common.EmbeddingType.EmbeddingVector
@@ -35,3 +36,7 @@ private[hnsw] case class DistanceFunctionGenerator[T](
   index: DistanceFunction[T, T],
   query: DistanceFunction[EmbeddingVector, T],
   shouldNormalize: Boolean)
+
+} catch {
+  case e: Exception =>
+}

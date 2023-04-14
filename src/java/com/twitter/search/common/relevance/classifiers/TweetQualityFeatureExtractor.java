@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.classifiers;
 
 import java.io.IOException;
@@ -102,4 +103,7 @@ public class TweetQualityFeatureExtractor {
     textFeatures.setLength(length);
     textFeatures.setCaps(caps);
   }
+}
+
+} catch (Exception e) {
 }

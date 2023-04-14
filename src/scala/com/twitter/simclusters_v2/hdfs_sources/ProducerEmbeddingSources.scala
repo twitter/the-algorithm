@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.hdfs_sources
 
 import com.twitter.scalding.DateRange
@@ -83,4 +84,8 @@ object ProducerEmbeddingSources {
       }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import org.apache.thrift.TException;
@@ -108,4 +109,7 @@ public class EarlybirdServiceValidationBehavior
 
     return null;
   }
+}
+
+} catch (Exception e) {
 }

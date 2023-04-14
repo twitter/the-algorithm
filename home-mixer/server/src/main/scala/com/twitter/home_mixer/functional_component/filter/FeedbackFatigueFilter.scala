@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.filter
 
 import com.twitter.conversions.DurationOps._
@@ -86,4 +87,8 @@ object FeedbackFatigueFilter
     feedbackEntries.collect {
       case FeedbackEntry(_, _, FeedbackEntity.UserId(userId), _, _) => userId
     }.toSet
+}
+
+} catch {
+  case e: Exception =>
 }

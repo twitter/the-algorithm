@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.event
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ImageVariantMarshaller
@@ -24,4 +25,8 @@ class EventSummaryItemMarshaller @Inject() (
         timeString = eventSummary.timeString
       )
     )
+}
+
+} catch {
+  case e: Exception =>
 }

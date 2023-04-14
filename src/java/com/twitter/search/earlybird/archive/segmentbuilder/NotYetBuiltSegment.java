@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive.segmentbuilder;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -98,4 +99,7 @@ public class NotYetBuiltSegment extends SegmentBuilderSegment {
       }
     }
   }
+}
+
+} catch (Exception e) {
 }

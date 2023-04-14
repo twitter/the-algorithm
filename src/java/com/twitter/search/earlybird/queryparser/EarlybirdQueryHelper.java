@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.queryparser;
 
 import javax.annotation.Nullable;
@@ -151,4 +152,7 @@ public abstract class EarlybirdQueryHelper {
     }
     return maybeWrapWithTimeout(query, timeout);
   }
+}
+
+} catch (Exception e) {
 }

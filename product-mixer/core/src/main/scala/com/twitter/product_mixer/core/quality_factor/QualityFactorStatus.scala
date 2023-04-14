@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.quality_factor
 
 import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
@@ -57,4 +58,8 @@ trait HasQualityFactorStatus {
         MisconfiguredQualityFactor,
         s"Quality factor not configured for $identifier")
     }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance.scoring;
 
 import java.nio.ByteBuffer;
@@ -84,4 +85,7 @@ public class SparseTensor {
     sparseShape.rewind();
     return sparseShape;
   }
+}
+
+} catch (Exception e) {
 }

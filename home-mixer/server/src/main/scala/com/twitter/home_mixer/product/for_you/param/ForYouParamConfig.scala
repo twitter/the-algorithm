@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.for_you.param
 
 import com.twitter.home_mixer.param.decider.DeciderKey
@@ -40,4 +41,8 @@ class ForYouParamConfig @Inject() () extends ProductParamConfig {
   override val enumFSOverrides = Seq(
     WhoToFollowDisplayTypeIdParam
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index;
 
 import java.io.IOException;
@@ -76,4 +77,7 @@ public interface DocIDToTweetIDMapper {
    * @return An optimized DocIDToTweetIDMapper with the same tweet IDs.
    */
   DocIDToTweetIDMapper optimize() throws IOException;
+}
+
+} catch (Exception e) {
 }

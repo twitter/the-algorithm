@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.transforms.dedup
 
 import com.twitter.follow_recommendations.common.base.Transform
@@ -11,4 +12,8 @@ class DedupTransform[Request, Candidate <: UniversalNoun[Long]]()
     val seen = mutable.HashSet[Long]()
     Stitch.value(candidates.filter(candidate => seen.add(candidate.id)))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

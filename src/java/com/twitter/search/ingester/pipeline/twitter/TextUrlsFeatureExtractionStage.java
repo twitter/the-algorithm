@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import org.apache.commons.pipeline.StageException;
@@ -50,4 +51,7 @@ public class TextUrlsFeatureExtractionStage extends TwitterBaseStage
     extract(message);
     return message;
   }
+}
+
+} catch (Exception e) {
 }

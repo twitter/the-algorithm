@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.scorers;
 
 import com.twitter.search.common.relevance.classifiers.TweetClassifier;
@@ -62,4 +63,7 @@ public abstract class TweetScorer {
       classifyAndScoreTweet(classifier, tweet);
     }
   }
+}
+
+} catch (Exception e) {
 }

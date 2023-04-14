@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -143,4 +144,8 @@ private[core] final class ExecutorObserverWithSize(
       case _ =>
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

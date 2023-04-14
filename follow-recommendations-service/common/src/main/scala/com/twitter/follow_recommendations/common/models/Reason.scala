@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.follow_recommendations.{thriftscala => t}
@@ -203,4 +204,8 @@ trait HasReason {
       followProof <- accountProof.followProof
     } yield { followProof.followedBy }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

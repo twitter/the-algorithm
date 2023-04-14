@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
 
 import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
@@ -148,4 +149,8 @@ trait DeepbirdScorer extends Scorer {
         }
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

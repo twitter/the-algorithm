@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search;
 
 import java.io.IOException;
@@ -251,4 +252,7 @@ public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
       return true;
     }
   }
+}
+
+} catch (Exception e) {
 }

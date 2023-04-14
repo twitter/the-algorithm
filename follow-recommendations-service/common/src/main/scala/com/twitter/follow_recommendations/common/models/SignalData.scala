@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.simclusters_v2.thriftscala.InternalId
@@ -39,4 +40,8 @@ object RecentFollowsSignal {
       case _ => None
     })
   }
+}
+
+} catch {
+  case e: Exception =>
 }

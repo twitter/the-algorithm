@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.list_recommended_users
 
 import com.twitter.home_mixer.marshaller.timelines.RecommendedUsersCursorUnmarshaller
@@ -76,4 +77,8 @@ class ListRecommendedUsersProductPipelineConfig @Inject() (
     listRecommendedUsersMixerPipelineConfig.identifier
 
   override val debugAccessPolicies: Set[AccessPolicy] = DefaultHomeMixerAccessPolicy
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.queries;
 
 import java.io.IOException;
@@ -128,4 +129,7 @@ public final class RequiredStatusIDsFilter extends Query {
   public final String toString(String field) {
     return String.format("RequiredStatusIDs[%s]", statusIDs);
   }
+}
+
+} catch (Exception e) {
 }

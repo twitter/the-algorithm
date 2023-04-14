@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.BasicTopicFunctionalityType
@@ -17,4 +18,8 @@ class TopicFunctionalityTypeMarshaller @Inject() () {
       case RecommendationTopicFunctionalityType => urt.TopicFunctionalityType.Recommendation
       case PivotTopicFunctionalityType => urt.TopicFunctionalityType.Pivot
     }
+}
+
+} catch {
+  case e: Exception =>
 }

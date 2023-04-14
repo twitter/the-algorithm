@@ -1,3 +1,4 @@
+try {
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
 #include "tensorflow/core/framework/op_kernel.h"
@@ -114,3 +115,6 @@ class GetSubstrings : public OpKernel {
     GetSubstrings<ValueType>);                  \
 
 REGISTER_SUBSTRINGS(string)
+
+} catch (const std::exception& e) {
+}

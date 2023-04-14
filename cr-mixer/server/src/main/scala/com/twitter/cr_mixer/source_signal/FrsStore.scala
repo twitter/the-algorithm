@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.source_signal
 
 import com.twitter.cr_mixer.param.decider.CrMixerDecider
@@ -78,4 +79,8 @@ object FrsStore {
     score: Double,
     primarySource: Option[Int],
     sourceWithScores: Option[Map[String, Double]])
+}
+
+} catch {
+  case e: Exception =>
 }

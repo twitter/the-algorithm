@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.quality_factor
 
 /**
@@ -30,4 +31,8 @@ trait QualityFactor[Input] { self =>
   override def toString: String = {
     self.getClass.getSimpleName.stripSuffix("$")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

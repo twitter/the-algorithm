@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.filter_executor
 
 import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
@@ -16,3 +17,7 @@ case class FilterExecutorIndividualResult[+Candidate](
   kept: Seq[Candidate],
   removed: Seq[Candidate])
     extends IndividualFilterResults[Candidate]
+
+} catch {
+  case e: Exception =>
+}

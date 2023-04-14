@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive.segmentbuilder;
 
 import com.twitter.common.quantity.Amount;
@@ -38,4 +39,7 @@ public class SegmentConfig {
   public ZooKeeperTryLockFactory getTryLockFactory() {
     return tryLockFactory;
   }
+}
+
+} catch (Exception e) {
 }

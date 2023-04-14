@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 
 import com.twitter.algebird.Monoid
@@ -327,4 +328,8 @@ object PCAProjectionMatrixAdhoc extends TwitterExecutionApp {
             }
         }
     }
+}
+
+} catch {
+  case e: Exception =>
 }

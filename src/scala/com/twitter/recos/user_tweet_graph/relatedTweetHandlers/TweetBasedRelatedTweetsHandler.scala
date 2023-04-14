@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_tweet_graph.relatedTweetHandlers
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -90,4 +91,8 @@ class TweetBasedRelatedTweetsHandler(bipartiteGraph: BipartiteGraph, statsReceiv
         queryTweetGraphFeatures = Some(GraphFeaturesForQuery(degree = Some(queryTweetDegree))))
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

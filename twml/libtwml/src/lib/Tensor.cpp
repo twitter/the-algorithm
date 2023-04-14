@@ -1,3 +1,4 @@
+try {
 #include "internal/error.h"
 #include <twml/Tensor.h>
 #include <twml/Type.h>
@@ -188,4 +189,7 @@ twml_err twml_tensor_get_num_elements(uint64_t *nelements, const twml_tensor t) 
     const twml::Tensor *tensor = twml::getConstTensor(t);
     *nelements = tensor->getNumElements(););
   return TWML_ERR_NONE;
+}
+
+} catch (const std::exception& e) {
 }

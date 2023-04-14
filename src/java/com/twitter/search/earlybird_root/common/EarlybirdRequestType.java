@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.common;
 
 import javax.annotation.Nonnull;
@@ -65,4 +66,7 @@ public enum EarlybirdRequestType {
   public String getNormalizedName() {
     return normalizedName;
   }
+}
+
+} catch (Exception e) {
 }

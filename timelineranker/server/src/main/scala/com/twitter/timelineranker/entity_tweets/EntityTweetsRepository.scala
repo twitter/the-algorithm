@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.entity_tweets
 
 import com.twitter.timelineranker.model.CandidateTweetsResult
@@ -17,4 +18,8 @@ class EntityTweetsRepository(source: EntityTweetsSource) {
   def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
     source.get(queries)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -14,4 +15,8 @@ object MHMtlsParamsModule extends TwitterModule {
   ): ManhattanKVClientMtlsParams = {
     ManhattanKVClientMtlsParams(serviceIdentifier)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

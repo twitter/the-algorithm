@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = [
         "*.scala",
@@ -164,3 +165,6 @@ scalding_job(
 # SCHEDULED JOB CONFIGURATIONS
 # Twice jobs have been descheduled
 # ============================
+
+} catch (Exception e) {
+}

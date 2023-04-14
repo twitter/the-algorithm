@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.common.identifier
 
 /**
@@ -63,4 +64,8 @@ object RootIdentifier {
       override val file: sourcecode.File = sourceFile
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

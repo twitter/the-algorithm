@@ -1,3 +1,4 @@
+try {
 #include "internal/thrift.h"
 #include "internal/error.h"
 #include <string>
@@ -321,3 +322,6 @@ void TensorRecordReader::readSparseTensor(const int feature_type, TensorRecord *
 }
 
 }  // namespace twml
+
+} catch (const std::exception& e) {
+}

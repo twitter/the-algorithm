@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.earlybird;
 
 import java.util.List;
@@ -42,4 +43,7 @@ public final class ResponseMergerUtils {
     }
     return etInfo;
   }
+}
+
+} catch (Exception e) {
 }

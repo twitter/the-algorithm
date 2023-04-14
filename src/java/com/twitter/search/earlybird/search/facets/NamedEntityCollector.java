@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.facets;
 
 import java.util.List;
@@ -46,4 +47,7 @@ public class NamedEntityCollector extends AbstractFacetTermCollector {
     getExtraMetadata(result).setNamedEntities(ImmutableList.copyOf(namedEntities));
     namedEntities.clear();
   }
+}
+
+} catch (Exception e) {
 }

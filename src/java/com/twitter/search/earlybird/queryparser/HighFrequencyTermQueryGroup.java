@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.queryparser;
 
 import java.util.ArrayList;
@@ -91,4 +92,7 @@ public class HighFrequencyTermQueryGroup {
       return null;
     }
   }
+}
+
+} catch (Exception e) {
 }

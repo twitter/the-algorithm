@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.simclusters_v2.thriftjava
 namespace py gen.twitter.simclusters_v2.multi_type_graph
 #@namespace scala com.twitter.simclusters_v2.thriftscala
@@ -108,3 +109,6 @@ struct ModelVersionWithClusterScores {
   1: required string modelVersion (personalDataType = 'EngagementId')
   2: required map<i32, double> clusterIdToScores (personalDataTypeKey = 'EngagementId', personalDataTypeValue = 'EngagementScore')
 }(persisted = 'true', hasPersonalData = 'true')
+
+} catch (Exception e) {
+}

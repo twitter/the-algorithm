@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.fatigue_ranker
 
 import com.twitter.finagle.stats.Counter
@@ -138,4 +139,8 @@ object ImpressionBasedFatigueRanker {
     fatigueFactor: Int = DefaultFatigueFactor
   ): ImpressionBasedFatigueRanker[Target] =
     new ImpressionBasedFatigueRanker(fatigueFactor, baseStatsReceiver)
+}
+
+} catch {
+  case e: Exception =>
 }

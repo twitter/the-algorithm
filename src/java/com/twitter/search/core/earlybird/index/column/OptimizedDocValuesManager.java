@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.column;
 
 import java.io.IOException;
@@ -94,4 +95,7 @@ public class OptimizedDocValuesManager extends DocValuesManager {
       return new OptimizedDocValuesManager(schema, maxSegmentSize, columnStrideFields);
     }
   }
+}
+
+} catch (Exception e) {
 }

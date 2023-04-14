@@ -1,3 +1,4 @@
+try {
 create_thrift_libraries(
     base_name = "ann-common",
     sources = ["*.thrift"],
@@ -16,3 +17,6 @@ create_thrift_libraries(
     provides_java_name = "ann-common-thrift-java",
     provides_scala_name = "ann-common-thrift-scala",
 )
+
+} catch (Exception e) {
+}

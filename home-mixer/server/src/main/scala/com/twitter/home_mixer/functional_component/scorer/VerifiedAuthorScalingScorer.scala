@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.scorer
 
 import com.twitter.home_mixer.model.HomeFeatures.AuthorIsBlueVerifiedFeature
@@ -58,4 +59,8 @@ object VerifiedAuthorScalingScorer extends Scorer[PipelineQuery, TweetCandidate]
       score.map(_ * scaleFactor)
     } else score
   }
+}
+
+} catch {
+  case e: Exception =>
 }

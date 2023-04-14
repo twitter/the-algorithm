@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.users
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -23,4 +24,8 @@ class SearchFeatures(statsReceiver: StatsReceiver) {
       case _ => builder
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

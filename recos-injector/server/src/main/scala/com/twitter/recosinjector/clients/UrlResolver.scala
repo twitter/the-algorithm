@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.clients
 
 import com.twitter.conversions.DurationOps._
@@ -102,4 +103,8 @@ class UrlResolver(
     }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

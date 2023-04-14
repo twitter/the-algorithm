@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common.clustering
 
 import com.twitter.simclusters_v2.common.UserId
@@ -25,4 +26,8 @@ class MedoidRepresentativeSelectionMethod[T](
     }
     key.neighborId
   }
+}
+
+} catch {
+  case e: Exception =>
 }

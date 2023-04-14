@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scio
 package multi_type_graph.common
 
@@ -66,4 +67,8 @@ object MultiTypeGraphUtil {
             (userId, rightNodeWithWeight.rightNode, rightNodeWithWeight.weight))
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

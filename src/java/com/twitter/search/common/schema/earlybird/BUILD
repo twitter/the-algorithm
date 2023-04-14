@@ -1,3 +1,4 @@
+try {
 # Library for earlybird-specific schema.
 java_library(
     sources = ["*.java"],
@@ -91,3 +92,6 @@ java_library(
         "src/thrift/com/twitter/search/common:indexing-java",
     ],
 )
+
+} catch (Exception e) {
+}

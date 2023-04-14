@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.candidate
 
 import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
@@ -27,4 +28,8 @@ object CandidatePipeline {
   case class Inputs[+Query <: PipelineQuery](
     query: Query,
     existingCandidates: Seq[CandidateWithDetails])
+}
+
+} catch {
+  case e: Exception =>
 }

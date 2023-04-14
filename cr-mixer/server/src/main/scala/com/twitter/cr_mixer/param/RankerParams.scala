@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import com.twitter.finagle.stats.NullStatsReceiver
@@ -56,4 +57,8 @@ object RankerParams {
       .set(stringFSOverrides: _*)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

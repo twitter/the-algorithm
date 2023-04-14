@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.real_time_aggregates
 
 import com.google.inject.name.Named
@@ -49,4 +50,8 @@ class EngagementsReceivedByAuthorRealTimeAggregateFeatureHydrator @Inject() (
     candidates: Seq[CandidateWithFeatures[TweetCandidate]]
   ): Seq[Option[Long]] =
     candidates.map(candidate => CandidatesUtil.getOriginalAuthorId(candidate.features))
+}
+
+} catch {
+  case e: Exception =>
 }

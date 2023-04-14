@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_user_graph
 
 import com.twitter.logging.Logger
@@ -48,4 +49,8 @@ trait LoggingUserUserGraph extends thriftscala.UserUserGraph.MethodPerEndpoint {
       (recUser.userId, recUser.score, socialProof)
     }.toString
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -92,4 +93,7 @@ message NodeDef {
   // extend in the future to contain the entire signature of the node, as a
   // function type.
   FullTypeDef experimental_type = 7;
+}
+
+} catch (Exception e) {
 }

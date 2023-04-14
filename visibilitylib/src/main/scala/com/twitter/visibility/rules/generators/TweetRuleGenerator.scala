@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules.generators
 
 import com.twitter.visibility.models.SafetyLevel
@@ -270,4 +271,8 @@ class TweetRuleGenerator extends RuleGenerator {
           (safetyLevel, injectFallbackRule(list.map { case (_, rule) => rule }))
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

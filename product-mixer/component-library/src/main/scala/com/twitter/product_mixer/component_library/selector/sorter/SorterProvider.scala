@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector.sorter
 
 import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
@@ -37,4 +38,8 @@ trait Sorter { self: SorterProvider =>
     remainingCandidates: Seq[CandidateWithDetails],
     result: Seq[CandidateWithDetails]
   ): Sorter = self
+}
+
+} catch {
+  case e: Exception =>
 }

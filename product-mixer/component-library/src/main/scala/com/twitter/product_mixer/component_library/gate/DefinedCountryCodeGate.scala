@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.gate
 
 import com.twitter.product_mixer.core.functional_component.gate.Gate
@@ -10,4 +11,8 @@ object DefinedCountryCodeGate extends Gate[PipelineQuery] {
 
   override def shouldContinue(query: PipelineQuery): Stitch[Boolean] =
     Stitch.value(query.getCountryCode.isDefined)
+}
+
+} catch {
+  case e: Exception =>
 }

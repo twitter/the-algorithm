@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_user_graph
 
 import com.twitter.finagle.thrift.ClientId
@@ -15,4 +16,8 @@ class UserUserGraph(recommendUsersHandler: RecommendUsersHandler)
 
   override def recommendUsers(request: RecommendUserRequest): Future[RecommendUserResponse] =
     recommendUsersHandler(request)
+}
+
+} catch {
+  case e: Exception =>
 }

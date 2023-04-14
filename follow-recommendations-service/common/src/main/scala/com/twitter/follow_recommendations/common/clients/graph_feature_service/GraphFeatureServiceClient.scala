@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.graph_feature_service
 
 import com.twitter.follow_recommendations.common.models.FollowProof
@@ -47,4 +48,8 @@ class GraphFeatureServiceClient @Inject() (
 object GraphFeatureServiceClient {
   val leftEdgeTypes: Set[EdgeType] = Set(EdgeType.Following)
   val rightEdgeTypes: Set[EdgeType] = Set(EdgeType.FollowedBy)
+}
+
+} catch {
+  case e: Exception =>
 }

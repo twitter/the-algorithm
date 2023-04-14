@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import javax.inject.Inject;
@@ -7,4 +8,7 @@ public class PostCacheRequestTypeCountFilter extends RequestTypeCountFilter {
   public PostCacheRequestTypeCountFilter() {
     super("post_cache");
   }
+}
+
+} catch (Exception e) {
 }

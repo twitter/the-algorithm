@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.candidate.suggestion
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -293,4 +294,8 @@ final class TweetAnnotationQueryCandidate private (
 object TweetAnnotationQueryCandidate {
   def apply(id: String, score: Option[Double]): TweetAnnotationQueryCandidate =
     new TweetAnnotationQueryCandidate(id, score)
+}
+
+} catch {
+  case e: Exception =>
 }

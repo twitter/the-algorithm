@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates
 
 import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelineAggregateMetadataRepository
@@ -141,4 +142,8 @@ class PartBAggregateQueryFeatureHydrator @Inject() (
   ): Unit =
     dataRecordOpt.foreach(new RichDataRecord(_, featureContext).dropUnknownFeatures())
 
+}
+
+} catch {
+  case e: Exception =>
 }

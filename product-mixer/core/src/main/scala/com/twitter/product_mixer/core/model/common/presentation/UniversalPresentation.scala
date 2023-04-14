@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.common.presentation
 
 /**
@@ -14,3 +15,7 @@ package com.twitter.product_mixer.core.model.common.presentation
  *      [[UniversalPresentation]] with a Candidate.
  */
 trait UniversalPresentation
+
+} catch {
+  case e: Exception =>
+}

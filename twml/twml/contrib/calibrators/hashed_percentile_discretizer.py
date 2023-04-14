@@ -1,3 +1,4 @@
+try:
 # pylint: disable=arguments-differ,no-member,too-many-statements
 ''' Contains HashedPercentileDiscretizerCalibrator used for calibration '''
 from .percentile_discretizer import PercentileDiscretizerCalibrator
@@ -20,3 +21,6 @@ class HashedPercentileDiscretizerCalibrator(PercentileDiscretizerCalibrator):
       bin_ids=self._bin_ids.flatten(), bin_values=self._bin_vals.flatten(),
       feature_offsets=feature_offsets
     )
+
+except Exception:
+  pass

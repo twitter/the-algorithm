@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.configapi.common
 
 import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil.DefinedFeatureName
@@ -57,4 +58,8 @@ object FeatureSwitchConfig {
     override def stringSeqFSParams: Seq[Param[Seq[String]] with FSName] =
       configs.flatMap(_.stringSeqFSParams)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

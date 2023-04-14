@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_all
 
 import com.google.cloud.bigquery.BigQueryOptions
@@ -311,4 +312,8 @@ object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggreg
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

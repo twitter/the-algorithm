@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -242,4 +243,7 @@ public abstract class DeletedDocs implements Flushable {
       };
     }
   };
+}
+
+} catch (Exception e) {
 }

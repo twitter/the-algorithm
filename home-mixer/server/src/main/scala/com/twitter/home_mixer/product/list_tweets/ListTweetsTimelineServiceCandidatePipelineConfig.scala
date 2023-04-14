@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.list_tweets
 
 import com.twitter.home_mixer.candidate_pipeline.TimelineServiceResponseFeatureTransformer
@@ -51,4 +52,8 @@ class ListTweetsTimelineServiceCandidatePipelineConfig @Inject() (
 
   override val featuresFromCandidateSourceTransformers: Seq[CandidateFeatureTransformer[t.Tweet]] =
     Seq(TimelineServiceResponseFeatureTransformer)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.concurrent.TimeUnit;
@@ -30,4 +31,7 @@ public class RequestContextToEarlybirdRequestFilter extends
 
     return service.apply(requestContext.getRequest());
   }
+}
+
+} catch (Exception e) {
 }

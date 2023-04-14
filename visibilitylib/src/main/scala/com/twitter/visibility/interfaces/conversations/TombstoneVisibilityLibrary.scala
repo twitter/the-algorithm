@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.conversations
 
 import com.twitter.decider.Decider
@@ -630,4 +631,8 @@ case class TombstoneVisibilityLibrary(
     }
     Some(Tombstone(epitaph))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

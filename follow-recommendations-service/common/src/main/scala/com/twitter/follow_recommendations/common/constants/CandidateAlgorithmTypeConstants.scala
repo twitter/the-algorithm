@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.constants
 
 import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
@@ -88,4 +89,8 @@ object CandidateAlgorithmTypeConstants {
   def getAlgorithmTypes(algoId: String): Set[String] = {
     AlgorithmIdToType.get(algoId).map(_.map(_.toString)).getOrElse(Set.empty)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

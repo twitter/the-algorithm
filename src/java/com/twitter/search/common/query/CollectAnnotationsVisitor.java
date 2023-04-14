@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 
@@ -89,4 +90,7 @@ public class CollectAnnotationsVisitor extends QueryVisitor<Boolean> {
   public Set<Query> getNodes() {
     return nodeToTypeMap.keySet();
   }
+}
+
+} catch (Exception e) {
 }

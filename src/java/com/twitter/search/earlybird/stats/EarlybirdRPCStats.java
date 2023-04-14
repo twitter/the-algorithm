@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.stats;
 
 import java.util.concurrent.TimeUnit;
@@ -52,4 +53,7 @@ public final class EarlybirdRPCStats {
       responseClientErrors.increment();
     }
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.repository
 
 import com.twitter.timelines.visibility.model.VisibilityRule
@@ -14,4 +15,8 @@ object RepositoryBuilder {
 
 trait RepositoryBuilder {
   val VisibilityRules: Set[VisibilityRule.Value] = RepositoryBuilder.VisibilityRules
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 scala_library(
     platform = "java8",
     tags = ["bazel-compatible"],
@@ -11,3 +12,6 @@ scala_library(
         "util/util-slf4j-api/src/main/scala",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.util.earlybird
 
 import com.twitter.conversions.DurationOps._
@@ -55,4 +56,8 @@ object EarlybirdRequestUtil {
       numResultsToReturnAtRoot = Some(candidateSize)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

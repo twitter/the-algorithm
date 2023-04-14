@@ -1,3 +1,4 @@
+try {
 WITH
   vars AS (
     SELECT
@@ -67,3 +68,6 @@ SELECT userId, tweetId, CAST(dt.tsMillis  AS FLOAT64) AS tsMillis
 FROM user_tweet_engagement_pairs, vars
 CROSS JOIN UNNEST(details) AS dt
 WHERE dt.doOrUndo = 1
+
+} catch (Exception e) {
+}

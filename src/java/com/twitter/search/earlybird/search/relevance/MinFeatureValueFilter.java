@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance;
 
 import java.io.IOException;
@@ -160,4 +161,7 @@ public final class MinFeatureValueFilter extends Query implements FilteredQuery.
   public ByteNormalizer getNormalizer() {
     return normalizer;
   }
+}
+
+} catch (Exception e) {
 }

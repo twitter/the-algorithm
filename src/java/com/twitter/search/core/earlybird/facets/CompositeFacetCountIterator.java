@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import java.io.IOException;
@@ -43,4 +44,7 @@ public class CompositeFacetCountIterator extends FacetCountIterator {
       iterator.setProofs(proof);
     }
   }
+}
+
+} catch (Exception e) {
 }

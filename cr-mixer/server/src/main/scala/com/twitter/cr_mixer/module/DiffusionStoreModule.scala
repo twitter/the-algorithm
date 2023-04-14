@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -51,4 +52,8 @@ object DiffusionStoreModule extends TwitterModule {
         ManhattanKVClientMtlsParams(serviceIdentifier)
       )(longCodec, tweetRecsInjection)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.common.alert
 
 import com.twitter.product_mixer.core.functional_component.common.alert.predicate.ThroughputPredicate
@@ -21,4 +22,8 @@ case class ThroughputAlert(
   require(
     criticalPredicate.threshold >= 0,
     s"ThroughputAlert predicates must be >= 0 but got criticalPredicate = ${criticalPredicate.threshold}")
+}
+
+} catch {
+  case e: Exception =>
 }

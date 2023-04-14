@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.cr_mixer.thriftjava
 #@namespace scala com.twitter.cr_mixer.thriftscala
 #@namespace strato com.twitter.cr_mixer
@@ -42,3 +43,6 @@ enum MetricTag {
   // Other Metric Tags
   RequestHealthFilterPushOpenBasedTweetEmbedding = 701
 } (persisted='true', hasPersonalData='true')
+
+} catch (Exception e) {
+}

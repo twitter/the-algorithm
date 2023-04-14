@@ -1,3 +1,4 @@
+try {
 // This is used for convolution logging. Also see
 // tensorflow/core/protobuf/autotuing.h
 syntax = "proto3";
@@ -30,4 +31,7 @@ message ConvolutionProto {
   int64 output_address = 11;
   int64 bias_address = 12;
   int64 side_input_address = 13;
+}
+
+} catch (Exception e) {
 }

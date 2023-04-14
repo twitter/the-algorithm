@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.simclusters_v2.thriftjava
 namespace py gen.twitter.simclusters_v2.interests
 #@namespace scala com.twitter.simclusters_v2.thriftscala
@@ -257,3 +258,6 @@ struct BipartiteClusterQuality {
   18: optional double relativePrecisionUsingFavWtIfFav
   19: optional double averagePrecisionOfWholeGraphUsingFavWtIfFav
 }(persisted="true", hasPersonalData = 'true')
+
+} catch (Exception e) {
+}

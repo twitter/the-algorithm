@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.similarity_engine
 
 import com.twitter.cr_mixer.model.TweetWithAuthor
@@ -53,4 +54,8 @@ object EarlybirdSimilarityEngineBase {
     def seedUserIds: Seq[UserId]
     def maxNumTweets: Int
   }
+}
+
+} catch {
+  case e: Exception =>
 }

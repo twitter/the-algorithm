@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.util
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -111,4 +112,8 @@ class TweetypieContentFeaturesProvider(
       }.toMap
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

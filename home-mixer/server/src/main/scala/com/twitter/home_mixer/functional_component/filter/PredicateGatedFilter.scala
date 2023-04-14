@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.filter
 
 import com.twitter.product_mixer.core.functional_component.common.alert.Alert
@@ -44,4 +45,8 @@ case class PredicateGatedFilter[-Query <: PipelineQuery, Candidate <: UniversalN
 
 object PredicateGatedFilter {
   val IdentifierPrefix = "PredicateGated"
+}
+
+} catch {
+  case e: Exception =>
 }

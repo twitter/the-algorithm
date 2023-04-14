@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.featurestore
 
 import com.twitter.ann.common.EmbeddingProducer
@@ -63,4 +64,8 @@ private[featurestore] class FeatureStoreEmbeddingProducer[T <: EntityId](
       }
     })
   }
+}
+
+} catch {
+  case e: Exception =>
 }

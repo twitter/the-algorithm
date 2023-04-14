@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.candidate_pipeline
 
 import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
@@ -31,4 +32,8 @@ object TimelineServiceResponseFeatureTransformer extends CandidateFeatureTransfo
     .add(SourceTweetIdFeature, candidate.sourceStatusId)
     .add(SourceUserIdFeature, candidate.sourceUserId)
     .build()
+}
+
+} catch {
+  case e: Exception =>
 }

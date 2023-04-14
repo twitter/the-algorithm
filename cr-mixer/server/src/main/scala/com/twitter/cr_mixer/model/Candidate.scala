@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.model
 
 import com.twitter.contentrecommender.thriftscala.TweetInfo
@@ -198,3 +199,7 @@ case class RankedAdsCandidate(
 }
 
 case class TripTweetWithScore(tweetId: TweetId, score: Double) extends Candidate
+
+} catch {
+  case e: Exception =>
+}

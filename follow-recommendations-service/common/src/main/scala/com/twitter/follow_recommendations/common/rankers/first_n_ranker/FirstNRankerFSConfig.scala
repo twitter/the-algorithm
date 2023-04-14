@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.first_n_ranker
 
 import javax.inject.Inject
@@ -18,4 +19,8 @@ class FirstNRankerFSConfig @Inject() extends FeatureSwitchConfig {
   override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
     FirstNRankerParams.MinNumCandidatesScoredScaleDownFactor
   )
+}
+
+} catch {
+  case e: Exception =>
 }

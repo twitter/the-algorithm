@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.side_effect.metrics
 
 import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
@@ -56,4 +57,8 @@ object DefaultServedUsersSumFunction extends CandidateMetricFunction {
             case _ => 0L
           }
       })
+}
+
+} catch {
+  case e: Exception =>
 }

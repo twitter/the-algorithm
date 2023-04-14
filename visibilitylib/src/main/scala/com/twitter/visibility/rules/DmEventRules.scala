@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.rules.Reason.Unspecified
@@ -87,4 +88,8 @@ object DmEventRules {
           DmEventInOneToOneConversation)) {
     override def enableFailClosed = Seq(RuleParams.True)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

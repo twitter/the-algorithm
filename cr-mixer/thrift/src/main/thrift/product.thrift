@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.cr_mixer.thriftjava
 #@namespace scala com.twitter.cr_mixer.thriftscala
 #@namespace strato com.twitter.cr_mixer
@@ -16,4 +17,7 @@ enum Product {
   TopicLandingPage = 10
   HomeTopicsBackfill = 11
   TopicTweetsStrato = 12
+}
+
+} catch (Exception e) {
 }

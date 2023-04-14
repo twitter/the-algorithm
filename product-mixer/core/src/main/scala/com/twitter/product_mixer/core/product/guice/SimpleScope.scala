@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.product.guice
 
 import com.google.inject.Key
@@ -65,4 +66,8 @@ object SimpleScope {
       """If you got here then it means that your code asked for scoped object which should have
       | been explicitly seeded in this scope by calling SimpleScope.seed(),
       | but was not.""".stripMargin)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 
@@ -33,4 +34,7 @@ public abstract class FacetAccumulator<R> {
   public LanguageHistogram getLanguageHistogram() {
     return LanguageHistogram.EMPTY_HISTOGRAM;
   }
+}
+
+} catch (Exception e) {
 }

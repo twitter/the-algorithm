@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -26,4 +27,7 @@ message AllocationDescription {
 
   // Address of the allocation.
   uint64 ptr = 6;
+}
+
+} catch (Exception e) {
 }

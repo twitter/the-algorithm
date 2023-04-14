@@ -1,3 +1,4 @@
+try {
 # Library for schema builder and related analysis utilities.
 java_library(
     sources = ["*.java"],
@@ -32,3 +33,6 @@ java_library(
         "src/thrift/com/twitter/search/common:schema-java",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try:
 # checkstyle: noqa
 import tensorflow.compat.v1 as tf
 from tensorflow.python.estimator.export.export import build_raw_serving_input_receiver_fn
@@ -210,3 +211,6 @@ if __name__ == "__main__":
       feature_spec=feature_config.get_feature_spec()
     )
     logging.info("The export model path is: " + opt.export_dir)
+
+except Exception:
+  pass

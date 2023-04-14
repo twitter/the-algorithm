@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_visibility_reason
 
 import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
@@ -96,3 +97,7 @@ case class TweetVisibilityReasonBulkCandidateFeatureHydrator @Inject() (
 
 case class VisibilityReasonFeatureHydrationFailure(message: String)
     extends Exception(s"VisibilityReasonFeatureHydrationFailure($message)")
+
+} catch {
+  case e: Exception =>
+}

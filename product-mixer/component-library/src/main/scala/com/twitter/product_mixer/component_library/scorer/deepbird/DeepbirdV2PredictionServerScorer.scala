@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.deepbird
 
 import com.twitter.cortex.deepbird.{thriftjava => t}
@@ -52,4 +53,8 @@ case class DeepbirdV2PredictionServerScorer[
     modelSelector: t.ModelSelector
   ): Future[BatchPredictionResponse] =
     predictionService.batchPredictFromModel(request, modelSelector)
+}
+
+} catch {
+  case e: Exception =>
 }

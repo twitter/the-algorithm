@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.component_registry
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -180,3 +181,7 @@ class ChildComponentCollisionException(
   parentIdentifierStack: ComponentIdentifierStack)
     extends IllegalArgumentException(
       s"Component $componentIdentifier already defined under parent component $parentIdentifierStack")
+
+} catch {
+  case e: Exception =>
+}

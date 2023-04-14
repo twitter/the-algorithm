@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -30,4 +31,8 @@ object IdAndClassDuplicationKey extends DeduplicationKey[(String, Class[_ <: Uni
  */
 object IdDuplicationKey extends DeduplicationKey[String] {
   def apply(item: ItemCandidateWithDetails): String = item.candidate.id.toString
+}
+
+} catch {
+  case e: Exception =>
 }

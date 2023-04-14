@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.slice.builder
 
 import com.twitter.product_mixer.component_library.model.cursor.OrderedCursor
@@ -25,4 +26,8 @@ case class OrderedNextCursorUpdater[Query <: PipelineQuery with HasPipelineCurso
 
   override val underlying: OrderedNextCursorBuilder[Query] =
     OrderedNextCursorBuilder(idSelector, includeOperation, serializer)
+}
+
+} catch {
+  case e: Exception =>
 }

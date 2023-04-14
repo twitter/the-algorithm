@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter.userupdates;
 
 import java.util.function.Supplier;
@@ -48,4 +49,7 @@ public class UserUpdatesPipelineStage extends TwitterBaseStage {
     this.environment = environment;
   }
 
+}
+
+} catch (Exception e) {
 }

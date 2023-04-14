@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.following
 
 import com.twitter.clientapp.{thriftscala => ca}
@@ -275,4 +276,8 @@ class FollowingMixerPipelineConfig @Inject() (
 
   override val transportMarshaller: TransportMarshaller[Timeline, urt.TimelineResponse] =
     urtTransportMarshaller
+}
+
+} catch {
+  case e: Exception =>
 }

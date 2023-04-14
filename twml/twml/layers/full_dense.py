@@ -1,3 +1,4 @@
+try:
 # pylint: disable=no-member,arguments-differ, attribute-defined-outside-init
 """
 Implementing Full Dense Layer
@@ -257,3 +258,6 @@ def full_dense(inputs, output_size,
                     _scope=name,
                     _reuse=reuse)
   return layer.apply(inputs)
+
+except Exception:
+  pass

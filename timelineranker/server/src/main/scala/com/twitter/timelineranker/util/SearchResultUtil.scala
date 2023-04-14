@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.util
 
 import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
@@ -120,4 +121,8 @@ object SearchResultUtil {
       SearchResultUtil.getSourceTweetId(searchResult).toSet ++
       SearchResultUtil.getReplyRootTweetId(searchResult).toSet
   }
+}
+
+} catch {
+  case e: Exception =>
 }

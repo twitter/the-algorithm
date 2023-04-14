@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
 
 case class CommerceDetails(
@@ -6,3 +7,7 @@ case class CommerceDetails(
   productKey: Option[Long],
   merchantId: Option[Long],
   productIndex: Option[Int])
+
+} catch {
+  case e: Exception =>
+}

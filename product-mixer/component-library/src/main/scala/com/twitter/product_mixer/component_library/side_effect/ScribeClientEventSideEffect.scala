@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.side_effect
 
 import com.twitter.abdecider.ScribingABDeciderUtil
@@ -115,4 +116,8 @@ object ScribeClientEventSideEffect {
     namespace: EventNamespace,
     eventValue: Option[Long] = None,
     latencyMs: Option[Long] = None)
+}
+
+} catch {
+  case e: Exception =>
 }

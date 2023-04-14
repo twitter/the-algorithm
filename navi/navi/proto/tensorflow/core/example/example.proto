@@ -1,3 +1,4 @@
+try {
 // Protocol messages for describing input data Examples for machine learning
 // model training or inference.
 syntax = "proto3";
@@ -304,3 +305,6 @@ message SequenceExample {
 }
 // LINT.ThenChange(
 //     https://www.tensorflow.org/code/tensorflow/python/training/training.py)
+
+} catch (Exception e) {
+}

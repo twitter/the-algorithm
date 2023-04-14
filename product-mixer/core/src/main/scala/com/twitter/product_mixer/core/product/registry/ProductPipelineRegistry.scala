@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.product.registry
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -187,3 +188,7 @@ class MultipleProductPipelinesForAProductException(
       s"${pipelineIdentifiers
         .map(productPipelineIdentifier => s"$productPipelineIdentifier from ${productPipelineIdentifier.file}")
         .mkString(", ")} ")
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 #pragma once
 
 #ifdef __cplusplus
@@ -57,3 +58,6 @@ class TWMLAPI ThriftWriter {
 
 }
 #endif
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.geoduck
 
 import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
@@ -54,4 +55,8 @@ object ReverseGeocodeClient {
   // So take the four letters to make sure it is consistent with LocationServiceClient
   val GeohashLengthAfterTruncation = 4
   def truncate(geohash: String): String = geohash.take(GeohashLengthAfterTruncation)
+}
+
+} catch {
+  case e: Exception =>
 }

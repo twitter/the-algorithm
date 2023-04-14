@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index;
 
 import java.io.IOException;
@@ -248,4 +249,7 @@ public class EarlybirdRealtimeIndexSegmentData extends EarlybirdIndexSegmentData
           indexExtension);
     }
   }
+}
+
+} catch (Exception e) {
 }

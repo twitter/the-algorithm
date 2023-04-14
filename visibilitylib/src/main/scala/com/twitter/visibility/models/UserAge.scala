@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.models
 
 case class UserAge(ageInYears: Option[Int]) {
@@ -12,4 +13,8 @@ case class UserAge(ageInYears: Option[Int]) {
   def unapply(userAge: UserAge): Option[Int] = {
     ageInYears
   }
+}
+
+} catch {
+  case e: Exception =>
 }

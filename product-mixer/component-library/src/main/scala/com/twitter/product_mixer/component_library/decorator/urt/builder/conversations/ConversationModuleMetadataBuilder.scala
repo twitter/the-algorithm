@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.conversations
 
 import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
@@ -35,4 +36,8 @@ case class ConversationModuleMetadataBuilder[
       gridCarouselMetadata = None
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

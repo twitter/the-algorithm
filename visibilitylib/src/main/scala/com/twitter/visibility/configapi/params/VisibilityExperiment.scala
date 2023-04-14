@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi.params
 
 import com.twitter.timelines.configapi.BucketName
@@ -16,4 +17,8 @@ abstract class VisibilityExperiment(experimentKey: String)
   override def experimentBuckets: Set[BucketName] = Set(TreatmentBucket)
   val ControlBucket: String = VisibilityExperiment.Control
   override def controlBuckets: Set[BucketName] = Set(ControlBucket)
+}
+
+} catch {
+  case e: Exception =>
 }

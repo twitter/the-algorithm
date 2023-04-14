@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.OuterTweetContext
@@ -15,4 +16,8 @@ class OuterTweetContextMarshaller @Inject() () {
       case QuoteTweetId(id) => thrift.OuterTweetContext.QuoteTweetId(id)
       case RetweetId(id) => thrift.OuterTweetContext.RetweetId(id)
     }
+}
+
+} catch {
+  case e: Exception =>
 }

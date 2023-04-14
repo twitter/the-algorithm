@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import java.util.List;
@@ -99,4 +100,7 @@ public class HitAttributeHelper implements HitAttributeProvider {
   public Map<Query, List<Integer>> getExpandedNodeToRankMap() {
     return expandedNodeToRankMap;
   }
+}
+
+} catch (Exception e) {
 }

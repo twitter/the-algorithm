@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.google.inject.name.Named
@@ -46,4 +47,8 @@ class RealTimeInteractionGraphUserVertexQueryFeatureHydrator @Inject() (
       }
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

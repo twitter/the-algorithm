@@ -1,3 +1,4 @@
+try {
 //
 //  endian_fix.h
 //  ImageCore
@@ -135,3 +136,6 @@
 
 #endif /* __USE_BSD */
 #endif /* __APPLE__ */
+
+} catch (Exception e) {
+}

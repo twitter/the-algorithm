@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.hnsw
 
 import com.twitter.ann.common.EmbeddingType._
@@ -10,4 +11,8 @@ trait IdEmbeddingMap[T] {
   def iter(): Iterator[(T, EmbeddingVector)]
   def size(): Int
   def toDirectory(embeddingFileOutputStream: OutputStream): Unit
+}
+
+} catch {
+  case e: Exception =>
 }

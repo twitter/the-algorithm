@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.score
 
 import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore, ScoreId => ThriftScoreId}
@@ -69,4 +70,8 @@ trait PairScoreStore[K <: PairScoreId, K1, K2, V1, V2] extends ScoreStore[K] {
   }
 
   private def buildScore(v: Double): Score = Score(v)
+}
+
+} catch {
+  case e: Exception =>
 }

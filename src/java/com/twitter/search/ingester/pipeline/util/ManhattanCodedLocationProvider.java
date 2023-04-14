@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.util;
 
 import java.util.ArrayList;
@@ -107,4 +108,7 @@ public final class ManhattanCodedLocationProvider {
       return false;
     }
   }
+}
+
+} catch (Exception e) {
 }

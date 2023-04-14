@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.config
 
 import com.twitter.timelines.util.stats.RequestScope
@@ -10,4 +11,8 @@ object RequestScopes {
   val ReverseChronHomeTimelineSource: RequestScope = RequestScope("reverseChronHomeTimelineSource")
   val EntityTweetsSource: RequestScope = RequestScope("entityTweets")
   val UtegLikedByTweetsSource: RequestScope = RequestScope("utegLikedByTweets")
+}
+
+} catch {
+  case e: Exception =>
 }

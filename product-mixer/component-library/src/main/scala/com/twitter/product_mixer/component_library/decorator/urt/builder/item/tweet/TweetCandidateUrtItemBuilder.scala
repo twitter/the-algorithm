@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.contextual_ref.ContextualTweetRefBuilder
@@ -89,4 +90,8 @@ case class TweetCandidateUrtItemBuilder[Query <: PipelineQuery, Candidate <: Bas
         destinationBuilder.map(_.apply(pipelineQuery, tweetCandidate, candidateFeatures))
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

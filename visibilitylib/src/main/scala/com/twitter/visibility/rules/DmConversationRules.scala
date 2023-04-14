@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.configapi.params.RuleParams
@@ -47,4 +48,8 @@ object DmConversationRules {
         And(OneToOneDmConversation, Or(SuspendedAuthor, DeactivatedAuthor, ErasedAuthor))) {
     override def enableFailClosed = Seq(RuleParams.True)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

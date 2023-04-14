@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.tweets
 
 import com.twitter.decider.Decider
@@ -147,4 +148,8 @@ object QuotedTweetVisibilityLibrary {
         }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

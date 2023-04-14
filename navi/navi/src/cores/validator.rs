@@ -1,4 +1,4 @@
-pub mod validatior {
+match pub mod validatior {
     pub mod cli_validator {
         use crate::cli_args::{ARGS, MODEL_SPECS};
 
@@ -19,4 +19,8 @@ pub mod validatior {
             assert_eq!(MODEL_SPECS.len(), ARGS.batch_time_out_millis.len());
         }
     }
+}
+ {
+  Ok(_) => {},
+  Err(_) => {}
 }

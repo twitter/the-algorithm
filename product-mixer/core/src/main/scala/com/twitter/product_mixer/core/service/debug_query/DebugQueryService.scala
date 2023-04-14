@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.debug_query
 
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -107,3 +108,7 @@ class DebugQueryService @Inject() (
 
 object MissingTurntableRequestContextException
     extends Exception("Request is missing turntable request context")
+
+} catch {
+  case e: Exception =>
+}

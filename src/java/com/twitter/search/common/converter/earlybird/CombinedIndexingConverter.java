@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.converter.earlybird;
 
 import java.io.IOException;
@@ -96,4 +97,7 @@ public class CombinedIndexingConverter {
 
     return builder.build();
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 // Input used in serving APIs.  Based on the tensorflow.Example family of
 // feature representations.
 
@@ -79,4 +80,7 @@ message Input {
     ExampleList example_list = 1 [lazy = true];
     ExampleListWithContext example_list_with_context = 2 [lazy = true];
   }
+}
+
+} catch (Exception e) {
 }

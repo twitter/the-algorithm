@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.marshaller.request
 
 import com.twitter.home_mixer.model.request.HomeMixerDebugOptions
@@ -24,4 +25,8 @@ class HomeMixerDebugParamsUnmarshaller @Inject() (
       }
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

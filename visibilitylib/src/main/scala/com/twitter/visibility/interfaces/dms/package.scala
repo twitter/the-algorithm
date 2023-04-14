@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces
 
 import com.twitter.stitch.Stitch
@@ -9,4 +10,8 @@ package object dms {
 
   val DmSafetyLabelMapFetcherStratoColumn =
     "visibility/safety-label-store/vflib/dm/safetyLabelMap.Dm"
+}
+
+} catch {
+  case e: Exception =>
 }

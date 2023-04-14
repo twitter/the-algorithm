@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.util
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -73,4 +74,8 @@ class TweetHydrator(tweetyPieClient: TweetyPieClient, statsReceiver: StatsReceiv
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.spam.rtf.thriftscala.{SafetyLevel => ThriftSafetyLevel}
@@ -14,4 +15,8 @@ object SafetyLevel {
   case object TopicsLandingPageTopicRecommendations extends SafetyLevel {
     override val toThrift = ThriftSafetyLevel.TopicsLandingPageTopicRecommendations
   }
+}
+
+} catch {
+  case e: Exception =>
 }

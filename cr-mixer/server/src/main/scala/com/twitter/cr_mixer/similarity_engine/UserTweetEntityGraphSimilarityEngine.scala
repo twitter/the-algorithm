@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.similarity_engine
 
 import com.twitter.recos.recos_common.thriftscala.SocialProofType
@@ -107,4 +108,8 @@ object UserTweetEntityGraphSimilarityEngine {
       params
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

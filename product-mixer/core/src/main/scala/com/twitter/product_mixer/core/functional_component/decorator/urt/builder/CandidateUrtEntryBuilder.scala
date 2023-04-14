@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.decorator.urt.builder
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -11,4 +12,8 @@ trait CandidateUrtEntryBuilder[
   BuilderOutput <: TimelineEntry] {
 
   def apply(query: Query, candidate: BuilderInput, candidateFeatures: FeatureMap): BuilderOutput
+}
+
+} catch {
+  case e: Exception =>
 }

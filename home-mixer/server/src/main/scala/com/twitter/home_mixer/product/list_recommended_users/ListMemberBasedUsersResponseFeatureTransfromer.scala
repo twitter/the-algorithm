@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.list_recommended_users
 
 import com.twitter.hermit.candidate.{thriftscala => t}
@@ -18,4 +19,8 @@ object ListMemberBasedUsersResponseFeatureTransfromer
   override def transform(candidate: t.Candidate): FeatureMap = FeatureMapBuilder()
     .add(ScoreFeature, candidate.score)
     .build()
+}
+
+} catch {
+  case e: Exception =>
 }

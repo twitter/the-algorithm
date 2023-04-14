@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.slice
 
 import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
@@ -82,3 +83,7 @@ case class TypeaheadMetadata(
 
 // Used to render badges in Typeahead, such as Business-affiliated badges
 case class UserBadge(badgeType: String, badgeUrl: String, description: String)
+
+} catch {
+  case e: Exception =>
+}

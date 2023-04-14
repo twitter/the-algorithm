@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
 
 import com.twitter.product_mixer.component_library.candidate_source.people_discovery.PeopleDiscoveryCandidateSource
@@ -67,4 +68,8 @@ class WhoToFollowDependentCandidatePipelineConfigBuilder @Inject() (
       layoutVersionParam = layoutVersionParam,
       excludedUserIdsFeature = excludedUserIdsFeature
     )
+}
+
+} catch {
+  case e: Exception =>
 }

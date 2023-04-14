@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2
 package scio.bq_generation.ftr_tweet
 
@@ -261,4 +262,8 @@ object DecayedSumClusterToTweetIndexGenerationBatch extends FTRClusterToTweetInd
   override val scoreKey = "dec_sum_logfavScoreClusterNormalizedOnly"
   override val maxUserFTR = 1.0
   override val maxTweetFTR = 1.0
+}
+
+} catch {
+  case e: Exception =>
 }

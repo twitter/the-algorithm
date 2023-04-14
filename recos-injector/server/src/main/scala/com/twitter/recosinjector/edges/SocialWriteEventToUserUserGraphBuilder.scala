@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.edges
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -70,4 +71,8 @@ class SocialWriteEventToUserUserGraphBuilder()(override implicit val statsReceiv
   ): Future[Seq[UserUserEdge]] = {
     Future(edges)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

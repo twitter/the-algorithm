@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema.earlybird;
 
 import com.google.common.base.Preconditions;
@@ -94,3 +95,6 @@ public class EarlybirdSchemaBuilder extends SchemaBuilder {
   }
 }
 
+
+} catch (Exception e) {
+}

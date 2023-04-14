@@ -1,3 +1,4 @@
+try:
 from toxicity_ml_pipeline.load_model import reload_model_weights
 from toxicity_ml_pipeline.utils.helpers import load_inference_func, upload_model
 
@@ -52,3 +53,6 @@ def _get_score(inference_func, df, text_col="text", kw="", batch_size=64):
 
   df[score_col] = predictions
   return df
+
+except Exception:
+  pass

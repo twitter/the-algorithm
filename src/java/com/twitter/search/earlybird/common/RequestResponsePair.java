@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common;
 
 import org.apache.lucene.search.Query;
@@ -41,4 +42,7 @@ public class RequestResponsePair {
   public Query getLuceneQuery() {
     return luceneQuery;
   }
+}
+
+} catch (Exception e) {
 }

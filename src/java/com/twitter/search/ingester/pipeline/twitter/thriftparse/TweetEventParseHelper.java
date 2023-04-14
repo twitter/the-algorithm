@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter.thriftparse;
 
 import java.util.Date;
@@ -724,4 +725,7 @@ public final class TweetEventParseHelper {
 
     message.setDirectedAtUserId(Optional.of(directedAtUser.getUser_id()));
   }
+}
+
+} catch (Exception e) {
 }

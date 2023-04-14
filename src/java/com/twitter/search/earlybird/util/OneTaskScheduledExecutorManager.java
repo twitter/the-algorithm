@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import java.io.Closeable;
@@ -88,4 +89,7 @@ public abstract class OneTaskScheduledExecutorManager
       throw new IOException(e);
     }
   }
+}
+
+} catch (Exception e) {
 }

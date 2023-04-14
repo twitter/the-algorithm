@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.socialgraph
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -13,4 +14,8 @@ class RecentFollowingRecentFollowingExpansionSourceFSConfig @Inject() ()
   override val booleanFSParams: Seq[FSParam[Boolean] with FSName] = Seq(
     RecentFollowingRecentFollowingExpansionSourceParams.CallSgsCachedColumn,
   )
+}
+
+} catch {
+  case e: Exception =>
 }

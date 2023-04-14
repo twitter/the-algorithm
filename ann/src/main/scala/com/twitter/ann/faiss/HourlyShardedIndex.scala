@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.faiss
 
 import com.twitter.ann.common.Distance
@@ -91,4 +92,8 @@ class HourlyShardedIndex[T, D <: Distance[D]](
 
     require(castedIndex.get() != null, "Failed to find any shards during startup")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

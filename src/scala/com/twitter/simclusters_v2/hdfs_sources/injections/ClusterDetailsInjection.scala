@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.hdfs_sources.injections
 
 import com.twitter.bijection.Bufferable
@@ -13,4 +14,8 @@ object ClusterDetailsInjection {
     genericInjection(Bufferable.injectionOf[(String, Int)]),
     ScalaCompactThrift(ClusterDetails)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

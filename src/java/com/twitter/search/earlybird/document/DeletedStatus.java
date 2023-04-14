@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.document;
 
 /**
@@ -12,4 +13,7 @@ public final class DeletedStatus {
     this.timeSliceID = timeSliceID;
     this.statusID = statusID;
   }
+}
+
+} catch (Exception e) {
 }

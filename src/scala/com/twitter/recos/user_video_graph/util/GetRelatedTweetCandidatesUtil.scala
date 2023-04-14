@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_video_graph.util
 
 import com.twitter.graphjet.bipartite.api.BipartiteGraph
@@ -53,4 +54,8 @@ object GetRelatedTweetCandidatesUtil {
         GraphFeaturesForTweet(cooccurrence = Some(cooccurrence), degree = Some(relatedTweetDegree)))
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

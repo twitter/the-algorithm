@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.follow_recommendations.thriftscala.DebugParams
@@ -27,4 +28,8 @@ trait HasDebugOptions {
 
 trait HasFrsDebugOptions {
   def frsDebugOptions: Option[DebugOptions]
+}
+
+} catch {
+  case e: Exception =>
 }

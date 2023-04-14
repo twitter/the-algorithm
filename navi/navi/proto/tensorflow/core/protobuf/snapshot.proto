@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.data.experimental;
@@ -44,4 +45,7 @@ message TensorMetadata {
 // Metadata for all the tensors in a Snapshot Record.
 message SnapshotTensorMetadata {
   repeated TensorMetadata tensor_metadata = 1;
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.uteg_liked_by_tweets
 
 import com.twitter.recos.recos_common.thriftscala.SocialProofType
@@ -71,4 +72,8 @@ class UTEGResultsTransform(
       envelope.copy(utegResults = utegResultsMap)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.side_effect
 
 import com.twitter.eventbus.client.EventBusPublisher
@@ -89,4 +90,8 @@ class PublishClientSentImpressionsEventBusSideEffect @Inject() (
   override val alerts = Seq(
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.4)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

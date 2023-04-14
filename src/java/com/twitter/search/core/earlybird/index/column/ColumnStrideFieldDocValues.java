@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.column;
 
 import java.io.IOException;
@@ -73,4 +74,7 @@ public class ColumnStrideFieldDocValues extends NumericDocValues {
   public long cost() {
     return iterator.cost();
   }
+}
+
+} catch (Exception e) {
 }

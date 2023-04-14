@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.step.pipeline_selector
 
 import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
@@ -41,3 +42,7 @@ case class PipelineSelectorStep[Query <: PipelineQuery, State <: HasQuery[Query,
 }
 
 case class PipelineSelectorResult(pipelineIdentifier: ComponentIdentifier) extends ExecutorResult
+
+} catch {
+  case e: Exception =>
+}

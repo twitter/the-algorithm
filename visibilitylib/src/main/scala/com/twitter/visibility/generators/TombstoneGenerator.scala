@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.generators
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -91,4 +92,8 @@ class TombstoneGenerator(
       case _ => TombstoneReason.Unspecified
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ContainsFeedbackActionInfos
@@ -63,3 +64,7 @@ case class TerminateTimelineInstruction(terminateTimelineDirection: TimelineTerm
 case class ShowCoverInstruction(cover: Cover) extends TimelineInstruction
 
 case class ShowAlertInstruction(showAlert: ShowAlert) extends TimelineInstruction
+
+} catch {
+  case e: Exception =>
+}

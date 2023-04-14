@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import java.util.HashMap;
@@ -103,4 +104,7 @@ public abstract class FacetUtil {
 
     return facetLabelProviderBuilder;
   }
+}
+
+} catch (Exception e) {
 }

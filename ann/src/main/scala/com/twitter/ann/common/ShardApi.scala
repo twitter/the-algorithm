@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.common
 
 import com.twitter.ann.common.EmbeddingType.EmbeddingVector
@@ -84,4 +85,8 @@ class ComposedQueryable[T, P <: RuntimeParams, D <: Distance[D]](
         .toList
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

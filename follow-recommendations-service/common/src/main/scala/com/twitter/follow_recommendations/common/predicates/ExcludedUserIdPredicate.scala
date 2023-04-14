@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates
 
 import com.twitter.follow_recommendations.common.base.Predicate
@@ -21,4 +22,8 @@ object ExcludedUserIdPredicate extends Predicate[(HasExcludedUserIds, CandidateU
       ValidStitch
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

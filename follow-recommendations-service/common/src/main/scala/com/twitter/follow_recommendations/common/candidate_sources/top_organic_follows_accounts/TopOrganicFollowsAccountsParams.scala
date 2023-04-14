@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -28,4 +29,8 @@ object TopOrganicFollowsAccountsParams {
         default = 1200,
         min = 0.001,
         max = 2000)
+}
+
+} catch {
+  case e: Exception =>
 }

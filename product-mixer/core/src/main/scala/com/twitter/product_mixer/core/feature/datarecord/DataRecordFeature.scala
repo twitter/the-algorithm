@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.feature.datarecord
 
 import com.twitter.ml.api.DataRecord
@@ -40,3 +41,7 @@ trait DataRecordOptionalFeature[-Entity, Value]
  * should be used as a whole instead of as individual [[DataRecordFeature]]s for example.
  */
 trait DataRecordInAFeature[-Entity] extends BaseDataRecordFeature[Entity, DataRecord]
+
+} catch {
+  case e: Exception =>
+}

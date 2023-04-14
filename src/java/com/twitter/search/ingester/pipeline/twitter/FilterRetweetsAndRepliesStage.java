@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import org.apache.commons.pipeline.StageException;
@@ -76,4 +77,7 @@ public class FilterRetweetsAndRepliesStage extends TwitterBaseStage
     }
     return shouldEmit;
   }
+}
+
+} catch (Exception e) {
 }

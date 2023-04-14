@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.module
 
 import com.google.inject.Provides
@@ -33,4 +34,8 @@ object SocialGraphServiceModule
   ): MethodBuilder = {
     methodBuilder.withTimeoutPerRequest(400.millis)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

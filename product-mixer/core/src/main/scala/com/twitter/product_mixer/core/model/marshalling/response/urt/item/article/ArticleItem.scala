@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.article
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
@@ -23,4 +24,8 @@ case class ArticleItem(
   override val entryNamespace: EntryNamespace = ArticleItem.ArticleEntryNamespace
 
   override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+}
+
+} catch {
+  case e: Exception =>
 }

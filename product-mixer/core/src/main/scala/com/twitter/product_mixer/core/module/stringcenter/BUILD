@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -23,3 +24,6 @@ scala_library(
         "stringcenter/client/src/main/scala/com/twitter/stringcenter/client",
     ],
 )
+
+} catch (Exception e) {
+}

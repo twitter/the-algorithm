@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.modules
 import com.twitter.inject.TwitterModule
 
@@ -15,4 +16,8 @@ object FlagsModule extends TwitterModule {
     default = false,
     help = "Whether to log results such that we use them for scoring or metrics"
   )
+}
+
+} catch {
+  case e: Exception =>
 }

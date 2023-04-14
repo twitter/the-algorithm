@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.Closeable;
@@ -278,4 +279,7 @@ public class EarlybirdKafkaConsumer implements Closeable {
     balancingKafkaConsumer.close();
     running.set(false);
   }
+}
+
+} catch (Exception e) {
 }

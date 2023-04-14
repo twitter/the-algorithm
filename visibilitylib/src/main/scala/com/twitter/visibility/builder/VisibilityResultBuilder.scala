@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder
 
 import com.twitter.visibility.features.Feature
@@ -111,4 +112,8 @@ class VisibilityResultBuilder(
       resolvedFeatureMap = resolvedFeatureMap
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

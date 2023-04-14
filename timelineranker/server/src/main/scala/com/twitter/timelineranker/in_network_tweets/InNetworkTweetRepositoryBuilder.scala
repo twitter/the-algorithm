@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.in_network_tweets
 
 import com.twitter.conversions.DurationOps._
@@ -106,4 +107,8 @@ class InNetworkTweetRepositoryBuilder(config: RuntimeConfiguration, configBuilde
 
     new InNetworkTweetRepository(inNetworkTweetSource, inNetworkTweetRealtimeCGSource)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

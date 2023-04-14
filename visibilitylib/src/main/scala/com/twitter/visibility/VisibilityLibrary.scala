@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility
 
 import com.twitter.abdecider.LoggingABDecider
@@ -384,4 +385,8 @@ class VisibilityLibrary private[VisibilityLibrary] (
       safetyLevel.name
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

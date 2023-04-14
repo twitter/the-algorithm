@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.step.scorer
 
 import com.twitter.product_mixer.core.functional_component.scorer.Scorer
@@ -66,4 +67,8 @@ case class ScorerStep[
 
   override def isEmpty(config: Seq[Scorer[Query, Candidate]]): Boolean =
     config.isEmpty
+}
+
+} catch {
+  case e: Exception =>
 }

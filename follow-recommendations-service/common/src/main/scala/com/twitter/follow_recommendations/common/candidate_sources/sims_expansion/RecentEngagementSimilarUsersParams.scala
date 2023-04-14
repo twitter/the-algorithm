@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
 
 import com.twitter.timelines.configapi.FSEnumParam
@@ -14,4 +15,8 @@ object RecentEngagementSimilarUsersParams {
         name = "sims_expansion_recent_engagement_aggregator_id",
         default = SimsExpansionSourceAggregatorId.Sum,
         enum = SimsExpansionSourceAggregatorId)
+}
+
+} catch {
+  case e: Exception =>
 }

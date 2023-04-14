@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline
 
 import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.CachedScoredTweetsCandidatePipelineConfig._
@@ -50,4 +51,8 @@ class CachedScoredTweetsCandidatePipelineConfig @Inject() (
 
 object CachedScoredTweetsCandidatePipelineConfig {
   val Identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("CachedScoredTweets")
+}
+
+} catch {
+  case e: Exception =>
 }

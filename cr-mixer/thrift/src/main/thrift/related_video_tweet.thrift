@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.cr_mixer.thriftjava
 #@namespace scala com.twitter.cr_mixer.thriftscala
 #@namespace strato com.twitter.cr_mixer
@@ -21,3 +22,6 @@ struct RelatedVideoTweet {
 struct RelatedVideoTweetResponse {
   1: required list<RelatedVideoTweet> tweets
 } (persisted='true')
+
+} catch (Exception e) {
+}

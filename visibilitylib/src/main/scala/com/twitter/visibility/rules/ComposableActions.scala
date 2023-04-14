@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 object ComposableActions {
@@ -42,4 +43,8 @@ object ComposableActions {
       composableActions.appealable
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

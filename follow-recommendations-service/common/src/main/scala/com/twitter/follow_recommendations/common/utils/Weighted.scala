@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.utils
 
 /**
@@ -18,4 +19,8 @@ object Weighted {
       override def apply(rec: Rec): Double = f(rec)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

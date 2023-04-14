@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.classifiers;
 
 import java.io.File;
@@ -257,4 +258,7 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
 
     return tweetHasOffensiveTerm;
   }
+}
+
+} catch (Exception e) {
 }

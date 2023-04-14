@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.search;
 
 import java.io.IOException;
@@ -325,4 +326,7 @@ public abstract class TwitterEarlyTerminationCollector
    * Debug info collected during execution.
    */
   public abstract List<String> getDebugInfo();
+}
+
+} catch (Exception e) {
 }

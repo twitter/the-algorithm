@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.recommendation
 
 import com.twitter.product_mixer.component_library.selector.InsertAppendResults
@@ -259,4 +260,8 @@ object RecommendationPipelineConfig extends PipelineConfigCompanion {
     decoratorStep,
     resultSideEffectsStep,
   )
+}
+
+} catch {
+  case e: Exception =>
 }

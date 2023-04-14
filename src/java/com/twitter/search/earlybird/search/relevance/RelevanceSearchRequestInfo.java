@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance;
 
 import com.google.common.base.Preconditions;
@@ -63,4 +64,7 @@ public class RelevanceSearchRequestInfo extends SearchRequestInfo {
     double currentQualityFactor = qualityFactor.get();
     return Math.max(numResults, (int) (currentQualityFactor * maxHitsToProcess));
   }
+}
+
+} catch (Exception e) {
 }

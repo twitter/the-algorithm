@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.query_server.common
 
 import com.twitter.ann.common.IndexOutputFile
@@ -176,4 +177,8 @@ case class ValidatedIndexPathProvider(
   override def isValidIndex(dir: AbstractFile): Boolean = {
     isValidHnswIndex(dir)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

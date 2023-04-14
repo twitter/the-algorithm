@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.generators
 
 import com.ibm.icu.util.ULocale
@@ -55,4 +56,8 @@ class CountryNameGenerator(countryCodeMap: Map[String, String], statsReceiver: S
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

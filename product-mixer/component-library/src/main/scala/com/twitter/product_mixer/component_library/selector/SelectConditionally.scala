@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.core.functional_component.common.CandidateScope
@@ -82,4 +83,8 @@ object SelectConditionally {
     enabledParamToInvert: Param[Boolean],
   ): Seq[Selector[Query]] =
     selectors.map(SelectConditionally.paramNotGated(_, enabledParamToInvert))
+}
+
+} catch {
+  case e: Exception =>
 }

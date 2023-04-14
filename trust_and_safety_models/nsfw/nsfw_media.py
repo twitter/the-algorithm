@@ -1,3 +1,4 @@
+try:
 import kerastuner as kt
 import math
 import numpy as np
@@ -464,3 +465,5 @@ plt.title(
 )
 plt.subplots_adjust(top=0.72)
 plt.savefig('recall_precision_nsfw_Keras_with_twitter_CLIP_sens_prev_test.pdf')
+except Exception:
+  pass

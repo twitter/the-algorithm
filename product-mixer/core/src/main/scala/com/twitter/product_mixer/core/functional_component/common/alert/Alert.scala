@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.common.alert
 
 import com.twitter.product_mixer.core.functional_component.common.alert.predicate.Predicate
@@ -28,4 +29,8 @@ trait Alert {
 
   /** A suffix to add to the end of the metric, this is often a [[Percentile]] */
   val metricSuffix: Option[String] = None
+}
+
+} catch {
+  case e: Exception =>
 }

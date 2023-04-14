@@ -1,3 +1,4 @@
+try {
 #pragma once
 
 #include <twml.h>
@@ -123,4 +124,7 @@ Status makeResourceHandle(OpKernelContext* context, int out_idx, ResourceType **
 
   *resource_ = resource;
   return Status::OK();
+}
+
+} catch (Exception e) {
 }

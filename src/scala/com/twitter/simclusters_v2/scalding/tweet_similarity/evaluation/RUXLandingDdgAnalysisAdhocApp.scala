@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.tweet_similarity.evaluation
 
 import com.twitter.rux.landing_page.data_pipeline.LabeledRuxServiceScribeScalaDataset
@@ -79,4 +80,8 @@ object RUXLandingDdgAnalysisAdhocApp extends TwitterExecutionApp {
         case _ => Nil
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

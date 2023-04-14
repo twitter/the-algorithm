@@ -1,3 +1,4 @@
+try:
 """
 Functions for exporting models for different modes.
 """
@@ -262,3 +263,6 @@ def export_feature_spec(dir_path, feature_spec_dict):
 
 # Keep the alias for compatibility.
 get_supervised_input_receiver_fn = twml.parsers.convert_to_supervised_input_receiver_fn
+
+except Exception:
+  pass

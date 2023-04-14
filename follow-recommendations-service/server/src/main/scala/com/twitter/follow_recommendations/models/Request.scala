@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.models
 
 import com.twitter.follow_recommendations.common.models.DisplayLocation
@@ -20,3 +21,7 @@ case class Request(
   userLocationState: Option[String] = None)
     extends ProductMixerRequest
     with HasFrsDebugParams {}
+
+} catch {
+  case e: Exception =>
+}

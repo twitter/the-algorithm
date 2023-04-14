@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import javax.inject.Inject;
@@ -118,4 +119,7 @@ class SuperRootService implements EarlybirdService.ServiceIface {
   public Future<EarlybirdResponse> search(EarlybirdRequest request) {
     return fullSearchMethod.apply(request);
   }
+}
+
+} catch (Exception e) {
 }

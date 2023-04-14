@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.guano.commons.thriftscala.PolicyInViolation
@@ -324,4 +325,8 @@ object PublicInterestRules {
     override def enabled: Seq[RuleParam[Boolean]] = Seq(
       EnableSearchIpiSafeSearchWithoutUserInQueryDropRule)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

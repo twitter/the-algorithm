@@ -1,3 +1,4 @@
+try:
 """
 Interpolation functions
 """
@@ -92,3 +93,6 @@ def linear_interp1_by_class(inputs, input_classes, ref_inputs, ref_outputs):
   # Use while loop for now, needs to be replace by a custom C++ op later.
   outputs = twml.util.batch_apply(in_func, inputs, cond_func=cond_func)
   return tf.reshape(outputs, original_input_shape)
+
+except Exception:
+  pass

@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_direct_interactions
 
 import com.spotify.scio.ScioContext
@@ -76,4 +77,8 @@ object InteractionGraphAggDirectInteractionsJob
     )
 
   }
+}
+
+} catch {
+  case e: Exception =>
 }

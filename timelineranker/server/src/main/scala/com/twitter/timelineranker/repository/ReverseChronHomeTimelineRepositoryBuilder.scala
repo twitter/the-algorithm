@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.repository
 
 import com.twitter.conversions.DurationOps._
@@ -69,4 +70,8 @@ class ReverseChronHomeTimelineRepositoryBuilder(
       contextBuilder
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

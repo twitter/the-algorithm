@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.serving;
@@ -53,4 +54,7 @@ message SessionRunResponse {
 service SessionService {
   // Runs inference of a given model.
   rpc SessionRun(SessionRunRequest) returns (SessionRunResponse);
+}
+
+} catch (Exception e) {
 }

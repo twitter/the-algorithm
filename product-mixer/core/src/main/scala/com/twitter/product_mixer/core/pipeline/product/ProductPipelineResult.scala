@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.product
 
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
@@ -59,4 +60,8 @@ object ProductPipelineResult {
     None,
     Some(result)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

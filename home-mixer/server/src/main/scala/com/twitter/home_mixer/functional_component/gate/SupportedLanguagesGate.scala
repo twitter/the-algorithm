@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.gate
 
 import com.twitter.product_mixer.core.functional_component.gate.Gate
@@ -65,4 +66,8 @@ object SupportedLanguagesGate extends Gate[PipelineQuery] {
 
   override def shouldContinue(query: PipelineQuery): Stitch[Boolean] =
     Stitch.value(query.getLanguageCode.forall(supportedLanguages.contains))
+}
+
+} catch {
+  case e: Exception =>
 }

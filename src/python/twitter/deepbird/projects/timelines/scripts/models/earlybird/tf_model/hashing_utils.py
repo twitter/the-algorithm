@@ -1,3 +1,4 @@
+try:
 from twitter.deepbird.io.util import _get_feature_id
 
 import numpy as np
@@ -27,3 +28,6 @@ def make_feature_id(name, num_bits):
 
 def limit_bits(value, num_bits):
   return value & ((2 ** num_bits) - 1)
+
+except Exception:
+  pass

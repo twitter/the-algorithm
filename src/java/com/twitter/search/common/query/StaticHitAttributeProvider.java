@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import java.util.Collections;
@@ -29,4 +30,7 @@ public class StaticHitAttributeProvider implements HitAttributeProvider {
     }
     return Collections.EMPTY_MAP;
   }
+}
+
+} catch (Exception e) {
 }

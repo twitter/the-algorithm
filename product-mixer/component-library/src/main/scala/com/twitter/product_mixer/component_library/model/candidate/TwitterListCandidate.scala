@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.candidate
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -71,4 +72,8 @@ final class TwitterListCandidate private (
 
 object TwitterListCandidate {
   def apply(id: Long): TwitterListCandidate = new TwitterListCandidate(id)
+}
+
+} catch {
+  case e: Exception =>
 }

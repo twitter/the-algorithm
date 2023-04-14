@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module.thrift_client
 import com.twitter.app.Flag
 import com.twitter.finagle.ThriftMux
@@ -36,4 +37,8 @@ object EarlybirdSearchClientModule
       .withSessionQualifier
       .successRateFailureAccrual(successRate = 0.9, window = 30.seconds)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

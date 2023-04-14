@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.conversations
 
 import com.google.common.annotations.VisibleForTesting
@@ -155,4 +156,8 @@ object AdAvoidanceLibrary {
       response
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.icon
 
 import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.icon.BaseHorizonIconBuilder
@@ -14,4 +15,8 @@ case class HorizonIconBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNo
     query: Query,
     candidates: Seq[CandidateWithFeatures[Candidate]]
   ): Option[HorizonIcon] = Some(icon)
+}
+
+} catch {
+  case e: Exception =>
 }

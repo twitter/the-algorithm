@@ -1,3 +1,4 @@
+try {
 #ifndef TENSORFLOW_CORE_KERNELS_BINARY_SPARSE_TENSOR_DENSE_MATMUL_IMPL_H_
 #define TENSORFLOW_CORE_KERNELS_BINARY_SPARSE_TENSOR_DENSE_MATMUL_IMPL_H_
 
@@ -143,3 +144,5 @@ static void ParallelLookupAndSegmentSum(OpKernelContext *ctx,
 }  // namespace tensorflow
 
 #endif  // TENSORFLOW_CORE_KERNELS_BINARY_SPARSE_TENSOR_DENSE_MATMUL_IMPL_H_
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try:
 """
 This module contains custom tensorflow metrics used at Twitter.
 Its components conform to conventions used by the ``tf.metrics`` module.
@@ -1378,3 +1379,6 @@ def combine_metric_fns(*fn_list):
       eval_metric_ops.update(fn(*args, **kwargs))
     return eval_metric_ops
   return combined_metric_ops
+
+except Exception:
+  pass

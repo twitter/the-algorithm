@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.Closeable;
@@ -14,4 +15,7 @@ public interface EarlybirdStartup {
    * thread to keep the index current.
    */
   Closeable start() throws EarlybirdStartupException;
+}
+
+} catch (Exception e) {
 }

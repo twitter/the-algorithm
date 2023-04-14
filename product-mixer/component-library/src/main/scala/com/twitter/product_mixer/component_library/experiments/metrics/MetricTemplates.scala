@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.experiments.metrics
 
 import com.twitter.product_mixer.component_library.experiments.metrics.PlaceholderConfig.PlaceholdersMap
@@ -120,4 +121,8 @@ object MetricTemplates {
       case m: MethodSymbol if m.isCaseAccessor => (m.name.toString -> m)
     }.toMap
   }
+}
+
+} catch {
+  case e: Exception =>
 }

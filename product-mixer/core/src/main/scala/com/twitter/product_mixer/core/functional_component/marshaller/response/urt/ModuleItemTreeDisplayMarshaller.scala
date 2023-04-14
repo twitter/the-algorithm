@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module.ModuleDisplayTypeMarshaller
@@ -17,4 +18,8 @@ class ModuleItemTreeDisplayMarshaller @Inject() (
       displayType = moduleItemTreeDisplay.displayType.map(moduleDisplayTypeMarshaller(_)),
       isAnchorChild = moduleItemTreeDisplay.isAnchorChild
     )
+}
+
+} catch {
+  case e: Exception =>
 }

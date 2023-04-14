@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.filter
 
 import com.twitter.cr_mixer.model.CandidateGeneratorQuery
@@ -48,4 +49,8 @@ case class UtegHealthFilter @Inject() () extends FilterBase {
   ): ConfigType = {
     query.params(UtegTweetGlobalParams.EnableTLRHealthFilterParam)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

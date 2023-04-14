@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.base
 
 import com.twitter.follow_recommendations.common.models.TweetCandidate
@@ -68,4 +69,8 @@ trait TweetAuthorsCandidateSource[-Target, +Candidate] extends CandidateSource[T
 
 object TweetAuthorsCandidateSource {
   final val DefaultScore: Double = 0.0
+}
+
+} catch {
+  case e: Exception =>
 }

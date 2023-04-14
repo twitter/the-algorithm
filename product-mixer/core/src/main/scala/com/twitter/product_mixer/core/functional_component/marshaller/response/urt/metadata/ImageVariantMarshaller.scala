@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.ColorPaletteMarshaller
@@ -16,4 +17,8 @@ class ImageVariantMarshaller @Inject() (
     height = imageVariant.height,
     palette = imageVariant.palette.map { paletteList => paletteList.map(colorPaletteMarshaller(_)) }
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 target(
     dependencies = [
         "visibility/lib/src/main/scala/com/twitter/visibility",
@@ -27,3 +28,6 @@ target(
         "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/users",
     ],
 )
+
+} catch (Exception e) {
+}

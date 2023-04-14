@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
@@ -22,4 +23,8 @@ class CoverCtaBehaviorMarshaller @Inject() (
       case nav: CoverBehaviorNavigate =>
         urt.CoverCtaBehavior.Navigate(urt.CoverBehaviorNavigate(urlMarshaller(nav.url)))
     }
+}
+
+} catch {
+  case e: Exception =>
 }

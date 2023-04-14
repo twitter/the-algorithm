@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.following
 
 import com.twitter.adserver.{thriftscala => ads}
@@ -99,4 +100,8 @@ class FollowingAdsCandidatePipelineBuilder @Inject() (
       alerts = alerts,
       urtRequest = Some(true),
     )
+}
+
+} catch {
+  case e: Exception =>
 }

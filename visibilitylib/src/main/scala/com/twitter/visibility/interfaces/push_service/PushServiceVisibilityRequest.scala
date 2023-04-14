@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.push_service
 
 import com.twitter.gizmoduck.thriftscala.User
@@ -17,3 +18,7 @@ case class PushServiceVisibilityRequest(
   isSourceTweet: Boolean = false,
   isOutOfNetworkTweet: Boolean = true,
 )
+
+} catch {
+  case e: Exception =>
+}

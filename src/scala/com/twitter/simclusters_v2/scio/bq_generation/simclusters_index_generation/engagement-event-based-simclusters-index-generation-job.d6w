@@ -1,3 +1,4 @@
+try {
 class Profile(Struct):
   project = Default(String, 'twttr-recos-ml-prod')
   date = Required(String)
@@ -42,3 +43,6 @@ jobs=[SimClustersIndexGenerationJob.bind(profile=Profile())]
 
 
 
+
+} catch (Exception e) {
+}

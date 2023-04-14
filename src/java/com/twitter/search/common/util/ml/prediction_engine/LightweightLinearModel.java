@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml.prediction_engine;
 
 import java.io.BufferedReader;
@@ -184,4 +185,7 @@ public class LightweightLinearModel {
     return String.format("LightweightLinearModel. {bias=%s binary=%s continuous=%s discrete=%s}",
         this.bias, this.binaryFeatures, this.continuousFeatures, this.discretizedFeatures);
   }
+}
+
+} catch (Exception e) {
 }

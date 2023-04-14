@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates.hss
 
 import com.twitter.conversions.DurationOps._
@@ -31,4 +32,8 @@ object HssPredicateParams {
     override def durationConversion: DurationConversion = DurationConversion.FromMillis
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

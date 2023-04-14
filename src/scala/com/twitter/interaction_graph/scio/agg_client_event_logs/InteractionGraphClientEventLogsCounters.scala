@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_client_event_logs
 
 import com.spotify.scio.ScioMetrics
@@ -29,4 +30,8 @@ case object InteractionGraphClientEventLogsCounters
   override def tweetImpressionFeaturesInc(): Unit = tweetImpressionCounter.inc()
 
   override def catchAllInc(): Unit = catchAllCounter.inc()
+}
+
+} catch {
+  case e: Exception =>
 }

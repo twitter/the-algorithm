@@ -1,3 +1,4 @@
+try:
 import os
 
 from toxicity_ml_pipeline.settings.default_settings_tox import LOCAL_DIR, MAX_SEQ_LENGTH
@@ -225,3 +226,5 @@ def load(
   print(model.summary(), "logits: ", from_logits)
 
   return model
+except Exception:
+  pass

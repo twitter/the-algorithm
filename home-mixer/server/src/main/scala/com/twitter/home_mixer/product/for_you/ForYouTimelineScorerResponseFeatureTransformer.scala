@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.for_you
 
 import com.twitter.tweetconvosvc.tweet_ancestor.{thriftscala => ta}
@@ -186,4 +187,8 @@ object ForYouTimelineScorerResponseFeatureTransformer
       .add(VideoDurationMsFeature, earlybirdFeatures.flatMap(_.videoDurationMs))
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

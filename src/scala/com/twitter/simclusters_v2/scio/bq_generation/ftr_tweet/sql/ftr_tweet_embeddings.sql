@@ -1,3 +1,4 @@
+try {
 WITH vars AS (
   SELECT
     TIMESTAMP('{START_TIME}') AS start_time,
@@ -278,3 +279,6 @@ WITH vars AS (
     clusterId,
     tweetScore
   FROM tweet_e_unnest
+
+} catch (Exception e) {
+}

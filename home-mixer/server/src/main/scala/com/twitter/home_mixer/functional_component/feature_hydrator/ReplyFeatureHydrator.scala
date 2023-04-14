@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -193,4 +194,8 @@ class ReplyFeatureHydrator @Inject() (statsReceiver: StatsReceiver)
           .getOrElse(SourceTweetIdFeature, None).getOrElse(candidate.candidate.id))
       .map(Time.now - _)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

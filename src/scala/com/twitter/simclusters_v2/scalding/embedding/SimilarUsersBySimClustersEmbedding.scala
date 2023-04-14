@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding
 
 import com.twitter.bijection.Injection
@@ -296,4 +297,8 @@ object SimilarUsersBySimClustersEmbedding {
     userToProducerMapJoinWithEmbedding
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

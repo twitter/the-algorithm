@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import javax.inject.Inject;
@@ -33,4 +34,7 @@ public class SuperRootServer extends SearchRootServer<EarlybirdService.ServiceIf
       throw new RuntimeException(e);
     }
   }
+}
+
+} catch (Exception e) {
 }

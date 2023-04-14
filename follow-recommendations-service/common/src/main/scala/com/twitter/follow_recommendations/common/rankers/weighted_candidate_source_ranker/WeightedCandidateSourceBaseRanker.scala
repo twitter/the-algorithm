@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
 
 import com.twitter.follow_recommendations.common.utils.RandomUtil
@@ -115,4 +116,8 @@ class WeightedCandidateSourceBaseRanker[A, Rec](
       randomSeed.map(new Random(_))
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

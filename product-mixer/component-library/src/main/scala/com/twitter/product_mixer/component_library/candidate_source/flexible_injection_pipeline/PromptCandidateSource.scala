@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline
 
 import com.twitter.inject.Logging
@@ -48,3 +49,7 @@ case class IntermediatePrompt(
   injection: injectionsthrift.Injection,
   offsetInModule: Option[Int],
   carouselTile: Option[injectionsthrift.Tile])
+
+} catch {
+  case e: Exception =>
+}

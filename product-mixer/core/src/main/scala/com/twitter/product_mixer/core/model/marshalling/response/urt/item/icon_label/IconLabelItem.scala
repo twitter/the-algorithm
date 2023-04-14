@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.icon_label
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
@@ -23,4 +24,8 @@ case class IconLabelItem(
   override val entryNamespace: EntryNamespace = IconLabelItem.IconLabelEntryNamespace
 
   override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+}
+
+} catch {
+  case e: Exception =>
 }

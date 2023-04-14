@@ -1,3 +1,4 @@
+try {
 # Java library for feature encoding and decoding utilities.
 java_library(
     sources = ["*.java"],
@@ -15,3 +16,6 @@ java_library(
         "src/thrift/com/twitter/search/common:indexing-java",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 
 import com.twitter.algebird.Aggregator
@@ -510,4 +511,8 @@ object DumpBpQuality extends TwitterExecutionApp {
         }
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

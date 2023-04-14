@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.query_server.common
 
 import com.twitter.ann.common._
@@ -89,4 +90,8 @@ class QueryIndexThriftController[T, P <: RuntimeParams, D <: Distance[D]] @Injec
     }
   }
   handle(Query) { query }
+}
+
+} catch {
+  case e: Exception =>
 }

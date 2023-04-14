@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import java.util.List;
@@ -55,4 +56,7 @@ public class EarlybirdChainedScatterGatherService extends
     }
     return Future.value(resultList);
   }
+}
+
+} catch (Exception e) {
 }

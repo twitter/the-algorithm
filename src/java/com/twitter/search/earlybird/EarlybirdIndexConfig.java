@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird;
 
 import java.io.IOException;
@@ -187,4 +188,7 @@ public abstract class EarlybirdIndexConfig {
   public SearchIndexingMetricSet getSearchIndexingMetricSet() {
     return searchIndexingMetricSet;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.hnsw;
 
 public interface DistanceFunction<T, Q> {
@@ -5,4 +6,7 @@ public interface DistanceFunction<T, Q> {
    * Distance between two items.
    */
   float distance(T t, Q q);
+}
+
+} catch (Exception e) {
 }

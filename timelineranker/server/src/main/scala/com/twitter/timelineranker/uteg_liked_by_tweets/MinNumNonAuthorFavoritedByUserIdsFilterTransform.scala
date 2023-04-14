@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.uteg_liked_by_tweets
 
 import com.twitter.recos.recos_common.thriftscala.SocialProofType
@@ -36,4 +37,8 @@ class MinNumNonAuthorFavoritedByUserIdsFilterTransform(
       favedByUserIds <- tweetRecommendation.socialProofByType.get(SocialProofType.Favorite)
     } yield favedByUserIds.filterNot(_ == authorId).size
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import javax.inject.Named;
@@ -75,4 +76,7 @@ public class ProtectedRootAppModule extends TwitterModule {
       WarmupConfig config) {
     return new EarlybirdProtectedWarmup(clock, config);
   }
+}
+
+} catch (Exception e) {
 }

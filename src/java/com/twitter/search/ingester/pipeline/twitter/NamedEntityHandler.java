@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.Set;
@@ -98,4 +99,7 @@ class NamedEntityHandler {
     // in other languages
     return NAMED_ENTITY_LANGUAGES.contains(message.getLanguage());
   }
+}
+
+} catch (Exception e) {
 }

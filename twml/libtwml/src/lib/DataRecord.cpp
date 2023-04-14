@@ -1,3 +1,4 @@
+try {
 #include "internal/thrift.h"
 #include "internal/error.h"
 
@@ -70,3 +71,6 @@ void DataRecord::clear() {
 }
 
 }  // namespace twml
+
+} catch (const std::exception& e) {
+}

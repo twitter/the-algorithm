@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.util.ArrayList;
@@ -215,4 +216,7 @@ public class SegmentSyncConfig {
   public Optional<String> getScrubGen() {
     return scrubGen;
   }
+}
+
+} catch (Exception e) {
 }

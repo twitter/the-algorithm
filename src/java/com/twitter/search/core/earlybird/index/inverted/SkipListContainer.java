@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -736,4 +737,7 @@ public class SkipListContainer<K> implements Flushable {
           hasPayloads);
     }
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 scala_library(
     compiler_option_sets = ["fatal_warnings"],
     platform = "java8",
@@ -21,3 +22,6 @@ scala_library(
         "util/util-thrift",
     ],
 )
+
+} catch (Exception e) {
+}

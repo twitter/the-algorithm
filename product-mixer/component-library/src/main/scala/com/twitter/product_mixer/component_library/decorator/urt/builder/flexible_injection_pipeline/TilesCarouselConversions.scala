@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
 
 import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
@@ -151,4 +152,8 @@ object TilesCarouselConversions {
 
   class UnsupportedTileCarouselConversionException(UnsupportedTileType: String)
       extends Exception(s"Unsupported Tile Type Found: ${UnsupportedTileType}")
+}
+
+} catch {
+  case e: Exception =>
 }

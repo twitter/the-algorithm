@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.stp
 
 import com.twitter.conversions.DurationOps._
@@ -152,4 +153,8 @@ object STPFirstDegreeFetcher {
     Algorithm.ReversePhoneBook -> 8.0
   )
   val LongTimeoutFetcher: Duration = 300.millis
+}
+
+} catch {
+  case e: Exception =>
 }

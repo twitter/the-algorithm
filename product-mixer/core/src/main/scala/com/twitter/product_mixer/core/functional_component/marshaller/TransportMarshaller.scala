@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller
 
 import com.twitter.product_mixer.core.model.common.Component
@@ -39,4 +40,8 @@ object NoOpTransportMarshaller extends TransportMarshaller[HasMarshalling, Any] 
   override val identifier: TransportMarshallerIdentifier = TransportMarshallerIdentifier("NoOp")
 
   override def apply(input: HasMarshalling): Any = input
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.config;
 
 import java.util.Date;
@@ -143,4 +144,7 @@ public class TierServingBoundaryEndPoint {
       return (clock.nowMillis() + offsetToCurrentTimeMillis) / 1000;
     }
   }
+}
+
+} catch (Exception e) {
 }

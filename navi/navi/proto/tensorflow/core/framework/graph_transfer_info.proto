@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -68,4 +69,7 @@ message GraphTransferInfo {
   repeated GraphTransferGraphOutputNodeInfo graph_output_node_info = 6;
   // Destination of graph transfer
   Destination destination = 7;
+}
+
+} catch (Exception e) {
 }

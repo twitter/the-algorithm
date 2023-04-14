@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.IOException;
@@ -106,4 +107,7 @@ public class PartitionWriter {
     createHandler.logState();
     updateHandler.logState();
   }
+}
+
+} catch (Exception e) {
 }

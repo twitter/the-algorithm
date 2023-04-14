@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.conversions.DurationOps._
@@ -92,4 +93,8 @@ case class PersistenceStoreQueryFeatureHydrator @Inject() (
   override val alerts = Seq(
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.7, 50, 60, 60)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

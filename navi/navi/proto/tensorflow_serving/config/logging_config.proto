@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.serving;
@@ -15,4 +16,7 @@ message SamplingConfig {
 message LoggingConfig {
   LogCollectorConfig log_collector_config = 1;
   SamplingConfig sampling_config = 2;
+}
+
+} catch (Exception e) {
 }

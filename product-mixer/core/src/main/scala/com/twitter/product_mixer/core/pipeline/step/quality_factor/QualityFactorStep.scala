@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.step.quality_factor
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -70,3 +71,7 @@ case class QualityFactorStepConfig(
 
 case class QualityFactorStepResult(currentValues: Map[ComponentIdentifier, Float])
     extends ExecutorResult
+
+} catch {
+  case e: Exception =>
+}

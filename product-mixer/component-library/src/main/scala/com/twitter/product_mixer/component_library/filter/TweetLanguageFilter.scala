@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.filter
 
 import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
@@ -37,4 +38,8 @@ case class TweetLanguageFilter[Candidate <: BaseTweetCandidate](
         kept = keptCandidates.map(_.candidate),
         removed = removedCandidates.map(_.candidate)))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

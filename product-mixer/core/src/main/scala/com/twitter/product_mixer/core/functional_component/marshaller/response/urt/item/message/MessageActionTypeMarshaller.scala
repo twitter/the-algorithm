@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.FollowAllMessageActionType
@@ -12,4 +13,8 @@ class MessageActionTypeMarshaller @Inject() () {
   def apply(messageActionType: MessageActionType): urt.MessageActionType = messageActionType match {
     case FollowAllMessageActionType => urt.MessageActionType.FollowAll
   }
+}
+
+} catch {
+  case e: Exception =>
 }

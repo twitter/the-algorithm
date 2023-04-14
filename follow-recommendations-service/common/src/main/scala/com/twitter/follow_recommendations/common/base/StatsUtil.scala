@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.base
 import com.twitter.finagle.stats.Stat
 import com.twitter.finagle.stats.StatsReceiver
@@ -269,4 +270,8 @@ object StatsUtil {
           .lowerFromTry
       }.getOrElse(stitch)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

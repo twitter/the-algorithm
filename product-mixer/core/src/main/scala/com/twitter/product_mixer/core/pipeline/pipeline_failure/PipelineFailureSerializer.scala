@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.pipeline_failure
 
 import com.fasterxml.jackson.core.JsonGenerator
@@ -64,4 +65,8 @@ private[pipeline_failure] class PipelineFailureSerializer()
     gen: JsonGenerator,
     serializers: SerializerProvider
   ): Unit = serializers.defaultSerializeValue(mkSerializableException(pipelineFailure), gen)
+}
+
+} catch {
+  case e: Exception =>
 }

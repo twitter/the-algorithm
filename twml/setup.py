@@ -1,3 +1,4 @@
+try:
 import os
 
 from setuptools import find_packages, setup
@@ -27,3 +28,6 @@ setup(
     'twml': data_files,
   },
 )
+
+except Exception:
+  pass

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.response_transformer
 
 import com.twitter.cr_mixer.{thriftscala => crm}
@@ -62,4 +63,8 @@ object ScoredTweetsCrMixerResponseFeatureTransformer
     case crm.MetricTag.HomeVideoView => Some(tsp.MetricTag.HomeVideoView)
     case _ => None
   }
+}
+
+} catch {
+  case e: Exception =>
 }

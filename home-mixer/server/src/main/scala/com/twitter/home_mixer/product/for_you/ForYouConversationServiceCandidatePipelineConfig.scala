@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.for_you
 
 import com.twitter.home_mixer.candidate_pipeline.ConversationServiceResponseFeatureTransformer
@@ -132,4 +133,8 @@ class ForYouConversationServiceCandidatePipelineConfig @Inject() (
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(),
     HomeMixerAlertConfig.BusinessHours.defaultEmptyResponseRateAlert()
   )
+}
+
+} catch {
+  case e: Exception =>
 }

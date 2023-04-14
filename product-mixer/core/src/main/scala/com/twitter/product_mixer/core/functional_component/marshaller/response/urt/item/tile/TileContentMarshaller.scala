@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.CallToActionTileContent
@@ -18,4 +19,8 @@ class TileContentMarshaller @Inject() (
     case tileCont: CallToActionTileContent =>
       urt.TileContent.CallToAction(callToActionTileContentMarshaller(tileCont))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

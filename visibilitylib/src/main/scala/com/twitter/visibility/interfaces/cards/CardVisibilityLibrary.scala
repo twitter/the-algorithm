@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.cards
 
 import com.twitter.appsec.sanitization.URLSafety
@@ -184,4 +185,8 @@ object CardVisibilityLibrary {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

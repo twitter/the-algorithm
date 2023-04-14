@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates.gizmoduck
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -18,4 +19,8 @@ object GizmoduckPredicateParams {
   }
   val MaxCacheSize: Int = 250000
   val CacheTTL: Duration = Duration.fromHours(6)
+}
+
+} catch {
+  case e: Exception =>
 }

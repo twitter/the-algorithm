@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
 
 import com.twitter.pages.render.{thriftscala => urp}
@@ -26,4 +27,8 @@ class UrpTransportMarshaller @Inject() (
     pageHeader = page.pageHeader.map(pageHeaderMarshaller(_)),
     pageNavBar = page.pageNavBar.map(pageNavBarMarshaller(_))
   )
+}
+
+} catch {
+  case e: Exception =>
 }

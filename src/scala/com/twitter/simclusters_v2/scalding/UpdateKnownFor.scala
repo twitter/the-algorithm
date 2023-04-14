@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 
 import com.twitter.algebird.{Monoid, Semigroup}
@@ -308,4 +309,8 @@ object UpdateKnownFor {
           }.toArray
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

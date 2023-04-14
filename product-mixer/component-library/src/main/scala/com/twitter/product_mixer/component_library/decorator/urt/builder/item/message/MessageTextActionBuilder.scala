@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.message
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -33,4 +34,8 @@ case class MessageTextActionBuilder[-Query <: PipelineQuery, -Candidate <: Unive
       onClickCallbacks
     )
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.two_hop_random_walk
 
 import com.twitter.follow_recommendations.common.candidate_sources.base.StratoFetcherWithUnitViewSource
@@ -37,4 +38,8 @@ object TwoHopRandomWalkSource {
 
   val Identifier: CandidateSourceIdentifier =
     CandidateSourceIdentifier(Algorithm.TwoHopRandomWalk.toString)
+}
+
+} catch {
+  case e: Exception =>
 }

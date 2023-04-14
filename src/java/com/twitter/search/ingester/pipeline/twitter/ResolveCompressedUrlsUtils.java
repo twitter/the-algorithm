@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import javax.annotation.Nullable;
@@ -114,3 +115,6 @@ public final class ResolveCompressedUrlsUtils {
   }
 }
 
+
+} catch (Exception e) {
+}

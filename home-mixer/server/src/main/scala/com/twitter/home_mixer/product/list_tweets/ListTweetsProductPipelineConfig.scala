@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.list_tweets
 
 import com.twitter.home_mixer.marshaller.timelines.ChronologicalCursorUnmarshaller
@@ -91,4 +92,8 @@ class ListTweetsProductPipelineConfig @Inject() (
     listTweetsMixerPipelineConfig.identifier
 
   override val debugAccessPolicies: Set[AccessPolicy] = DefaultHomeMixerAccessPolicy
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.facets;
 
 import java.io.IOException;
@@ -156,4 +157,7 @@ public class ExplainFacetResultsCollector extends FacetResultsCollector {
       }
     }
   }
+}
+
+} catch (Exception e) {
 }

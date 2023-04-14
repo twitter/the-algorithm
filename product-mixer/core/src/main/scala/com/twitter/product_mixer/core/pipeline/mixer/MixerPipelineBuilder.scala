@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.mixer
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -579,4 +580,8 @@ class MixerPipelineBuilder[Query <: PipelineQuery, DomainResultType <: HasMarsha
           Seq(config.domainMarshaller, config.transportMarshaller)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

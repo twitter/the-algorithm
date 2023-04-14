@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
@@ -34,4 +35,8 @@ class FullCoverContentMarshaller @Inject() (
         imageDisplayType = fullCover.imageDisplayType.map(imageDisplayTypeMarshaller(_)),
         impressionCallbacks = fullCover.impressionCallbacks.map(_.map(callbackMarshaller(_)))
       ))
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 java_library(
     sources = ["*.java"],
     platform = "java8",
@@ -30,3 +31,6 @@ java_library(
         "util/util-core/src/main/java/com/twitter/util/javainterop",
     ],
 )
+
+} catch (Exception e) {
+}

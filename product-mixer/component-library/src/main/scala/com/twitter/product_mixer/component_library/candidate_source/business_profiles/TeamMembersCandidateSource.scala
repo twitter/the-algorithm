@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.business_profiles
 
 import com.twitter.product_mixer.component_library.model.cursor.NextCursorFeature
@@ -50,4 +51,8 @@ class TeamMembersCandidateSource @Inject() (
     }
     featureMapBuilder.build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

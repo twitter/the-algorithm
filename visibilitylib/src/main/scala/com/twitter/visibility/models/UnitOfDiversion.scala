@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.models
 
 trait UnitOfDiversion {
@@ -13,4 +14,8 @@ object UnitOfDiversion {
   case class TweetId(tweetId: Long) extends UnitOfDiversion {
     override def apply: (String, Any) = ("tweet_id", tweetId)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 create_thrift_libraries(
     base_name = "graph_feature_service_thrift",
     sources = ["*.thrift"],
@@ -13,3 +14,6 @@ create_thrift_libraries(
     provides_java_name = "graph_feature_service_thrift_java",
     provides_scala_name = "graph_feature_service_thrift_scala",
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -39,4 +40,8 @@ object TwiceClustersMembersStoreModule extends TwitterModule {
       twiceClustersMembersStratoFetchableStore
     )(statsReceiver.scope("twice_clusters_members_largestDimApe_similarity_store"))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

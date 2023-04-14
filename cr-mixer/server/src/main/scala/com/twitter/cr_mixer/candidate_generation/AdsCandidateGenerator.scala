@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.candidate_generation
 
 import com.twitter.cr_mixer.blender.AdsBlender
@@ -137,4 +138,8 @@ class AdsCandidateGenerator @Inject() (
     }
     Future.value(rankedCandidates)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

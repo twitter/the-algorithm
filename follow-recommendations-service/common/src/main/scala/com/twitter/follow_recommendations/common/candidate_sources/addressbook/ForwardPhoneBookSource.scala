@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.addressbook
 
 import com.twitter.finagle.stats.NullStatsReceiver
@@ -69,4 +70,8 @@ object ForwardPhoneBookSource {
   val NumPhoneBookEntries: Int = 1000
   val IsPhone = true
   val DefaultEdgeType: EdgeType = EdgeType.Forward
+}
+
+} catch {
+  case e: Exception =>
 }

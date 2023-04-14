@@ -1,3 +1,4 @@
+try {
 WITH
   vars AS (
     SELECT
@@ -66,3 +67,6 @@ WHERE
     ({SUPPLEMENTAL_ACTION_TYPES_ENGAGEMENT_STR})
    AND timestamp_millis((1288834974657 +
             ((tweetId  & 9223372036850581504) >> 22))) >= vars.no_older_tweets_than_date
+
+} catch (Exception e) {
+}

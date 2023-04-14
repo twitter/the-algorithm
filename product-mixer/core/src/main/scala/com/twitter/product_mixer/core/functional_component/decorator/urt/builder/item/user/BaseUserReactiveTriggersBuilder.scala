@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.user
 
 import com.twitter.product_mixer.component_library.model.candidate.BaseUserCandidate
@@ -12,4 +13,8 @@ trait BaseUserReactiveTriggersBuilder[-Query <: PipelineQuery, -Candidate <: Bas
     candidate: Candidate,
     candidateFeatures: FeatureMap
   ): Option[UserReactiveTriggers]
+}
+
+} catch {
+  case e: Exception =>
 }

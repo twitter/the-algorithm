@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import com.google.common.base.Predicate;
@@ -29,4 +30,7 @@ public final class UserPartitionUtil {
       }
     };
   }
+}
+
+} catch (Exception e) {
 }

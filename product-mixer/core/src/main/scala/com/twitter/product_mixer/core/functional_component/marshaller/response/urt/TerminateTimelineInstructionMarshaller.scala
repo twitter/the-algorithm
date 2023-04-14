@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.BottomTermination
@@ -19,4 +20,8 @@ class TerminateTimelineInstructionMarshaller @Inject() () {
         case TopAndBottomTermination => urt.TimelineTerminationDirection.TopAndBottom
       }
     )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive;
 
 import java.io.File;
@@ -76,4 +77,7 @@ public class ArchiveOnDiskEarlybirdIndexConfig extends ArchiveEarlybirdIndexConf
   public boolean supportOutOfOrderIndexing() {
     return false;
   }
+}
+
+} catch (Exception e) {
 }

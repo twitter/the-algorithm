@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import java.util.ArrayList;
@@ -67,4 +68,7 @@ public final class SkipPartitionFilter extends
 
     return wrappedServices;
   }
+}
+
+} catch (Exception e) {
 }

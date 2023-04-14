@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.transformer_executor
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -32,4 +33,8 @@ class PerCandidateTransformerExecutor @Inject() (override val statsReceiver: Sta
       transformer.identifier
     )(Arrow.sequence(perCandidateArrow))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

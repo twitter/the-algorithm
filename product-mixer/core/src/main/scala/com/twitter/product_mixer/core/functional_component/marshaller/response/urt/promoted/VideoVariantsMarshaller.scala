@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.VideoVariant
@@ -14,4 +15,8 @@ class VideoVariantsMarshaller {
         bitrate = videoVariant.bitrate
       ))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

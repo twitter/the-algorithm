@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated.featurestorev1
 
 import com.twitter.ml.featurestore.lib.EntityId
@@ -55,4 +56,8 @@ case class ParamGatedFeatureStoreV1CandidateFeatureHydrator[
 
 object ParamGatedFeatureStoreV1CandidateFeatureHydrator {
   val IdentifierPrefix = "ParamGated"
+}
+
+} catch {
+  case e: Exception =>
 }

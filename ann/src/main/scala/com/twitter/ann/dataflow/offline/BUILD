@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "index_builder_lib",
     sources = [
@@ -25,3 +26,6 @@ scala_library(
         "src/scala/com/twitter/wtf/beam/bq_embedding_export:bq_embedding_export_lib",
     ],
 )
+
+} catch (Exception e) {
+}

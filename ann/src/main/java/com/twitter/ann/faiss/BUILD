@@ -1,3 +1,4 @@
+try {
 target(
     name = "faiss",
     dependencies = [
@@ -13,3 +14,6 @@ java_library(
     tags = ["bazel-compatible"],
     dependencies = [],
 )
+
+} catch (Exception e) {
+}

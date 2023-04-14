@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.util;
 import java.util.concurrent.TimeUnit;
 import com.twitter.common.base.MorePreconditions;
@@ -32,4 +33,7 @@ public class IngesterStageTimer extends StageTimer {
     long runTime = System.nanoTime() - startTime.get();
     timer.timerIncrement(runTime);
   }
+}
+
+} catch (Exception e) {
 }

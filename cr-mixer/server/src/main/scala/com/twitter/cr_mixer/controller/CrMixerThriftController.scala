@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.controller
 
 import com.twitter.core_workflows.user_model.thriftscala.UserState
@@ -754,4 +755,8 @@ class CrMixerThriftController @Inject() (
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

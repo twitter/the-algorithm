@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.util
 
 import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
@@ -102,4 +103,8 @@ object CandidatesUtil {
       case ItemCandidateWithDetails(candidate: TweetCandidate, _, _) => candidate.id
       case _ => throw PipelineFailure(UnexpectedCandidateResult, "Only Item candidate expected")
     }
+}
+
+} catch {
+  case e: Exception =>
 }

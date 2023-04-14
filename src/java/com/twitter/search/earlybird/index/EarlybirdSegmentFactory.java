@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.index;
 
 import java.io.IOException;
@@ -55,4 +56,7 @@ public class EarlybirdSegmentFactory {
         searcherStats,
         clock);
   }
+}
+
+} catch (Exception e) {
 }

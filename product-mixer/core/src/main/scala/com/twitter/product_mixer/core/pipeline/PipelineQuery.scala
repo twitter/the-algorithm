@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -29,4 +30,8 @@ trait PipelineQuery extends HasParams with HasClientContext with HasProduct with
    * usually this will be implemented via `copy(features = Some(features))`
    */
   def withFeatureMap(features: FeatureMap): PipelineQuery
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
  SELECT DISTINCT tweetId
     FROM `twttr-bq-tweetsource-prod.user.unhydrated_flat`, UNNEST(entity_annotations) AS ea
     WHERE
@@ -41,3 +42,6 @@
           )
       )
   )
+
+} catch (Exception e) {
+}

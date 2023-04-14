@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.feature_hydrator.query.cr_ml_ranker
 
 import com.twitter.cr_ml_ranker.{thriftscala => t}
@@ -15,4 +16,8 @@ class CrMlRankerCommonQueryFeatureHydratorBuilder @Inject() (
 
   def build(rankingConfigSelector: RankingConfigBuilder): CrMlRankerCommonQueryFeatureHydrator =
     new CrMlRankerCommonQueryFeatureHydrator(crMlRanker, rankingConfigSelector)
+}
+
+} catch {
+  case e: Exception =>
 }

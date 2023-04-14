@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.following.param
 
 import com.twitter.conversions.DurationOps._
@@ -82,4 +83,8 @@ object FollowingParam {
         name = "following_enable_fast_ads",
         default = true
       )
+}
+
+} catch {
+  case e: Exception =>
 }

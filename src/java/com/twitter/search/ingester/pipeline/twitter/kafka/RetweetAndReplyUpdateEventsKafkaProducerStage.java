@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter.kafka;
 
 import org.apache.commons.pipeline.validation.ConsumedTypes;
@@ -21,4 +22,7 @@ public class RetweetAndReplyUpdateEventsKafkaProducerStage extends KafkaProducer
   protected void innerRunFinalStageOfBranchV2(IngesterThriftVersionedEvents events) {
     super.tryToSendEventsToKafka(events);
   }
+}
+
+} catch (Exception e) {
 }

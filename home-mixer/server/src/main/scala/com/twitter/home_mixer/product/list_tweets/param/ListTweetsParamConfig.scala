@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.list_tweets.param
 
 import com.twitter.home_mixer.param.decider.DeciderKey
@@ -20,4 +21,8 @@ class ListTweetsParamConfig @Inject() () extends ProductParamConfig {
   override val boundedIntFSOverrides = Seq(
     ServerMaxResultsParam
   )
+}
+
+} catch {
+  case e: Exception =>
 }

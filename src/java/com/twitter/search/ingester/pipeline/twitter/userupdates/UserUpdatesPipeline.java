@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter.userupdates;
 
 import java.time.Duration;
@@ -219,4 +220,7 @@ public final class UserUpdatesPipeline {
       LOG.error("Error shutting down stage", e);
     }
   }
+}
+
+} catch (Exception e) {
 }

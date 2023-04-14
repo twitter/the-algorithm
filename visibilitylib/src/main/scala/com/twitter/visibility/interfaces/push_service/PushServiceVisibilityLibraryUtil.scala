@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.push_service
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -54,4 +55,8 @@ object PushServiceVisibilityLibraryUtil {
   def getAuthorId(tweet: Tweet): Option[Long] = tweet.coreData.map(_.userId)
   def isRetweet(tweet: Tweet): Boolean = tweet.coreData.flatMap(_.share).isDefined
   def isQuotedTweet(tweet: Tweet): Boolean = tweet.quotedTweet.isDefined
+}
+
+} catch {
+  case e: Exception =>
 }

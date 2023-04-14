@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.blender
 
 import com.twitter.cr_mixer.model.BlendedAdsCandidate
@@ -74,4 +75,8 @@ case class AdsBlender @Inject() (globalStats: StatsReceiver) {
     tweetIdMap.toMap
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

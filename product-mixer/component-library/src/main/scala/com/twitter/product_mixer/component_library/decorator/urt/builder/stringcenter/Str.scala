@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -33,4 +34,8 @@ case class Str[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
       placeholders = placeholderMapOpt.getOrElse(Map.empty[String, Any])
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

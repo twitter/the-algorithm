@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding.abuse
 
 import com.twitter.scalding.typed.TypedPipe
@@ -146,4 +147,8 @@ object CrossSimClusterFeaturesScaldingJob extends AdhocExecutionApp with Cassowa
           dateRange.`end`)
       ).unit
   }
+}
+
+} catch {
+  case e: Exception =>
 }

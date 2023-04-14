@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.utils
 
 import com.twitter.follow_recommendations.common.models.DisplayLocation
@@ -25,3 +26,7 @@ object DisplayLocationProductConverterUtil {
 }
 
 case class UnconvertibleProductMixerProductException(message: String) extends Exception(message)
+
+} catch {
+  case e: Exception =>
+}

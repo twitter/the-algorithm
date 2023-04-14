@@ -1,3 +1,4 @@
+try {
 # Pre-requisites
 
 ## Tutorial
@@ -47,3 +48,6 @@ bin/d6w schedule \
   --bind=profile.date="2021-11-04" \
   --bind=profile.machine="n2-highmem-16"
 ```
+
+} catch (Exception e) {
+}

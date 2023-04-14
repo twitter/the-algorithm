@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.impression_store
 
 import com.twitter.follow_recommendations.common.models.DisplayLocation
@@ -39,4 +40,8 @@ class WtfImpressionStore @Inject() (
         Stitch.Nil
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.list_recommended_users.filter
 
 import com.twitter.home_mixer.product.list_recommended_users.model.ListFeatures.ScoreFeature
@@ -26,4 +27,8 @@ object DropMaxCandidatesByScoreFilter extends Filter[PipelineQuery, UserCandidat
 
     Stitch.value(FilterResult(kept, removed))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

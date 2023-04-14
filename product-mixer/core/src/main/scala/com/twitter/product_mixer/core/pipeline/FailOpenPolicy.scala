@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline
 
 import com.twitter.product_mixer.core.pipeline.pipeline_failure.MisconfiguredFeatureMapFailure
@@ -39,4 +40,8 @@ object FailOpenPolicy {
     (failureCategory: PipelineFailureCategory) =>
       categories
         .contains(failureCategory)
+}
+
+} catch {
+  case e: Exception =>
 }

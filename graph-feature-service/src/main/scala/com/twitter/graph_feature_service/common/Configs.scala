@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.common
 
 import com.twitter.conversions.DurationOps._
@@ -70,4 +71,8 @@ object Configs {
     hashLong(userId, RandomSeed) % NumGraphShards
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph
 
 /**
@@ -36,4 +37,8 @@ object AssembleMultiTypeGraphScioBatchApp extends AssembleMultiTypeGraphScioBase
   override val isAdhoc: Boolean = false
   override val rootMHPath: String = Config.RootMHPath
   override val rootThriftPath: String = Config.RootThriftPath
+}
+
+} catch {
+  case e: Exception =>
 }

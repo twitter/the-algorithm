@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.faiss
 
 import com.twitter.ann.common.Queryable
@@ -40,4 +41,8 @@ object FaissIndex {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

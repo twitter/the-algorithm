@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.services
 
 import com.twitter.finagle.stats.Counter
@@ -81,4 +82,8 @@ class UserScoringService @Inject() (
       case _ => request
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

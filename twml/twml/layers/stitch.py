@@ -1,3 +1,4 @@
+try:
 # pylint: disable=useless-super-delegation
 """
 Implementing Stitch Layer
@@ -52,3 +53,6 @@ class Stitch(Layer):
     concat_keys = tf.dynamic_stitch(indices, partioned_keys)
     concat_vals = tf.dynamic_stitch(indices, partioned_val)
     return [concat_vals, concat_keys]
+
+except Exception:
+  pass

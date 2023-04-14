@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -132,4 +133,7 @@ public class MultiPostingLists extends OptimizedPostingLists {
           flushInfo.getIntProperty(DF_THRESHOLD_PROP_NAME));
     }
   }
+}
+
+} catch (Exception e) {
 }

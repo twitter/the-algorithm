@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive.segmentbuilder;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -66,4 +67,7 @@ public class SomeoneElseIsBuildingSegment extends SegmentBuilderSegment {
   boolean segmentExistsOnHdfs() {
     return ArchiveHDFSUtils.hasSegmentIndicesOnHDFS(sync, segmentInfo);
   }
+}
+
+} catch (Exception e) {
 }

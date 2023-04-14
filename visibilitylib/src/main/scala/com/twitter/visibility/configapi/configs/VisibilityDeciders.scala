@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi.configs
 
 import com.twitter.decider.Recipient
@@ -387,4 +388,8 @@ private[visibility] object VisibilityDeciders {
 
     BaseConfigBuilder(boolOverrides :+ safetyLevelOverride).build("VisibilityDeciders")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

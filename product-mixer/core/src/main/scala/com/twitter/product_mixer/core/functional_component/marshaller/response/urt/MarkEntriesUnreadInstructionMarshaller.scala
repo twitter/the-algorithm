@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.MarkEntriesUnreadInstruction
@@ -10,4 +11,8 @@ class MarkEntriesUnreadInstructionMarshaller @Inject() () {
 
   def apply(instruction: MarkEntriesUnreadInstruction): urt.MarkEntriesUnread =
     urt.MarkEntriesUnread(entryIds = instruction.entryIds)
+}
+
+} catch {
+  case e: Exception =>
 }

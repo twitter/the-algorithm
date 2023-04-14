@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.feature.featurestorev1
 
 import com.twitter.ml.featurestore.catalog.entities
@@ -37,4 +38,8 @@ object UserCandidateUserIdEntity
     existingFeatures: FeatureMap
   ): EntityWithId[UserId] =
     entity.withId(UserId(user.id))
+}
+
+} catch {
+  case e: Exception =>
 }

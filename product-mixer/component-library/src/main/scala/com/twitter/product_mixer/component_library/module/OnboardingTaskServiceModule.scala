@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.module
 
 import com.twitter.finagle.thriftmux.MethodBuilder
@@ -27,4 +28,8 @@ object OnboardingTaskServiceModule
   }
 
   override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+}
+
+} catch {
+  case e: Exception =>
 }

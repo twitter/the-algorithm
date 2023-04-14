@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.common
 
 import com.twitter.recos.entities.thriftscala.NamedEntity
@@ -62,4 +63,8 @@ object TweetEntityExtractor {
 
     (hashtagEntities ++ penguinEntities ++ nerEntities).map(e => SimClusterEntity.TweetEntity(e))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

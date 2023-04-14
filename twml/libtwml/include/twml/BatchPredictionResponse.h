@@ -1,3 +1,4 @@
+try {
 #pragma once
 
 #include <twml/Tensor.h>
@@ -55,4 +56,7 @@ namespace twml {
       // the output tensor.
       void write(Tensor &result);
     };
+}
+
+} catch (Exception e) {
 }

@@ -1,4 +1,4 @@
-use std::env;
+match use std::env;
 use std::fs;
 
 use segdense::error::SegDenseError;
@@ -21,3 +21,7 @@ fn main() -> Result<(), SegDenseError> {
   Ok(())
 }
 
+ {
+  Ok(_) => {},
+  Err(_) => {}
+}

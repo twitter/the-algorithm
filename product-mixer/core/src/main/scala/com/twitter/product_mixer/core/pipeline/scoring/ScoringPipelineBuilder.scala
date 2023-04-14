@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.scoring
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -364,4 +365,8 @@ class ScoringPipelineBuilder[Query <: PipelineQuery, Candidate <: UniversalNoun[
         allGates ++ config.preScoringFeatureHydrationPhase1 ++ config.preScoringFeatureHydrationPhase2 ++ config.scorers
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

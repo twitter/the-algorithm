@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.column;
 
 import java.io.IOException;
@@ -99,4 +100,7 @@ public class ColumnStrideMultiIntIndex extends AbstractColumnStrideMultiIntIndex
           flushInfo.getStringProperty(NAME_PROP_NAME), values, maxSize);
     }
   }
+}
+
+} catch (Exception e) {
 }

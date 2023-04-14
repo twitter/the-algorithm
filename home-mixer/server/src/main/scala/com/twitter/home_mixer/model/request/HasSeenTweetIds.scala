@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.model.request
 
 /**
@@ -6,4 +7,8 @@ package com.twitter.home_mixer.model.request
  */
 trait HasSeenTweetIds {
   def seenTweetIds: Option[Seq[Long]]
+}
+
+} catch {
+  case e: Exception =>
 }

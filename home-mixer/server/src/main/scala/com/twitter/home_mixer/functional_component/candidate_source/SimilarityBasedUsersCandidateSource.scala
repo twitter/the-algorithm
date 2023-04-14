@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.candidate_source
 
 import com.twitter.hermit.candidate.{thriftscala => t}
@@ -31,4 +32,8 @@ class SimilarityBasedUsersCandidateSource @Inject() (
         }
       }.map(_.flatten)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

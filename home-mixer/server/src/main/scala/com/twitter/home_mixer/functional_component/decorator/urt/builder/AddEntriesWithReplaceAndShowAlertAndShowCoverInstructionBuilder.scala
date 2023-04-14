@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.decorator.urt.builder
 
 import com.twitter.product_mixer.component_library.premarshaller.urt.builder.AlwaysInclude
@@ -27,4 +28,8 @@ case class AddEntriesWithReplaceAndShowAlertAndCoverInstructionBuilder[Query <: 
     } else
       Seq.empty
   }
+}
+
+} catch {
+  case e: Exception =>
 }

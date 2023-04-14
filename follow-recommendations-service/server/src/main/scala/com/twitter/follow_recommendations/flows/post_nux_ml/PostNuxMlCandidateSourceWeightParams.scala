@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.post_nux_ml
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -174,4 +175,8 @@ object PostNuxMlCandidateSourceWeightParams {
         0.0,
         2000.0
       )
+}
+
+} catch {
+  case e: Exception =>
 }

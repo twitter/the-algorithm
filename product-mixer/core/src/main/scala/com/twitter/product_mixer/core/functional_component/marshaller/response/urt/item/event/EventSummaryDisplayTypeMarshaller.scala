@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.event
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryDisplayType
@@ -21,4 +22,8 @@ class EventSummaryDisplayTypeMarshaller @Inject() () {
     case CellWithProminentSocialContextEventSummaryDisplayType =>
       urt.EventSummaryDisplayType.CellWithProminentSocialContext
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.utils
 
 object CollectionUtil {
@@ -19,4 +20,8 @@ object CollectionUtil {
       case Nil => Stream.empty
       case ys => ys.map(_.head) #:: transposeLazy(ys.map(_.tail))
     }
+}
+
+} catch {
+  case e: Exception =>
 }

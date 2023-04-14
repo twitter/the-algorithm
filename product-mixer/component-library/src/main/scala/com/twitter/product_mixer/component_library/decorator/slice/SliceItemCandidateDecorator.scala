@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.slice
 
 import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
@@ -38,4 +39,8 @@ case class SliceItemCandidateDecorator[Query <: PipelineQuery, Candidate <: Univ
 
     Stitch.value(cursorPresentations)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

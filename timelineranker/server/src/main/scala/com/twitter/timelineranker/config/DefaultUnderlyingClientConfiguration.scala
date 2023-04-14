@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.config
 
 import com.twitter.conversions.DurationOps._
@@ -155,4 +156,8 @@ class DefaultUnderlyingClientConfiguration(flags: TimelineRankerFlags, statsRece
 
   override val stratoClient: StratoClient =
     Strato.client.withMutualTls(serviceIdentifier, OpportunisticTls.Required).build()
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.common
 
 import com.twitter.search.common.file.AbstractFile
@@ -86,4 +87,8 @@ class ShardedIndexBuilderWithSerialization[T, P <: RuntimeParams, D <: Distance[
   override def toQueryable: Queryable[T, P, D] = {
     shardedIndex.toQueryable
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.richtext
 
 case class RichText(
@@ -5,3 +6,7 @@ case class RichText(
   entities: List[RichTextEntity],
   rtl: Option[Boolean],
   alignment: Option[RichTextAlignment])
+
+} catch {
+  case e: Exception =>
+}

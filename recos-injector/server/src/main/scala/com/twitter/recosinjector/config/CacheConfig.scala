@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.config
 
 import com.twitter.finagle.memcached.Client
@@ -20,4 +21,8 @@ trait CacheConfig {
     serviceIdentifier = serviceIdentifier
   )
 
+}
+
+} catch {
+  case e: Exception =>
 }

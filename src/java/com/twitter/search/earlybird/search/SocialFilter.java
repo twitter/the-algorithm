@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search;
 
 import java.io.IOException;
@@ -95,4 +96,7 @@ public class SocialFilter {
     byte[] userIDInBytes = Longs.toByteArray(fromUserLong);
     return acceptor.accept(fromUserLong, userIDInBytes);
   }
+}
+
+} catch (Exception e) {
 }

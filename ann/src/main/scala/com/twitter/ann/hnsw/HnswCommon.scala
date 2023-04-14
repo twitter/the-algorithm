@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.hnsw
 
 import com.twitter.ann.common.RuntimeParams
@@ -59,4 +60,8 @@ object HnswCommon {
  */
 case class HnswParams(ef: Int) extends RuntimeParams {
   override def toString: String = s"HnswParams(ef = $ef)"
+}
+
+} catch {
+  case e: Exception =>
 }

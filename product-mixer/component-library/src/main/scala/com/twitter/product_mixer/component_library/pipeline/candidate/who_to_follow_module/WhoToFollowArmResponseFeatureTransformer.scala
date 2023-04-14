@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
 
 import com.twitter.hermit.{thriftscala => h}
@@ -35,4 +36,8 @@ object WhoToFollowArmResponseFeatureTransformer
     .add(TrackingTokenFeature, input.trackingToken)
     .add(ScoreFeature, input.mlPredictionScore)
     .build()
+}
+
+} catch {
+  case e: Exception =>
 }

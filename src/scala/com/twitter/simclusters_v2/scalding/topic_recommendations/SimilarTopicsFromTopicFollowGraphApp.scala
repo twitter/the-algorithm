@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.topic_recommendations
 
 import com.twitter.escherbird.scalding.source.FullMetadataSource
@@ -219,4 +220,8 @@ object SimilarTopics {
       .sortWithTakePerRow(numSimilarTopics)(Ordering.by(-_._2))
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

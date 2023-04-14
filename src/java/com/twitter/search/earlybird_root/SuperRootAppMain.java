@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import java.util.Arrays;
@@ -45,4 +46,7 @@ public class SuperRootAppMain extends SearchRootAppMain<SuperRootServer> {
   protected Class<?> getServiceIfaceClass() {
     return EarlybirdService.ServiceIface.class;
   }
+}
+
+} catch (Exception e) {
 }

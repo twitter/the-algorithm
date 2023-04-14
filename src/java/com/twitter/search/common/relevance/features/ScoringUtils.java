@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.features;
 
 import com.google.common.base.Preconditions;
@@ -21,4 +22,7 @@ public final class ScoringUtils {
     return (float) (Math.pow(value, exp) / (Math.pow(value, exp) + Math.pow(halfval, exp)));
   }
 
+}
+
+} catch (Exception e) {
 }

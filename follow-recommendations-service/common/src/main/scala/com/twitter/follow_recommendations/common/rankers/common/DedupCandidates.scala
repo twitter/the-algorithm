@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.common
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -8,4 +9,8 @@ object DedupCandidates {
     val seen = mutable.HashSet[Long]()
     input.filter { candidate => seen.add(candidate.id) }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.marshaller.timeline_logging
 
 import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
@@ -13,4 +14,8 @@ object ConversationEntryMarshaller {
       displayType = Some(entry.displayType.toString),
       score = candidate.features.getOrElse(ScoreFeature, None)
     )
+}
+
+} catch {
+  case e: Exception =>
 }

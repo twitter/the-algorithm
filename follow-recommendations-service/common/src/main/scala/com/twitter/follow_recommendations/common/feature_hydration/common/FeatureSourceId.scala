@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.common
 
 sealed trait FeatureSourceId
@@ -16,4 +17,8 @@ object FeatureSourceId {
   @deprecated object StratoFeatureHydrationSourceId extends FeatureSourceId
   object PreFetchedFeatureSourceId extends FeatureSourceId
   object UserScoringFeatureSourceId extends FeatureSourceId
+}
+
+} catch {
+  case e: Exception =>
 }

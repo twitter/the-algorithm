@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.model
 
 import com.twitter.search.common.features.thriftscala.ThriftTweetFeatures
@@ -32,4 +33,8 @@ case class CandidateTweet(hydratedTweet: HydratedTweet, features: ThriftTweetFea
       features = Some(features)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

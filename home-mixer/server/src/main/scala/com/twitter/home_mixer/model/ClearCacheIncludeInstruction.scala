@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.model
 
 import com.twitter.home_mixer.model.request.DeviceContext.RequestContext
@@ -40,4 +41,8 @@ case class ClearCacheIncludeInstruction(
 
     enabled && ptr && minTweets
   }
+}
+
+} catch {
+  case e: Exception =>
 }

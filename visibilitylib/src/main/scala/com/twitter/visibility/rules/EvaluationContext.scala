@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -65,4 +66,8 @@ object EvaluationContext {
     def withMemoizedParams(memoizeParams: Gate[Unit]) = this.copy(memoizeParams = memoizeParams)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.sources
 
 import com.google.inject.Inject
@@ -70,4 +71,8 @@ class CandidateAlgorithmSource @Inject() (stats: StatsReceiver) extends FeatureS
     }
     Stitch.value(candidatesToAlgoMap.toMap)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

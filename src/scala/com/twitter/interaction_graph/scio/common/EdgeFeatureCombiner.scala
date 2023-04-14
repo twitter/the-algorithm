@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.common
 
 import com.spotify.scio.ScioMetrics
@@ -347,4 +348,8 @@ case class BooleanOrEdgeCombiner(
   override def isSet = edgeFeature.isDefined
 
   override def setFeature(feature: EdgeFeature): BooleanOrEdgeCombiner = setFeature(feature, 1.0, 0)
+}
+
+} catch {
+  case e: Exception =>
 }

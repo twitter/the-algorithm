@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.uteg_liked_by_tweets
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -92,4 +93,8 @@ class CombinedScoreAndTruncateTransform(
 
     Future.value(envelope.copy(searchResults = transformedSearchResults))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.products.home_timeline.configapi
 
 import com.twitter.conversions.DurationOps._
@@ -35,4 +36,8 @@ object HomeTimelineParams {
       with HasDurationConversion {
     override val durationConversion: DurationConversion = DurationConversion.FromHours
   }
+}
+
+} catch {
+  case e: Exception =>
 }

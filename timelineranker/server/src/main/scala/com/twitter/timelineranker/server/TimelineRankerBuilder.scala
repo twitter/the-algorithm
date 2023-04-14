@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.server
 
 import com.twitter.concurrent.AsyncSemaphore
@@ -124,4 +125,8 @@ class TimelineRankerBuilder(config: RuntimeConfiguration) {
 
   val compactProtocolServiceFactory: ServiceFactory[Array[Byte], Array[Byte]] =
     mkServiceFactory(new TCompactProtocol.Factory())
+}
+
+} catch {
+  case e: Exception =>
 }

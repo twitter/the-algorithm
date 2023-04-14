@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -62,4 +63,8 @@ object SkitStratoStoreModule extends TwitterModule {
       windowSize = 10000L
     )(statsReceiver.scope("skit_in_memory_cache"))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

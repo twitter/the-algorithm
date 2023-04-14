@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.media.MediaKey
@@ -12,4 +13,8 @@ class MediaKeyMarshaller @Inject() () {
     id = mediaKey.id,
     category = mediaKey.category
   )
+}
+
+} catch {
+  case e: Exception =>
 }

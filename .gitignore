@@ -1,2 +1,6 @@
+try {
 .DS_Store
 
+
+} catch (Exception e) {
+}

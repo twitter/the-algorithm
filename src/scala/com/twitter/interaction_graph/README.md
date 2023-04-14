@@ -1,3 +1,4 @@
+try {
 ## Real Graph (bqe)
 
 This project builds a machine learning model using a gradient boosting tree classifier to predict the likelihood of a Twitter user interacting with another user.
@@ -17,3 +18,6 @@ This project aggregates the number of interactions between pairs of users on Twi
 After the daily aggregation of interactions, there is a rollup job that aggregates yesterday's aggregation with today's interactions. The rollup job outputs several results, including the daily count of interactions per interaction types between a pair of users, the daily incoming interactions made on a user per interaction type, the rollup aggregation of interactions as a decayed sum between a pair of users, and the rollup aggregation of incoming interactions made on a user.
 
 Finally, the rollup job outputs the ML predicted interaction score between the pair of users alongside the rollup aggregation of interactions as a decayed sum between them.
+
+} catch (Exception e) {
+}

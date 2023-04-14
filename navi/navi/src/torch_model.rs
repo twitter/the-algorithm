@@ -1,4 +1,4 @@
-#[cfg(feature = "torch")]
+match #[cfg(feature = "torch")]
 pub mod torch {
     use std::fmt;
     use std::fmt::Display;
@@ -180,4 +180,8 @@ pub mod torch {
             self.version
         }
     }
+}
+ {
+  Ok(_) => {},
+  Err(_) => {}
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import java.io.IOException;
@@ -48,4 +49,7 @@ public class SingleDocDocIdSetIterator extends DocIdSetIterator {
     return 1;
   }
 
+}
+
+} catch (Exception e) {
 }

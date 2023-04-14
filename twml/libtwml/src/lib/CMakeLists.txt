@@ -1,3 +1,4 @@
+try {
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 cmake_policy(VERSION 2.8)
@@ -34,3 +35,6 @@ set_target_properties(twml PROPERTIES
   VERSION "${TWML_VERSION}"
   SOVERSION "${TWML_SOVERSION}"
   )
+
+} catch (Exception e) {
+}

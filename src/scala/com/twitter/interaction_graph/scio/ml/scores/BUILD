@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -52,3 +53,6 @@ create_datasets(
         "src/scala/com/twitter/wtf/scalding/jobs/injection",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.util
 
 import com.twitter.search.common.constants.{thriftscala => scc}
@@ -90,4 +91,8 @@ object LanguageUtil {
       case _ => Some(language)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

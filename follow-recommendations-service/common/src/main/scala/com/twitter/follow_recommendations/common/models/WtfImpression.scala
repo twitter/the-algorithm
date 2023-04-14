@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.util.Time
@@ -10,3 +11,7 @@ case class WtfImpression(
   displayLocation: DisplayLocation,
   latestTime: Time,
   counts: Int)
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Module
@@ -202,4 +203,8 @@ object TweetInfoStoreModule extends TwitterModule {
     }
     tweetInfoStore
   }
+}
+
+} catch {
+  case e: Exception =>
 }

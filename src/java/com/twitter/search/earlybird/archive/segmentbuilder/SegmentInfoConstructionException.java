@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive.segmentbuilder;
 
 import java.io.IOException;
@@ -9,4 +10,7 @@ class SegmentInfoConstructionException extends Exception {
   SegmentInfoConstructionException(String msg, IOException e) {
     super(msg, e);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.common
 
 import com.spotify.scio.coders.Coder
@@ -73,4 +74,8 @@ object UserUtil {
     userIdMappings.foldLeft(input)((data, mapping) =>
       filterUsersByIdMapping(data, usersToBeFiltered, mapping))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

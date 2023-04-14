@@ -1,3 +1,4 @@
+try:
 from reader import EventBusPipedBinaryRecordReader
 import tensorflow.compat.v1 as tf
 import twml
@@ -57,3 +58,6 @@ def get_train_input_fn(feature_config, params, parse_fn=None):
 
   return lambda: get_eventbus_data_record_dataset(
     eventbus_reader, train_parse_fn, params.train_batch_size)
+
+except Exception:
+  pass

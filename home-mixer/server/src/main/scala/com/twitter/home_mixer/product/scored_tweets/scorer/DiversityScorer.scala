@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.scorer
 
 import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
@@ -54,4 +55,8 @@ case class DiversityScorer(diversityDiscountProvider: DiversityDiscountProvider)
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

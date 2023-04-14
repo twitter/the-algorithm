@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.follow_recommendations.logging.{thriftscala => offline}
@@ -20,4 +21,8 @@ object FlowRecommendation {
     )
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

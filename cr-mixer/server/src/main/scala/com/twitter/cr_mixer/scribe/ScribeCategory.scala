@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.scribe
 
 /**
@@ -61,4 +62,8 @@ case class ScribeCategory(
   scribeCategory: String) {
   def getProdLoggerFactoryNode: String = loggerFactoryNode
   def getStagingLoggerFactoryNode: String = "staging_" + loggerFactoryNode
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.scoring_pipeline
 
 import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.CachedScoredTweetsCandidatePipelineConfig
@@ -31,4 +32,8 @@ class ScoredTweetsWeightedScoresSumScoringPipelineConfig @Inject() (
   override val scorers: Seq[Scorer[ScoredTweetsQuery, TweetCandidate]] = Seq(
     weightedScoresSumScorer
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try:
 # pylint: disable=wildcard-import
 """ This module contains all contrib Layers. """
 
@@ -9,3 +10,6 @@ from .factorization_machine import FactorizationMachine # noqa: F401
 from .full_dense import full_dense, FullDense  # noqa: F401
 from .stacked_rnn import StackedRNN, stacked_rnn  # noqa: F401
 from .zscore_normalization import ZscoreNormalization, zscore_normalization  # noqa: F401
+
+except Exception:
+  pass

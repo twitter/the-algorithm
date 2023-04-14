@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.entities;
 
 import java.util.Date;
@@ -77,4 +78,7 @@ public class TwitterRetweetMessage {
   public String toString() {
     return ToStringBuilder.reflectionToString(this);
   }
+}
+
+} catch (Exception e) {
 }

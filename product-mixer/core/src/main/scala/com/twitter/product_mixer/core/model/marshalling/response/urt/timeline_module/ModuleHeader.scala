@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
@@ -11,3 +12,7 @@ case class ModuleHeader(
   customIcon: Option[ImageVariant],
   socialContext: Option[SocialContext],
   moduleHeaderDisplayType: ModuleHeaderDisplayType)
+
+} catch {
+  case e: Exception =>
+}

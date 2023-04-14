@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.hdfs_sources
 
 import com.twitter.scalding.DateOps
@@ -36,4 +37,8 @@ object DataSources {
       .toTypedPipe
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

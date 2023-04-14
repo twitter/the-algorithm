@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
 
 import com.twitter.pages.render.{thriftscala => urp}
@@ -15,4 +16,8 @@ class TopicPageHeaderFacepileMarshaller @Inject() (
       userIds = topicPageHeaderFacepile.userIds,
       facepileUrl = topicPageHeaderFacepile.facepileUrl.map(urlMarshaller(_))
     )
+}
+
+} catch {
+  case e: Exception =>
 }

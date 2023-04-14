@@ -1,3 +1,4 @@
+try:
 # pylint: disable=no-member,arguments-differ, attribute-defined-outside-init
 """
 Implementing Full Dense Layer
@@ -378,3 +379,6 @@ def full_dense(inputs, output_size,
                     **kwargs)
 
   return layer(inputs)
+
+except Exception:
+  pass

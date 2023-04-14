@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.model
 
 import com.twitter.timelineranker.{thriftscala => thrift}
@@ -43,4 +44,8 @@ case class Timeline(id: TimelineId, entries: Seq[TimelineEntryEnvelope]) {
       entries = entries.map(_.toThrift)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

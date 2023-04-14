@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.sims
 
 import com.twitter.hermit.candidate.thriftscala.Candidates
@@ -8,3 +9,7 @@ abstract class StratoBasedSimsCandidateSourceWithUnitView(
   fetcher: Fetcher[Long, Unit, Candidates],
   override val identifier: CandidateSourceIdentifier)
     extends StratoBasedSimsCandidateSource[Unit](fetcher, Unit, identifier)
+
+} catch {
+  case e: Exception =>
+}

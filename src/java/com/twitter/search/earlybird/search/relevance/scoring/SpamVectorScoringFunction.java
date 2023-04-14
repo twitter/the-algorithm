@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance.scoring;
 
 import java.io.IOException;
@@ -82,4 +83,7 @@ public class SpamVectorScoringFunction extends ScoringFunction {
   @Override
   public void updateRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {
   }
+}
+
+} catch (Exception e) {
 }

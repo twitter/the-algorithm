@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common
 
 import com.twitter.simclusters_v2.thriftscala.{
@@ -93,4 +94,8 @@ object SimClustersMultiEmbeddingId {
     }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

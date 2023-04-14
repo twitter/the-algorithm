@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema.base;
 
 import java.util.Collection;
@@ -228,4 +229,7 @@ public interface Schema {
       super(msg, e);
     }
   }
+}
+
+} catch (Exception e) {
 }

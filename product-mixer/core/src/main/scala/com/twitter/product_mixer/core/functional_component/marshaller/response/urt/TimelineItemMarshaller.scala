@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
@@ -19,4 +20,8 @@ class TimelineItemMarshaller @Inject() (
     feedbackInfo = item.feedbackActionInfo.map(feedbackInfoMarshaller(_)),
     prompt = None
   )
+}
+
+} catch {
+  case e: Exception =>
 }

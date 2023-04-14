@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.worker.util
 
 import com.twitter.graph_feature_service.thriftscala.EdgeType
@@ -16,4 +17,8 @@ case class GraphContainer(
   def warmup: Future[Unit] = {
     Future.collect(graphs.mapValues(_.warmup())).unit
   }
+}
+
+} catch {
+  case e: Exception =>
 }

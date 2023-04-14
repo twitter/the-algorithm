@@ -1,3 +1,4 @@
+try:
 # checkstyle: noqa
 import tensorflow.compat.v1 as tf
 from ..constants import EB_SCORE_IDX
@@ -21,3 +22,6 @@ def get_lolly_scores(labels):
   logged_eb_lolly_scores = tf.reshape(labels[:, EB_SCORE_IDX], (-1, 1))
   eb_lolly_scores = tf.truediv(logged_eb_lolly_scores, 100.0)
   return eb_lolly_scores
+
+except Exception:
+  pass

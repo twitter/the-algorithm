@@ -1,3 +1,4 @@
+try {
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
 #include "tensorflow/core/framework/op_kernel.h"
@@ -37,3 +38,6 @@ class NumIntraOpThreads : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(Name("NumIntraOpThreads").Device(DEVICE_CPU), NumIntraOpThreads);
+
+} catch (const std::exception& e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.configapi.candidates
 
 import com.google.inject.Inject
@@ -18,4 +19,8 @@ class HydrateCandidateParamsTransform[Target <: HasParams with HasDisplayLocatio
   def transform(target: Target, candidates: Seq[CandidateUser]): Stitch[Seq[CandidateUser]] = {
     Stitch.value(candidates.map(candidateParamsFactory.apply(_, target)))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

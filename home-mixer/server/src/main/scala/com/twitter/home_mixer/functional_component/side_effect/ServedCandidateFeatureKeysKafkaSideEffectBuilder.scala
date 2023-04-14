@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.side_effect
 
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
@@ -17,4 +18,8 @@ case class ServedCandidateFeatureKeysKafkaSideEffectBuilder @Inject() (
     }
     new ServedCandidateFeatureKeysKafkaSideEffect(topic, sourceIdentifiers)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

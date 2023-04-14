@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.gate
 
 import com.twitter.product_mixer.core.functional_component.gate.Gate.SkippedResult
@@ -124,4 +125,8 @@ trait QueryAndCandidateGate[-Query <: PipelineQuery] extends BaseGate[Query] {
 
 object Gate {
   val SkippedResult: Stitch[GateResult] = Stitch.value(GateResult.Skipped)
+}
+
+} catch {
+  case e: Exception =>
 }

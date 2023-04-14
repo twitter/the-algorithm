@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema.base;
 
 import javax.annotation.Nullable;
@@ -371,4 +372,7 @@ public class EarlybirdFieldType extends FieldType {
     checkIfFrozen();
     this.numericFieldSettings = numericFieldSettings;
   }
+}
+
+} catch (Exception e) {
 }

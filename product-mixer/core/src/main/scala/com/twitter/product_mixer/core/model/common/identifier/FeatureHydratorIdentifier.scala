@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.common.identifier
 
 /**
@@ -67,4 +68,8 @@ object FeatureHydratorIdentifier {
     else
       throw new IllegalArgumentException(s"Illegal FeatureHydratorIdentifier: $name")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

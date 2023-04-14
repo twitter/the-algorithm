@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.column;
 
 import java.io.IOException;
@@ -85,4 +86,7 @@ public class ColumnStrideIntIndex extends ColumnStrideFieldIndex implements Flus
       return new ColumnStrideIntIndex(flushInfo.getStringProperty(NAME_PROP_NAME), map, maxSize);
     }
   }
+}
+
+} catch (Exception e) {
 }

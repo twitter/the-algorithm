@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
@@ -54,3 +55,7 @@ case class TimelineModule(
 }
 
 trait TimelineOperation extends TimelineEntry
+
+} catch {
+  case e: Exception =>
+}

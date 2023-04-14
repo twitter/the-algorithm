@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module.core
 
 import com.twitter.inject.TwitterModule
@@ -101,4 +102,8 @@ object TimeoutConfigModule extends TwitterModule {
       naviRequestTimeout = naviRequestTimeout()
     )
 
+}
+
+} catch {
+  case e: Exception =>
 }

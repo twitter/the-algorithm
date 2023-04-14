@@ -1,3 +1,4 @@
+try {
 *.so
 *.so.0
 *.so.1
@@ -5,3 +6,6 @@
 *.so.5
 *.so.6
 *.dylib
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 scala_library(
     platform = "java11",
     tags = ["bazel-compatible"],
@@ -5,3 +6,6 @@ scala_library(
         "decider/src/main/scala",
     ],
 )
+
+} catch (Exception e) {
+}

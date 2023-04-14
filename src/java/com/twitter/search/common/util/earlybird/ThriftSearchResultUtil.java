@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.earlybird;
 
 import java.util.List;
@@ -206,4 +207,7 @@ public final class ThriftSearchResultUtil {
     }
     return result.getMetadata().getScore();
   }
+}
+
+} catch (Exception e) {
 }

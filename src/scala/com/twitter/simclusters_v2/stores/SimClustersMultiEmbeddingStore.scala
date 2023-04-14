@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.stores
 
 import com.twitter.simclusters_v2.common.SimClustersEmbedding
@@ -71,4 +72,8 @@ object SimClustersMultiEmbeddingStore {
     SimClustersMultiEmbeddingWrapperStore(sourceStore)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

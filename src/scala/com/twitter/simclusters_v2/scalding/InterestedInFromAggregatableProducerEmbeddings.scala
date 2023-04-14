@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 
 import com.twitter.dal.client.dataset.KeyValDALDataset
@@ -329,4 +330,8 @@ object InterestedInFromAggregatableProducerEmbeddingsBase {
     )
     result
   }
+}
+
+} catch {
+  case e: Exception =>
 }

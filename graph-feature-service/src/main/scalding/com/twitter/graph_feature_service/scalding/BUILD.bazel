@@ -1,3 +1,4 @@
+try {
 scala_library(
     platform = "java8",
     tags = [
@@ -64,3 +65,6 @@ scalding_job(
     ],
     dependencies = [":scalding"],
 )
+
+} catch (Exception e) {
+}

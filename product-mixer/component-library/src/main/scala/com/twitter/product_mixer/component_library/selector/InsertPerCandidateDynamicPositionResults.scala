@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.core.functional_component.common.CandidateScope
@@ -75,4 +76,8 @@ case class InsertPerCandidateDynamicPositionResults[-Query <: PipelineQuery](
 
     SelectorResult(remainingCandidates = otherRemainingCandidates, result = mergedResult)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

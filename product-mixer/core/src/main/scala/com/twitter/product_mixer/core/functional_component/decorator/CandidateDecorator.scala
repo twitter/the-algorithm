@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.decorator
 
 import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
@@ -58,4 +59,8 @@ object CandidateDecorator {
       decorator
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

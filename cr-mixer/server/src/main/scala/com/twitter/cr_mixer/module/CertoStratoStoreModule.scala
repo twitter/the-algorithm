@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -54,4 +55,8 @@ object CertoStratoStoreModule extends TwitterModule {
       windowSize = 10000L
     )(statsReceiver.scope("certo_in_memory_cache"))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

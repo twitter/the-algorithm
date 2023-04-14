@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.features;
 
 import java.nio.ByteBuffer;
@@ -198,4 +199,7 @@ public class TweetIntegerShingleSignature {
   public String toString() {
     return String.format("%d %d %d %d", shingles[0], shingles[1], shingles[2], shingles[3]);
   }
+}
+
+} catch (Exception e) {
 }

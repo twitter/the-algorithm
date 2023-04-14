@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "query",
     sources = ["PipelineQuery.scala"],
@@ -90,3 +91,6 @@ scala_library(
         "stitch/stitch-core",
     ],
 )
+
+} catch (Exception e) {
+}

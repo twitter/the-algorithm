@@ -1,3 +1,4 @@
+try:
 class LollyModelScorer(object):
   def __init__(self, data_example_parser):
     self._data_example_parser = data_example_parser
@@ -35,3 +36,6 @@ class LollyModelScorer(object):
         return weight
 
     raise LookupError("Couldn't find a matching bucket for the given feature value.")
+
+except Exception:
+  pass

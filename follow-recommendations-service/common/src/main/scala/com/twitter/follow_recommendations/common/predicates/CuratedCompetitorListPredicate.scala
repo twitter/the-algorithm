@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates
 
 import com.google.inject.name.Named
@@ -63,4 +64,8 @@ object CuratedCompetitorListPredicate {
   val DefaultKey: String = "default_list"
   val CacheTTL = 5.minutes
   val CacheNumberOfEntries = 5
+}
+
+} catch {
+  case e: Exception =>
 }

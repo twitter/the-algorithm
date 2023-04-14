@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = [
         "*.scala",
@@ -19,3 +20,6 @@ scala_library(
         "usersource/snapshot/src/main/thrift/com/twitter/usersource/snapshot/flat:flat-scala",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.social_context
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -98,4 +99,8 @@ case class FeatureSocialContextBuilder(
         throw new UnsupportedOperationException(s"Unknown social context: $field")
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.domain_marshaller_executor
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -41,4 +42,8 @@ object DomainMarshallerExecutor {
     query: Query,
     candidatesWithDetails: Seq[CandidateWithDetails])
   case class Result[+DomainResponseType](result: DomainResponseType) extends ExecutorResult
+}
+
+} catch {
+  case e: Exception =>
 }

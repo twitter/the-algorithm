@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search;
 
 import java.io.IOException;
@@ -95,4 +96,7 @@ public abstract class EarlybirdLuceneSearcher extends IndexSearcher {
       return collector.getFacetResults(facetName, topK);
     }
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.quota;
 
 import java.util.Optional;
@@ -62,4 +63,7 @@ public class ConfigRepoBasedQuotaManager implements ClientIdQuotaManager {
     Preconditions.checkState(commonPoolQuota.isPresent());
     return commonPoolQuota.get();
   }
+}
+
+} catch (Exception e) {
 }

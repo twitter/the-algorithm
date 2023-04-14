@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.adserver
 
 import com.twitter.adserver.thriftscala.NewAdServer
@@ -12,4 +13,8 @@ object AdserverModule extends BaseClientModule[NewAdServer.MethodPerEndpoint] wi
 
   override def configureThriftMuxClient(client: ThriftMux.Client): ThriftMux.Client =
     client.withRequestTimeout(500.millis)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml.prediction_engine;
 
 /**
@@ -13,4 +14,7 @@ public interface ModelBuilder {
    * builds the model
    */
   LightweightLinearModel build();
+}
+
+} catch (Exception e) {
 }

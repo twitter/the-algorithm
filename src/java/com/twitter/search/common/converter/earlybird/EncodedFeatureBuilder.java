@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.converter.earlybird;
 
 import java.io.IOException;
@@ -528,4 +529,7 @@ public class EncodedFeatureBuilder {
     sink.setNumericValue(
         EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT, ints.mostSignificantInt);
   }
+}
+
+} catch (Exception e) {
 }

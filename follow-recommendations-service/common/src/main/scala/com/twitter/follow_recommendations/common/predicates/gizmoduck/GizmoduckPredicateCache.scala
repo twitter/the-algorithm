@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates.gizmoduck
 
 import java.util.concurrent.TimeUnit
@@ -47,4 +48,8 @@ object GizmoduckPredicateCache {
 
     cache
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import com.twitter.timelines.configapi.CompositeConfig
@@ -119,4 +120,8 @@ object CrMixerParamConfig {
       VideoViewTweetsParams.AllParams ++
       UnifiedUSSSignalParams.AllParams
   }
+}
+
+} catch {
+  case e: Exception =>
 }

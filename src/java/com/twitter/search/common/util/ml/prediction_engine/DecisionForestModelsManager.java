@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml.prediction_engine;
 
 import java.io.IOException;
@@ -66,4 +67,7 @@ public class DecisionForestModelsManager extends BaseModelsManager<DecisionFores
       public void run() { }
     };
   }
+}
+
+} catch (Exception e) {
 }

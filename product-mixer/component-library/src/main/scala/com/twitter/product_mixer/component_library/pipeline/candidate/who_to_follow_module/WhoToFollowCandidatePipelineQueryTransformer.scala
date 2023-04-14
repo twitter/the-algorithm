@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
 
 import com.twitter.peoplediscovery.api.thriftscala.ClientContext
@@ -36,4 +37,8 @@ case class WhoToFollowCandidatePipelineQueryTransformer[-Query <: PipelineQuery]
         excludedUserIdsFeature.flatMap(feature => input.features.map(_.get(feature))),
       includePromoted = Some(true),
     )
+}
+
+} catch {
+  case e: Exception =>
 }

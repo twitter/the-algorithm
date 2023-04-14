@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.logging
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -161,4 +162,8 @@ object FrsLogger {
      */
     override val externalReferer: Option[ExternalRefererDataProvider] = None
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.controllers
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
@@ -35,4 +36,8 @@ private[core] object AlertConfig {
       alert.runbookLink,
       alert.metricSuffix
     )
+}
+
+} catch {
+  case e: Exception =>
 }

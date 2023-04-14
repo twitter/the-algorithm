@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -12,4 +13,8 @@ trait BaseSocialContextBuilder[-Query <: PipelineQuery, -Candidate <: UniversalN
     candidate: Candidate,
     candidateFeatures: FeatureMap
   ): Option[SocialContext]
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.index;
 
 import java.io.IOException;
@@ -528,4 +529,7 @@ public class OutOfOrderRealtimeTweetIDMapper extends TweetIDMapper {
           tweetIds);
     }
   }
+}
+
+} catch (Exception e) {
 }

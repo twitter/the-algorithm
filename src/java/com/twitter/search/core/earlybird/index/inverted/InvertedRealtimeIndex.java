@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -555,4 +556,7 @@ public class InvertedRealtimeIndex extends InvertedIndex {
       return index;
     }
   }
+}
+
+} catch (Exception e) {
 }

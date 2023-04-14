@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.queryparser;
 
 import java.util.Arrays;
@@ -1778,4 +1779,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
   public Set<String> getQueriedFields() {
     return queriedFields;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import org.apache.lucene.util.BytesRef;
@@ -88,4 +89,7 @@ public final class PayloadUtil {
   private static int intsForBytes(int byteCount) {
     return (byteCount + 3) / 4;
   }
+}
+
+} catch (Exception e) {
 }

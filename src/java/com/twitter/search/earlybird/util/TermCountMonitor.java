@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import java.util.Collections;
@@ -335,4 +336,7 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
   Map<String, SearchLongGauge> getMissingFields() {
     return missingFields;
   }
+}
+
+} catch (Exception e) {
 }

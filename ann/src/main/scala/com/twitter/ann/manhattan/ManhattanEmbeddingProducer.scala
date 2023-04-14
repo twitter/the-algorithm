@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.manhattan
 
 import com.twitter.ann.common.EmbeddingType.EmbeddingVector
@@ -60,4 +61,8 @@ object ManhattanEmbeddingProducer {
     val descriptor = keyDescriptor(injection, dataset)
     new ManhattanEmbeddingProducer(descriptor, EmbeddingDescriptor, manhattanEndpoint)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

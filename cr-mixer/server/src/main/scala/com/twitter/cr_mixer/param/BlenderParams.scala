@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import com.twitter.finagle.stats.NullStatsReceiver
@@ -149,4 +150,8 @@ object BlenderParams {
       .set(doubleOverrides: _*)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

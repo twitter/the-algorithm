@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.hdfs_sources
 
 object DataPaths {
@@ -46,4 +47,8 @@ object InternalDataPaths {
 
   private[simclusters_v2] val RawKnownFor2020Path =
     "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_known_for_20M_145K_2020"
+}
+
+} catch {
+  case e: Exception =>
 }

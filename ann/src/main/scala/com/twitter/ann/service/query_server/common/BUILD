@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "common",
     sources = [
@@ -61,3 +62,6 @@ scala_library(
         "util/util-stats/src/main/scala/com/twitter/finagle/stats",
     ],
 )
+
+} catch (Exception e) {
+}

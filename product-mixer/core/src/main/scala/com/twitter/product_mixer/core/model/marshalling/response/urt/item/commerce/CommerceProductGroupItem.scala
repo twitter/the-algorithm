@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.commerce
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
@@ -20,4 +21,8 @@ case class CommerceProductGroupItem(
 
   val entryNamespace: EntryNamespace = CommerceProductGroupEntryNamespace
   def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+}
+
+} catch {
+  case e: Exception =>
 }

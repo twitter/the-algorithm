@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.gizmoduck
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -78,4 +79,8 @@ object GizmoduckClient {
   val GetUserByIdUserNameQueryFields: Set[QueryFields] = Set(
     QueryFields.Profile
   )
+}
+
+} catch {
+  case e: Exception =>
 }

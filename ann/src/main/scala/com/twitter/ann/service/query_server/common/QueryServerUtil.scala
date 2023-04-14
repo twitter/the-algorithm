@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.query_server.common
 
 import com.twitter.logging.Logger
@@ -31,4 +32,8 @@ object QueryServerUtil {
     }
     isValid
   }
+}
+
+} catch {
+  case e: Exception =>
 }

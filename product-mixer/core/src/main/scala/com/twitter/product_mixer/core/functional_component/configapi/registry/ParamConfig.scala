@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.configapi.registry
 
 import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil.DefinedFeatureName
@@ -71,4 +72,8 @@ trait ParamConfig {
     Seq.empty
 
   def gatedOverrides: Map[String, Seq[OptionalOverride[_]]] = Map.empty
+}
+
+} catch {
+  case e: Exception =>
 }

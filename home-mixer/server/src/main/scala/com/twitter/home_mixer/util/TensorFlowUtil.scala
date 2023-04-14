@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.util
 
 import com.twitter.ml.api.thriftscala.FloatTensor
@@ -29,4 +30,8 @@ object TensorFlowUtil {
     val bb_content = skipEmbeddingBBHeader(bb)
     FloatTensor(byteBufferToFloatIterator(bb_content).map(_.toDouble).toList)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

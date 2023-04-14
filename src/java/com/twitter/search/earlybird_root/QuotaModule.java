@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import java.util.concurrent.Executors;
@@ -107,4 +108,7 @@ public class QuotaModule extends TwitterModule {
       ConfigRepoBasedQuotaManager configRepoBasedQuotaManager) {
     return new ClientIdArchiveAccessFilter(configRepoBasedQuotaManager);
   }
+}
+
+} catch (Exception e) {
 }

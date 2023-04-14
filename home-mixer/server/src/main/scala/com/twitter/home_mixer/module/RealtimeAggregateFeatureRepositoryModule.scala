@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.module
 
 import com.google.inject.Provides
@@ -250,4 +251,8 @@ trait RealtimeAggregateHelpers {
   protected val dataRecordValueTransformer: Transformer[DataRecord, Array[Byte]] = ThriftCodec
     .toCompact[ml.DataRecord]
     .toByteArrayTransformer()
+}
+
+} catch {
+  case e: Exception =>
 }

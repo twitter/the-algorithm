@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition.freshstartup;
 
 import java.io.IOException;
@@ -166,4 +167,7 @@ class PostOptimizationUpdatesIndexer {
           perSegmentAppliedUpdates.get(i).getCount());
     }
   }
+}
+
+} catch (Exception e) {
 }

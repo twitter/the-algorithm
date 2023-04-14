@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.features;
 
 import java.util.Set;
@@ -66,4 +67,7 @@ public class TweetTextQuality {
   public void setTextScore(byte textScore) {
     this.textScore = textScore;
   }
+}
+
+} catch (Exception e) {
 }

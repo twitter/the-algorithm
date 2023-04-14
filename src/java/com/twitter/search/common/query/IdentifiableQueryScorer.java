@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import java.io.IOException;
@@ -57,4 +58,7 @@ public class IdentifiableQueryScorer extends FilteredScorer {
       }
     };
   }
+}
+
+} catch (Exception e) {
 }

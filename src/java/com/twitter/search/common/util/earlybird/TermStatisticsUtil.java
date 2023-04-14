@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.earlybird;
 
 import java.util.concurrent.TimeUnit;
@@ -44,4 +45,7 @@ public final class TermStatisticsUtil {
 
     return binSize;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.following
 
 import com.twitter.home_mixer.candidate_pipeline.FollowingEarlybirdResponseFeatureTransformer
@@ -51,4 +52,8 @@ class FollowingEarlybirdCandidatePipelineConfig @Inject() (
     t.ThriftSearchResult,
     TweetCandidate
   ] = { sourceResult => TweetCandidate(id = sourceResult.id) }
+}
+
+} catch {
+  case e: Exception =>
 }

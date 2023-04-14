@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.media.AspectRatio
@@ -12,4 +13,8 @@ class AspectRatioMarshaller @Inject() () {
     numerator = aspectRatio.numerator,
     denominator = aspectRatio.denominator
   )
+}
+
+} catch {
+  case e: Exception =>
 }

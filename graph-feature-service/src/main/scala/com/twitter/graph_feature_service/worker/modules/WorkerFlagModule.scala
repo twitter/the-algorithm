@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.worker.modules
 
 import com.twitter.inject.TwitterModule
@@ -30,4 +31,8 @@ object WorkerFlagModule extends TwitterModule {
   flag[String](HdfsCluster, "Hdfs cluster to download graph files from")
 
   flag[String](HdfsClusterUrl, "Hdfs cluster url to download graph files from")
+}
+
+} catch {
+  case e: Exception =>
 }

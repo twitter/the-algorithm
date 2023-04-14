@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema.base;
 
 import com.twitter.search.common.schema.thriftjava.ThriftIndexedNumericFieldSettings;
@@ -34,4 +35,7 @@ public class IndexedNumericFieldSettings {
   public boolean isUseSortableEncoding() {
     return useSortableEncoding;
   }
+}
+
+} catch (Exception e) {
 }

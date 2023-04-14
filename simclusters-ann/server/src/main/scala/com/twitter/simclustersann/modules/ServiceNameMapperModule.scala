@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.modules
 
 import com.google.inject.Provides
@@ -12,4 +13,8 @@ object ServiceNameMapperModule extends TwitterModule {
   ): ServiceNameMapper = {
     ServiceNameMapper
   }
+}
+
+} catch {
+  case e: Exception =>
 }

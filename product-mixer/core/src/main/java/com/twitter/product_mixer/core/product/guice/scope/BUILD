@@ -1,3 +1,4 @@
+try {
 java_library(
     sources = ["*.java"],
     platform = "java8",
@@ -6,3 +7,6 @@ java_library(
         "3rdparty/jvm/com/google/inject:guice",
     ],
 )
+
+} catch (Exception e) {
+}

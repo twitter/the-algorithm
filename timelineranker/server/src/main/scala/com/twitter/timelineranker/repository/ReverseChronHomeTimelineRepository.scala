@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.repository
 
 import com.twitter.timelineranker.model.ReverseChronTimelineQuery
@@ -17,4 +18,8 @@ class ReverseChronHomeTimelineRepository(
   def get(query: ReverseChronTimelineQuery): Future[Timeline] = {
     contextBuilder(query).flatMap(source.get)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.net.MalformedURLException;
@@ -285,4 +286,7 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
     }
     cardNameCounter.increment();
   }
+}
+
+} catch (Exception e) {
 }

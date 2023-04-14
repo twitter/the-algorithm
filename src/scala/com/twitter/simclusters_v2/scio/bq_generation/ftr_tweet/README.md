@@ -1,3 +1,4 @@
+try {
 # FTR Tweet embeddings 
 
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
@@ -210,3 +211,6 @@ aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-centr
 aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-oon-ftr-pop1000-rnkdecay-tweet-index-generation-batch-job
 aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-oon-ftr-pop1000-rnkdecay-tweet-index-generation-batch-job
 ```
+
+} catch (Exception e) {
+}

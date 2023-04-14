@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -75,3 +76,6 @@ enum DataType {
 //    https://www.tensorflow.org/code/tensorflow/core/framework/types.cc,
 //    https://www.tensorflow.org/code/tensorflow/python/framework/dtypes.py,
 //    https://www.tensorflow.org/code/tensorflow/python/framework/function.py)
+
+} catch (Exception e) {
+}

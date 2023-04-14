@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.config
 
 object TimelineRankerConstants {
@@ -5,4 +6,8 @@ object TimelineRankerConstants {
   val ManhattanStarbuckAppId = "timelineranker"
   val WarmupClientName = "timelineranker.warmup"
   val ForwardedClientName = "timelineranker.forwarded"
+}
+
+} catch {
+  case e: Exception =>
 }

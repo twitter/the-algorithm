@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.worker.util
 
 import com.twitter.graph_feature_service.thriftscala.EdgeType
@@ -29,4 +30,8 @@ object FollowedByPartialValueGraph extends PartialValueGraph {
 object MutualFollowPartialValueGraph extends PartialValueGraph {
 
   override def edgeType: EdgeType = MutualFollow
+}
+
+} catch {
+  case e: Exception =>
 }

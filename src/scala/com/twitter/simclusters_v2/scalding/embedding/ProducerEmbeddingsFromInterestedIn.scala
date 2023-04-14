@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding
 
 import com.twitter.dal.client.dataset.KeyValDALDataset
@@ -698,4 +699,8 @@ object ProducerEmbeddingsFromInterestedIn {
           inputId -> TopSimClustersWithScore(topSimClusters, modelVersion)
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

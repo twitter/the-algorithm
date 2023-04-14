@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.factory;
 
 import java.io.IOException;
@@ -898,4 +899,7 @@ public class EarlybirdWireModule {
         earlybirdIndexFlusher,
         provideKafkaIndexCaughtUpMonitor());
   }
+}
+
+} catch (Exception e) {
 }

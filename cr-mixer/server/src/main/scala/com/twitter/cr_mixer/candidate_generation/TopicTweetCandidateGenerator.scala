@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.candidate_generation
 
 import com.twitter.contentrecommender.thriftscala.TweetInfo
@@ -229,4 +230,8 @@ class TopicTweetCandidateGenerator @Inject() (
           }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.simclusters_v2.thriftjava
 namespace py gen.twitter.simclusters_v2.graph
 #@namespace scala com.twitter.simclusters_v2.thriftscala
@@ -59,3 +60,6 @@ struct NormsAndCounts {
   10: optional double logFavWeightsOnFollowEdgesSum(personalDataType = 'EngagementsPublic')
 
 }(persisted="true", hasPersonalData = 'true')
+
+} catch (Exception e) {
+}

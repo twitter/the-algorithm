@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.product
 
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
@@ -382,4 +383,8 @@ class ProductPipelineBuilder[TRequest <: Request, Query <: PipelineQuery, Respon
       override val children: Seq[Component] = allGates ++ childPipelines
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

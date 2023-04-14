@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.tweets
 
 import com.twitter.tweetypie.thriftscala.Tweet
@@ -67,4 +68,8 @@ trait CommunityTweetFeatures {
         false
       )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

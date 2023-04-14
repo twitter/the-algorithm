@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.monitoring
 
 import com.twitter.timelines.configapi.FSParam
@@ -10,4 +11,8 @@ object MonitoringParams {
         default = Seq.empty[Long]
       )
 
+}
+
+} catch {
+  case e: Exception =>
 }

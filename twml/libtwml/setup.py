@@ -1,3 +1,4 @@
+try:
 """
 libtwml setup.py module
 """
@@ -10,3 +11,6 @@ setup(
   packages=find_packages(),
   data_files=[('', ['libtwml_tf.so'])],
 )
+
+except Exception:
+  pass

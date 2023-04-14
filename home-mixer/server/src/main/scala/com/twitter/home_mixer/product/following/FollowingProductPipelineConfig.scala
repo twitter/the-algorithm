@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.following
 
 import com.twitter.conversions.DurationOps._
@@ -128,4 +129,8 @@ class FollowingProductPipelineConfig @Inject() (
   )
 
   override val debugAccessPolicies: Set[AccessPolicy] = DefaultHomeMixerAccessPolicy
+}
+
+} catch {
+  case e: Exception =>
 }

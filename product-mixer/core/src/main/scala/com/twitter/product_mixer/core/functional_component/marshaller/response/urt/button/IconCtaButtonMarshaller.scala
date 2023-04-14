@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon.HorizonIconMarshaller
@@ -18,4 +19,8 @@ class IconCtaButtonMarshaller @Inject() (
       accessibilityLabel = iconCtaButton.accessibilityLabel,
       url = urlMarshaller(iconCtaButton.url)
     )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.stp
 
 import com.twitter.bijection.scrooge.BinaryScalaCodec
@@ -62,4 +63,8 @@ class EpStpScorer @Inject() (epScorer: EPScorer) {
 
 object EpStpScorer {
   val WithFeaturesBreakDown = false
+}
+
+} catch {
+  case e: Exception =>
 }

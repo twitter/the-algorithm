@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.earlybird;
 
 import com.twitter.search.common.query.thriftjava.CollectorParams;
@@ -26,4 +27,7 @@ public final class ThriftSearchQueryUtil {
     return (searchQuery != null) && searchQuery.isSetSearcherId()
       && (searchQuery.getSearcherId() > 0);
   }
+}
+
+} catch (Exception e) {
 }

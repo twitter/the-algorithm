@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.ReferenceObject
@@ -387,4 +388,8 @@ case class TwitterTextRendererEntity[+T] private[richtext] (
   private[richtext] def startsBetween(start: Int, end: Int): Boolean = {
     startIndex >= start && startIndex < end && endIndex > end
   }
+}
+
+} catch {
+  case e: Exception =>
 }

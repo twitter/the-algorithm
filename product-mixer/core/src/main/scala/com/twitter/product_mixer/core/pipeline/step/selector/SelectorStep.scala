@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.step.selector
 
 import com.twitter.product_mixer.core.functional_component.selector.Selector
@@ -50,4 +51,8 @@ case class SelectorStep[
   // Selection is a bit different to other steps (i.e, other steps, empty means don't change anything)
   // where an empty selection list drops all candidates.
   override def isEmpty(config: Seq[Selector[Query]]): Boolean = false
+}
+
+} catch {
+  case e: Exception =>
 }

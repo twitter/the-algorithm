@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
@@ -23,4 +24,8 @@ class ClientEventDetailsMarshaller @Inject() (
       commerceDetails = clientEventDetails.commerceDetails.map(commerceDetailsMarshaller(_))
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

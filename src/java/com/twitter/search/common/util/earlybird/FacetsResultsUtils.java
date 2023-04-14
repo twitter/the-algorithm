@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.earlybird;
 
 import java.util.ArrayList;
@@ -492,4 +493,7 @@ public final class FacetsResultsUtils {
 
         return SCORE_COMPARATOR.compare(count1, count2);
       };
+}
+
+} catch (Exception e) {
 }

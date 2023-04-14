@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.logging
 
 import com.google.common.base.CaseFormat
@@ -486,4 +487,8 @@ case class CrMixerScribeLogger @Inject() (
 object CrMixerScribeLogger {
   val KafkaMaxTweetsPerMessage: Int = 200
   val BatchSize: Int = 20
+}
+
+} catch {
+  case e: Exception =>
 }

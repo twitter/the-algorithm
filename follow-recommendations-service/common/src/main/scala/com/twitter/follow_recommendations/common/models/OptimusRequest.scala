@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
@@ -13,3 +14,7 @@ trait OptimusRequest
     with HasInterestIds
     with HasDebugOptions
     with HasPreviousRecommendationsContext {}
+
+} catch {
+  case e: Exception =>
+}

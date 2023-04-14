@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import com.google.common.base.Optional;
@@ -15,4 +16,7 @@ public class TopTweetsCacheRequestNormalizer extends
     return Optional.fromNullable(
         TopTweetsCacheUtil.normalizeTopTweetsRequestForCache(requestContext.getRequest()));
   }
+}
+
+} catch (Exception e) {
 }

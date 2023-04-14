@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.module
 
 import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
@@ -31,4 +32,8 @@ object FollowRecommenderServiceModule
   }
 
   override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+}
+
+} catch {
+  case e: Exception =>
 }

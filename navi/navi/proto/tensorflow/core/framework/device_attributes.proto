@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -55,4 +56,7 @@ message DeviceAttributes {
   // clients in a multi-client setup. Set to -1 if unavailable, non-negative
   // otherwise.
   int64 xla_global_id = 8;
+}
+
+} catch (Exception e) {
 }

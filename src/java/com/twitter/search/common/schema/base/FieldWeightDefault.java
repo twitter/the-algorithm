@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema.base;
 
 import java.util.LinkedHashMap;
@@ -107,4 +108,7 @@ public class FieldWeightDefault {
 
     return builder.build();
   }
+}
+
+} catch (Exception e) {
 }

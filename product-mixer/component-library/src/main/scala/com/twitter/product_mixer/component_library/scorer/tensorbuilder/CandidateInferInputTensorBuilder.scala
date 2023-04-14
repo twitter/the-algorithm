@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.tensorbuilder
 
 import com.twitter.ml.api.thriftscala.FloatTensor
@@ -68,3 +69,7 @@ case class CandidateSparseMapInferInputTensorBuilder[-Candidate <: UniversalNoun
     extends CandidateInferInputTensorBuilder[Candidate, Option[Map[Int, Double]]](
       SparseMapInferInputTensorBuilder,
       features)
+
+} catch {
+  case e: Exception =>
+}

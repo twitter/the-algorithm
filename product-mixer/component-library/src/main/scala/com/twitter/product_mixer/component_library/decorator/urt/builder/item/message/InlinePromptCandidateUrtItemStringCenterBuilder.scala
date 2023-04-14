@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.message
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.item.message.InlinePromptCandidateUrtItemStringCenterBuilder.InlinePromptClientEventInfoElement
@@ -71,4 +72,8 @@ case class InlinePromptCandidateUrtItemStringCenterBuilder[-Query <: PipelineQue
       ),
       impressionCallbacks = None
     )
+}
+
+} catch {
+  case e: Exception =>
 }

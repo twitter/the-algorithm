@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -24,4 +25,7 @@ public abstract class ScheduledExecutorTask implements Runnable {
 
   @VisibleForTesting
   protected abstract void runOneIteration();
+}
+
+} catch (Exception e) {
 }

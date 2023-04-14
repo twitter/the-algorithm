@@ -1,3 +1,4 @@
+try:
 '''
 Contains implementations of functions to parse training and evaluation data.
 
@@ -18,3 +19,6 @@ from twitter.deepbird.io.legacy.parsers import (
   get_sparse_serving_input_receiver_fn,  # noqa: F401
   get_tensor_parse_fn,  # noqa: F401
 )
+
+except Exception:
+  pass

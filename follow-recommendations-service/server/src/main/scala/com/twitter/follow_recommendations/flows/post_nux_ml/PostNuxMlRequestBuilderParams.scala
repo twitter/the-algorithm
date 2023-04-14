@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.post_nux_ml
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -42,4 +43,8 @@ object PostNuxMlRequestBuilderParams {
       extends FSParam[Boolean](
         name = "post_nux_ml_request_builder_enable_invalid_relationship_predicate",
         false)
+}
+
+} catch {
+  case e: Exception =>
 }

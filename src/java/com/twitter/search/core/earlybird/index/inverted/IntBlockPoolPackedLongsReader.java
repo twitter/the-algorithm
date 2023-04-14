@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import javax.annotation.Nullable;
@@ -250,4 +251,7 @@ public final class IntBlockPoolPackedLongsReader {
     currentInt = currentBlock[indexInCurrentBlock++];
     return currentInt;
   }
+}
+
+} catch (Exception e) {
 }

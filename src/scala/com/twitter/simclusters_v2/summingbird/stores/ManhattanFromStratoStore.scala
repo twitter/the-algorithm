@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.stores
 
 import com.twitter.bijection.Injection
@@ -105,4 +106,8 @@ object ManhattanFromStratoStore {
 
     (keyInj, valDesc)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird;
 
 import java.io.IOException;
@@ -125,4 +126,7 @@ public class RealtimeEarlybirdIndexConfig extends EarlybirdIndexConfig {
   public boolean supportOutOfOrderIndexing() {
     return true;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.earlybird
 
 import com.twitter.search.earlybird.{thriftscala => t}
@@ -23,4 +24,8 @@ class EarlybirdTweetCandidateSource @Inject() (
         response.searchResults.map(_.results).getOrElse(Seq.empty)
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

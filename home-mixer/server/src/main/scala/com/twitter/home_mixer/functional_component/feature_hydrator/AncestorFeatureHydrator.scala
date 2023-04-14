@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
@@ -53,4 +54,8 @@ class AncestorFeatureHydrator @Inject() (
         ta.TweetAncestor(ancestors.conversationId, rootAuthorId)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

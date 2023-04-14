@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 sealed trait FilterReason {
@@ -130,4 +131,8 @@ object FilterReason {
   case object FailOpen extends FilterReason {
     override val reason: String = "fail_open"
   }
+}
+
+} catch {
+  case e: Exception =>
 }

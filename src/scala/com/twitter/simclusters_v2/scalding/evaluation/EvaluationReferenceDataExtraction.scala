@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.evaluation
 
 import com.twitter.ml.api.constant.SharedFeatures.AUTHOR_ID
@@ -267,4 +268,8 @@ object TimelinesEngagementDataExtractor {
       .sumByKey
       .map { case (uid, tweetSeq) => ReferenceTweets(uid, tweetSeq) }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.scoring
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -27,4 +28,8 @@ class ScoringPipelineBuilderFactory @Inject() (
       statsReceiver
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

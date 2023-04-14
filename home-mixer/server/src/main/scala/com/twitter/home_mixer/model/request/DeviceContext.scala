@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.model.request
 
 import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
@@ -71,4 +72,8 @@ object DeviceContext {
 
 trait HasDeviceContext {
   def deviceContext: Option[DeviceContext]
+}
+
+} catch {
+  case e: Exception =>
 }

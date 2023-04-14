@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.models
 
 import com.twitter.guano.commons.thriftscala.PolicyInViolation
@@ -22,4 +23,8 @@ object SafetyLabelMetadata {
       metadata.policyUrl
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

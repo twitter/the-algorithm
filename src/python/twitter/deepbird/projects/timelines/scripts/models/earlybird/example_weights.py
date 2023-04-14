@@ -1,3 +1,4 @@
+try:
 # checkstyle: noqa
 import tensorflow.compat.v1 as tf
 from .constants import INDEX_BY_LABEL, LABEL_NAMES
@@ -41,3 +42,6 @@ def _make_weight_cli_argument_name(label_name):
 
 def _make_weight_param_name(label_name):
   return f"weight_{label_name}"
+
+except Exception:
+  pass

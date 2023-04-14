@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.app;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -108,4 +109,7 @@ public class RealtimeIngesterPipelineV2 {
     kafkaConsumer.cleanupStageV2();
     tweetEventDeserializerStage.cleanupStageV2();
   }
+}
+
+} catch (Exception e) {
 }

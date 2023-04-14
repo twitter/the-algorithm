@@ -1,3 +1,4 @@
+try {
 -- Calculate the fav counts for tweets within a given timeframe
 with vars as (
     SELECT TIMESTAMP("{START_TIME}") AS start_date,
@@ -36,3 +37,6 @@ tweet_raw_favs_table AS (
 SELECT tweetId, COUNT(DISTINCT(userId)) AS favCount
 FROM tweet_raw_favs_table
 GROUP BY tweetId
+
+} catch (Exception e) {
+}

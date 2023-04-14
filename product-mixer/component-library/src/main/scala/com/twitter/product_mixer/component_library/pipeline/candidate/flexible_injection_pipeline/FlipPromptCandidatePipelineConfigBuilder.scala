@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline
 
 import com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline.PromptCandidateSource
@@ -32,4 +33,8 @@ class FlipPromptCandidatePipelineConfigBuilder @Inject() (
       supportedClientParam = supportedClientParam,
       promptCandidateSource = promptCandidateSource)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.sources
 
 import com.google.inject.Provides
@@ -149,4 +150,8 @@ object HydrationSourcesModule extends TwitterModule {
   private def randomizedTTL(ttl: Long): Long = {
     (ttl - ttl * earlyExpiration * Random.nextDouble()).toLong
   }
+}
+
+} catch {
+  case e: Exception =>
 }

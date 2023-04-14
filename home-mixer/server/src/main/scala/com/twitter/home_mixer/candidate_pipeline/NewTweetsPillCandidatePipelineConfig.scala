@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.candidate_pipeline
 
 import com.twitter.conversions.DurationOps._
@@ -120,4 +121,8 @@ object NewTweetsPillCandidatePipelineConfig {
   // Unlimited display time (until user takes action)
   val DisplayDuration = -1.millisecond
   val TriggerDelay = 4.minutes
+}
+
+} catch {
+  case e: Exception =>
 }

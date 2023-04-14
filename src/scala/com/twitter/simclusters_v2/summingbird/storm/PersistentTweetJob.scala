@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.storm
 
 import com.twitter.simclusters_v2.common.TweetId
@@ -148,4 +149,8 @@ private[storm] object PersistentTweetJob {
   private lazy val qualifiedSet = 3
     .until(25).map { i => Math.pow(2, i).toInt }.toSet
 
+}
+
+} catch {
+  case e: Exception =>
 }

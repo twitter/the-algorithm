@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.client
 
 import com.twitter.conversions.DurationOps._
@@ -86,4 +87,8 @@ sealed trait TimelineRankerClientBuilderBase {
 
 object TimelineRankerClientBuilder extends TimelineRankerClientBuilderBase {
   override def DefaultProdDest: String = "/s/timelineranker/timelineranker"
+}
+
+} catch {
+  case e: Exception =>
 }

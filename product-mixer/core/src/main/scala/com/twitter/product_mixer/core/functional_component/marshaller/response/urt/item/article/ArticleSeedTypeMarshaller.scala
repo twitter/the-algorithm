@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.article
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleSeedType
@@ -17,4 +18,8 @@ class ArticleSeedTypeMarshaller @Inject() () {
       case FriendsOfFriendsSeed => urt.ArticleSeedType.FriendsOfFriends
       case ListIdSeed => urt.ArticleSeedType.ListId
     }
+}
+
+} catch {
+  case e: Exception =>
 }

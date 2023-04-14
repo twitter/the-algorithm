@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.debug_query
 
 import com.twitter.finagle.Service
@@ -40,4 +41,8 @@ object DebugQueryNotSupportedService
     thriftRequest: ScroogeRequest[_]
   ): Future[ScroogeResponse[t.PipelineExecutionResult]] =
     Future.value(ScroogeResponse(t.PipelineExecutionResult(failureJson)))
+}
+
+} catch {
+  case e: Exception =>
 }

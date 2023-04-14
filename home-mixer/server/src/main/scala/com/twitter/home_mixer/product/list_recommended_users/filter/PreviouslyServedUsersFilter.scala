@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.list_recommended_users.filter
 
 import com.twitter.home_mixer.functional_component.feature_hydrator.ListMembersFeature
@@ -32,4 +33,8 @@ object PreviouslyServedUsersFilter extends Filter[ListRecommendedUsersQuery, Use
 
     Stitch.value(FilterResult(kept = kept, removed = removed))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

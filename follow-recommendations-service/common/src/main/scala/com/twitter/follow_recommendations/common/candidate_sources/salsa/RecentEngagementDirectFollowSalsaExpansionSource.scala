@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.salsa
 
 import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
@@ -37,4 +38,8 @@ object RecentEngagementDirectFollowSalsaExpansionSource {
     Algorithm.RecentEngagementSarusOcCur.toString)
   val NumFirstDegreeNodesToRetrieve = 10
   val OutputSize = 200
+}
+
+} catch {
+  case e: Exception =>
 }

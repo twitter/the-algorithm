@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_video_graph
 
 import com.twitter.finagle.tracing.Trace
@@ -9,4 +10,8 @@ import com.twitter.util.Future
 trait LoggingUserVideoGraph extends thriftscala.UserVideoGraph.MethodPerEndpoint {
   private[this] val accessLog = Logger("access")
 
+}
+
+} catch {
+  case e: Exception =>
 }

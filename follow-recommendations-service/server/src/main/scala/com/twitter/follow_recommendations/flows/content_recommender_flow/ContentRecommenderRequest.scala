@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.content_recommender_flow
 
 import com.twitter.core_workflows.user_model.thriftscala.UserState
@@ -42,4 +43,8 @@ case class ContentRecommenderRequest(
   override val excludedUserIds: Seq[Long] = {
     inputExcludeUserIds ++ clientContext.userId.toSeq
   }
+}
+
+} catch {
+  case e: Exception =>
 }

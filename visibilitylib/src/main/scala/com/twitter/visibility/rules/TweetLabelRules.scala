@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.common.ModelScoreThresholds
@@ -880,4 +881,8 @@ object NsfwHighRecallTweetLabelAvoidRule
     ) {
   override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
     new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+}
+
+} catch {
+  case e: Exception =>
 }

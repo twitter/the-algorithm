@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.marshaller.request
 
 import com.twitter.home_mixer.model.request.FollowingProductContext
@@ -51,4 +52,8 @@ class HomeMixerProductContextUnmarshaller @Inject() (
     case t.ProductContext.UnknownUnionField(field) =>
       throw new UnsupportedOperationException(s"Unknown display context: ${field.field.name}")
   }
+}
+
+} catch {
+  case e: Exception =>
 }

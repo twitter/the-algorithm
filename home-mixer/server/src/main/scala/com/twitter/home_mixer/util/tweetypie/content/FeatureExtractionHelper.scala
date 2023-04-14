@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.util.tweetypie.content
 
 import com.twitter.home_mixer.model.ContentFeatures
@@ -26,4 +27,8 @@ object FeatureExtractionHelper {
       semanticCoreAnnotations = tweet.escherbirdEntityAnnotations.map(_.entityAnnotations)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

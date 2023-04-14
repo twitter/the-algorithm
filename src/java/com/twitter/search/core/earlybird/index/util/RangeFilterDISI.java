@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.util;
 
 import java.io.IOException;
@@ -55,4 +56,7 @@ public class RangeFilterDISI extends DocIdSetIterator {
   protected boolean shouldReturnDoc() throws IOException {
     return true;
   }
+}
+
+} catch (Exception e) {
 }

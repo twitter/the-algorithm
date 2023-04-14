@@ -1,3 +1,4 @@
+try:
 # pylint: disable=missing-docstring, unused-argument
 ''' Contains the base classes for CalibrationFeature and Calibrator '''
 
@@ -155,3 +156,6 @@ class Calibrator(object):
         `tf.Session <https://www.tensorflow.org/versions/master/api_docs/python/tf/Session>`_
         instance. The ``sess`` is used to produces summaries for the writer.
     """
+
+except Exception:
+  pass

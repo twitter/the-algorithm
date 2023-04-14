@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 /**
@@ -199,4 +200,7 @@ public final class PackedLongsReaderPreComputedValues {
   int[] getHighBitsMask(int numBitsPerValue) {
     return allHighBitsMask == null ? null : allHighBitsMask[numBitsPerValue];
   }
+}
+
+} catch (Exception e) {
 }

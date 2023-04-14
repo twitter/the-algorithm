@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.common
 
 import com.twitter.algebird.Monoid
@@ -37,4 +38,8 @@ object SummerWithSumValues {
         case (None, deltaV) => deltaV
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

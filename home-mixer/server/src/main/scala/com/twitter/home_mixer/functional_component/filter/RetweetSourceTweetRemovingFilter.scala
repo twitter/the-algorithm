@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.filter
 
 import com.twitter.home_mixer.model.HomeFeatures.EarlybirdFeature
@@ -37,4 +38,8 @@ object RetweetSourceTweetRemovingFilter extends Filter[PipelineQuery, TweetCandi
       }
     Stitch.value(FilterResult(kept = kept, removed = removed))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

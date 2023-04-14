@@ -1,3 +1,4 @@
+try {
 java_library(
     sources = ["*.java"],
     dependencies = [
@@ -5,3 +6,6 @@ java_library(
         "src/java/com/twitter/search/earlybird/config",
     ],
 )
+
+} catch (Exception e) {
+}

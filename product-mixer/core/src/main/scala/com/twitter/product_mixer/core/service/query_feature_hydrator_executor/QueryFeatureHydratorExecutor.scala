@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.query_feature_hydrator_executor
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
@@ -214,4 +215,8 @@ object QueryFeatureHydratorExecutor {
       s"`AsyncHydrator.hydrateBefore` contained ${asyncQueryFeatureHydrator.hydrateBefore} which was not in the parent pipeline's " +
         s"`PipelineConfig` Companion object field `stepsAsyncFeatureHydrationCanBeCompletedBy = $validPipelineSteps`."
     )
+}
+
+} catch {
+  case e: Exception =>
 }

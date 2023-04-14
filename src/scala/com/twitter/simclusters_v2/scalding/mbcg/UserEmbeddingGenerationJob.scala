@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.mbcg
 
 import com.twitter.conversions.DurationOps._
@@ -267,4 +268,8 @@ object UserEmbeddingGenerationBatchJobExperimental
         }
       }
     }
+}
+
+} catch {
+  case e: Exception =>
 }

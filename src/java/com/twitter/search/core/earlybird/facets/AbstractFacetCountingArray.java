@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import java.io.IOException;
@@ -228,4 +229,7 @@ public abstract class AbstractFacetCountingArray implements Flushable {
   IntBlockPool getFacetsPool() {
     return facetsPool;
   }
+}
+
+} catch (Exception e) {
 }

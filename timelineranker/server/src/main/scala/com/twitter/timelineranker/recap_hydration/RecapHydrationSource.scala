@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.recap_hydration
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -120,4 +121,8 @@ class RecapHydrationSource(
       featureHydrationPipeline(query)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -20,4 +21,7 @@ message SavedModel {
 
   // One or more MetaGraphs.
   repeated MetaGraphDef meta_graphs = 2;
+}
+
+} catch (Exception e) {
 }

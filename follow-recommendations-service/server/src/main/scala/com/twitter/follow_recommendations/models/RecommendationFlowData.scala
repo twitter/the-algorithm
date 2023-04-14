@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.models
 
 import com.twitter.follow_recommendations.common.models.CandidateUser
@@ -101,4 +102,8 @@ object RecommendationFlowData {
       )
     })
   }
+}
+
+} catch {
+  case e: Exception =>
 }

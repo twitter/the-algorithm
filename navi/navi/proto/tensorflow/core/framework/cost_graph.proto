@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -86,4 +87,7 @@ message CostGraphDef {
     string dimension = 2;
   }
   repeated AggregatedCost cost = 2;
+}
+
+} catch (Exception e) {
 }

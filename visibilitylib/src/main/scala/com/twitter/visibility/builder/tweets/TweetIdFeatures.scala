@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.tweets
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -73,4 +74,8 @@ class TweetIdFeatures(
       .withConstantFeature(TweetTimestamp, TweetFeatures.tweetTimestamp(tweetId))
       .withConstantFeature(TweetId, tweetId)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.des
 
 import com.twitter.stitch.Stitch
@@ -69,4 +70,8 @@ object DESVisibilityLibrary {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

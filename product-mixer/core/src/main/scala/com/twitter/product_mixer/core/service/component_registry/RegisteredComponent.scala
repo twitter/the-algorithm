@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.component_registry
 
 import com.twitter.product_mixer.core.model.common.Component
@@ -13,3 +14,7 @@ case class RegisteredComponent(
   identifier: ComponentIdentifier,
   component: Component,
   sourceFile: String)
+
+} catch {
+  case e: Exception =>
+}

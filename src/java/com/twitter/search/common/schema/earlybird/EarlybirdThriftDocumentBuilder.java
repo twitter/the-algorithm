@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema.earlybird;
 
 import java.io.IOException;
@@ -894,4 +895,7 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
   private static boolean isNotEmpty(List<?> value) {
     return value != null && !value.isEmpty();
   }
+}
+
+} catch (Exception e) {
 }

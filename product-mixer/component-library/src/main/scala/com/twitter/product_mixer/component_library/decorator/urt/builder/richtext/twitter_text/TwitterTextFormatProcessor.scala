@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Plain
@@ -65,3 +66,7 @@ case class TwitterTextFormatProcessor(
 
 case class UnmatchedFormatTag(format: RichTextFormat)
     extends Exception(s"Unmatched format start and end tags for $format")
+
+} catch {
+  case e: Exception =>
+}

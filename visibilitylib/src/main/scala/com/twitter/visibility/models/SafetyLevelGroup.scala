@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.models
 
 import com.twitter.visibility.models.SafetyLevel.AccessInternalPromotedContent
@@ -551,4 +552,8 @@ object SafetyLevelGroup {
       FilterNone,
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

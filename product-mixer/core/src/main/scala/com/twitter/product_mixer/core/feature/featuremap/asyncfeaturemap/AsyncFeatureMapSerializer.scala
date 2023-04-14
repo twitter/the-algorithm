@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap
 
 import com.fasterxml.jackson.core.JsonGenerator
@@ -42,4 +43,8 @@ private[asyncfeaturemap] class AsyncFeatureMapSerializer() extends JsonSerialize
 
     gen.writeEndObject()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

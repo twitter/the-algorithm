@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.query_server.common.throttling
 
 import com.twitter.util.Duration
@@ -47,4 +48,8 @@ class WindowedThrottlingInstrument(
   def percentageOfTimeSpentThrottling(): Double = {
     math.min(1, throttlingChangeHistory.sum.toDouble / assignedCpuNs)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

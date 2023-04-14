@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.gate
 
 import com.twitter.product_mixer.core.functional_component.common.CandidateScope
@@ -19,4 +20,8 @@ case class NonEmptyCandidatesGate(scope: CandidateScope)
     query: PipelineQuery,
     candidates: Seq[CandidateWithDetails]
   ): Stitch[Boolean] = Stitch.value(scope.partition(candidates).candidatesInScope.nonEmpty)
+}
+
+} catch {
+  case e: Exception =>
 }

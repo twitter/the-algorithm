@@ -1,3 +1,4 @@
+try:
 # pylint: disable=arguments-differ,no-member,too-many-statements
 ''' Contains PercentileDiscretizerFeature and PercentileDiscretizerCalibrator used \
     for PercentileDiscretizer calibration '''
@@ -575,3 +576,6 @@ class PercentileDiscretizerCalibrator(Calibrator):
         module.export(save_dir, session)
 
     self.write_summary_json(save_dir, name)
+
+except Exception:
+  pass

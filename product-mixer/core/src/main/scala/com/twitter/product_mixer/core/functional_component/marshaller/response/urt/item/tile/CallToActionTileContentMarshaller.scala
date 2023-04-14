@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button.CtaButtonMarshaller
@@ -18,4 +19,8 @@ class CallToActionTileContentMarshaller @Inject() (
       richText = callToActionTileContent.richText.map(richTextMarshaller(_)),
       ctaButton = callToActionTileContent.ctaButton.map(ctaButtonMarshaller(_))
     )
+}
+
+} catch {
+  case e: Exception =>
 }

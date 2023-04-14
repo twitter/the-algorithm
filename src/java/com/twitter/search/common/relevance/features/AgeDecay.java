@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.features;
 
 import java.util.concurrent.TimeUnit;
@@ -85,4 +86,7 @@ public class AgeDecay {
     double decay = computeExponential(halflife, exp, age);  // in (0, 1]
     return (maxBoost - minBoost) * decay + minBoost;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.index;
 
 import java.io.IOException;
@@ -29,4 +30,7 @@ public class TimeMappingWriter implements EarlybirdRealtimeIndexSegmentWriter.In
   @Override
   public void finish() {
   }
+}
+
+} catch (Exception e) {
 }

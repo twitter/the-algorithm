@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.util
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -85,4 +86,8 @@ object SourceTweetsUtil {
       .flatMap(SearchResultUtil.getSourceTweetId)
       .filterNot(searchResultsTweetIds.contains)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

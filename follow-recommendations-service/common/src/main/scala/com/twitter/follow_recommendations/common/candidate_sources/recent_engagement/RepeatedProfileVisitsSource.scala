@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.recent_engagement
 
 import com.google.inject.Inject
@@ -154,4 +155,8 @@ class RepeatedProfileVisitsSource @Inject() (
 
 object RepeatedProfileVisitsSource {
   val Identifier = CandidateSourceIdentifier(Algorithm.RepeatedProfileVisits.toString)
+}
+
+} catch {
+  case e: Exception =>
 }

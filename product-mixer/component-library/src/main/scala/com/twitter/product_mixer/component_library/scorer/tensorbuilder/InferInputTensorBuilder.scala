@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.tensorbuilder
 
 import com.google.protobuf.ByteString
@@ -149,3 +150,7 @@ class FeatureValuesAndShapeMismatchException(
 class UnexpectedDataTypeException[T](value: T, builder: InferInputTensorBuilder[_])
     extends UnsupportedOperationException(
       s"Unsupported data type ${value} passed in at ${builder.getClass.toString}")
+
+} catch {
+  case e: Exception =>
+}

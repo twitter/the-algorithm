@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -93,4 +94,8 @@ class TwhinAuthorFollow20220101FeatureHydrator @Inject() (
         .flatten
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

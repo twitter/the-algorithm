@@ -1,3 +1,4 @@
+try:
 from .hashing_utils import make_feature_id, numpy_hashing_uniform
 
 import numpy as np
@@ -32,3 +33,6 @@ class TFModelWeightsInitializerBuilder(object):
       for bin_idx, weight in enumerate(discretized_feature["weights"]):
         final_bucket_id = numpy_hashing_uniform(feature_id, bin_idx, self.num_bits)
         initial_weights[final_bucket_id][0] = weight
+
+except Exception:
+  pass

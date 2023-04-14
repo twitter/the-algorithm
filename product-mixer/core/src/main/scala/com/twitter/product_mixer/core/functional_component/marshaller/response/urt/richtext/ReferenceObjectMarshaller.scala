@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
@@ -28,4 +29,8 @@ class ReferenceObjectMarshaller @Inject() (urlMarshaller: UrlMarshaller) {
     case twitterList: RichTextList =>
       urt.ReferenceObject.TwitterList(urt.RichTextList(id = twitterList.id, url = twitterList.url))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

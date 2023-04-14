@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.forward_pivot
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.RosettaColorMarshaller
@@ -32,4 +33,8 @@ class ForwardPivotMarshaller @Inject() (
     softInterventionDisplayType =
       forwardPivot.softInterventionDisplayType.map(softInterventionDisplayTypeMarshaller(_)),
   )
+}
+
+} catch {
+  case e: Exception =>
 }

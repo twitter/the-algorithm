@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet
 
 sealed trait TweetDisplayType
@@ -14,3 +15,7 @@ case object TweetWithoutCard extends TweetDisplayType
 case object ReaderModeRoot extends TweetDisplayType
 case object ReaderMode extends TweetDisplayType
 case object CondensedTweet extends TweetDisplayType
+
+} catch {
+  case e: Exception =>
+}

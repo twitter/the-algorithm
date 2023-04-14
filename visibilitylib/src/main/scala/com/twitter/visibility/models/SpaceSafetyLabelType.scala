@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.models
 
 import com.twitter.visibility.safety_label_store.{thriftscala => s}
@@ -88,4 +89,8 @@ object SpaceSafetyLabelType extends SafetyLabelType {
     modelToThriftMap
       .get(safetyLabelType).getOrElse(UnknownThriftSafetyLabelType)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

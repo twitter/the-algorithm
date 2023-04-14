@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.candidate
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -732,4 +733,8 @@ class CandidatePipelineBuilder[
 
   private case class CandidateWithFeaturesImpl(candidate: Result, features: FeatureMap)
       extends CandidateWithFeatures[Result]
+}
+
+} catch {
+  case e: Exception =>
 }

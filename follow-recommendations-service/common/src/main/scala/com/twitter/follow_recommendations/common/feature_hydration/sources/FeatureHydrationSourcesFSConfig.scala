@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.sources
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -39,4 +40,8 @@ class FeatureHydrationSourcesFSConfig @Inject() () extends FeatureSwitchConfig {
   override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
     FeatureStoreSourceParams.GlobalFetchTimeout
   )
+}
+
+} catch {
+  case e: Exception =>
 }

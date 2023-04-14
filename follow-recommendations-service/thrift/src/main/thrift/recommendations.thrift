@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.follow_recommendations.thriftjava
 #@namespace scala com.twitter.follow_recommendations.thriftscala
 #@namespace strato com.twitter.follow_recommendations
@@ -37,4 +38,7 @@ struct HydratedUserRecommendation {
 
 union HydratedRecommendation {
   1: HydratedUserRecommendation hydratedUserRecommendation
+}
+
+} catch (Exception e) {
 }

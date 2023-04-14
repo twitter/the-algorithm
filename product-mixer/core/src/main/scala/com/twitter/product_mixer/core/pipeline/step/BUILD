@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = [
         "*.scala",
@@ -15,3 +16,6 @@ scala_library(
         "stitch/stitch-core",
     ],
 )
+
+} catch (Exception e) {
+}

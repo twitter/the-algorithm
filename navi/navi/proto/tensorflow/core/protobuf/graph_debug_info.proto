@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -49,4 +50,7 @@ message GraphDebugInfo {
   // It would be preferable to avoid mangling and use a tuple key of (op.name,
   // func_name), but this is not supported with protocol buffers.
   map<string, StackTrace> traces = 2;
+}
+
+} catch (Exception e) {
 }

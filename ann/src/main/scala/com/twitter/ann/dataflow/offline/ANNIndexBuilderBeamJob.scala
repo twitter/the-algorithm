@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.dataflow.offline
 
 import com.spotify.scio.ScioContext
@@ -458,4 +459,8 @@ object ANNIndexBuilderBeamJob extends ScioBeamJob[ANNOptions] {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

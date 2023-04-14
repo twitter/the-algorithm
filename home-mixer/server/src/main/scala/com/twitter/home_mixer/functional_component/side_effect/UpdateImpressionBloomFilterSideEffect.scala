@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.side_effect
 
 import com.twitter.conversions.DurationOps._
@@ -57,4 +58,8 @@ class UpdateImpressionBloomFilterSideEffect @Inject() (bloomFilter: ImpressionBl
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.8),
     HomeMixerAlertConfig.BusinessHours.defaultLatencyAlert(30.millis)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.common.matrix
 
 import com.twitter.algebird.{ArrayMonoid, BloomFilterMonoid, Monoid, Semigroup}
@@ -70,4 +71,8 @@ case class DenseRowMatrix[R](
     })
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

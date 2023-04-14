@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.deepbird
 
 import com.twitter.cortex.deepbird.runtime.prediction_engine.TensorflowPredictionEngine
@@ -55,4 +56,8 @@ class TensorflowPredictionEngineScorer[
     request: BatchPredictionRequest,
     modelSelector: ModelSelector
   ): Future[BatchPredictionResponse] = tensorflowPredictionEngine.getBatchPrediction(request)
+}
+
+} catch {
+  case e: Exception =>
 }

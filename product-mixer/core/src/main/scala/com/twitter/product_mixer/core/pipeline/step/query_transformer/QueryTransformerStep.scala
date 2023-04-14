@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.step.query_transformer
 
 import com.twitter.product_mixer.core.model.marshalling.request.Request
@@ -50,3 +51,7 @@ case class QueryTransformerStep[
 }
 
 case class QueryTransformerResult[Query <: PipelineQuery](query: Query) extends ExecutorResult
+
+} catch {
+  case e: Exception =>
+}

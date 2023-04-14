@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer
 
 import com.google.inject.Module
@@ -226,4 +227,8 @@ class CrMixerServer extends ThriftServer with Mtls with HttpServer with HttpMtls
     handle[CrMixerThriftServerWarmupHandler]()
     handle[CrMixerHttpServerWarmupHandler]()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
@@ -25,4 +26,8 @@ class VerticalGridItemTopicTileMarshaller @Inject() (
       )
     )
 
+}
+
+} catch {
+  case e: Exception =>
 }

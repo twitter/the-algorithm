@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.product
 
 import com.twitter.product_mixer.core.functional_component.configapi.registry.ParamConfig
@@ -33,4 +34,8 @@ trait ProductParamConfig extends ParamConfig with ProductParamConfigBuilder {
         name = supportedClientFSName,
         default = false
       )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 -- date_labels is 1 day after date_candidates (which is the current batch run's start date)
 DECLARE date_candidates, date_labels DATE;
 DECLARE positive_rate FLOAT64;
@@ -65,3 +66,6 @@ CREATE OR REPLACE TABLE `twttr-recos-ml-prod.realgraph.train$table_suffix$` AS
 SELECT * FROM `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$`
 WHERE CASE WHEN label = 0 AND RAND() < positive_rate THEN true WHEN label = 1 AND RAND() < (1-positive_rate) THEN true ELSE false END
 ;
+
+} catch (Exception e) {
+}

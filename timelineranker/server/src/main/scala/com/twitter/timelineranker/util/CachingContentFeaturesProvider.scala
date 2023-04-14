@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.util
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -117,4 +118,8 @@ class CachingContentFeaturesProvider(
         }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

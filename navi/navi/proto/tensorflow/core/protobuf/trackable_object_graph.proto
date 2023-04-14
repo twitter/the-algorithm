@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -77,4 +78,7 @@ message RegisteredSaver {
 
   // Unique auto-generated name of the object.
   string object_name = 2;
+}
+
+} catch (Exception e) {
 }

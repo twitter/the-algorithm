@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.module
 
 import com.google.inject.Provides
@@ -49,4 +50,8 @@ object ManhattanTweetImpressionStoreModule extends TwitterModule {
     val manhattanEndpoint = ManhattanClientBuilder.buildManhattanEndpoint(config, statsReceiver)
     ManhattanTweetImpressionStoreClient(config, manhattanEndpoint, statsReceiver)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

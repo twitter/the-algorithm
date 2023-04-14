@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.sims
 
 import com.twitter.finagle.stats.NullStatsReceiver
@@ -52,4 +53,8 @@ class SwitchingSimsSource @Inject() (
 
 object SwitchingSimsSource {
   val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(Algorithm.Sims.toString)
+}
+
+} catch {
+  case e: Exception =>
 }

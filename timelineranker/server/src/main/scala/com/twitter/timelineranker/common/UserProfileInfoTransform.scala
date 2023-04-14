@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.servo.util.FutureArrow
@@ -26,4 +27,8 @@ class UserProfileInfoTransform(handler: FailOpenHandler, gizmoduckClient: Gizmod
       }
     } { _: Throwable => EmptyUserProfileInfoFuture }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import java.util.List;
@@ -98,4 +99,7 @@ public class HitAttributeCollector {
 
     return hitMap;
   }
+}
+
+} catch (Exception e) {
 }

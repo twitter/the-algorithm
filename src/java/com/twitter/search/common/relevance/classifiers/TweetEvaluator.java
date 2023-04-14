@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.classifiers;
 
 import com.google.common.base.Preconditions;
@@ -34,4 +35,7 @@ public abstract class TweetEvaluator {
       evaluate(tweet);
     }
   }
+}
+
+} catch (Exception e) {
 }

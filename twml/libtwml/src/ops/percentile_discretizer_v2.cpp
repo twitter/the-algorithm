@@ -1,3 +1,4 @@
+try {
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
 #include "tensorflow/core/framework/op_kernel.h"
@@ -238,4 +239,7 @@ void CombinedComputeDiscretizers(
   }  catch (const std::exception &e) {
     context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
   }
+}
+
+} catch (const std::exception& e) {
 }

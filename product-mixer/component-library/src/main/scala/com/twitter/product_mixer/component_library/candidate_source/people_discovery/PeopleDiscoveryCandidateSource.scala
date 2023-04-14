@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.people_discovery
 
 import com.twitter.peoplediscovery.api.{thriftscala => t}
@@ -68,4 +69,8 @@ class PeopleDiscoveryCandidateSource @Inject() (
       .build()
     CandidatesWithSourceFeatures(userRecommendations, features)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

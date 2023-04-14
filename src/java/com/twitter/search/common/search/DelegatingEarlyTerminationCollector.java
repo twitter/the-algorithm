@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.search;
 
 import java.io.IOException;
@@ -72,4 +73,7 @@ public final class DelegatingEarlyTerminationCollector
   public List<String> getDebugInfo() {
     return null;
   }
+}
+
+} catch (Exception e) {
 }

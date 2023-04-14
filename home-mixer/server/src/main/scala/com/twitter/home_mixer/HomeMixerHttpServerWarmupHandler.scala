@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer
 
 import com.twitter.finatra.http.routing.HttpWarmup
@@ -15,4 +16,8 @@ class HomeMixerHttpServerWarmupHandler @Inject() (warmup: HttpWarmup) extends Ha
     Try(warmup.send(get("/admin/product-mixer/product-pipelines"), admin = true)())
       .onFailure(e => error(e.getMessage, e))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

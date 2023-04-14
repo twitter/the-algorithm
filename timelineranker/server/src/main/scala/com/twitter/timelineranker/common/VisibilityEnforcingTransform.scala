@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.servo.util.FutureArrow
@@ -19,4 +20,8 @@ class VisibilityEnforcingTransform(visibilityEnforcer: VisibilityEnforcer)
           hydratedTweets = HydratedTweets(outerTweets = visibleTweets, innerTweets = innerTweets))
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

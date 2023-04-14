@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.common.identifier
 
 /**
@@ -76,4 +77,8 @@ private[core] object SelectorIdentifier {
       override val file: sourcecode.File = sourceFile
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

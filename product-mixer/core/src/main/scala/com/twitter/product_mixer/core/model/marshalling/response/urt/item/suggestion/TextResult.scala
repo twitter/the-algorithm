@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.highlight.HighlightedSection
@@ -12,3 +13,7 @@ case class TextResult(
   hitHighlights: Option[Seq[HighlightedSection]],
   score: Option[Double],
   querySource: Option[String])
+
+} catch {
+  case e: Exception =>
+}

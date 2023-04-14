@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.quota;
 
 import java.io.IOException;
@@ -158,4 +159,7 @@ public class ConfigBasedQuotaConfig extends PeriodicFileLoader {
           perEmailQuotas.get(email));
     }
   }
+}
+
+} catch (Exception e) {
 }

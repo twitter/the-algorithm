@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.common
 
 import com.spotify.scio.ScioMetrics
@@ -260,4 +261,8 @@ object FeatureGeneratorUtil {
       !DWELL_TIME_FEATURE_LIST.contains(f.name)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

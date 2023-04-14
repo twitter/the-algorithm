@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder
 
 import com.twitter.finagle.stats.NullStatsReceiver
@@ -61,4 +62,8 @@ class FeatureMapBuilder private[builder] (
   def withConstantFeature[T](feature: Feature[T], option: Option[T]): FeatureMapBuilder = {
     option.map(withConstantFeature(feature, _)).getOrElse(this)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

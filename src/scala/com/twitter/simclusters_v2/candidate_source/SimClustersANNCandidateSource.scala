@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.candidate_source
 
 import com.twitter.conversions.DurationOps._
@@ -634,4 +635,8 @@ object SimClustersANNCandidateSource {
       EmbeddingType.FavTfgTopic,
       EmbeddingType.LogFavBasedKgoApeTopic
     )
+}
+
+} catch {
+  case e: Exception =>
 }

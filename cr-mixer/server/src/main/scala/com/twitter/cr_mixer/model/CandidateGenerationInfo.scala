@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.model
 
 import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
@@ -65,3 +66,7 @@ case class CandidateGenerationInfo(
   sourceInfoOpt: Option[SourceInfo],
   similarityEngineInfo: SimilarityEngineInfo,
   contributingSimilarityEngines: Seq[SimilarityEngineInfo])
+
+} catch {
+  case e: Exception =>
+}

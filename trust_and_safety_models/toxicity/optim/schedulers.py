@@ -1,3 +1,4 @@
+try:
 from typing import Callable
 
 import tensorflow as tf
@@ -42,3 +43,6 @@ class WarmUp(tf.keras.optimizers.schedules.LearningRateSchedule):
       "power": self.power,
       "name": self.name,
     }
+
+except Exception:
+  pass

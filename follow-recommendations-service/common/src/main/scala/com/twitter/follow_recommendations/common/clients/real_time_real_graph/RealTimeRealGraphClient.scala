@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.real_time_real_graph
 
 import com.google.inject.Inject
@@ -125,4 +126,8 @@ object RealTimeRealGraphClient {
     EngagementType.Like -> 1.0,
     EngagementType.Retweet -> 1.0,
   )
+}
+
+} catch {
+  case e: Exception =>
 }

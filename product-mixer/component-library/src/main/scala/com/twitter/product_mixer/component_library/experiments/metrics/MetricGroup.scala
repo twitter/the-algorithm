@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.experiments.metrics
 
 import scala.collection.immutable.ListSet
@@ -51,4 +52,8 @@ case class MetricGroup(
   // Unique metric names based on globally unique metric name
   def uniqueMetricNames: Set[String] =
     metrics.groupBy(_.name).keys.toSet
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search;
 
 import java.io.IOException;
@@ -627,4 +628,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
   protected boolean shouldCollectVerboseDebugInfo() {
     return requestDebugMode >= 6;
   }
+}
+
+} catch (Exception e) {
 }

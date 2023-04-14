@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.facets;
 
 import java.io.IOException;
@@ -21,4 +22,7 @@ public abstract class FacetScorer {
    * for facet result labeling.
    */
   public abstract FacetAccumulator<?> getFacetAccumulator(FacetLabelProvider labelProvider);
+}
+
+} catch (Exception e) {
 }

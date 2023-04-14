@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urt.builder
 
 import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorBuilder.DefaultSortIndex
@@ -131,4 +132,8 @@ trait UrtCursorBuilder[-Query <: PipelineQuery] {
     nonCursorEntries.lastOption
       .flatMap(_.sortIndex).map(_ - UrtEntryOffset).getOrElse(initialSortIndex)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter.filters;
 
 import java.util.EnumSet;
@@ -47,4 +48,7 @@ public class IngesterValidMessageFilter {
   protected final boolean acceptNullcast() {
     return DeciderUtil.isAvailableForRandomRecipient(decider, KEEP_NULLCAST_DECIDER_KEY);
   }
+}
+
+} catch (Exception e) {
 }

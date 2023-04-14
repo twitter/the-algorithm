@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance.scoring;
 
 import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
@@ -44,4 +45,7 @@ public class BatchHit {
   public long getTimeSliceID() {
     return timeSliceID;
   }
+}
+
+} catch (Exception e) {
 }

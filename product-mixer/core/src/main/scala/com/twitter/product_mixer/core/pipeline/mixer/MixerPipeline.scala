@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.mixer
 
 import com.twitter.product_mixer.core.model.common.identifier.MixerPipelineIdentifier
@@ -21,4 +22,8 @@ abstract class MixerPipeline[Query <: PipelineQuery, Result] private[mixer]
   override private[core] val config: MixerPipelineConfig[Query, _, Result]
   override val arrow: Arrow[Query, MixerPipelineResult[Result]]
   override val identifier: MixerPipelineIdentifier
+}
+
+} catch {
+  case e: Exception =>
 }

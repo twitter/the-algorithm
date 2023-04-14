@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.config;
 
 import java.util.Date;
@@ -45,4 +46,7 @@ public class RootClusterBoundaryInfo implements ServingRange {
   public long getServingRangeUntilTimeSecondsFromEpoch() {
     return servingRangeMax.getBoundaryTimeSecondsFromEpoch();
   }
+}
+
+} catch (Exception e) {
 }

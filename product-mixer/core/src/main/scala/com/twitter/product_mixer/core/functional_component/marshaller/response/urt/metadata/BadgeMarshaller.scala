@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.RosettaColorMarshaller
@@ -15,4 +16,8 @@ class BadgeMarshaller @Inject() (
     textColorName = badge.textColorName.map(rosettaColorMarshaller(_)),
     backgroundColorName = badge.backgroundColorName.map(rosettaColorMarshaller(_))
   )
+}
+
+} catch {
+  case e: Exception =>
 }

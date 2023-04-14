@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.Collection;
@@ -64,4 +65,7 @@ public class AsyncPinkUrlsResolver {
         }
     ));
   }
+}
+
+} catch (Exception e) {
 }

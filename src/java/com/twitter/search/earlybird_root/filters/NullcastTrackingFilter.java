@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.HashSet;
@@ -78,4 +79,7 @@ public class NullcastTrackingFilter extends SensitiveResultsTrackingFilter {
     }
     return request.getSearchQuery().getSearchStatusIds();
   }
+}
+
+} catch (Exception e) {
 }

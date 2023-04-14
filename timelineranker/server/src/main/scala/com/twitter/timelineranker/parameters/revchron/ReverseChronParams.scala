@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.revchron
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -42,4 +43,8 @@ object ReverseChronParams {
         name = "reverse_chron_post_filtering_based_on_search_metadata_enabled",
         default = true
       )
+}
+
+} catch {
+  case e: Exception =>
 }

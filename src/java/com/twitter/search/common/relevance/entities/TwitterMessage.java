@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.entities;
 
 import java.text.DateFormat;
@@ -1264,4 +1265,7 @@ public class TwitterMessage {
   public static boolean reflectionApproxEquals(TwitterMessage a, TwitterMessage b) {
     return reflectionApproxEquals(a, b, Collections.emptyList());
   }
+}
+
+} catch (Exception e) {
 }

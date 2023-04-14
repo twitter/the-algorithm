@@ -1,3 +1,4 @@
+try {
 #pragma once
 #include <twml/defines.h>
 
@@ -46,3 +47,6 @@ class ThriftInvalidType: public twml::Error {
 
 }
 #endif
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.model
 
 import com.twitter.timelineranker.{thriftscala => thrift}
@@ -34,4 +35,8 @@ case class CandidateTweetsResult(
       sourceTweets = Some(thriftSourceTweets)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

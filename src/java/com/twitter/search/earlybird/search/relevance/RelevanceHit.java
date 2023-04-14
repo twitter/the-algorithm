@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance;
 
 import java.util.Comparator;
@@ -101,4 +102,7 @@ public class RelevanceHit extends Hit
     metadata = null;
     signature = null;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
@@ -47,4 +48,8 @@ class TimelineInstructionMarshaller @Inject() (
     case instruction: TerminateTimelineInstruction =>
       urt.TimelineInstruction.TerminateTimeline(terminateTimelineInstructionMarshaller(instruction))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

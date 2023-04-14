@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.model
 
 import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
@@ -11,3 +12,7 @@ case class TopicTweetWithScore(
   tweetId: TweetId,
   score: Double,
   similarityEngineType: SimilarityEngineType)
+
+} catch {
+  case e: Exception =>
+}

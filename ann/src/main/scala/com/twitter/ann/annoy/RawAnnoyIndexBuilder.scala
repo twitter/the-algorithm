@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.annoy
 
 import com.spotify.annoy.jni.base.{Annoy => AnnoyLib}
@@ -120,4 +121,8 @@ private[this] class RawAnnoyIndexBuilder[D <: Distance[D]](
     metadataFile.copyFrom(temp.getByteSource.openStream())
     temp.delete()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

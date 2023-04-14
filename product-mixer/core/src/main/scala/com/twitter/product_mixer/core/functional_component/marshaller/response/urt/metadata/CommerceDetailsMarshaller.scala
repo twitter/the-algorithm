@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.CommerceDetails
@@ -15,4 +16,8 @@ class CommerceDetailsMarshaller @Inject() () {
     merchantId = commerceDetails.merchantId,
     productIndex = commerceDetails.productIndex,
   )
+}
+
+} catch {
+  case e: Exception =>
 }

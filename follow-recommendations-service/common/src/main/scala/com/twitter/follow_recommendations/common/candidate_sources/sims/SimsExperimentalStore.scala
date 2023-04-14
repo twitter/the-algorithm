@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.sims
 
 import com.google.inject.Singleton
@@ -33,4 +34,8 @@ object SimsExperimentalStore {
   val Identifier = CandidateSourceIdentifier(Algorithm.Sims.toString)
   val MaxCacheSize = 1000
   val CacheTTL: Duration = Duration.fromHours(12)
+}
+
+} catch {
+  case e: Exception =>
 }

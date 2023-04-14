@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance;
 
 import java.util.Collections;
@@ -149,4 +150,7 @@ public class NGramCache {
         .asMap();
     this.penguinVersion = penguinVersion;
   }
+}
+
+} catch (Exception e) {
 }

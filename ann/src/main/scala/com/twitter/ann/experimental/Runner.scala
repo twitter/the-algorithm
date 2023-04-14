@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.experimental
 
 import com.twitter.ann.annoy.{AnnoyRuntimeParams, TypedAnnoyIndex}
@@ -168,4 +169,8 @@ object Runner {
     val end = System.currentTimeMillis()
     (result, (end - start))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

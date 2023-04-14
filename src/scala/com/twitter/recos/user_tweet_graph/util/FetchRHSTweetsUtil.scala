@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_tweet_graph.util
 
 import com.twitter.graphjet.bipartite.MultiSegmentIterator
@@ -31,4 +32,8 @@ object FetchRHSTweetsUtil {
         tweetIds.distinct
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

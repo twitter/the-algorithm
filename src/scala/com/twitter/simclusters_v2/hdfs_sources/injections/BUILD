@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     platform = "java8",
@@ -11,3 +12,6 @@ scala_library(
         "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
     ],
 )
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.transforms.tracking_token
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -73,4 +74,8 @@ class TrackingTokenTransform @Inject() (baseStatsReceiver: StatsReceiver)
         }.getOrElse(candidates))
 
   }
+}
+
+} catch {
+  case e: Exception =>
 }

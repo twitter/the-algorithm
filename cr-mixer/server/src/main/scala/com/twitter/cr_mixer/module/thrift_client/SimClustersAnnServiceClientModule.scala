@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module.thrift_client
 
 import com.google.inject.Provides
@@ -144,4 +145,8 @@ object SimClustersAnnServiceClientModule extends TwitterModule {
     ThriftMux.Client.methodPerEndpoint(thriftClient)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

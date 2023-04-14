@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.assembler.models
 
 sealed trait Layout
@@ -14,3 +15,7 @@ case class CarouselLayout(
   carouselOptions: CarouselOptions,
   socialProofs: Option[Seq[SocialProof]])
     extends Layout
+
+} catch {
+  case e: Exception =>
+}

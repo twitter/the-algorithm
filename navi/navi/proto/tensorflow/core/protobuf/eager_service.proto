@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.eager;
@@ -341,4 +342,7 @@ service EagerService {
   // Closes the context. No calls to other methods using the existing context ID
   // are valid after this.
   rpc CloseContext(CloseContextRequest) returns (CloseContextResponse);
+}
+
+} catch (Exception e) {
 }

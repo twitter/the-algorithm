@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer
 
 import com.google.inject.Module
@@ -115,4 +116,8 @@ class HomeMixerServer extends ThriftServer with Mtls with HttpServer with HttpMt
     handle[HomeMixerThriftServerWarmupHandler]()
     handle[HomeMixerHttpServerWarmupHandler]()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

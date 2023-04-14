@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.faiss
 
 import com.google.common.base.Preconditions
@@ -152,3 +153,7 @@ trait FaissIndexer extends Logging {
 }
 
 object FaissIndexer extends FaissIndexer {}
+
+} catch {
+  case e: Exception =>
+}

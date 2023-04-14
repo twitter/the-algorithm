@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.config
 
 import com.twitter.abdecider.ABDeciderFactory
@@ -130,4 +131,8 @@ class RuntimeConfigurationImpl(
       case _ => new StagingUnderlyingClientConfiguration(flags, statsReceiver)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

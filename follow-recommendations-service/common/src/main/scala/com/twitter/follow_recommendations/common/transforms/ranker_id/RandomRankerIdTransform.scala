@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.transforms.ranker_id
 
 import com.google.inject.Inject
@@ -21,4 +22,8 @@ class RandomRankerIdTransform @Inject() () extends GatedTransform[HasParams, Can
   ): Stitch[Seq[CandidateUser]] = {
     Stitch.value(candidates.map(_.addScore(Score.RandomScore)))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

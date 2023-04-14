@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.IOException;
@@ -137,4 +138,7 @@ public class SimpleUpdateIndexer {
       segmentInfo.setUpdatesStreamOffsetTimestamp(offsetTimeMillis);
     }
   }
+}
+
+} catch (Exception e) {
 }

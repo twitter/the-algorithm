@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.param.decider
 
 import com.twitter.servo.decider.DeciderKeyEnum
@@ -37,4 +38,8 @@ object DeciderKey extends DeciderKeyEnum {
 
   val EnableSimClustersSimilarityFeatureHydration = Value(
     "enable_simclusters_similarity_feature_hydration")
+}
+
+} catch {
+  case e: Exception =>
 }

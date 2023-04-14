@@ -1,3 +1,4 @@
+try {
 # Loadtest ANN query service with random embeddings
 
 An ANN query service can be load-tested with random embeddings as queries, generated automatically by loadtest tool.
@@ -216,3 +217,6 @@ Set `--reducers` according to the embeddings dataset size.
 
 There are multiple type of `query_id_type` and `index_id_type` that can be used. Some native types like string/int/long or related to entity embeddings
 like tweet/word/user/url... for more info: [Link](https://cgit.twitter.biz/source/tree/src/scala/com/twitter/cortex/ml/embeddings/common/EntityKind.scala#n8)
+
+} catch (Exception e) {
+}

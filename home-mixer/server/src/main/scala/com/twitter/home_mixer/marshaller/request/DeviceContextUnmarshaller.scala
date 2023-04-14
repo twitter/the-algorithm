@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.marshaller.request
 
 import com.twitter.home_mixer.model.request.DeviceContext
@@ -16,4 +17,8 @@ class DeviceContextUnmarshaller @Inject() () {
       autoplayEnabled = deviceContext.autoplayEnabled
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

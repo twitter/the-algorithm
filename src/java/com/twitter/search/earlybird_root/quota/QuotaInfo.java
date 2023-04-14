@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.quota;
 
 import com.google.common.base.Preconditions;
@@ -75,4 +76,7 @@ public class QuotaInfo {
   public boolean hasArchiveAccess() {
     return archiveAccess;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.hnsw;
 
 import java.util.ArrayList;
@@ -193,4 +194,7 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
   public Iterator<DistancedItem<T>> iterator() {
     return queue.iterator();
   }
+}
+
+} catch (Exception e) {
 }

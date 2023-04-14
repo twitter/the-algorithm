@@ -1,3 +1,4 @@
+try {
 # Training
 
 This folder contains the sql files that we'll use for training the prod real graph models:
@@ -58,3 +59,5 @@ This BQ command creates or replaces a machine learning model called twttr-recos-
 The options provided in the command configure the specific settings for the model, such as the number of parallel trees, the maximum number of iterations, and the data split method. The DATA_SPLIT_METHOD parameter is set to CUSTOM, and DATA_SPLIT_COL is set to if_eval, which means the data will be split into training and evaluation sets based on the if_eval column. The IF function is used to assign a boolean value of true or false to if_eval based on the modulo operation performed on source_id.
 
 The SELECT statement specifies the input data for the model. The columns selected include label (the target variable to be predicted), as well as various features such as num_days, num_tweets, and num_follows that are used to predict the target variable.
+} catch (Exception e) {
+}

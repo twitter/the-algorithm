@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.common.alert.predicate
 
 /**
@@ -33,3 +34,7 @@ case object Hours extends MetricGranularity { override val unit: String = "h" }
  * in any 10 '''day''' period
  */
 case object Days extends MetricGranularity { override val unit: String = "d" }
+
+} catch {
+  case e: Exception =>
+}

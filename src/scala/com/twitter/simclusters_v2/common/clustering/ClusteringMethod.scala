@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common.clustering
 
 /**
@@ -31,4 +32,8 @@ object ClusteringStatistics {
   val StatMedoidSelectionTime = "medoid_selection_total_time_ms"
   val StatComputedSimilarityBeforeFilter = "computed_similarity_before_filter"
 
+}
+
+} catch {
+  case e: Exception =>
 }

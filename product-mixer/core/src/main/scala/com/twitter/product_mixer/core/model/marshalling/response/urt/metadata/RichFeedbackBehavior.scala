@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
 
 sealed trait RichFeedbackBehavior
@@ -13,3 +14,7 @@ case class RichFeedbackBehaviorReplyPinState(replyPinState: ReplyPinState)
 case class RichFeedbackBehaviorToggleMuteUser(userId: Long) extends RichFeedbackBehavior
 case class RichFeedbackBehaviorToggleFollowUser(userId: Long) extends RichFeedbackBehavior
 case class RichFeedbackBehaviorReportTweet(entryId: Long) extends RichFeedbackBehavior
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import java.io.IOException;
@@ -55,4 +56,7 @@ public class IdentifiableQueryWeight extends Weight {
   public boolean isCacheable(LeafReaderContext ctx) {
     return inner.isCacheable(ctx);
   }
+}
+
+} catch (Exception e) {
 }

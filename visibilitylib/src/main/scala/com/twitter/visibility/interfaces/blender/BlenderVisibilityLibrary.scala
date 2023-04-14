@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.blender
 
 import com.twitter.decider.Decider
@@ -413,4 +414,8 @@ class BlenderVisibilityLibrary(
 
     result.copy(verdict = newVerdict)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

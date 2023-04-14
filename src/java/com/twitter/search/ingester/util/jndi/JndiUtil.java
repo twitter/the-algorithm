@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.util.jndi;
 
 import java.util.Hashtable;
@@ -67,4 +68,7 @@ public abstract class JndiUtil {
       setTestingMode(false);
     }
   }
+}
+
+} catch (Exception e) {
 }

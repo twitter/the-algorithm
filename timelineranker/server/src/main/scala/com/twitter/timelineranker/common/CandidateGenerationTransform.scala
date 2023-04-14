@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -37,4 +38,8 @@ class CandidateGenerationTransform(statsReceiver: StatsReceiver)
       Future.value(CandidateTweetsResult.Empty)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

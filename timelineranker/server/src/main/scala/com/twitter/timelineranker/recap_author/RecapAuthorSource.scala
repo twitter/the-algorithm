@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.recap_author
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -209,4 +210,8 @@ class RecapAuthorSource(
   def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
     Future.collect(queries.map(get))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

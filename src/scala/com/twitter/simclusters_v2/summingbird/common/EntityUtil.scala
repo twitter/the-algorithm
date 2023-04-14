@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.common
 
 import com.twitter.cuad.ner.thriftscala.WholeEntityType
@@ -43,4 +44,8 @@ private[summingbird] object EntityUtil {
         }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

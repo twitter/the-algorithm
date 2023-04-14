@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.file_store
 
 import com.twitter.ann.common.thriftscala.FileBasedIndexIdStore
@@ -32,4 +33,8 @@ object ReadableIndexIdFileStore {
   private[this] def loadFile(file: AbstractFile): ByteBuffer = {
     ArrayByteBufferCodec.encode(file.getByteSource.read())
   }
+}
+
+} catch {
+  case e: Exception =>
 }

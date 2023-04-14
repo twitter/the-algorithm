@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = [
         "*.scala",
@@ -128,3 +129,6 @@ scala_library(
         "util/util-hashing",
     ],
 )
+
+} catch (Exception e) {
+}

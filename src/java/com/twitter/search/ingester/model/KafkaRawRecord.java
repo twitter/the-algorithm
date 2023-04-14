@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.model;
 
 /**
@@ -19,4 +20,7 @@ public class KafkaRawRecord {
   public long getReadAtTimestampMs() {
     return readAtTimestampMs;
   }
+}
+
+} catch (Exception e) {
 }

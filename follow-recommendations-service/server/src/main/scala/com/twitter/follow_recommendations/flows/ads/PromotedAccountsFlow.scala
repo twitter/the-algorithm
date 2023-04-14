@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.ads
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -109,4 +110,8 @@ class PromotedAccountsFlow @Inject() (
   }
 
   override val statsReceiver: StatsReceiver = baseStatsReceiver.scope("promoted_accounts_flow")
+}
+
+} catch {
+  case e: Exception =>
 }

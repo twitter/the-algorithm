@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.models
 
 import com.twitter.spam.rtf.thriftscala.SafetyResultReason
@@ -58,4 +59,8 @@ object LabelSource {
   case class HSESource(name: String) extends LabelSource
 
   case class StringSource(name: String) extends LabelSource
+}
+
+} catch {
+  case e: Exception =>
 }

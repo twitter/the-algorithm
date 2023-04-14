@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
 
 case class UserFacepile(
@@ -7,3 +8,7 @@ case class UserFacepile(
   actionType: Option[MessageActionType],
   displaysFeaturingText: Option[Boolean],
   displayType: Option[UserFacepileDisplayType])
+
+} catch {
+  case e: Exception =>
+}

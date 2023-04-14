@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer
 
 import com.twitter.onboarding.task.service.thriftscala.PromptType
@@ -59,4 +60,8 @@ object FlipQueryTransformer
       supportedPromptTypes = Some(SUPPORTED_PROMPT_TYPES)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

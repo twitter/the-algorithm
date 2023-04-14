@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend
 
 import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendDescriptionFeature
@@ -38,4 +39,8 @@ object TrendPromotedMetadataBuilder
       )
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

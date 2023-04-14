@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common;
 
 import javax.inject.Inject;
@@ -25,4 +26,7 @@ public class EarlybirdThriftBackend extends EarlybirdService.ServiceToClient {
     super(thriftToBytesFilter.andThen(byteService), protocolFactory);
   }
 
+}
+
+} catch (Exception e) {
 }

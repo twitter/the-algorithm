@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_video_graph
 
 import com.twitter.graphjet.bipartite.api.EdgeTypeMask
@@ -59,4 +60,8 @@ object UserVideoEdgeTypeMask extends Enumeration {
     }
     edgeType.toByte
   }
+}
+
+} catch {
+  case e: Exception =>
 }

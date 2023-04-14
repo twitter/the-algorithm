@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert
 
 import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
@@ -15,4 +16,8 @@ case class StaticShowAlertColorConfigurationBuilder[-Query <: PipelineQuery](
     candidate: ShowAlertCandidate,
     features: FeatureMap
   ): ShowAlertColorConfiguration = configuration
+}
+
+} catch {
+  case e: Exception =>
 }

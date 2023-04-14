@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.param_gated
 
 import com.twitter.product_mixer.component_library.scorer.param_gated.ParamGatedScorer.IdentifierPrefix
@@ -40,4 +41,8 @@ case class ParamGatedScorer[-Query <: PipelineQuery, Result <: UniversalNoun[Any
 
 object ParamGatedScorer {
   val IdentifierPrefix = "ParamGated"
+}
+
+} catch {
+  case e: Exception =>
 }

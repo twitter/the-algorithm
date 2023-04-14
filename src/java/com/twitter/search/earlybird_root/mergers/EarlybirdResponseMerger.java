@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.mergers;
 
 import java.util.Collections;
@@ -601,4 +602,7 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
   EarlybirdRequest getEarlybirdRequest() {
     return requestContext.getRequest();
   }
+}
+
+} catch (Exception e) {
 }

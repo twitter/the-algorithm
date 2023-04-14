@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.scalding.offline.faissindexbuilder
 
 import com.twitter.ann.common.Distance
@@ -72,4 +73,8 @@ object IndexBuilderApp extends TwitterExecutionApp with IndexBuilderExecutable {
   override def job: Execution[Unit] = Execution.getArgs.flatMap { args: Args =>
     indexBuilderExecution(args)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

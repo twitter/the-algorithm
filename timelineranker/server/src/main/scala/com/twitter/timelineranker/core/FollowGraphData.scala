@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.core
 
 import com.twitter.timelines.model.UserId
@@ -31,4 +32,8 @@ object FollowGraphData {
     Set.empty[UserId],
     Set.empty[UserId]
   )
+}
+
+} catch {
+  case e: Exception =>
 }

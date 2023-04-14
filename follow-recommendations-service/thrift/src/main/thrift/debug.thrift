@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.follow_recommendations.thriftjava
 #@namespace scala com.twitter.follow_recommendations.thriftscala
 #@namespace strato com.twitter.follow_recommendation
@@ -70,4 +71,7 @@ enum DebugCandidateSourceIdentifier {
   NOTIFICATION_ENGAGEMENT = 44,
   EFR_BY_WORLDWIDE_PICTURE_PRODUCER = 45,
   POP_GEOHASH_REAL_GRAPH = 46,
+}
+
+} catch (Exception e) {
 }

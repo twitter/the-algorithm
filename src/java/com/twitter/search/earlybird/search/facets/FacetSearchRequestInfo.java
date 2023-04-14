@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.facets;
 
 import org.apache.lucene.search.Query;
@@ -25,4 +26,7 @@ public class FacetSearchRequestInfo extends SearchRequestInfo {
   public final FacetCountState getFacetCountState() {
     return this.facetCountState;
   }
+}
+
+} catch (Exception e) {
 }

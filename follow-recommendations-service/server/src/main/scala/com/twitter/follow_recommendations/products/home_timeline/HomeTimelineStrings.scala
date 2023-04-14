@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.products.home_timeline
 
 import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
@@ -23,4 +24,8 @@ class HomeTimelineStrings @Inject() (
     externalStringRegistry.createProdString("WhoToFollowModule.title")
   val whoToFollowModuleFooter: ExternalString =
     externalStringRegistry.createProdString("WhoToFollowModule.pivot")
+}
+
+} catch {
+  case e: Exception =>
 }

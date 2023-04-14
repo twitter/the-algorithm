@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.scoring_pipeline_executor
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -169,4 +170,8 @@ object ScoringPipelineExecutor {
   case class Inputs[Query <: PipelineQuery](
     query: Query,
     itemCandidatesWithDetails: Seq[ItemCandidateWithDetails])
+}
+
+} catch {
+  case e: Exception =>
 }

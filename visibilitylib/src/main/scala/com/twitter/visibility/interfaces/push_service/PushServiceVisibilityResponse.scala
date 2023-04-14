@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.push_service
 
 import com.twitter.visibility.builder.VisibilityResult
@@ -49,4 +50,8 @@ case class PushServiceVisibilityResponse(
   def missingFeatures: Map[String, Int] = PushServiceVisibilityLibraryUtil.getMissingFeatureCounts(
     Seq(tweetVisibilityResult, authorVisibilityResult))
 
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.utils
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -47,4 +48,8 @@ object RescueWithStatsUtils {
           Stitch.Nil
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

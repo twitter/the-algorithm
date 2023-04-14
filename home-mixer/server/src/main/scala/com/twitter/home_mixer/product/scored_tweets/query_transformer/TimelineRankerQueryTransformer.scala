@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.query_transformer
 
 import com.twitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
@@ -106,4 +107,8 @@ trait TimelineRankerQueryTransformer[
       hydratesContentFeatures = Some(false)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

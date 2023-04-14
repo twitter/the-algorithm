@@ -1,3 +1,4 @@
+try {
 // Defines the text format for including per-op API definition and
 // overrides for client language op code generators.
 
@@ -135,4 +136,7 @@ message ApiDef {
 
 message ApiDefs {
   repeated ApiDef op = 1;
+}
+
+} catch (Exception e) {
 }

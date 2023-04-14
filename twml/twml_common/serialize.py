@@ -1,3 +1,4 @@
+try:
 from thrift.protocol import TBinaryProtocol
 from thrift.transport import TTransport
 
@@ -14,3 +15,6 @@ def deserialize(record, bytes):
   iproto = TBinaryProtocol.TBinaryProtocol(tbuf)
   record.read(iproto)
   return record
+
+except Exception:
+  pass

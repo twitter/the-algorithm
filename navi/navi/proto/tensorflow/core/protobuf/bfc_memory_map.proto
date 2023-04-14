@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -44,4 +45,7 @@ message MemoryDump {
   repeated MemChunk chunk = 3;
   repeated SnapShot snap_shot = 4;
   MemAllocatorStats stats = 5;
+}
+
+} catch (Exception e) {
 }

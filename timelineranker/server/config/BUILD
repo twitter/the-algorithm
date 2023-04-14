@@ -1,3 +1,4 @@
+try {
 resources(
     sources = ["**/*.yml"],
 )
@@ -12,3 +13,6 @@ files(
         "**/*",
     ],
 )
+
+} catch (Exception e) {
+}

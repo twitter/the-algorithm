@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.mergers;
 
 import java.util.ArrayList;
@@ -94,4 +95,7 @@ public final class TierResponseAccumulator extends ResponseAccumulator {
         .setNumSuccessfulPartitions(response.getNumSuccessfulPartitions())
         .setTierResponseCode(EarlybirdResponseCode.SUCCESS));
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.models
 
 import com.twitter.spam.rtf.thriftscala.{SafetyLevel => ThriftSafetyLevel}
@@ -852,4 +853,8 @@ object SafetyLevel {
 
   val List: Seq[SafetyLevel] =
     ThriftSafetyLevel.list.map(fromThrift).filter(_ != DeprecatedSafetyLevel)
+}
+
+} catch {
+  case e: Exception =>
 }

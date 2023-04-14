@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.recap_hydration
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -12,4 +13,8 @@ class RecapHydrationSearchResultsTransform(
     extends RecapHydrationSearchResultsTransformBase {
   override def tweetIdsToHydrate(envelope: CandidateEnvelope): Seq[TweetId] =
     envelope.query.tweetIds.get
+}
+
+} catch {
+  case e: Exception =>
 }

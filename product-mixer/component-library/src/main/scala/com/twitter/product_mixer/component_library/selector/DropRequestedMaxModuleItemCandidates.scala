@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.core.functional_component.common.CandidateScope
@@ -65,4 +66,8 @@ object DropRequestedMaxModuleItemCandidates {
     new DropRequestedMaxModuleItemCandidates(
       SpecificPipeline(candidatePipeline),
       defaultRequestedMaxModuleItemResultsParam)
+}
+
+} catch {
+  case e: Exception =>
 }

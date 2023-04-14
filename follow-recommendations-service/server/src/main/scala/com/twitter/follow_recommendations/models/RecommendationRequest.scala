@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.models
 
 import com.twitter.follow_recommendations.common.models.ClientContextConverter
@@ -26,4 +27,8 @@ case class RecommendationRequest(
     fetchPromotedContent,
     debugParams.map(DebugParams.toOfflineThrift)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

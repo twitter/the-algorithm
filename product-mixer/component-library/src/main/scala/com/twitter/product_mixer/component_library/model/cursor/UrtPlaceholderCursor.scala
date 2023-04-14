@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.cursor
 
 import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
@@ -14,4 +15,8 @@ case class UrtPlaceholderCursor() extends UrtPipelineCursor {
   // This value is unused, in that it is not serialized into the final cursor value
   override def initialSortIndex: Long = throw new UnsupportedOperationException(
     "initialSortIndex is not defined for placeholder cursors")
+}
+
+} catch {
+  case e: Exception =>
 }

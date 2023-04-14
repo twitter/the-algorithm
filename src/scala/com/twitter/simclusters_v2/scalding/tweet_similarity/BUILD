@@ -1,3 +1,4 @@
+try {
 scala_library(
     platform = "java8",
     tags = ["bazel-compatible"],
@@ -232,3 +233,6 @@ create_datasets(
         "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
     ],
 )
+
+} catch (Exception e) {
+}

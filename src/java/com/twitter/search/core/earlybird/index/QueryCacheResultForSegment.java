@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index;
 
 import org.apache.lucene.search.DocIdSet;
@@ -36,4 +37,7 @@ public class QueryCacheResultForSegment {
   public long getCardinality() {
     return cardinality;
   }
+}
+
+} catch (Exception e) {
 }

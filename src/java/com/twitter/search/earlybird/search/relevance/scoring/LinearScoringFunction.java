@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance.scoring;
 
 import java.io.IOException;
@@ -234,4 +235,7 @@ public class LinearScoringFunction extends FeatureBasedScoringFunction {
     byte featureValue = (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.REPLY_COUNT);
     return MutableFeatureNormalizers.BYTE_NORMALIZER.unnormLowerBound(featureValue);
   }
+}
+
+} catch (Exception e) {
 }

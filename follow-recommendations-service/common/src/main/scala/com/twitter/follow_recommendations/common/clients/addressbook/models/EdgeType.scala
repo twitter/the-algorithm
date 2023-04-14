@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.addressbook.models
 
 import com.twitter.addressbook.datatypes.{thriftscala => t}
@@ -13,4 +14,8 @@ object EdgeType {
   case object Reverse extends EdgeType {
     override val toThrift: t.EdgeType = t.EdgeType.Reverse
   }
+}
+
+} catch {
+  case e: Exception =>
 }

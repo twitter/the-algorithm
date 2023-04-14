@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.index;
 
 import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsData;
@@ -14,4 +15,7 @@ public class TweetSearchIndexExtensionsFactory extends EarlybirdIndexExtensionsF
   public EarlybirdIndexExtensionsData newLuceneIndexExtensionsData() {
     return new TweetSearchLuceneIndexExtensionsData();
   }
+}
+
+} catch (Exception e) {
 }

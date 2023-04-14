@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.document;
 
 import com.google.common.base.Preconditions;
@@ -37,4 +38,7 @@ public class TimeSlicedThriftIndexingEvent {
         + ", thriftIndexingEvent=" + thriftIndexingEvent
         + '}';
   }
+}
+
+} catch (Exception e) {
 }

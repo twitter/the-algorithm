@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.entity_tweets
 
 import com.twitter.timelineranker.decider.DeciderKey
@@ -62,4 +63,8 @@ object EntityTweetsParams {
         default = false
       )
 
+}
+
+} catch {
+  case e: Exception =>
 }

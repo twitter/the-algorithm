@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules.generators
 
 import com.twitter.visibility.models.SafetyLevel
@@ -71,4 +72,8 @@ case class TweetVisibilityPolicyBuilder(
   def build: TweetVisibilityPolicy = {
     new TweetVisibilityPolicy(rules)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

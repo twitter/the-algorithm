@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.step.filter
 
 import com.twitter.product_mixer.core.functional_component.filter.Filter
@@ -61,4 +62,8 @@ case class FilterStep[
     }
     state.updateCandidatesWithFeatures(newCandidates)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

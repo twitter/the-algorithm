@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema;
 
 import org.apache.lucene.document.Field;
@@ -41,4 +42,7 @@ public final class NumericField extends Field {
   private NumericField(String fieldName) {
     super(fieldName, NUMERIC_FIELD_TYPE);
   }
+}
+
+} catch (Exception e) {
 }

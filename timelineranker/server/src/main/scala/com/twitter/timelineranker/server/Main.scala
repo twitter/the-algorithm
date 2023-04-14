@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.server
 
 import com.twitter.conversions.DurationOps._
@@ -179,4 +180,8 @@ class TimelineRankerServer extends {
         System.exit(1)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

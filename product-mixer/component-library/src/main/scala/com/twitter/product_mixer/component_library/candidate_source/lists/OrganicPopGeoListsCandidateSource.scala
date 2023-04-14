@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.lists
 
 import com.twitter.product_mixer.component_library.model.candidate.TwitterListCandidate
@@ -36,4 +37,8 @@ class OrganicPopGeoListsCandidateSource @Inject() (
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

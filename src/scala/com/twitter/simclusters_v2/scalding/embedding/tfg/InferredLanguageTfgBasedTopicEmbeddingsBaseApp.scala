@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding.tfg
 
 import com.twitter.bijection.{Bufferable, Injection}
@@ -191,4 +192,8 @@ trait InferredLanguageTfgBasedTopicEmbeddingsBaseApp
   ): Execution[Unit] = {
     Execution.unit // do not need this
   }
+}
+
+} catch {
+  case e: Exception =>
 }

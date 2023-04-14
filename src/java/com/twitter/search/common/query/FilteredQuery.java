@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import java.io.IOException;
@@ -222,4 +223,7 @@ public class FilteredQuery extends Query {
     Weight queryWeight = Preconditions.checkNotNull(query.createWeight(searcher, scoreMode, boost));
     return new FilteredQueryWeight(this, queryWeight, docIdFilterFactory);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 #include "internal/thrift.h"
 #include "internal/error.h"
 
@@ -216,3 +217,5 @@ void HashedDataRecordReader::readBlob(
   }
 }
 }  // namespace twml
+} catch (const std::exception& e) {
+}

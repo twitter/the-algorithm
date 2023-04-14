@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml;
 
 import java.util.List;
@@ -117,4 +118,7 @@ public final class FeatureUtils {
     return maxEntry.map(Map.Entry::getKey);
   }
 
+}
+
+} catch (Exception e) {
 }

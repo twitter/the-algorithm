@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.slice.builder
 
 import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
@@ -26,4 +27,8 @@ case class CursorCandidateSliceItemBuilder()
       case CursorCandidateNextCursor => CursorItem(candidate.value, NextCursor)
       case CursorCandidatePreviousCursor => CursorItem(candidate.value, PreviousCursor)
     }
+}
+
+} catch {
+  case e: Exception =>
 }

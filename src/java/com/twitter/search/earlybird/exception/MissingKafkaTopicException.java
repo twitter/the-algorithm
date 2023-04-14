@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.exception;
 
 public class MissingKafkaTopicException extends Exception {
@@ -8,4 +9,7 @@ public class MissingKafkaTopicException extends Exception {
   public MissingKafkaTopicException(String message, Throwable cause) {
     super(message, cause);
   }
+}
+
+} catch (Exception e) {
 }

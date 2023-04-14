@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema.earlybird;
 
 import java.util.Map;
@@ -699,4 +700,7 @@ public final class EarlybirdSchemaCreateTool {
             EarlybirdFieldConstant.SPACES_FACET, true, false, false);
     return builder.build();
   }
+}
+
+} catch (Exception e) {
 }

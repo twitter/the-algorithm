@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.facets;
 
 import java.util.ArrayList;
@@ -59,4 +60,7 @@ public class FacetLabelCollector implements FacetTermCollector {
     // Make a copy
     return new ArrayList<>(labels);
   }
+}
+
+} catch (Exception e) {
 }

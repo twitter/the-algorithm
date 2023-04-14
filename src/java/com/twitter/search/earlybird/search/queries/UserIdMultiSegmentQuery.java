@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.queries;
 
 import java.io.IOException;
@@ -525,4 +526,7 @@ public class UserIdMultiSegmentQuery extends Query {
       return bqBuilder.build();
     }
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.slice
 
 import com.twitter.product_mixer.core.model.marshalling.request.Request
@@ -26,4 +27,8 @@ class SliceService @Inject() (productPipelineRegistry: ProductPipelineRegistry) 
     productPipelineRegistry
       .getProductPipeline[RequestType, SliceResult](request.product)
       .process(ProductPipelineRequest(request, params))
+}
+
+} catch {
+  case e: Exception =>
 }

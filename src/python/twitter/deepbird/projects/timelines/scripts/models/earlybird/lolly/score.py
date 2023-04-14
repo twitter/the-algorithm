@@ -1,3 +1,4 @@
+try:
 import sys
 
 from .parsers import DBv2DataExampleParser
@@ -11,3 +12,6 @@ if __name__ == "__main__":
 
   score = lolly_model_scorer.score(data_example=sys.argv[2])
   print(score)
+
+except Exception:
+  pass

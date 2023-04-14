@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding.common
 
 import com.twitter.recos.entities.thriftscala.Entity
@@ -76,4 +77,8 @@ object EntityEmbeddingUtil {
       )
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

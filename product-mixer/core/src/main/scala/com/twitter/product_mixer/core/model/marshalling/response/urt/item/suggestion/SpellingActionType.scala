@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion
 
 /**
@@ -24,3 +25,7 @@ case object ExpandSpellingActionType extends SpellingActionType
  * Clients use the text 'Did you mean … ?' to display the suggestion.
  */
 case object SuggestSpellingActionType extends SpellingActionType
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try:
 """
 Module containing extra tensorflow metrics used at Twitter.
 This module conforms to conventions used by tf.metrics.*.
@@ -207,3 +208,6 @@ def get_dual_binary_tasks_metric_fn(metrics, classnames, topK=(5,5,5), use_topK=
     return metrics_base_res
 
   return get_eval_metric_ops
+
+except Exception:
+  pass

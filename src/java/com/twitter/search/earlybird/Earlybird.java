@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird;
 
 import java.io.File;
@@ -264,4 +265,7 @@ public class Earlybird extends AbstractTwitterServer {
     }
     LOG.info("onExit() complete.");
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.response_transformer
 
 import com.twitter.home_mixer.marshaller.timelines.TopicContextFunctionalityTypeUnmarshaller
@@ -91,4 +92,8 @@ object CachedScoredTweetsResponseFeatureTransformer
       .add(TweetUrlsFeature, candidate.urlsList.getOrElse(Seq.empty))
       .add(WeightedModelScoreFeature, candidate.score)
       .build()
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,4 +1,4 @@
-use anyhow::Result;
+match use anyhow::Result;
 use log::{info, warn};
 use std::collections::HashMap;
 use tokio::time::Instant;
@@ -296,4 +296,8 @@ pub fn bootstrap<T: Model>(model_factory: ModelFactory<T>) -> Result<()> {
             info!("Prediction server started: {}", addr);
             ps_server.await.map_err(anyhow::Error::msg)
         })
+}
+ {
+  Ok(_) => {},
+  Err(_) => {}
 }

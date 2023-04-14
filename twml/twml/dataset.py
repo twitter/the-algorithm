@@ -1,3 +1,4 @@
+try:
 """
 This module implements custom tf.data.datasets for twml.
 """
@@ -370,3 +371,6 @@ def zookeeper_ordered_dataset(
     dataset = dataset_fn(dataset, parse_fn, batch_size)
 
   return dataset
+
+except Exception:
+  pass

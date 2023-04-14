@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.slice.builder
 
 import com.twitter.product_mixer.component_library.model.cursor.OrderedCursor
@@ -27,4 +28,8 @@ case class OrderedPreviousCursorUpdater[
 
   override val underlying: OrderedPreviousCursorBuilder[Query] =
     OrderedPreviousCursorBuilder(idSelector, includeOperation, serializer)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.feature_update_service.modules;
 
 import javax.inject.Named;
@@ -59,4 +60,7 @@ public class FinagleKafkaProducerModule extends TwitterModule {
   public Clock clock() {
     return Clock.SYSTEM_CLOCK;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.module
 
 import com.google.inject.Provides
@@ -34,4 +35,8 @@ object StaleTweetsCacheModule extends TwitterModule {
       keyHasher = Some(KeyHasher.FNV1_32)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive;
 
 import java.io.IOException;
@@ -170,4 +171,7 @@ public final class ArchiveHDFSUtils {
   private static String padding(int value, int len) {
     return String.format("%0" + len + "d", value);
   }
+}
+
+} catch (Exception e) {
 }

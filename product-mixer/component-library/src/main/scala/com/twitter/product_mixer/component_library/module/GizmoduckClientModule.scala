@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.module
 
 import com.google.inject.Provides
@@ -44,4 +45,8 @@ object GizmoduckClientModule
       .idempotent(1.percent)
 
   override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+}
+
+} catch {
+  case e: Exception =>
 }

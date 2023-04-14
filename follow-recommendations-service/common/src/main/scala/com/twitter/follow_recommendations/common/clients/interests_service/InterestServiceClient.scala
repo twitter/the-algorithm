@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.interests_service
 
 import com.google.inject.Inject
@@ -112,4 +113,8 @@ class InterestServiceClient @Inject() (
       case _ => Nil
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

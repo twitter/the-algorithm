@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.repository
 
 import com.twitter.timelineranker.model.Timeline
@@ -13,4 +14,8 @@ class RankedHomeTimelineRepository extends TimelineRepository {
       Future.exception(new UnsupportedOperationException("ranked timelines are not yet supported."))
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.revchron
 
 import com.twitter.servo.decider.DeciderGateBuilder
@@ -25,4 +26,8 @@ class ReverseChronProduction(deciderGateBuilder: DeciderGateBuilder) {
     .set(intOverrides: _*)
     .set(booleanOverrides: _*)
     .build(ReverseChronProduction.getClass.getSimpleName)
+}
+
+} catch {
+  case e: Exception =>
 }

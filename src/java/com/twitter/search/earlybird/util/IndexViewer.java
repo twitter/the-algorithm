@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import java.io.IOException;
@@ -795,4 +796,7 @@ public class IndexViewer {
     writer.value("does not exist on this earlybird.");
     writer.endObject();
   }
+}
+
+} catch (Exception e) {
 }

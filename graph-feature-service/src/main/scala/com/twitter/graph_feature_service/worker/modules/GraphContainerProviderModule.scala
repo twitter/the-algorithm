@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.worker.modules
 
 import com.google.inject.Provides
@@ -59,4 +60,8 @@ object GraphContainerProviderModule extends TwitterModule {
 
     util.GraphContainer(graphs)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

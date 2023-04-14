@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.index;
 
 import java.io.IOException;
@@ -146,4 +147,7 @@ public class DocValuesBasedTweetIDMapper extends TweetIDMapper implements Flusha
       return new DocValuesBasedTweetIDMapper();
     }
   }
+}
+
+} catch (Exception e) {
 }

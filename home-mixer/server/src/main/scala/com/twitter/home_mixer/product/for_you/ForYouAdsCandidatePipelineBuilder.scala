@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.for_you
 
 import com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated.ParamGatedCandidateFeatureHydrator
@@ -91,4 +92,8 @@ class ForYouAdsCandidatePipelineBuilder @Inject() (
       alerts = alerts,
       urtRequest = Some(true),
     )
+}
+
+} catch {
+  case e: Exception =>
 }

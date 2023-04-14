@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.recommendation
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -26,4 +27,8 @@ abstract class RecommendationPipeline[
   override private[core] val config: RecommendationPipelineConfig[Query, Candidate, _, Result]
   override val arrow: Arrow[Query, RecommendationPipelineResult[Candidate, Result]]
   override val identifier: RecommendationPipelineIdentifier
+}
+
+} catch {
+  case e: Exception =>
 }

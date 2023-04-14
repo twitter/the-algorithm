@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive.segmentbuilder;
 
 import java.io.IOException;
@@ -537,4 +538,7 @@ public class SegmentBuilder {
     LOG.info("Scrub gen: " + scrubGen);
     return new SegmentSyncConfig(Optional.of(scrubGen));
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.filter
 
 import com.twitter.product_mixer.component_library.filter.ParamGatedFilter.IdentifierPrefix
@@ -38,4 +39,8 @@ case class ParamGatedFilter[-Query <: PipelineQuery, Candidate <: UniversalNoun[
 
 object ParamGatedFilter {
   val IdentifierPrefix = "ParamGated"
+}
+
+} catch {
+  case e: Exception =>
 }

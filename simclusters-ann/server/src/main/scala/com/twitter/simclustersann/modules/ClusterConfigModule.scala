@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.modules
 
 import com.google.inject.Provides
@@ -22,4 +23,8 @@ object ClusterConfigModule extends TwitterModule {
       case None => throw MissingClusterConfigForSimClustersAnnVariantException(serviceName)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

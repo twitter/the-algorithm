@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "agg_negative",
     sources = ["*.scala"],
@@ -41,3 +42,6 @@ create_datasets(
         "src/scala/com/twitter/interaction_graph/injection:user_session_inj",
     ],
 )
+
+} catch (Exception e) {
+}

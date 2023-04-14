@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.mergers;
 
 import java.util.ArrayList;
@@ -469,4 +470,7 @@ public class ThriftTermResultsMerger {
     searchResults.setNumPartitionsEarlyTerminated(numPartitionsEarlyTerminated);
     return searchResults;
   }
+}
+
+} catch (Exception e) {
 }

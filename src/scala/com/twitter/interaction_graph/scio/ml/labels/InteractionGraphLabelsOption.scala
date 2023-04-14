@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.ml.labels
 
 import com.twitter.beam.io.dal.DALOptions
@@ -25,4 +26,8 @@ trait InteractionGraphLabelsOption extends DALOptions with DateRangeOptions {
   @Default.Integer(10)
   def getNumberOfShards: Integer
   def setNumberOfShards(value: Integer): Unit
+}
+
+} catch {
+  case e: Exception =>
 }

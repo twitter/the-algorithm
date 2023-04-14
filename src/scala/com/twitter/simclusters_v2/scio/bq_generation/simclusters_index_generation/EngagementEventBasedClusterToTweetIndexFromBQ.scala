@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scio.bq_generation
 package simclusters_index_generation
 
@@ -174,4 +175,8 @@ object EngagementEventBasedClusterToTweetIndexFromBQ {
         .usingStandardSql()
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

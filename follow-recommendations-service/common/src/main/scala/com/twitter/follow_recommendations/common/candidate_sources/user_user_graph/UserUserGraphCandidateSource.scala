@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.user_user_graph
 
 import com.twitter.finagle.stats.Counter
@@ -122,4 +123,8 @@ object UserUserGraphCandidateSource {
   val MaxNumSocialProofs = 10
   val MinUserPerSocialProof: Map[UserSocialProofType, Int] =
     Map[UserSocialProofType, Int]((SocialProofType, 2))
+}
+
+} catch {
+  case e: Exception =>
 }

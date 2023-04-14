@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.io.IOException;
@@ -346,4 +347,7 @@ public class CompleteSegmentManager {
     }
   }
 
+}
+
+} catch (Exception e) {
 }

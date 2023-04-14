@@ -1,3 +1,4 @@
+try {
 java_library(
     sources = ["*.java"],
     platform = "java8",
@@ -16,3 +17,6 @@ java_library(
         "src/thrift/com/twitter/search/common:constants-java",
     ],
 )
+
+} catch (Exception e) {
+}

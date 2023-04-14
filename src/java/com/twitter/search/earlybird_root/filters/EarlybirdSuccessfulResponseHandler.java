@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import com.twitter.search.common.clientstats.RequestCounters;
@@ -51,4 +52,7 @@ public final class EarlybirdSuccessfulResponseHandler
     }
   }
 
+}
+
+} catch (Exception e) {
 }

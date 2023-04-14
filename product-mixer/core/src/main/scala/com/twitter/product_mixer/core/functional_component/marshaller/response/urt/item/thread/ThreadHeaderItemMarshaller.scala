@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.thread
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.thread.ThreadHeaderItem
@@ -15,4 +16,8 @@ class ThreadHeaderItemMarshaller @Inject() (
         content = threadHeaderContentMarshaller(threadHeaderItem.content)
       )
     )
+}
+
+} catch {
+  case e: Exception =>
 }

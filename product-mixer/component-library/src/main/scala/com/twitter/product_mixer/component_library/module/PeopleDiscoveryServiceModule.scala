@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.module
 
 import com.twitter.conversions.DurationOps._
@@ -39,4 +40,8 @@ object PeopleDiscoveryServiceModule
   }
 
   override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+}
+
+} catch {
+  case e: Exception =>
 }

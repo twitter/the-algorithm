@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 
 import com.twitter.scalding.{DateOps, DateParser, Execution, Stat, TypedPipe, TypedTsv, UniqueID}
@@ -128,4 +129,8 @@ object CompareClustersAdhoc extends TwitterExecutionApp {
             .writeExecution(TypedTsv(args("outputDir")))
         }
     }
+}
+
+} catch {
+  case e: Exception =>
 }

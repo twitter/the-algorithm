@@ -1,3 +1,4 @@
+try {
 DECLARE date_start, date_end DATE;
 SET date_end = (SELECT DATE(TIMESTAMP_MILLIS($start_time$)));
 SET date_start = DATE_SUB(date_end, INTERVAL 30 DAY);
@@ -41,3 +42,6 @@ ORDER BY 3 DESC,4 DESC
 SELECT ds FROM `twttr-recos-ml-prod.realgraph.candidates_for_training`
 WHERE ds = (SELECT DATE(TIMESTAMP_MILLIS($start_time$)))
 LIMIT 1
+
+} catch (Exception e) {
+}

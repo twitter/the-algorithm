@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.sources
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -27,4 +28,8 @@ object Utils {
   private[common] def randomizedTTL(ttl: Long): Long = {
     (ttl - ttl * EarlyExpiration * Random.nextDouble()).toLong
   }
+}
+
+} catch {
+  case e: Exception =>
 }

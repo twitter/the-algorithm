@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.scalding.offline
 
 import com.twitter.core_workflows.user_model.thriftscala.CondensedUserState
@@ -114,4 +115,8 @@ object KnnDebug {
       }
       .shard(shards)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

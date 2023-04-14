@@ -1,3 +1,4 @@
+try {
 scala_library(
     platform = "java8",
     tags = ["bazel-compatible"],
@@ -12,3 +13,6 @@ scala_library(
         "storage/clients/manhattan/client/src/main/scala",
     ],
 )
+
+} catch (Exception e) {
+}

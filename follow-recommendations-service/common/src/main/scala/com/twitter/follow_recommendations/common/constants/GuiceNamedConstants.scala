@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.constants
 
 object GuiceNamedConstants {
@@ -40,4 +41,8 @@ object GuiceNamedConstants {
 
   // ann clients
   final val RELATABLE_ACCOUNTS_FETCHER = "relatable_accounts_fetcher"
+}
+
+} catch {
+  case e: Exception =>
 }

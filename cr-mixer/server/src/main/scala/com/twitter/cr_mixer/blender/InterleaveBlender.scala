@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.blender
 
 import com.twitter.cr_mixer.model.BlendedCandidate
@@ -30,4 +31,8 @@ case class InterleaveBlender @Inject() (globalStats: StatsReceiver) {
     Future.value(blendedCandidates)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

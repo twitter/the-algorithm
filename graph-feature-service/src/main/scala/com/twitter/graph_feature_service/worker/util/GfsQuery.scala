@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.worker.util
 
 import com.twitter.graph_feature_service.thriftscala.EdgeType
@@ -12,3 +13,7 @@ sealed trait GfsQuery {
  */
 case class ToPartialQuery(edgeType: EdgeType, userId: Long) extends GfsQuery
 
+
+} catch {
+  case e: Exception =>
+}

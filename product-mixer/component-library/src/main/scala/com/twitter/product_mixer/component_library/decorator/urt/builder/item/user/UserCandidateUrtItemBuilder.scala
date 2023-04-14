@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.user
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.item.user.UserCandidateUrtItemBuilder.UserClientEventInfoElement
@@ -59,4 +60,8 @@ case class UserCandidateUrtItemBuilder[Query <: PipelineQuery, UserCandidate <: 
       enableReactiveBlending = enableReactiveBlending
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

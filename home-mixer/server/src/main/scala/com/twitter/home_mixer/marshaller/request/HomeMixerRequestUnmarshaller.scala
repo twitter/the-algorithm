@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.marshaller.request
 
 import com.twitter.home_mixer.model.request.HomeMixerRequest
@@ -27,4 +28,8 @@ class HomeMixerRequestUnmarshaller @Inject() (
       homeRequestParam = false
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

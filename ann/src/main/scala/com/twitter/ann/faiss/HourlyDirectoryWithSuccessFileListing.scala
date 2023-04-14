@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.faiss
 
 import com.twitter.conversions.DurationOps.richDurationFromInt
@@ -61,4 +62,8 @@ object HourlyDirectoryWithSuccessFileListing extends Logging {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

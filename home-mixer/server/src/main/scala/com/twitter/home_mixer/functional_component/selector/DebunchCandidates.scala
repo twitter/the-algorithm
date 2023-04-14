@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.selector
 
 import com.twitter.home_mixer.functional_component.selector.DebunchCandidates.TrailingTweetsMinSize
@@ -80,4 +81,8 @@ case class DebunchCandidates(
     val updatedCandidates = otherCandidates ++ debunchedCandidates
     SelectorResult(remainingCandidates = updatedCandidates, result = result)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.feature.featurestorev1
 
 import com.twitter.ml.api.transform.FeatureRenameTransform
@@ -55,4 +56,8 @@ object TweetCandidateTweetIdEntity
     existingFeatures: FeatureMap
   ): EntityWithId[TweetId] =
     entity.withId(TweetId(tweet.id))
+}
+
+} catch {
+  case e: Exception =>
 }

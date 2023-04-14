@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.ann
 
 import com.twitter.ann.common._
@@ -16,3 +17,7 @@ case class AnnIdQuery[T, P <: RuntimeParams](
   ids: Seq[T],
   numOfNeighbors: Int,
   runtimeParams: P)
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.list_recommended_users.feature_hydrator
 
 import com.twitter.home_mixer.model.request.HasListId
@@ -50,4 +51,8 @@ class IsListMemberFeatureHydrator @Inject() (socialGraph: SocialGraph)
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

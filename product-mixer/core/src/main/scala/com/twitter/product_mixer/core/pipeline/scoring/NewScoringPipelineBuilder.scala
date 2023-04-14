@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.scoring
 
 import com.twitter.product_mixer.core.functional_component.common.alert.Alert
@@ -199,4 +200,8 @@ case class ScoringPipelineState[Query <: PipelineQuery, Candidate <: UniversalNo
   override private[pipeline] def setExecutorResults(
     newMap: ListMap[PipelineStepIdentifier, ExecutorResult]
   ) = this.copy(executorResultsByPipelineStep = newMap)
+}
+
+} catch {
+  case e: Exception =>
 }

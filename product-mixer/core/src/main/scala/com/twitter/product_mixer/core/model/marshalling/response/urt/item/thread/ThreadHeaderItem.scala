@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.thread
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
@@ -21,4 +22,8 @@ case class ThreadHeaderItem(
   override val entryNamespace: EntryNamespace = ThreadHeaderItem.ThreadHeaderEntryNamespace
 
   override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+}
+
+} catch {
+  case e: Exception =>
 }

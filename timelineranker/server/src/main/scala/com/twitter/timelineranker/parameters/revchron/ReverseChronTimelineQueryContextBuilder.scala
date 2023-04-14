@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.revchron
 
 import com.twitter.timelineranker.config.RuntimeConfiguration
@@ -69,4 +70,8 @@ class ReverseChronTimelineQueryContextBuilder(
       )
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

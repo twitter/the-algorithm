@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.configapi.params.RuleParam
@@ -329,4 +330,8 @@ case object SafeSearchUserRules {
       Seq(NotGraduatedUserLabelRuleHoldbackExperimentParam)
 
   }
+}
+
+} catch {
+  case e: Exception =>
 }

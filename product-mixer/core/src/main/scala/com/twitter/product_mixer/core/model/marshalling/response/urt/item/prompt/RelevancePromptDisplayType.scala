@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt
 
 /**
@@ -11,3 +12,7 @@ case object Normal extends RelevancePromptDisplayType
 case object Compact extends RelevancePromptDisplayType
 case object Large extends RelevancePromptDisplayType
 case object ThumbsUpAndDown extends RelevancePromptDisplayType
+
+} catch {
+  case e: Exception =>
+}

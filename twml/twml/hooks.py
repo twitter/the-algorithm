@@ -1,3 +1,4 @@
+try:
 """ This file contains tf.train.SessionRunHooks defined by TWML """
 from datetime import datetime
 import json
@@ -560,3 +561,6 @@ class StopIfExistsHook(tf.train.SessionRunHook):
   def stop_requested(self):
     """ true if this hook requested a stop """
     return self._stop_requested
+
+except Exception:
+  pass

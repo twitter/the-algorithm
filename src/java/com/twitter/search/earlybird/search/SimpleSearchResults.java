@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search;
 
 import java.util.List;
@@ -32,4 +33,7 @@ public class SimpleSearchResults extends SearchResultsInfo {
   public Hit getHit(int hitIndex) {
     return hits[hitIndex];
   }
+}
+
+} catch (Exception e) {
 }

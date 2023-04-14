@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.feature_hydrator.query.param_gated.featurestorev1
 
 import com.twitter.ml.featurestore.lib.EntityId
@@ -44,4 +45,8 @@ case class ParamGatedFeatureStoreV1QueryFeatureHydrator[
     Conditionally.and(query, queryFeatureHydrator, query.params(enabledParam))
 
   override def hydrate(query: Query): Stitch[FeatureMap] = queryFeatureHydrator.hydrate(query)
+}
+
+} catch {
+  case e: Exception =>
 }

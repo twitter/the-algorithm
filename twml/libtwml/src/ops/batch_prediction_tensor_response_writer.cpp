@@ -1,3 +1,4 @@
+try {
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
 #include "tensorflow/core/framework/op_kernel.h"
@@ -79,3 +80,6 @@ class BatchPredictionTensorResponseWriter : public OpKernel {
 REGISTER_KERNEL_BUILDER(
     Name("BatchPredictionTensorResponseWriter").Device(DEVICE_CPU),
     BatchPredictionTensorResponseWriter);
+
+} catch (const std::exception& e) {
+}

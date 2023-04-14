@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.cr_mixer.thriftjava
 #@namespace scala com.twitter.cr_mixer.thriftscala
 #@namespace strato com.twitter.cr_mixer
@@ -166,3 +167,6 @@ union AdsRecommendationsResult{
   1: AdsRecommendationTopLevelApiResult adsRecommendationTopLevelApiResult
   2: FetchCandidatesResult fetchCandidatesResult
 }(persisted='true', hasPersonalData = 'true')
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scio.bq_generation
 package ftr_tweet
 
@@ -240,3 +241,7 @@ object IIKF2020FTRAt5Pop10000batchJobProd extends FTRJob {
 case class UserToTweetRecommendations(
   userId: Long,
   tweetCandidates: List[CandidateTweet])
+
+} catch {
+  case e: Exception =>
+}

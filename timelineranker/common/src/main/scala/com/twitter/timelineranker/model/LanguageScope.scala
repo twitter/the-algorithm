@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.model
 
 import com.twitter.timelineranker.{thriftscala => thrift}
@@ -43,4 +44,8 @@ object LanguageScope extends Enumeration {
         throw new IllegalArgumentException(s"Unsupported language scope: $scope")
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

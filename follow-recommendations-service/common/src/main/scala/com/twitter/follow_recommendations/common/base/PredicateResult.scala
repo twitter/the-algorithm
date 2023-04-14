@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.base
 
 import com.twitter.follow_recommendations.common.models.FilterReason
@@ -15,4 +16,8 @@ object PredicateResult {
   case class Invalid(reasons: Set[FilterReason] = Set.empty[FilterReason]) extends PredicateResult {
     override val value = false
   }
+}
+
+} catch {
+  case e: Exception =>
 }

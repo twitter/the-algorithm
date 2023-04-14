@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.user_user_graph
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -12,4 +13,8 @@ class UserUserGraphFSConfig @Inject() () extends FeatureSwitchConfig {
     UserUserGraphParams.UserUserGraphCandidateSourceEnabledInWeightMap,
     UserUserGraphParams.UserUserGraphCandidateSourceEnabledInTransform
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 alias(
     name = "graph_feature_service-server",
     target = ":graph_feature_service-server_lib",
@@ -65,3 +66,6 @@ jvm_app(
     binary = ":worker-bin",
     tags = ["bazel-compatible"],
 )
+
+} catch (Exception e) {
+}

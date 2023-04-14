@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.encoding.features;
 
 import com.google.common.base.Preconditions;
@@ -44,4 +45,7 @@ public class ClampByteNormalizer extends ByteNormalizer {
   public double unnormUpperBound(byte norm) {
     return ByteNormalizer.unsignedByteToInt(norm) + 1;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -191,4 +192,8 @@ trait PipelineBuilder[Query] extends Executor {
         s"${builtSteps.map(_.identifier).zip(stepsInOrder).mkString("\n")}"
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

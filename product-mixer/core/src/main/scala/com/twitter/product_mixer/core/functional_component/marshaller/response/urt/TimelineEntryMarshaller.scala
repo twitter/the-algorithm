@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
@@ -20,3 +21,7 @@ class TimelineEntryMarshaller @Inject() (
 
 class TimelineEntryMissingSortIndexException
     extends UnsupportedOperationException("Timeline entry missing sort index")
+
+} catch {
+  case e: Exception =>
+}

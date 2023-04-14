@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.follow_recommendations.{thriftscala => t}
@@ -25,4 +26,8 @@ object RankingInfo {
     )
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

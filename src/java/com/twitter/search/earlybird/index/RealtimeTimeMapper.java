@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.index;
 
 import java.io.IOException;
@@ -146,4 +147,7 @@ public class RealtimeTimeMapper extends AbstractInMemoryTimeMapper {
           new IntBlockPool.FlushHandler().load(flushInfo.getSubProperties(IDS_SUB_PROP), in));
     }
   }
+}
+
+} catch (Exception e) {
 }

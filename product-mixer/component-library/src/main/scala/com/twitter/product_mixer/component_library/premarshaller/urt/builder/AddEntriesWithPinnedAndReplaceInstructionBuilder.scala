@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urt.builder
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
@@ -28,4 +29,8 @@ case class AddEntriesWithPinnedAndReplaceInstructionBuilder[Query <: PipelineQue
     } else
       Seq.empty
   }
+}
+
+} catch {
+  case e: Exception =>
 }

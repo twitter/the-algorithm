@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.model
 
 /**
@@ -74,4 +75,8 @@ object ModelConfig {
   val RetweetBasedDiffusion: String =
     "RetweetBasedDiffusion"
 
+}
+
+} catch {
+  case e: Exception =>
 }

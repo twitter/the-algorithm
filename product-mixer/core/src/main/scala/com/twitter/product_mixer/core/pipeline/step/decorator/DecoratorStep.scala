@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.step.decorator
 
 import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
@@ -60,4 +61,8 @@ case class DecoratorStep[
   ): State = {
     state.updateDecorations(executorResult.result)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

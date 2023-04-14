@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.query_feature_hydrator
 
 import com.twitter.follow_recommendations.{thriftscala => frs}
@@ -61,4 +62,8 @@ case class FrsSeedUsersQueryFeatureHydrator @Inject() (
           .build()
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

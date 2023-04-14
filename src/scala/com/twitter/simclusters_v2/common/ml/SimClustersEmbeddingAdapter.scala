@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common.ml
 
 import com.twitter.ml.api.Feature.Continuous
@@ -36,4 +37,8 @@ class NormalizedSimClustersEmbeddingAdapter(
     val dataRecord = new DataRecord().setFeatureValue(embeddingFeature, normalizedEmbedding)
     dataRecord.setFeatureValue(normFeature, embedding.l2norm)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

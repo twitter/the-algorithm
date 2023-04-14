@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.users
 
 import com.twitter.decider.Decider
@@ -108,4 +109,8 @@ object UserVisibilityLibrary {
           finished = true
         )
       )
+}
+
+} catch {
+  case e: Exception =>
 }

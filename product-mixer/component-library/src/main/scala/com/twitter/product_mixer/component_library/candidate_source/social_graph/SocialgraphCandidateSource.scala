@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.social_graph
 
 import com.twitter.product_mixer.component_library.model.candidate.CursorType
@@ -54,4 +55,8 @@ class SocialgraphCandidateSource @Inject() (
         SocialgraphResult(id)
       } ++ Seq(nextCursor, prevCursor)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

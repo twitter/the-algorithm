@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.common
 
 import com.twitter.algebird.DecayedValueMonoid
@@ -137,4 +138,8 @@ object Implicits {
     AlgebirdImplicits.decayedValueCodec
 
   implicit val batcher: Batcher = Batcher.unit
+}
+
+} catch {
+  case e: Exception =>
 }

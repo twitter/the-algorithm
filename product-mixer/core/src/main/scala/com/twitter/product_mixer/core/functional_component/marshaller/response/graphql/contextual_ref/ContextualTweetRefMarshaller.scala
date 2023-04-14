@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.ContextualTweetRef
@@ -14,4 +15,8 @@ class ContextualTweetRefMarshaller @Inject() (
       id = contextualTweetRef.id,
       hydrationContext =
         contextualTweetRef.hydrationContext.map(tweetHydrationContextMarshaller(_)))
+}
+
+} catch {
+  case e: Exception =>
 }

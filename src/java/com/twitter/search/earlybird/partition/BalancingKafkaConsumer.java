@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.time.Duration;
@@ -114,4 +115,7 @@ public class BalancingKafkaConsumer {
   public void close() {
     kafkaConsumer.close();
   }
+}
+
+} catch (Exception e) {
 }

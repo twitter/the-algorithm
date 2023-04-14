@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.candidate_generation
 
 import com.twitter.contentrecommender.thriftscala.TweetInfo
@@ -176,4 +177,8 @@ class UtegTweetCandidateGenerator @Inject() (
         }.getOrElse(throw new Exception("Cannot find ranked candidate in original UTEG tweets"))
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.common
 
 import com.twitter.stitch.Stitch
@@ -9,4 +10,8 @@ import inference.GrpcService.ModelInferResponse
  */
 trait MLModelInferenceClient {
   def score(request: ModelInferRequest): Stitch[ModelInferResponse]
+}
+
+} catch {
+  case e: Exception =>
 }

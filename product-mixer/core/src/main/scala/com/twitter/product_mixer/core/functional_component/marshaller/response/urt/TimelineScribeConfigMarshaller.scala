@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
@@ -14,4 +15,8 @@ class TimelineScribeConfigMarshaller @Inject() () {
       section = timelineScribeConfig.section,
       entityToken = timelineScribeConfig.entityToken
     )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import javax.inject.Inject;
@@ -13,4 +14,7 @@ public class FullArchiveRootServer extends SearchRootServer<EarlybirdService.Ser
     super(svc, byteSvc);
   }
 
+}
+
+} catch (Exception e) {
 }

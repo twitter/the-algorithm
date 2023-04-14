@@ -1,3 +1,4 @@
+try:
 # checkstyle: noqa
 import tensorflow.compat.v1 as tf
 from collections import OrderedDict
@@ -118,3 +119,6 @@ def get_mse(predictions, labels):
   update_op = tf.reduce_mean(squared_lolly_tf_score_diff, name="update_op")
 
   return value_op, update_op
+
+except Exception:
+  pass

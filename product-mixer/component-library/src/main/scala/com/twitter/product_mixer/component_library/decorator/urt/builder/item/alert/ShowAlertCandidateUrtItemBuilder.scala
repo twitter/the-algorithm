@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert.ShowAlertCandidateUrtItemBuilder.ShowAlertClientEventInfoElement
@@ -58,4 +59,8 @@ case class ShowAlertCandidateUrtItemBuilder[-Query <: PipelineQuery](
     colorConfig = colorConfigBuilder(query, candidate, features),
     navigationMetadata = navigationMetadataBuilder.flatMap(_.apply(query, candidate, features)),
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.util
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -32,4 +33,8 @@ object LoggingUtil {
     mkDefaultLoggerFactory(statsReceiver)()
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

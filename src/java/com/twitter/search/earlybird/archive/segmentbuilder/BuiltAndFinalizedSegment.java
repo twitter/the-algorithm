@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive.segmentbuilder;
 
 import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
@@ -26,4 +27,7 @@ public class BuiltAndFinalizedSegment extends SegmentBuilderSegment {
   public boolean isBuilt() {
     return true;
   }
+}
+
+} catch (Exception e) {
 }

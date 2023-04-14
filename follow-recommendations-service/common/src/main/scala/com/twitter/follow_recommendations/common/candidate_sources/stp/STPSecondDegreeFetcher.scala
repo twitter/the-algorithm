@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.stp
 
 import com.twitter.follow_recommendations.common.models.IntermediateSecondDegreeEdge
@@ -91,4 +92,8 @@ class STPSecondDegreeFetcher @Inject() (
 object STPSecondDegreeFetcher {
   val MaxNumSecondDegreeEdges = 200
   val MaxNumOfMutualFollows = 50
+}
+
+} catch {
+  case e: Exception =>
 }

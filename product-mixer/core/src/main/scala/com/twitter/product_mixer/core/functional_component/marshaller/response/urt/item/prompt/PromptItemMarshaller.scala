@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
@@ -23,4 +24,8 @@ class PromptItemMarshaller @Inject() (
         }
       ))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

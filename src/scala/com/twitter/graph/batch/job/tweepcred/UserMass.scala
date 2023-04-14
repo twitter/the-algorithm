@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph.batch.job.tweepcred
 
 import com.twitter.twadoop.user.gen.CombinedUser
@@ -66,4 +67,8 @@ object UserMass {
       Some(UserMassInfo(userId, adjustedMass))
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

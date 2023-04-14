@@ -1,4 +1,4 @@
-#[macro_use]
+match #[macro_use]
 extern crate lazy_static;
 extern crate core;
 
@@ -212,3 +212,7 @@ pub enum PredictMessage<T: Model> {
 pub struct Callback(Sender<PredictResult>, usize);
 
 pub const MAX_VERSIONS_PER_MODEL: usize = 2;
+ {
+  Ok(_) => {},
+  Err(_) => {}
+}

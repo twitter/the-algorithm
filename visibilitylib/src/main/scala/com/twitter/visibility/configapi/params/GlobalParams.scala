@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi.params
 
 import com.twitter.timelines.configapi.Param
@@ -8,4 +9,8 @@ abstract class GlobalParam[T](override val default: T) extends Param(default) {
 
 private[visibility] object GlobalParams {
   object EnableFetchingLabelMap extends GlobalParam(false)
+}
+
+} catch {
+  case e: Exception =>
 }

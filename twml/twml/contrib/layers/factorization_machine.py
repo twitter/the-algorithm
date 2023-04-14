@@ -1,3 +1,4 @@
+try:
 # pylint: disable=no-member, arguments-differ, attribute-defined-outside-init, unused-argument
 """
 Implementing factorization Layer
@@ -177,3 +178,6 @@ class FactorizationMachine(Layer):
     # valueError: The last dimension of the inputs to `Dense` should be defined. Found `None`
     outputs.set_shape([None, 1])
     return outputs
+
+except Exception:
+  pass

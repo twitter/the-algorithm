@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import org.slf4j.Logger;
@@ -14,4 +15,7 @@ public final class ExceptionHandler {
   public static void logException(EarlybirdRequest request, Throwable e) {
     LOG.error("Exception while handling request: {}", request, e);
   }
+}
+
+} catch (Exception e) {
 }

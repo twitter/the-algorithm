@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.tensorbuilder
 
 import com.twitter.product_mixer.component_library.scorer.common.ModelSelector
@@ -37,4 +38,8 @@ class ModelInferRequestBuilder[-Query <: PipelineQuery, -Candidate <: UniversalN
     }
     inferRequest.build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

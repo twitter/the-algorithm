@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.wire;
 
 import javax.naming.NamingException;
@@ -24,4 +25,7 @@ public class IngesterPartitioner extends SearchPartitioner {
       throw new RuntimeException(e);
     }
   }
+}
+
+} catch (Exception e) {
 }

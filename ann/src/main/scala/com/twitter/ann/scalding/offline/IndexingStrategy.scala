@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.scalding.offline
 
 import com.twitter.ann.brute_force.{BruteForceIndex, BruteForceRuntimeParams}
@@ -113,4 +114,8 @@ case class HnswIndexingStrategy[D <: Distance[D]](
       hnswParams
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

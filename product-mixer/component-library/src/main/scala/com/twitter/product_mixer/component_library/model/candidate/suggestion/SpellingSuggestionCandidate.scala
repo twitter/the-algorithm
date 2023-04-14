@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.candidate.suggestion
 
 import com.twitter.product_mixer.core.model.common.UniversalNoun
@@ -90,4 +91,8 @@ object SpellingSuggestionCandidate {
     originalQuery: Option[String]
   ): SpellingSuggestionCandidate =
     new SpellingSuggestionCandidate(id, textResult, spellingActionType, originalQuery)
+}
+
+} catch {
+  case e: Exception =>
 }

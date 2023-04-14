@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.for_you
 
 import com.twitter.timelines.render.{thriftscala => tl}
@@ -75,4 +76,8 @@ object ForYouScoredTweetsResponseFeatureTransformer
       )
       .add(TopicIdSocialContextFeature, input.topicId)
       .build()
+}
+
+} catch {
+  case e: Exception =>
 }

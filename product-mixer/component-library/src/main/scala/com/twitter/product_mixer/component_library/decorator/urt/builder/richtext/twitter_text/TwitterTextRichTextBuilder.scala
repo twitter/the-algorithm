@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.RichTextReferenceObjectBuilder
@@ -34,4 +35,8 @@ case class TwitterTextRichTextBuilder[-Query <: PipelineQuery, -Candidate <: Uni
       .transform(TwitterTextEntityProcessor(twitterTextReferenceObjectBuilder))
       .build
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.search;
 
 import javax.annotation.Nonnull;
@@ -48,4 +49,7 @@ public final class EarlyTerminationState {
   public void incrementCount() {
     count.increment();
   }
+}
+
+} catch (Exception e) {
 }

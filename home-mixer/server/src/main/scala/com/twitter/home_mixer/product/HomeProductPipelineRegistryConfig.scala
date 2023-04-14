@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product
 
 import com.twitter.home_mixer.model.request.FollowingProduct
@@ -51,4 +52,8 @@ class HomeProductPipelineRegistryConfig @Inject() (
     listTweetsProductPipelineConfig,
     listRecommendedUsersProductPipelineConfig
   )
+}
+
+} catch {
+  case e: Exception =>
 }

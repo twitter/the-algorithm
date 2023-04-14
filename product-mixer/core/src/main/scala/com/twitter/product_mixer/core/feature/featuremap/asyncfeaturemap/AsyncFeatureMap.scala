@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
@@ -131,4 +132,8 @@ private[core] object AsyncFeatureMap {
             case (hydratorIdentifier, _, featuresToHydrate, stitch) =>
               (hydratorIdentifier, featuresToHydrate, stitch)
           }: _*)))
+}
+
+} catch {
+  case e: Exception =>
 }

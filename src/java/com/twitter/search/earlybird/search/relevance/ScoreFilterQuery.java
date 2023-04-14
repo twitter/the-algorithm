@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance;
 
 import java.io.IOException;
@@ -135,4 +136,7 @@ public final class ScoreFilterQuery extends Query {
   public String toString(String field) {
     return "SCORE_FILTER_QUERY[minScore=" + minScore + ",maxScore=" + maxScore + "]";
   }
+}
+
+} catch (Exception e) {
 }

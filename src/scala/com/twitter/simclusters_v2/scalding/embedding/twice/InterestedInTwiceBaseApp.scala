@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding.twice
 
 import com.twitter.bijection.Injection
@@ -492,4 +493,8 @@ object InterestedInTwiceBaseApp {
 
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

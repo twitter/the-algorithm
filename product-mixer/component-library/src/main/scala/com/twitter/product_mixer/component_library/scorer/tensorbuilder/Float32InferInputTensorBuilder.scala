@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.tensorbuilder
 
 import inference.GrpcService.ModelInferRequest.InferInputTensor
@@ -24,4 +25,8 @@ case object Float32InferInputTensorBuilder extends InferInputTensorBuilder[AnyVa
       featureValues.map(toFloat),
       tensorShape)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

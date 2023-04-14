@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.lang;
 
 import java.lang.reflect.Field;
@@ -138,4 +139,7 @@ public final class ThriftLanguageUtil {
     }
     return ThriftLanguageUtil.getLocaleOf(thriftLang).getLanguage();
   }
+}
+
+} catch (Exception e) {
 }

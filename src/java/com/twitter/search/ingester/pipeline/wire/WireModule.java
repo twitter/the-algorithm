@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.wire;
 
 import java.util.List;
@@ -223,4 +224,7 @@ public abstract class WireModule {
    * Returns audio space core strato column fetcher.
    */
   public abstract AudioSpaceCoreFetcher getAudioSpaceCoreFetcher();
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.scorer
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -10,4 +11,8 @@ case class ScoredCandidateResult[Candidate <: UniversalNoun[Any]](
   scorerResult: FeatureMap)
     extends CandidateWithFeatures[Candidate] {
   override val features: FeatureMap = scorerResult
+}
+
+} catch {
+  case e: Exception =>
 }

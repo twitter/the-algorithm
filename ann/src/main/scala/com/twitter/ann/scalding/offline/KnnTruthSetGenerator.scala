@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.scalding.offline
 
 import com.twitter.ann.common.Distance
@@ -81,4 +82,8 @@ object KnnTruthSetGenerator extends TwitterExecutionApp {
 
     Execution.zip(knnExecution, querySetExecution, indexSetExecution).unit
   }
+}
+
+} catch {
+  case e: Exception =>
 }

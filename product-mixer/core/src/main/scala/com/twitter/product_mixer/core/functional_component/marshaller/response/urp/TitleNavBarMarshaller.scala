@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
 
 import com.twitter.pages.render.{thriftscala => urp}
@@ -16,4 +17,8 @@ class TitleNavBarMarshaller @Inject() (
       subtitle = titleNavBar.subtitle,
       clientEventInfo = titleNavBar.clientEventInfo.map(clientEventInfoMarshaller(_))
     )
+}
+
+} catch {
+  case e: Exception =>
 }

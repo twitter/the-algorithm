@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.module.product_mixer_flags
 
 import com.twitter.inject.annotations.Flags
@@ -71,4 +72,8 @@ object ProductMixerFlagModule extends TwitterModule {
       println("===============================================================================")
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 # SimClusters ANN
 
 SimClusters ANN is a service that returns tweet candidate recommendations given a SimClusters embedding. The service implements tweet recommendations based on the Approximate Cosine Similarity algorithm.
@@ -97,3 +98,6 @@ In the case of multiple instances,
 ## Checking Deployed Version and Rolling Back
 
 Wherever possible, roll back using Workflows by finding an earlier good version and clicking the "rollback" button in the UI. This is the safest and least error-prone method.
+
+} catch (Exception e) {
+}

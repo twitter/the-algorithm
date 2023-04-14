@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
@@ -32,3 +33,7 @@ case class HalfCoverContent(
   coverImage: Option[CoverImage],
   dismissInfo: Option[DismissInfo])
     extends CoverContent
+
+} catch {
+  case e: Exception =>
+}

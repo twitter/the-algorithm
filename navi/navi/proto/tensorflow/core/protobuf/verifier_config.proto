@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -24,4 +25,7 @@ message VerifierConfig {
   Toggle structure_verifier = 2;
 
   // Next tag: 3
+}
+
+} catch (Exception e) {
 }

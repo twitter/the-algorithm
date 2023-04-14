@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance.collectors;
 
 import java.io.IOException;
@@ -144,4 +145,7 @@ public abstract class AbstractRelevanceCollector
    * For subclasses to process and aggregate collected hits.
    */
   protected abstract RelevanceSearchResults doGetRelevanceResults() throws IOException;
+}
+
+} catch (Exception e) {
 }

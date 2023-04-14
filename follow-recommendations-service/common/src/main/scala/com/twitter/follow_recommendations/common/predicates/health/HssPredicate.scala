@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates.hss
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -92,4 +93,8 @@ case class HssPredicate @Inject() (
       case _ => None
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

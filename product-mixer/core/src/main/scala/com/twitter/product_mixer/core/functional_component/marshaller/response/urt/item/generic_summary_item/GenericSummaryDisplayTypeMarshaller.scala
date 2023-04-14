@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryItemDisplayType
@@ -15,4 +16,8 @@ class GenericSummaryDisplayTypeMarshaller @Inject() () {
     genericSummaryItemDisplayType match {
       case HeroDisplayType => urt.GenericSummaryDisplayType.Hero
     }
+}
+
+} catch {
+  case e: Exception =>
 }

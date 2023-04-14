@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urp
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
@@ -17,3 +18,7 @@ case class TitleNavBar(
   override val clientEventInfo: Option[ClientEventInfo] = None)
     extends PageNavBar
     with HasClientEventInfo
+
+} catch {
+  case e: Exception =>
+}

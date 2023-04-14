@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.adapter
 
 import com.twitter.timelineranker.model._
@@ -136,4 +137,8 @@ object TimelineServiceAdapter {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

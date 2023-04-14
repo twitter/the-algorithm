@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.service.loadtest
 
 import com.google.common.util.concurrent.AtomicDouble
@@ -228,4 +229,8 @@ class ComposedLoadTestBuildRecorder(
     indexLatency: Duration,
     toQueryableLatency: Duration
   ): Unit = recorders.foreach { _.recordIndexCreation(indexSize, indexLatency, toQueryableLatency) }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 
 import com.twitter.algebird.Semigroup
@@ -351,4 +352,8 @@ object InterestedInFromKnownForLite {
       //      .withReducers(1000)
       .toTypedPipe
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 include "flows.thrift"
 include "recently_engaged_user_id.thrift"
 
@@ -60,3 +61,6 @@ union DisplayContext {
     9: SimilarToUser similarToUser
     10: PostNuxFollowTask postNuxFollowTask
 }(hasPersonalData='true')
+
+} catch (Exception e) {
+}

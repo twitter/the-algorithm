@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.util;
 
 import java.util.ArrayList;
@@ -44,4 +45,7 @@ public final class PenguinVersionsUtil {
     return decider.isAvailable(
         String.format("enable_penguin_version_%d", penguinVersion.getByteValue()));
   }
+}
+
+} catch (Exception e) {
 }

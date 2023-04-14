@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.candidate_source.ads
 
 import com.twitter.adserver.thriftscala.AdImpression
@@ -26,4 +27,8 @@ class AdsProdStratoCandidateSource @Inject() (adsClient: MakeAdRequestClientColu
     stratoResult: AdRequestResponse
   ): Seq[AdImpression] =
     stratoResult.impressions
+}
+
+} catch {
+  case e: Exception =>
 }

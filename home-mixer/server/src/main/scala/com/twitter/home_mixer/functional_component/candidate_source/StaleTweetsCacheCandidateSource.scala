@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.candidate_source
 
 import com.google.inject.name.Named
@@ -27,4 +28,8 @@ class StaleTweetsCacheCandidateSource @Inject() (
       }.toSeq
     })
   }
+}
+
+} catch {
+  case e: Exception =>
 }

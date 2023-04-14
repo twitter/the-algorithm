@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow.serving;
@@ -65,4 +66,7 @@ message GetModelStatusResponse {
   // Version number and status information for applicable model version(s).
   repeated ModelVersionStatus model_version_status = 1
       [json_name = "model_version_status"];
+}
+
+} catch (Exception e) {
 }

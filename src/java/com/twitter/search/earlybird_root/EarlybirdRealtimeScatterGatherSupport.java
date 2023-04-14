@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import javax.inject.Inject;
@@ -18,4 +19,7 @@ public class EarlybirdRealtimeScatterGatherSupport extends EarlybirdServiceScatt
       EarlybirdFeatureSchemaMerger featureSchemaMerger) {
     super(partitionMappingManager, EarlybirdCluster.REALTIME, featureSchemaMerger);
   }
+}
+
+} catch (Exception e) {
 }

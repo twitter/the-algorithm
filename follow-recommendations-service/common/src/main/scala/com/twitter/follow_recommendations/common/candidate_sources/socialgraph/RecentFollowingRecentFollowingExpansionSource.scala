@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.socialgraph
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -99,4 +100,8 @@ object RecentFollowingRecentFollowingExpansionSource {
 
   val NumFirstDegreeNodesToRetrieve = 5
   val NumSecondDegreeNodesToRetrieve = 20
+}
+
+} catch {
+  case e: Exception =>
 }

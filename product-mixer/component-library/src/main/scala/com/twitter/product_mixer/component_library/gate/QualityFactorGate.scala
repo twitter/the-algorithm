@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.gate
 
 import com.twitter.product_mixer.core.functional_component.gate.Gate
@@ -22,4 +23,8 @@ case class QualityFactorGate(pipelineIdentifier: ComponentIdentifier, threshold:
     query: PipelineQuery with HasQualityFactorStatus
   ): Stitch[Boolean] =
     Stitch.value(query.getQualityFactorCurrentValue(pipelineIdentifier) >= threshold)
+}
+
+} catch {
+  case e: Exception =>
 }

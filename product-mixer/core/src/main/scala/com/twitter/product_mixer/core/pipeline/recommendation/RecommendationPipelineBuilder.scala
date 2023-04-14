@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.recommendation
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -1073,4 +1074,8 @@ class RecommendationPipelineBuilder[
           Seq(config.domainMarshaller, config.transportMarshaller)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

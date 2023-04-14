@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.common
 
 import com.twitter.follow_recommendations.common.models.CandidateUser
@@ -20,4 +21,8 @@ trait FeatureSource {
       with HasDisplayLocation,
     candidates: Seq[CandidateUser]
   ): Stitch[Map[CandidateUser, DataRecord]]
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.candidate_generation
 
 import com.twitter.cr_mixer.candidate_generation.CustomizedRetrievalCandidateGeneration.Query
@@ -342,4 +343,8 @@ object CustomizedRetrievalCandidateGeneration {
       diffusionBasedSimilarityEngineQuery = diffusionBasedSimilarityEngineQuery
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

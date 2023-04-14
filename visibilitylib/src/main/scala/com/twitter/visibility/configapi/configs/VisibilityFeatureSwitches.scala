@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi.configs
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -71,4 +72,8 @@ private[visibility] object VisibilityFeatureSwitches {
   def config(statsReceiver: StatsReceiver, logger: Logger): BaseConfig =
     BaseConfigBuilder(overrides(statsReceiver.scope("features_switches"), logger))
       .build("VisibilityFeatureSwitches")
+}
+
+} catch {
+  case e: Exception =>
 }

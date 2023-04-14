@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_address_book
 
 import com.twitter.beam.io.dal.DALOptions
@@ -21,4 +22,8 @@ trait InteractionGraphAddressBookOption extends DALOptions with DateRangeOptions
   @Default.Integer(16)
   def getNumberOfShards: Integer
   def setNumberOfShards(value: Integer): Unit
+}
+
+} catch {
+  case e: Exception =>
 }

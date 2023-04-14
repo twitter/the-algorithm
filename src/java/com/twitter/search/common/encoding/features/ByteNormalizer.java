@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.encoding.features;
 
 /**
@@ -35,4 +36,7 @@ public abstract class ByteNormalizer {
   public boolean changedNorm(double val) {
     return normalize(val) != normalize(val - 1);
   }
+}
+
+} catch (Exception e) {
 }

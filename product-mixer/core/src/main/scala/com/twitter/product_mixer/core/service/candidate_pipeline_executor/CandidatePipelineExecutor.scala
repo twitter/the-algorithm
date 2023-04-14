@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.service.candidate_pipeline_executor
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -79,4 +80,8 @@ class CandidatePipelineExecutor @Inject() (override val statsReceiver: StatsRece
           queryFeatureMap = mergedFeatureMap)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

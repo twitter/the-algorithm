@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -28,3 +29,6 @@ scala_library(
         "util/util-security/src/main/scala/com/twitter/util/security",
     ],
 )
+
+} catch (Exception e) {
+}

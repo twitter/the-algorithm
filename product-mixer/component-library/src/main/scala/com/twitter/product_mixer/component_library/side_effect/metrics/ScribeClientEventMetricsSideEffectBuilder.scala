@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.side_effect.metrics
 
 import com.twitter.clientapp.thriftscala.LogEvent
@@ -81,4 +82,8 @@ case class ScribeClientEventMetricsSideEffectBuilder(
       page = page,
       eventConfigs = eventConfigs)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

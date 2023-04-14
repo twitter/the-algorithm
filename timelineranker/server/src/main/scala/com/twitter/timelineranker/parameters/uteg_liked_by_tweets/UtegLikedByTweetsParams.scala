@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.uteg_liked_by_tweets
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -171,4 +172,8 @@ object UtegLikedByTweetsParams {
         default = true
       )
 
+}
+
+} catch {
+  case e: Exception =>
 }

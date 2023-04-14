@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations
 
 import com.twitter.ml.api.util.FDsl._
@@ -61,4 +62,8 @@ class UserTopicDataRecordAdapter extends IRecordOneToOneAdapter[UserTopicTrainin
     dr.setFeatureValue(TargetTopicIdFeatures, record.targetTopicId.toLong)
     dr.getRecord
   }
+}
+
+} catch {
+  case e: Exception =>
 }

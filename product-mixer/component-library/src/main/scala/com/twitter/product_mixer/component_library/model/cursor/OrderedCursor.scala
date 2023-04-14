@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.cursor
 
 import com.twitter.product_mixer.core.pipeline.PipelineCursor
@@ -28,3 +29,7 @@ case class OrderedCursor(
   cursorType: Option[CursorType],
   gapBoundaryId: Option[Long] = None)
     extends PipelineCursor
+
+} catch {
+  case e: Exception =>
+}

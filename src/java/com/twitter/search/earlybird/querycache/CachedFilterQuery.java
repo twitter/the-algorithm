@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.querycache;
 
 import java.io.IOException;
@@ -307,4 +308,7 @@ public final class CachedFilterQuery extends Query {
   public String toString(String s) {
     return "CachedFilterQuery[" + queryCacheFilter.getFilterName() + "]";
   }
+}
+
+} catch (Exception e) {
 }

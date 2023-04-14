@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.interleave_ranker
 
 import javax.inject.Inject
@@ -9,4 +10,8 @@ import com.twitter.timelines.configapi.FSParam
 class InterleaveRankerFSConfig @Inject() extends FeatureSwitchConfig {
   override val booleanFSParams: Seq[FSParam[Boolean]] =
     Seq(InterleaveRankerParams.ScribeRankingInfoInInterleaveRanker)
+}
+
+} catch {
+  case e: Exception =>
 }

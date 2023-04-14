@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer
 package functional_component.feature_hydrator
 
@@ -78,4 +79,8 @@ class MetricCenterUserCountingFeatureHydrator @Inject() (
         .flatten
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

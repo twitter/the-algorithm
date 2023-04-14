@@ -1,3 +1,4 @@
+try {
 scala_library(
     platform = "java8",
     tags = ["bazel-compatible"],
@@ -5,3 +6,6 @@ scala_library(
         "graph-feature-service/src/main/thrift/com/twitter/graph_feature_service:graph_feature_service_thrift-scala",
     ],
 )
+
+} catch (Exception e) {
+}

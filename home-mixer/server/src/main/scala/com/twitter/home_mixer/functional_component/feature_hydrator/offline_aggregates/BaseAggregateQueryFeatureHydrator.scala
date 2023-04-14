@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -73,4 +74,8 @@ trait BaseAggregateRootFeature
   def aggregateStores: Set[StoreConfig[_]]
 
   lazy val aggregateTypes: Set[AggregateType] = aggregateStores.map(_.aggregateType)
+}
+
+} catch {
+  case e: Exception =>
 }

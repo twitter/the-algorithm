@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import com.google.common.base.Optional;
@@ -14,4 +15,7 @@ public class TermStatsCacheRequestNormalizer extends
   public Optional<EarlybirdRequest> normalizeRequest(EarlybirdRequestContext requestContext) {
     return Optional.fromNullable(TermStatsCacheUtil.normalizeForCache(requestContext.getRequest()));
   }
+}
+
+} catch (Exception e) {
 }

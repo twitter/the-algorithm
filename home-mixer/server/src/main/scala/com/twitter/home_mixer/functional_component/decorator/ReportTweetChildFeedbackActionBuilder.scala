@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.decorator
 
 import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
@@ -35,4 +36,8 @@ case class ReportTweetChildFeedbackActionBuilder @Inject() (
       )
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

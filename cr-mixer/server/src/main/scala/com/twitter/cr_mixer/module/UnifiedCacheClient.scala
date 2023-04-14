@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -80,4 +81,8 @@ object UnifiedCacheClient extends TwitterModule {
       serviceIdentifier = serviceIdentifier,
       timeout = TIME_OUT
     )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates.sgs
 
 import com.google.common.annotations.VisibleForTesting
@@ -143,4 +144,8 @@ object InvalidRelationshipTypesPredicate {
     RelationshipMapping(RelationshipType.ReportedAsAbuse, true),
     RelationshipMapping(RelationshipType.ReportedAsAbuseBy, true)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

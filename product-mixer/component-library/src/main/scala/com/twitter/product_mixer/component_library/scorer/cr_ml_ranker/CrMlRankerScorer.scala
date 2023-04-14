@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.cr_ml_ranker
 
 import com.twitter.product_mixer.component_library.feature_hydrator.query.cr_ml_ranker.CrMlRankerCommonFeatures
@@ -49,4 +50,8 @@ class CrMlRankerScorer @Inject() (crMlRanker: CrMlRankerScoreStitchClient)
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.clients
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -27,4 +28,8 @@ class Tweetypie(
           Future.None
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

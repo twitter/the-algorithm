@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.edges
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -79,4 +80,8 @@ trait EventToMessageBuilder[Event, E <: Edge] {
    * @return
    */
   def filterEdges(event: Event, edges: Seq[E]): Future[Seq[E]]
+}
+
+} catch {
+  case e: Exception =>
 }

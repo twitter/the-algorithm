@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.AdsMetadata
@@ -10,4 +11,8 @@ class AdsMetadataMarshaller @Inject() () {
 
   def apply(adsMetadata: AdsMetadata): urt.AdsMetadata =
     urt.AdsMetadata(carouselId = adsMetadata.carouselId)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import com.twitter.search.common.caching.Cache;
@@ -24,4 +25,7 @@ public class RecencyServicePostProcessor
                                      EarlybirdResponse serviceResponse) {
     CacheUtil.cacheResults(cache, requestContext.getRequest(), serviceResponse, maxCacheResults);
   }
+}
+
+} catch (Exception e) {
 }

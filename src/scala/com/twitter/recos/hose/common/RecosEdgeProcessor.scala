@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.hose.common
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -38,4 +39,8 @@ case class RecosEdgeProcessor(
     }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

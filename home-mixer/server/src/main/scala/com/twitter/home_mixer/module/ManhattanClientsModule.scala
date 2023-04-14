@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.module
 
 import com.google.inject.Provides
@@ -53,4 +54,8 @@ object ManhattanClientsModule extends TwitterModule with ConfigUtils {
       .defaultMaxTimeout(Duration.fromMilliseconds(70))
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

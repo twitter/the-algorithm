@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.feature_update_service.stats;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -108,4 +109,7 @@ public class FeatureUpdateStats {
     rates.putIfAbsent(key, SearchRateCounter.export(key));
     rates.get(key).increment();
   }
+}
+
+} catch (Exception e) {
 }

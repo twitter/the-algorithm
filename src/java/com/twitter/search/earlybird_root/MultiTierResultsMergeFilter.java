@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import java.util.List;
@@ -52,4 +53,7 @@ public class MultiTierResultsMergeFilter extends
         Integer.MAX_VALUE);
     return merger.merge();
   }
+}
+
+} catch (Exception e) {
 }

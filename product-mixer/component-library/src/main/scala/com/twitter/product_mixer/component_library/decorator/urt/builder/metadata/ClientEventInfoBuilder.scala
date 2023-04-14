@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -45,4 +46,8 @@ object EmptyClientEventInfoBuilder
     candidateFeatures: FeatureMap,
     element: Option[String]
   ): Option[ClientEventInfo] = None
+}
+
+} catch {
+  case e: Exception =>
 }

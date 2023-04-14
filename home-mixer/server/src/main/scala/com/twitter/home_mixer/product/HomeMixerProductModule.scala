@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product
 
 import com.twitter.inject.TwitterModule
@@ -8,4 +9,8 @@ object HomeMixerProductModule extends TwitterModule {
   override def configure(): Unit = {
     bind[ProductPipelineRegistryConfig].to[HomeProductPipelineRegistryConfig]
   }
+}
+
+} catch {
+  case e: Exception =>
 }

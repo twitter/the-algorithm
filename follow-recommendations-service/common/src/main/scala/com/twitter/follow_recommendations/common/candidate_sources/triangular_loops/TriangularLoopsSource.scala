@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.triangular_loops
 
 import com.twitter.follow_recommendations.common.models.AccountProof
@@ -88,4 +89,8 @@ object TriangularLoopsSource {
         ).withCandidateSource(Identifier)
       }.sortBy(-_.score.getOrElse(0.0)).take(NumResults)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

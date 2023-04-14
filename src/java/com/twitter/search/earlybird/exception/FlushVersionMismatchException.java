@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.exception;
 
 import java.io.IOException;
@@ -14,4 +15,7 @@ public class FlushVersionMismatchException extends IOException {
   public FlushVersionMismatchException(String message, Throwable cause) {
     super(message, cause);
   }
+}
+
+} catch (Exception e) {
 }

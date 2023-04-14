@@ -1,3 +1,4 @@
+try {
 # Library for Schema.java and other utilities with minimal dependencies.
 java_library(
     name = "base",
@@ -23,3 +24,6 @@ java_library(
         "src/thrift/com/twitter/search/common:schema-java",
     ],
 )
+
+} catch (Exception e) {
+}

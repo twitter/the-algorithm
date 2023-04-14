@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.media
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -76,4 +77,8 @@ class MediaMetadataFeatures(
       uploaderIdOpt.map(Set(_)).getOrElse(Set.empty)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

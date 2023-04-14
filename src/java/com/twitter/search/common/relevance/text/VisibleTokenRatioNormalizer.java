@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.text;
 
 public class VisibleTokenRatioNormalizer {
@@ -36,4 +37,7 @@ public class VisibleTokenRatioNormalizer {
   public static VisibleTokenRatioNormalizer createInstance() {
     return new VisibleTokenRatioNormalizer(NORMALIZE_TO_BITS);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.config
 
 import com.twitter.cortex_tweet_annotate.thriftscala.CortexTweetQueryService
@@ -104,4 +105,8 @@ abstract class UnderlyingClientConfiguration(
     }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

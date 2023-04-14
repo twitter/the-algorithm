@@ -1,3 +1,4 @@
+try:
 import re
 
 from twitter.deepbird.io.util import _get_feature_id
@@ -143,3 +144,6 @@ class DBv2DataExampleParser(Parser):
       value_by_feature_name[self.feature_name_by_dbv2_id[feature_id]] = float(feature_values[index])
 
     return value_by_feature_name
+
+except Exception:
+  pass

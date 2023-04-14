@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CenterCoverHalfCoverDisplayType
@@ -15,4 +16,8 @@ class HalfCoverDisplayTypeMarshaller @Inject() () {
       case CenterCoverHalfCoverDisplayType => urt.HalfCoverDisplayType.CenterCover
       case CoverHalfCoverDisplayType => urt.HalfCoverDisplayType.Cover
     }
+}
+
+} catch {
+  case e: Exception =>
 }

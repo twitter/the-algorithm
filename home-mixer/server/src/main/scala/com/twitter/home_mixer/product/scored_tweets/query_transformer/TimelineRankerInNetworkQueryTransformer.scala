@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.query_transformer
 
 import com.twitter.conversions.DurationOps._
@@ -39,4 +40,8 @@ case class TimelineRankerInNetworkQueryTransformer[
 
   override def transform(input: Query): t.RecapQuery =
     buildTimelineRankerQuery(input).toThriftRecapQuery
+}
+
+} catch {
+  case e: Exception =>
 }

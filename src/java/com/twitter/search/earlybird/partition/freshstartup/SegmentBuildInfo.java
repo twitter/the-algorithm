@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition.freshstartup;
 
 import org.slf4j.Logger;
@@ -89,4 +90,7 @@ class SegmentBuildInfo {
     LOG.info(String.format("  End offset: %,d", tweetEndOffset));
     LOG.info(String.format("  Start tweet id: %d", startTweetId));
   }
+}
+
+} catch (Exception e) {
 }

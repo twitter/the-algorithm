@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.graph_common
 
 import com.twitter.graphjet.bipartite.api.EdgeTypeMask
@@ -60,4 +61,8 @@ object NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphBuilder {
       statsReceiverWrapper
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

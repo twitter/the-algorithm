@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.util
 
 import com.twitter.concurrent.NamedPoolThreadFactory
@@ -98,4 +99,8 @@ object FuturePools {
 
     FuturePool.interruptible(executorService)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

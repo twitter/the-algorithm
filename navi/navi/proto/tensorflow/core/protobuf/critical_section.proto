@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 package tensorflow;
@@ -21,4 +22,7 @@ message CriticalSectionExecutionDef {
   // Whether this operation requires exclusive access to its resources,
   // (i.e., no other CriticalSections may request the same resources).
   bool exclusive_resource_access = 2;
+}
+
+} catch (Exception e) {
 }

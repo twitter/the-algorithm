@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageAnimationType
@@ -8,3 +9,7 @@ case class CoverImage(
   imageVariant: ImageVariant,
   imageDisplayType: ImageDisplayType,
   imageAnimationType: Option[ImageAnimationType])
+
+} catch {
+  case e: Exception =>
+}

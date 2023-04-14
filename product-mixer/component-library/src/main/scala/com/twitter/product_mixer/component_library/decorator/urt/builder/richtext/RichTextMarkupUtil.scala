@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ExternalUrl
@@ -132,4 +133,8 @@ object RichTextMarkupUtil {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

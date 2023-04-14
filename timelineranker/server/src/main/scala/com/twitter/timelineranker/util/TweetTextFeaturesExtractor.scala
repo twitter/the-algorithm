@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.util
 
 import com.twitter.common.text.tagger.UniversalPOS
@@ -196,4 +197,8 @@ object TweetTextFeaturesExtractor {
   private[this] def getTweetText(tweetText: String, hydrateTweetText: Boolean): Option[String] = {
     if (hydrateTweetText) Some(tweetText) else None
   }
+}
+
+} catch {
+  case e: Exception =>
 }

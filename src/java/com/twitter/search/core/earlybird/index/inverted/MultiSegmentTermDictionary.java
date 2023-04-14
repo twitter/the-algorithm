@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import com.google.common.collect.ImmutableList;
@@ -57,4 +58,7 @@ public interface MultiSegmentTermDictionary {
    * dictionary.
    */
   int getNumTermEntries();
+}
+
+} catch (Exception e) {
 }

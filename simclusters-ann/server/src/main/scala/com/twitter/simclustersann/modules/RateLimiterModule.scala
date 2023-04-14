@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.modules
 
 import com.google.common.util.concurrent.RateLimiter
@@ -20,4 +21,8 @@ object RateLimiterModule extends TwitterModule {
     @Flag(RateLimiterQPS) rateLimiterQps: Int
   ): RateLimiter =
     RateLimiter.create(rateLimiterQps)
+}
+
+} catch {
+  case e: Exception =>
 }

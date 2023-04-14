@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.exception;
 
 public class ClientException extends Exception {
@@ -8,4 +9,7 @@ public class ClientException extends Exception {
   public ClientException(String message) {
     super(message);
   }
+}
+
+} catch (Exception e) {
 }

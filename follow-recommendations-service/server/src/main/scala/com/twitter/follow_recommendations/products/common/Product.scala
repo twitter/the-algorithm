@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.products.common
 
 import com.twitter.follow_recommendations.assembler.models.Layout
@@ -54,3 +55,7 @@ trait Product {
 }
 
 case class ProductRequest(recommendationRequest: RecommendationRequest, params: Params)
+
+} catch {
+  case e: Exception =>
+}

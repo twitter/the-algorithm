@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.candidate_source
 
 import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
@@ -53,4 +54,8 @@ object ClusterRanker extends Enumeration {
       .map { case (clusterId, scores) => clusterId -> math.max(scores._1, 1e-4) }
       .toMap
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.tensorbuilder
 
 import com.twitter.ml.api.thriftscala.FloatTensor
@@ -31,3 +32,7 @@ case object FloatTensorInferInputTensorBuilder extends InferInputTensorBuilder[F
 }
 class EmptyFloatTensorException(featureName: String)
     extends RuntimeException(s"FloatTensor in feature $featureName is empty!")
+
+} catch {
+  case e: Exception =>
+}

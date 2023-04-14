@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.list_tweets.param
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -19,4 +20,8 @@ object ListTweetsParam {
         min = 1,
         max = 500
       )
+}
+
+} catch {
+  case e: Exception =>
 }

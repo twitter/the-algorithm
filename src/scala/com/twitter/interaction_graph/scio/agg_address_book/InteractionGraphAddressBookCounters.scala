@@ -1,3 +1,4 @@
+try {
 package com.twitter.interaction_graph.scio.agg_address_book
 
 import com.spotify.scio.ScioMetrics
@@ -31,4 +32,8 @@ case object InteractionGraphAddressBookCounters extends InteractionGraphAddressB
   override def phoneFeatureInc(): Unit = phoneFeatureCounter.inc()
 
   override def bothFeatureInc(): Unit = bothFeatureCounter.inc()
+}
+
+} catch {
+  case e: Exception =>
 }

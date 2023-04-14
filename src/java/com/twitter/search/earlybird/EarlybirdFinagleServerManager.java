@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird;
 
 import com.twitter.finagle.thrift.ThriftClientRequest;
@@ -50,4 +51,7 @@ public interface EarlybirdFinagleServerManager {
    * Stops the production finagle server after waiting for at most the given amount of time.
    */
   void stopProductionFinagleServer(Duration serverCloseWaitTime) throws InterruptedException;
+}
+
+} catch (Exception e) {
 }

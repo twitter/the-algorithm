@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.feature_hydrator.query.impressed_tweets
 
 import com.twitter.product_mixer.core.feature.Feature
@@ -54,4 +55,8 @@ case class ImpressedTweetsQueryFeatureHydrator @Inject() (
         Stitch.value(featureMapResult)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

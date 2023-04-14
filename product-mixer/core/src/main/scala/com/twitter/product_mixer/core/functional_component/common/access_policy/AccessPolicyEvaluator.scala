@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.common.access_policy
 
 /**
@@ -9,4 +10,8 @@ object AccessPolicyEvaluator {
       case AllowedLdapGroups(allowedGroups) => allowedGroups.exists(userLdapGroups.contains)
       case _: BlockEverything => false
     }
+}
+
+} catch {
+  case e: Exception =>
 }

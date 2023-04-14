@@ -1,3 +1,4 @@
+try {
 ## InteractionGraphAggDirectInteractions Dataflow Job
 
 #### IntelliJ
@@ -32,3 +33,6 @@ bin/d6w schedule \
   --bind=profile.date=2022-04-13 \
   --bind=profile.output_path=processed/interaction_graph_agg_direct_interactions_dataflow
 ```
+
+} catch (Exception e) {
+}

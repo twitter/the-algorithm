@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
 
 import com.twitter.peoplediscovery.api.{thriftscala => t}
@@ -74,4 +75,8 @@ class WhoToFollowCandidatePipelineConfig[Query <: PipelineQuery](
 
   override val decorator: Option[CandidateDecorator[Query, UserCandidate]] =
     Some(WhoToFollowCandidateDecorator(moduleDisplayTypeBuilder, feedbackActionInfoBuilder))
+}
+
+} catch {
+  case e: Exception =>
 }

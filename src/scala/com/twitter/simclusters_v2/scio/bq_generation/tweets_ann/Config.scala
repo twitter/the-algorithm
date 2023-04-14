@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scio.bq_generation.tweets_ann
 
 object Config {
@@ -30,4 +31,8 @@ object Config {
   val SimClustersANNTopNClustersPerSourceEmbedding: Int = 20
   val SimClustersANNTopMTweetsPerCluster: Int = 50
   val SimClustersANNTopKTweetsPerUserRequest: Int = 200
+}
+
+} catch {
+  case e: Exception =>
 }

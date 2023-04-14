@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.ads
 
 import com.twitter.adserver.thriftscala.AdImpression
@@ -36,4 +37,8 @@ object AdsCandidatePipelineResultsTransformer
       UnexpectedCandidateResult,
       reason =
         s"Unsupported AdImpression ($reason). impressionString: ${impression.impressionString}")
+}
+
+} catch {
+  case e: Exception =>
 }

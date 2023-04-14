@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird;
 
 import java.net.InetAddress;
@@ -272,4 +273,7 @@ public class EarlybirdServerSetManager implements ServerSetMember {
   protected boolean isInServerSetForServiceProxy() {
     return inServerSetForServiceProxy;
   }
+}
+
+} catch (Exception e) {
 }

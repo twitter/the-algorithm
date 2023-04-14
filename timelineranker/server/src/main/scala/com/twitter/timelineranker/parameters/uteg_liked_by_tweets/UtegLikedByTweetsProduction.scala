@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.parameters.uteg_liked_by_tweets
 
 import com.twitter.servo.decider.DeciderGateBuilder
@@ -84,4 +85,8 @@ class UtegLikedByTweetsProduction(deciderGateBuilder: DeciderGateBuilder) {
       boundedIntFeaturesSwitchOverrides: _*
     )
     .build(UtegLikedByTweetsProduction.getClass.getSimpleName)
+}
+
+} catch {
+  case e: Exception =>
 }

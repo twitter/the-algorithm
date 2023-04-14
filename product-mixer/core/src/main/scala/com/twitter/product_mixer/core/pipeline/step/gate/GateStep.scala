@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.step.gate
 
 import com.twitter.product_mixer.core.functional_component.gate.BaseGate
@@ -40,4 +41,8 @@ case class GateStep[Query <: PipelineQuery, State <: HasQuery[Query, State]] @In
   ): State = input
 
   override def isEmpty(config: Seq[BaseGate[Query]]): Boolean = config.isEmpty
+}
+
+} catch {
+  case e: Exception =>
 }

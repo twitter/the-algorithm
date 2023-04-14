@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineMetadata
@@ -15,4 +16,8 @@ class TimelineMetadataMarshaller @Inject() (
     scribeConfig = timelineMetadata.scribeConfig.map(timelineScribeConfigMarshaller(_)),
     readerModeConfig = timelineMetadata.readerModeConfig.map(readerModeConfigMarshaller(_))
   )
+}
+
+} catch {
+  case e: Exception =>
 }

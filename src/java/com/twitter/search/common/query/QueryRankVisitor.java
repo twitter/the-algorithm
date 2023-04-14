@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import java.util.IdentityHashMap;
@@ -53,4 +54,7 @@ public class QueryRankVisitor extends DetectAnnotationVisitor {
   public IdentityHashMap<Query, Integer> getNodeToRankMap() {
     return nodeToRankMap;
   }
+}
+
+} catch (Exception e) {
 }

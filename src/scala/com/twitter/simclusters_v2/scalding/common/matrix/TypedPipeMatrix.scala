@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.common.matrix
 
 import com.twitter.algebird.{Aggregator, Semigroup}
@@ -46,4 +47,8 @@ abstract class TypedPipeMatrix[R, C, @specialized(Double, Int, Float, Long, Shor
   lazy val numUniqueCols: ValuePipe[Long] = {
     this.uniqueColIds.aggregate(Aggregator.size)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

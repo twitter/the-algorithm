@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -15,3 +16,6 @@ scala_library(
         "src/thrift/com/twitter/ads/adserver:adserver_rpc-scala",
     ],
 )
+
+} catch (Exception e) {
+}

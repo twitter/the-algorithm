@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.cache
 
 import com.twitter.bijection.Bijection
@@ -78,4 +79,8 @@ class ThriftEnumOptionBijection[T <: ThriftEnum](constructor: Int => T) extends 
       case None => Buf.Empty
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

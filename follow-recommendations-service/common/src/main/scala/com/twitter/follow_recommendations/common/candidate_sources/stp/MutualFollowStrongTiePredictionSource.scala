@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.stp
 
 import com.twitter.follow_recommendations.common.clients.socialgraph.RecentEdgesQuery
@@ -58,4 +59,8 @@ object MutualFollowStrongTiePredictionSource {
     Algorithm.MutualFollowSTP.toString)
   val NumOfRecentFollowings = 100
   val NumOfRecentFollowers = 100
+}
+
+} catch {
+  case e: Exception =>
 }

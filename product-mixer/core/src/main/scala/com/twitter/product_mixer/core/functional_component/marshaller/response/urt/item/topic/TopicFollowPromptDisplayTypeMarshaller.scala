@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.IncentiveFocusTopicFollowPromptDisplayType
@@ -18,4 +19,8 @@ class TopicFollowPromptDisplayTypeMarshaller @Inject() () {
         urt.TopicFollowPromptDisplayType.IncentiveFocus
       case TopicFocusTopicFollowPromptDisplayType => urt.TopicFollowPromptDisplayType.TopicFocus
     }
+}
+
+} catch {
+  case e: Exception =>
 }

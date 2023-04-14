@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.feature_update_service;
 
 import java.util.ArrayList;
@@ -146,4 +147,7 @@ public class FeatureUpdateServiceThriftServer extends AbstractMtlsThriftServer {
       return null;
     });
   }
+}
+
+} catch (Exception e) {
 }

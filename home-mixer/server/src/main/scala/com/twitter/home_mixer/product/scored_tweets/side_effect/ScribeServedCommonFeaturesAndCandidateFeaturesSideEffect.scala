@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.side_effect
 
 import com.twitter.conversions.DurationOps._
@@ -210,4 +211,8 @@ class ScribeServedCommonFeaturesAndCandidateFeaturesSideEffect @Inject() (
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

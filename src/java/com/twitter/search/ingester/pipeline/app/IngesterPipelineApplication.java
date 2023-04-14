@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.app;
 
 import java.io.File;
@@ -192,4 +193,7 @@ public class IngesterPipelineApplication extends AbstractTwitterServer {
       LOG.error("Unable to shutdown pipeline.", e);
     }
   }
+}
+
+} catch (Exception e) {
 }

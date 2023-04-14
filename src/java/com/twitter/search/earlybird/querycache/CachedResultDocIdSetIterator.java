@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.querycache;
 
 import java.io.IOException;
@@ -69,4 +70,7 @@ public class CachedResultDocIdSetIterator extends DocIdSetIterator {
       return cachedDocIdIterator.cost();
     }
   }
+}
+
+} catch (Exception e) {
 }

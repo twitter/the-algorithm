@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.product
 
 import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
@@ -104,4 +105,8 @@ object ProductPipelineConfig extends PipelineConfigCompanion {
     pipelineSelectorStep,
     pipelineExecutionStep
   )
+}
+
+} catch {
+  case e: Exception =>
 }

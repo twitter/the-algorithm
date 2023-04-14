@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.adapters
 
 import com.twitter.follow_recommendations.common.models.DisplayLocation
@@ -76,4 +77,8 @@ object ClientContextAdapter extends IRecordOneToOneAdapter[(ClientContext, Displ
     dr.setFeatureValue(META_IS_RANDOM, GOAL_META_IS_RANDOM)
     dr
   }
+}
+
+} catch {
+  case e: Exception =>
 }

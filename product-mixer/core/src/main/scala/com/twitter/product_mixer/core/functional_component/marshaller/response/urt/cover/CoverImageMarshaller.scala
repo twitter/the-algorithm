@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ImageAnimationTypeMarshaller
@@ -20,4 +21,8 @@ class CoverImageMarshaller @Inject() (
       imageDisplayType = imageDisplayTypeMarshaller(coverImage.imageDisplayType),
       imageAnimationType = coverImage.imageAnimationType.map(imageAnimationTypeMarshaller(_))
     )
+}
+
+} catch {
+  case e: Exception =>
 }

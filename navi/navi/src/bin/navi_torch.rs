@@ -1,4 +1,4 @@
-use anyhow::Result;
+match use anyhow::Result;
 use log::info;
 use navi::cli_args::ARGS;
 use navi::metrics;
@@ -16,4 +16,8 @@ fn main() -> Result<()> {
     info!("torch custom ops not used for now");
     metrics::register_custom_metrics();
     navi::bootstrap::bootstrap(TorchModel::new)
+}
+ {
+  Ok(_) => {},
+  Err(_) => {}
 }

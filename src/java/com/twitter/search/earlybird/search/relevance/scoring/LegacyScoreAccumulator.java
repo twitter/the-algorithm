@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance.scoring;
 
 import com.twitter.search.common.util.ml.prediction_engine.BaseLegacyScoreAccumulator;
@@ -95,4 +96,7 @@ public class LegacyScoreAccumulator extends BaseLegacyScoreAccumulator<LinearSco
     addContinuousFeature(TweetScoringFeatures.LANGUAGE_ID, data.tweetLangId);
     addBinaryFeature(TweetScoringFeatures.HAS_VISIBLE_LINK, data.hasVisibleLink);
   }
+}
+
+} catch (Exception e) {
 }

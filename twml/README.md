@@ -1,3 +1,4 @@
+try {
 # TWML
 
 ---
@@ -11,3 +12,6 @@ deprecated,
 it is still currently used to train the Earlybird light ranking models (
 see `src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/train.py`).
 The most relevant part of this is the `DataRecordTrainer` class, which is where the core training logic resides.  
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.controller
 
 import com.twitter.finatra.thrift.Controller
@@ -47,4 +48,8 @@ class HomeThriftController @Inject() (
       fsCustomMapInput = fsCustomMapInput
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

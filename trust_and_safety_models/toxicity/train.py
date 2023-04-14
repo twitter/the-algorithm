@@ -1,3 +1,4 @@
+try:
 from datetime import datetime
 from importlib import import_module
 import os
@@ -399,3 +400,6 @@ class Trainer(object):
         i += 1
         if i == 3:
           break
+
+except Exception:
+  pass

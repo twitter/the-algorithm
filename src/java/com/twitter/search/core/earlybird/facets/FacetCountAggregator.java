@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import java.util.List;
@@ -90,4 +91,7 @@ public class FacetCountAggregator implements FacetTermCollector {
     }
   }
 
+}
+
+} catch (Exception e) {
 }

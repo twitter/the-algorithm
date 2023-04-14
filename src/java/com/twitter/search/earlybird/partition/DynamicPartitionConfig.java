@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import com.google.common.base.Preconditions;
@@ -66,4 +67,7 @@ public class DynamicPartitionConfig {
           + "New: " + partitionConfig.getPartitionConfigDescription());
     }
   }
+}
+
+} catch (Exception e) {
 }

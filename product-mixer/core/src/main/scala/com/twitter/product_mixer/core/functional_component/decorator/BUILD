@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "decoration",
     sources = ["Decoration.scala"],
@@ -35,3 +36,6 @@ scala_library(
         "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
     ],
 )
+
+} catch (Exception e) {
+}

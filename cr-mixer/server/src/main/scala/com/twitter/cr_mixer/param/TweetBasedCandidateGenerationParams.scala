@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import com.twitter.finagle.stats.NullStatsReceiver
@@ -186,4 +187,8 @@ object TweetBasedCandidateGenerationParams {
       .set(intOverrides: _*)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

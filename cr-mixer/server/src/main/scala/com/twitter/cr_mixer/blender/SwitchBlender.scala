@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.blender
 
 import com.twitter.core_workflows.user_model.thriftscala.UserState
@@ -78,4 +79,8 @@ object SwitchBlender {
 
   private val RandomOrder: Ordering[InitialCandidate] =
     Ordering.by[InitialCandidate, Double](_ => scala.util.Random.nextDouble())
+}
+
+} catch {
+  case e: Exception =>
 }

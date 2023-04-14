@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
 
 import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
@@ -31,4 +32,8 @@ class PostnuxDeepbirdProdScorer @Inject() (
     extends PostNuxV1DeepbirdProdScorer {
   override val id = RankerId.PostNuxProdRanker
   override val modelName = "PostNUX14531GafClemNetWarmStart"
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.article
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.item.article.ArticleCandidateUrtItemBuilder.ArticleClientEventInfoElement
@@ -49,4 +50,8 @@ case class ArticleCandidateUrtItemBuilder[
       socialContextBuilder.flatMap(_.apply(query, articleCandidate, candidateFeatures)),
     articleSeedType = articleSeedType
   )
+}
+
+} catch {
+  case e: Exception =>
 }

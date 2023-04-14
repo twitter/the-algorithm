@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer
 package featureswitch
 
@@ -76,4 +77,8 @@ object CrMixerImpressedBuckets {
   private[featureswitch] def recordImpressedBucket(bucket: Bucket) = {
     localImpressedBucketsMap().foreach { m => m += bucket -> true }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

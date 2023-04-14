@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.clients.dismiss_store
 
 import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
@@ -57,4 +58,8 @@ class DismissStore @Inject() (
         case _ => Nil
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

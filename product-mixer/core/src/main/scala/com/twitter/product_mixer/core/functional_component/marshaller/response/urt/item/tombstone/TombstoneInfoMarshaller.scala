@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
@@ -15,4 +16,8 @@ class TombstoneInfoMarshaller @Inject() (
     richText = tombstoneInfo.richText.map(richTextMarshaller(_)),
     richRevealText = tombstoneInfo.richRevealText.map(richTextMarshaller(_))
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.modules
 
 import com.google.inject.Provides
@@ -68,4 +69,8 @@ object DiffyModule extends TwitterModule {
       lookupByMethod = true
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

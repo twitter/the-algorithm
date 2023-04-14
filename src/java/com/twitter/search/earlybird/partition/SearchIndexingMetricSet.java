@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.util.EnumMap;
@@ -205,4 +206,7 @@ public class SearchIndexingMetricSet {
   long getIndexFreshnessInMillis() {
     return System.currentTimeMillis() - freshestTweetTimeMillis.get();
   }
+}
+
+} catch (Exception e) {
 }

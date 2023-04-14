@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.common.clustering
 
 /**
@@ -30,4 +31,8 @@ class LargestDimensionClusteringMethod extends ClusteringMethod {
       .cluster(embeddings, similarityFn, recordStatCallback)
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

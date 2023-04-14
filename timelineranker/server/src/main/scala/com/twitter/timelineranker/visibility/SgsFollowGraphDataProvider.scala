@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.visibility
 
 import com.twitter.finagle.stats.Stat
@@ -263,4 +264,8 @@ class ScopedSgsFollowGraphDataProviderFactory(
       statsReceiver
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

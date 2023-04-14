@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_video_graph
 
 import com.twitter.finagle.Service
@@ -99,3 +100,7 @@ class UserTweetGraphEdgeHttpHandler(graph: MultiSegmentPowerLawBipartiteGraph)
 }
 
 case class Edge(tweetId: Long, actionType: String, cardType: String)
+
+} catch {
+  case e: Exception =>
+}

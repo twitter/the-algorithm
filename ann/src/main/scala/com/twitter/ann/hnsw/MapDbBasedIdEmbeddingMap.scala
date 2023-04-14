@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.hnsw
 
 import com.twitter.ann.common.EmbeddingType.EmbeddingVector
@@ -78,4 +79,8 @@ private[this] class MapDbBasedIdEmbeddingMap[T](
   override def toDirectory(embeddingFile: OutputStream): Unit = {
     HnswIOUtil.saveEmbeddings(embeddingFile, injection, iter())
   }
+}
+
+} catch {
+  case e: Exception =>
 }

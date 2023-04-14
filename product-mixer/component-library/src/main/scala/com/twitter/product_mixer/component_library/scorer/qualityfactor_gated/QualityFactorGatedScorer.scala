@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.scorer.qualityfactor_gated
 
 import com.twitter.product_mixer.component_library.scorer.qualityfactor_gated.QualityFactorGatedScorer.IdentifierPrefix
@@ -56,4 +57,8 @@ case class QualityFactorGatedScorer[
 
 object QualityFactorGatedScorer {
   val IdentifierPrefix = "QualityFactorGated"
+}
+
+} catch {
+  case e: Exception =>
 }

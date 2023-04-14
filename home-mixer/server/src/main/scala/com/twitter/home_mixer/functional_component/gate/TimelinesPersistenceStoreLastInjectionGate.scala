@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.gate
 
 import com.twitter.common_internal.analytics.twitter_client_user_agent_parser.UserAgent
@@ -48,4 +49,8 @@ case class TimelinesPersistenceStoreLastInjectionGate(
 
       latestResponseWithEntityIdTypeEntry.map(_.servedTime)
     }.getOrElse(Time.Bottom)
+}
+
+} catch {
+  case e: Exception =>
 }

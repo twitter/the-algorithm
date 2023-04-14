@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.search;
 
 import java.io.IOException;
@@ -79,4 +80,7 @@ public class PairDocIdSetIterator extends DocIdSetIterator {
     return d1.cost() + d2.cost();
   }
 
+}
+
+} catch (Exception e) {
 }

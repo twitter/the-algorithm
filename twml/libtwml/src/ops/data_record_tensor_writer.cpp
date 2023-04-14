@@ -1,3 +1,4 @@
+try {
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
 #include "tensorflow/core/framework/op_kernel.h"
@@ -79,3 +80,6 @@ class DataRecordTensorWriter : public OpKernel {
 REGISTER_KERNEL_BUILDER(
     Name("DataRecordTensorWriter").Device(DEVICE_CPU),
     DataRecordTensorWriter);
+
+} catch (const std::exception& e) {
+}

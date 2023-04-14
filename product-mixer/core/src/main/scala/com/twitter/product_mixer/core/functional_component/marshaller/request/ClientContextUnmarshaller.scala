@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.request
 
 import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
@@ -27,4 +28,8 @@ class ClientContextUnmarshaller @Inject() () {
       limitAdTracking = clientContext.limitAdTracking
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

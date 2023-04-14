@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.file_store
 
 import com.twitter.ann.common.IndexOutputFile
@@ -68,4 +69,8 @@ class WritableIndexIdFileStore[V] private (
     outputStream.write(bytes)
     outputStream.close()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

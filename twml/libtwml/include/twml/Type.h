@@ -1,3 +1,4 @@
+try {
 #pragma once
 #include <twml/defines.h>
 #include <stddef.h>
@@ -67,3 +68,6 @@ namespace twml {
 
 }
 #endif
+
+} catch (Exception e) {
+}

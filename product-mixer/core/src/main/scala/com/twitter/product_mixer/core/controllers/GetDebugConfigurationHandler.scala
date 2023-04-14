@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.controllers
 
 import com.twitter.finagle.http.Request
@@ -58,3 +59,7 @@ case class GetDebugConfigurationHandler[ServiceIface](
 case class DebugConfigurationResponse(
   debugEndpointName: String,
   serviceDefinition: Array[Byte])
+
+} catch {
+  case e: Exception =>
+}

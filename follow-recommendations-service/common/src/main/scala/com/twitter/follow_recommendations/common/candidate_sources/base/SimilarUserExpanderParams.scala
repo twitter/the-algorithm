@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.base
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -28,4 +29,8 @@ object SimilarUserExpanderParams {
   case object DefaultEnableImplicitEngagedExpansion
       extends FSParam[Boolean]("similar_user_enable_implicit_engaged_expansion", true)
 
+}
+
+} catch {
+  case e: Exception =>
 }

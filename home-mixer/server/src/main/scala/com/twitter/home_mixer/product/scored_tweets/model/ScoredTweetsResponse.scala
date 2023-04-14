@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.scored_tweets.model
 
 import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
@@ -27,3 +28,7 @@ case class ScoredTweet(
   streamToKafka: Option[Boolean])
 
 case class ScoredTweetsResponse(scoredTweets: Seq[ScoredTweet]) extends HasMarshalling
+
+} catch {
+  case e: Exception =>
+}

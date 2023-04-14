@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.services
 
 import com.twitter.follow_recommendations.configapi.deciders.DeciderParams
@@ -25,4 +26,8 @@ class RecommendationsService @Inject() (
       Stitch.value(RecommendationResponse(Nil))
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

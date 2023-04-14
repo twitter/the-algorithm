@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.side_effect
 
 import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect.Inputs
@@ -57,4 +58,8 @@ object PipelineResultSideEffect {
     remainingCandidates: Seq[CandidateWithDetails],
     droppedCandidates: Seq[CandidateWithDetails],
     response: ResultType)
+}
+
+} catch {
+  case e: Exception =>
 }

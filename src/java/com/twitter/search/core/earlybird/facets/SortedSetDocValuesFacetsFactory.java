@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 import java.io.IOException;
@@ -42,4 +43,7 @@ public class SortedSetDocValuesFacetsFactory implements FacetsFactory {
         && SortedSetDocValuesReaderStateHelper.isDimSupported(
             state, facetSearchParam.getFacetFieldRequest().getField());
   }
+}
+
+} catch (Exception e) {
 }

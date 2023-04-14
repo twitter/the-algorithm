@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.builder.users
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -46,4 +47,8 @@ class ViewerSearchSafetyFeatures(
       case _ => Stitch.False
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

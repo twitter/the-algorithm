@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.color._
@@ -45,4 +46,8 @@ class RosettaColorMarshaller @Inject() () {
     case LightRedRosettaColor => urt.RosettaColor.LightRed
     case FadedRedRosettaColor => urt.RosettaColor.FadedRed
   }
+}
+
+} catch {
+  case e: Exception =>
 }

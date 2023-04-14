@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.caching;
 
 import javax.inject.Inject;
@@ -30,4 +31,7 @@ public class TopTweetsCacheFilter extends
           new EarlybirdRequestPerClientCacheStats(
               EarlybirdRequestType.TOP_TWEETS.getNormalizedName()));
   }
+}
+
+} catch (Exception e) {
 }

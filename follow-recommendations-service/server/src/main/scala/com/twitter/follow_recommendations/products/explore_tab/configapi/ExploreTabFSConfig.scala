@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.products.explore_tab.configapi
 
 import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
@@ -11,4 +12,8 @@ import javax.inject.Singleton
 class ExploreTabFSConfig @Inject() () extends FeatureSwitchConfig {
   override val booleanFSParams: Seq[Param[Boolean] with FSName] =
     Seq(EnableProductForSoftUser)
+}
+
+} catch {
+  case e: Exception =>
 }

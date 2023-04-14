@@ -1,3 +1,4 @@
+try {
 #pragma once
 #include <twml/Tensor.h>
 #include <type_traits>
@@ -90,3 +91,6 @@ public:
 
 }
 #endif
+
+} catch (Exception e) {
+}

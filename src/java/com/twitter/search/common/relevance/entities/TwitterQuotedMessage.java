@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.relevance.entities;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -38,4 +39,7 @@ public class TwitterQuotedMessage {
   public String toString() {
     return ToStringBuilder.reflectionToString(this);
   }
+}
+
+} catch (Exception e) {
 }

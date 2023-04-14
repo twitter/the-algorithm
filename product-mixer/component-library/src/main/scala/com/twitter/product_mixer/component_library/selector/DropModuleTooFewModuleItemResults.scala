@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.selector
 
 import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
@@ -43,4 +44,8 @@ case class DropModuleTooFewModuleItemResults(
 
     SelectorResult(remainingCandidates = remainingCandidates, result = updatedResults)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

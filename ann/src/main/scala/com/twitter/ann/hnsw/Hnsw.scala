@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.hnsw
 
 import com.google.common.annotations.VisibleForTesting
@@ -180,4 +181,8 @@ private[hnsw] class Hnsw[T, D <: Distance[D]](
       Future.exception(e)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

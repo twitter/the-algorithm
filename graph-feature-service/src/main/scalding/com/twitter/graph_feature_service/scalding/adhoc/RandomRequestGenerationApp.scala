@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.scalding.adhoc
 
 import com.twitter.bijection.Injection
@@ -74,4 +75,8 @@ object RandomRequestGenerationApp extends TwitterExecutionApp {
       )
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

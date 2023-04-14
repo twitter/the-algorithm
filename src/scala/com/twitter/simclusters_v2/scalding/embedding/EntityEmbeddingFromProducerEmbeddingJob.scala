@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding
 
 import com.twitter.onboarding.relevance.candidates.thriftscala.InterestBasedUserRecommendations
@@ -236,4 +237,8 @@ private object EntityEmbeddingFromProducerEmbeddingJob {
       }
   }
 
+}
+
+} catch {
+  case e: Exception =>
 }

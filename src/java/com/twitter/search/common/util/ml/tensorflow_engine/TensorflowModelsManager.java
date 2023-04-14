@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml.tensorflow_engine;
 
 import java.io.IOException;
@@ -186,4 +187,7 @@ public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
       dynamicSchema
     );
   }
+}
+
+} catch (Exception e) {
 }

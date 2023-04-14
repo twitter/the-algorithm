@@ -1,3 +1,4 @@
+try:
 # pylint: disable=no-member, attribute-defined-outside-init, too-many-instance-attributes
 """
 Implementing HashingDiscretizer Layer
@@ -154,3 +155,6 @@ class HashingDiscretizer(Layer):
     output_shape = [batch_size, output_size]
 
     return twml.SparseTensor(ids, discretizer_keys, discretizer_vals, output_shape).to_tf()
+
+except Exception:
+  pass

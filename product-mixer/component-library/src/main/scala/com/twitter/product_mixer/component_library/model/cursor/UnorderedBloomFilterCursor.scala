@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.model.cursor
 
 import com.twitter.product_mixer.core.pipeline.PipelineCursor
@@ -23,3 +24,7 @@ case class UrtUnorderedBloomFilterCursor(
 case class UnorderedBloomFilterCursor(
   longIntBloomFilter: AdaptiveLongIntBloomFilter)
     extends PipelineCursor
+
+} catch {
+  case e: Exception =>
+}

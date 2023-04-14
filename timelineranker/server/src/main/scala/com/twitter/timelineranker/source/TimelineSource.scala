@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.source
 
 import com.twitter.timelineranker.model.Timeline
@@ -13,4 +14,8 @@ class EmptyTimelineSource extends TimelineSource {
   def get(queries: Seq[TimelineQuery]): Seq[Future[Timeline]] = {
     queries.map(q => Future.value(Timeline.empty(q.id)))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.product.for_you
 
 import com.twitter.home_mixer.functional_component.decorator.HomeFeedbackActionInfoBuilder
@@ -163,4 +164,8 @@ class ForYouScoredTweetsCandidatePipelineConfig @Inject() (
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(),
     HomeMixerAlertConfig.BusinessHours.defaultEmptyResponseRateAlert(10, 20)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.product.guice.scope;
 
 import static java.lang.annotation.ElementType.METHOD;
@@ -12,3 +13,6 @@ import com.google.inject.ScopeAnnotation;
 @Retention(RUNTIME)
 @ScopeAnnotation
 public @interface ProductScoped {}
+
+} catch (Exception e) {
+}

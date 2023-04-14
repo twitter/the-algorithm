@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.home_mixer.model.HomeFeatures.FeedbackHistoryFeature
@@ -35,4 +36,8 @@ case class FeedbackHistoryQueryFeatureHydrator @Inject() (
       .map { feedbackHistory =>
         FeatureMapBuilder().add(FeedbackHistoryFeature, feedbackHistory).build()
       }
+}
+
+} catch {
+  case e: Exception =>
 }

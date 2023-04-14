@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet_composer
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer.Reply
@@ -15,4 +16,8 @@ class TweetComposerDisplayTypeMarshaller @Inject() () {
       case TweetComposerSelfThread => urt.TweetComposerDisplayType.SelfThread
       case Reply => urt.TweetComposerDisplayType.Reply
     }
+}
+
+} catch {
+  case e: Exception =>
 }

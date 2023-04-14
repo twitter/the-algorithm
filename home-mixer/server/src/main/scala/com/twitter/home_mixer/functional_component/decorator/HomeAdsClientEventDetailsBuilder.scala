@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.decorator
 
 import com.twitter.finagle.tracing.Trace
@@ -43,4 +44,8 @@ case class HomeAdsClientEventDetailsBuilder(injectionType: Option[String])
 
     Some(clientEventDetails)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.common
 
 import com.twitter.search.common.file.AbstractFile
@@ -25,4 +26,8 @@ trait QueryableDeserialization[T, P <: RuntimeParams, D <: Distance[D], Q <: Que
   def fromDirectory(
     serializationDirectory: AbstractFile
   ): Q
+}
+
+} catch {
+  case e: Exception =>
 }

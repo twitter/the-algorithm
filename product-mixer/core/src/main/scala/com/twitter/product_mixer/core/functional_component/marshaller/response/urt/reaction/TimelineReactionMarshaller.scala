@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.reaction
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.reaction.ImmediateTimelineReaction
@@ -25,4 +26,8 @@ class TimelineReactionMarshaller @Inject() () {
       maxExecutionCount = timelineReaction.maxExecutionCount
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

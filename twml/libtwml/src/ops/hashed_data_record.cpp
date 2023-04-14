@@ -1,3 +1,4 @@
+try {
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
 #include "tensorflow/core/framework/op_kernel.h"
@@ -518,3 +519,6 @@ REGISTER_GETTER(BatchSize)
 REGISTER_GETTER(TotalSize)
 REGISTER_GETTER(Labels)
 REGISTER_GETTER(Weights)
+
+} catch (const std::exception& e) {
+}

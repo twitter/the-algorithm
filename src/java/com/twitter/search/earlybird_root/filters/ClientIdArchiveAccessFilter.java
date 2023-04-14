@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.Optional;
@@ -53,4 +54,7 @@ public class ClientIdArchiveAccessFilter extends SimpleFilter<EarlybirdRequest, 
     }
     return service.apply(request);
   }
+}
+
+} catch (Exception e) {
 }

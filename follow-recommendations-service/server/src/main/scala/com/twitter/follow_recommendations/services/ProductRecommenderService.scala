@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.services
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -69,4 +70,8 @@ class ProductRecommenderService @Inject() (
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

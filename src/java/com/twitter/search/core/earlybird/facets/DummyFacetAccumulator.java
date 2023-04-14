@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.facets;
 
 /**
@@ -25,4 +26,7 @@ public class DummyFacetAccumulator<R> extends FacetAccumulator<R> {
   public void reset(FacetLabelProvider facetLabelProvider) {
   }
 
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 /**
  * &copy; Copyright 2008, Summize, Inc. All rights reserved.
  */
@@ -173,4 +174,7 @@ public class CollectComparableObjectsStage extends TwitterBaseStage<Void, Void> 
   public long getTimeBasedEmitCount() {
     return timeBasedEmitCount.get();
   }
+}
+
+} catch (Exception e) {
 }

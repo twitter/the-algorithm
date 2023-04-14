@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import java.util.Collections;
@@ -157,4 +158,7 @@ public final class QueryCommonFieldHitsVisitor extends SearchQueryVisitor<Set<St
     }
     return Collections.emptySet();
   }
+}
+
+} catch (Exception e) {
 }

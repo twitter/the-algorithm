@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.common;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -52,4 +53,7 @@ public class CaughtUpMonitor {
     }
     LOG.info("Caught up.");
   }
+}
+
+} catch (Exception e) {
 }

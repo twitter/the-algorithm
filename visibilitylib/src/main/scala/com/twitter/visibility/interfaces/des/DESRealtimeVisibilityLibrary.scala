@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.interfaces.des
 
 import com.twitter.gizmoduck.thriftscala.User
@@ -96,4 +97,8 @@ object DESRealtimeVisibilityLibrary {
       .map(_.toActionThrift())
       .getOrElse(Allow.toActionThrift())
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline
 
 import com.twitter.product_mixer.core.pipeline.pipeline_failure.MalformedCursor
@@ -54,4 +55,8 @@ object PipelineCursorSerializer {
 
     (deserializePf orElse defaultDeserializePf)(thriftCursor)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

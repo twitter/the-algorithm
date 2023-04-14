@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.util;
 
 import java.util.concurrent.Callable;
@@ -46,4 +47,7 @@ public final class ActionLogger {
      */
     void run() throws Exception;
   }
+}
+
+} catch (Exception e) {
 }

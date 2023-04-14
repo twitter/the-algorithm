@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.model
 
 import com.twitter.adserver.thriftscala.RequestTriggerType
@@ -39,4 +40,8 @@ trait HomeAdsQuery
   }
 
   override val disableNsfwAvoidance: Option[Boolean] = Some(true)
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.transforms.modify_social_proof
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -24,4 +25,8 @@ class RemoveAccountProofTransform @Inject() (statsReceiver: StatsReceiver)
       removedProofsCounter.incr()
       candidate.copy(reason = None)
     })
+}
+
+} catch {
+  case e: Exception =>
 }

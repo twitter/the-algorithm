@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.partition;
 
 import java.time.Duration;
@@ -185,3 +186,6 @@ public abstract class SimpleStreamIndexer<K, V> {
   }
 }
 
+
+} catch (Exception e) {
+}

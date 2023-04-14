@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.common;
 
 import java.util.ArrayList;
@@ -224,4 +225,7 @@ public final class EarlybirdRequestContext {
   public Set<ThriftSearchFeatureSchemaSpecifier> getFeatureSchemasAvailableInClient() {
     return featureSchemasAvailableInClient;
   }
+}
+
+} catch (Exception e) {
 }

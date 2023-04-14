@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.module
 
 import com.twitter.conversions.DurationOps._
@@ -57,4 +58,8 @@ object EarlybirdModule
       .withProtocolFactory(new TCompactProtocol.Factory())
 
   override protected def sessionAcquisitionTimeout: Duration = 1.seconds
+}
+
+} catch {
+  case e: Exception =>
 }

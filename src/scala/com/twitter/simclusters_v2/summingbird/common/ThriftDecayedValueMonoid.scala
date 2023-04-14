@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.summingbird.common
 
 import com.twitter.algebird.DecayedValue
@@ -54,4 +55,8 @@ object ThriftDecayedValueMonoid {
       thriftDecayedValueMonoid.decayToTimestamp(thriftDecayedValue, timeInMs)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

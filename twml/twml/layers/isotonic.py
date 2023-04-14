@@ -1,3 +1,4 @@
+try:
 # pylint: disable=no-member, invalid-name, attribute-defined-outside-init
 """
 Contains the Isotonic Layer
@@ -74,3 +75,6 @@ class Isotonic(Layer):
     """
     calibrate_op = libtwml.ops.isotonic_calibration(inputs, self.xs_input, self.ys_input)
     return calibrate_op
+
+except Exception:
+  pass

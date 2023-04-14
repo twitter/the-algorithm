@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
 
 import com.twitter.follow_recommendations.common.utils.RandomUtil
@@ -33,4 +34,8 @@ class ExponentialShuffler[T]() extends RankWeightedRandomShuffler[T] {
     1 / math
       .pow(rank.toDouble, 2.0) // this function was proved to be effective in previous DDGs
   }
+}
+
+} catch {
+  case e: Exception =>
 }

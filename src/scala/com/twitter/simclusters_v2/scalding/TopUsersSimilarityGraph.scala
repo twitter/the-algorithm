@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding
 
 import com.twitter.algebird.Max
@@ -993,4 +994,8 @@ object TopUsersOnlyApp extends TwitterExecutionApp {
           }
         }
     }
+}
+
+} catch {
+  case e: Exception =>
 }

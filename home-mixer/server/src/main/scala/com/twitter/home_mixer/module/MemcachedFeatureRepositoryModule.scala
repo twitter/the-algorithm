@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.module
 
 import com.google.inject.Provides
@@ -110,4 +111,8 @@ object MemcachedFeatureRepositoryModule extends TwitterModule {
       hashName = memcacheKeyHasher
     )()
 
+}
+
+} catch {
+  case e: Exception =>
 }

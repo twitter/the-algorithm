@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert
 
 import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
@@ -12,4 +13,8 @@ trait BaseShowAlertNavigationMetadataBuilder[-Query <: PipelineQuery] {
     candidate: ShowAlertCandidate,
     features: FeatureMap
   ): Option[ShowAlertNavigationMetadata]
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleShowMoreBehavior
@@ -16,4 +17,8 @@ class ModuleShowMoreBehaviorMarshaller @Inject() (
     case moduleShowMoreBehaviorRevealByCount: ModuleShowMoreBehaviorRevealByCount =>
       moduleShowMoreBehaviorRevealByCountMarshaller(moduleShowMoreBehaviorRevealByCount)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

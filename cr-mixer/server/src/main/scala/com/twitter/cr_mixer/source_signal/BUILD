@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
@@ -30,3 +31,6 @@ scala_library(
         "user-signal-service/thrift/src/main/thrift:thrift-scala",
     ],
 )
+
+} catch (Exception e) {
+}

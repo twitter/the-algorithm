@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.param
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -107,4 +108,8 @@ object HomeGlobalParams {
         name = "home_mixer_enable_advertiser_brand_safety_settings_feature_hydrator",
         default = true
       )
+}
+
+} catch {
+  case e: Exception =>
 }

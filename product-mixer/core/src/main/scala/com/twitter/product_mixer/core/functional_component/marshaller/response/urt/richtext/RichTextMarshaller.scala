@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
@@ -16,4 +17,8 @@ class RichTextMarshaller @Inject() (
     rtl = richText.rtl,
     alignment = richText.alignment.map(richTextAlignmentMarshaller(_))
   )
+}
+
+} catch {
+  case e: Exception =>
 }

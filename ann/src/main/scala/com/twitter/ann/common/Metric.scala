@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.common
 
 import com.google.common.collect.ImmutableBiMap
@@ -287,4 +288,8 @@ object MetricUtil {
   ): EmbeddingVector = {
     math.normalize(embedding)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

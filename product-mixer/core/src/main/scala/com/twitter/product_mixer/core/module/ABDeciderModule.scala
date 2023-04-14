@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.module
 
 import com.google.inject.Provides
@@ -48,4 +49,8 @@ object ABDeciderModule extends TwitterModule {
 
     abDeciderFactory.buildWithLogging()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

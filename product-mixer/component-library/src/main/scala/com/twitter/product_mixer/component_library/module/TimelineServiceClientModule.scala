@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.module
 
 import com.google.inject.Provides
@@ -41,4 +42,8 @@ object TimelineServiceClientModule
   ): TimelineService = {
     new TimelineService(client)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

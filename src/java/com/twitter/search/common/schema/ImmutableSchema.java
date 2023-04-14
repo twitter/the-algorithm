@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema;
 
 import java.io.IOException;
@@ -901,4 +902,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
         return null;
     }
   }
+}
+
+} catch (Exception e) {
 }

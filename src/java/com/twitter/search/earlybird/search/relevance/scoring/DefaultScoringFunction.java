@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.relevance.scoring;
 
 import org.apache.lucene.search.Explanation;
@@ -34,4 +35,7 @@ public class DefaultScoringFunction extends ScoringFunction {
       relevanceStats.setNumSkipped(relevanceStats.getNumSkipped() + 1);
     }
   }
+}
+
+} catch (Exception e) {
 }

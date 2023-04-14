@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.routers;
 
 import java.util.concurrent.TimeUnit;
@@ -97,4 +98,7 @@ public class RelevanceRequestRouter extends AbstractRecencyAndRelevanceRequestRo
 
     return true;
   }
+}
+
+} catch (Exception e) {
 }

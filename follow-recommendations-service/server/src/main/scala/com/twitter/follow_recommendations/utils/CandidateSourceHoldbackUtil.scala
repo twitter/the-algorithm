@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.utils
 
 import com.twitter.follow_recommendations.common.candidate_sources.addressbook._
@@ -79,4 +80,8 @@ object CandidateSourceHoldbackUtil {
       CandidateSourceType.ActivityContextual -> ContextualActivityCandidateSourceIds,
       CandidateSourceType.GeoAndInterests -> GeoCandidateSourceIds
     )
+}
+
+} catch {
+  case e: Exception =>
 }

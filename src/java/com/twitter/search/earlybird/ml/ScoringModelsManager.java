@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.ml;
 
 import java.io.IOException;
@@ -152,4 +153,7 @@ public class ScoringModelsManager {
         "scoring_models_classpath_",
         serverStats);
   }
+}
+
+} catch (Exception e) {
 }

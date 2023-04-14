@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.premarshaller.urt.builder
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowCoverInstruction
@@ -21,4 +22,8 @@ case class ShowCoverInstructionBuilder[Query <: PipelineQuery](
       Seq.empty
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.recosinjector.clients
 
 import com.twitter.conversions.DurationOps._
@@ -134,4 +135,8 @@ class RecosHoseEntitiesCache(client: Client) {
         stats.scope("update_cache_failure").counter(ex.getClass.getSimpleName).incr()
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

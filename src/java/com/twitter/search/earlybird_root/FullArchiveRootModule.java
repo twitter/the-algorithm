@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import java.util.List;
@@ -238,4 +239,7 @@ public class FullArchiveRootModule extends TwitterModule {
       WarmupConfig config) {
     return new EarlybirdWarmup(clock, config);
   }
+}
+
+} catch (Exception e) {
 }

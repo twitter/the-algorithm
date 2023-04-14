@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.wire;
 
 import java.util.concurrent.TimeUnit;
@@ -116,4 +117,7 @@ public class StratoMetaStoreWireModule {
 
     return new MetastoreClientImpl(manhattanClient);
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.product
 
 import com.twitter.product_mixer.core.functional_component.common.access_policy.WithDebugAccessPolicies
@@ -25,4 +26,8 @@ abstract class ProductPipeline[RequestType <: Request, ResponseType] private[pro
     ProductPipelineResult[ResponseType]
   ]
   override val identifier: ProductPipelineIdentifier
+}
+
+} catch {
+  case e: Exception =>
 }

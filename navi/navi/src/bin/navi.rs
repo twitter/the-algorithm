@@ -1,4 +1,4 @@
-use anyhow::Result;
+match use anyhow::Result;
 use log::info;
 use navi::cli_args::{ARGS, MODEL_SPECS};
 use navi::cores::validator::validatior::cli_validator;
@@ -44,4 +44,8 @@ fn get_custom_op_version(customops_lib: &str) -> i64 {
         customop_hash, customop_version_num
     );
     customop_version_num
+}
+ {
+  Ok(_) => {},
+  Err(_) => {}
 }

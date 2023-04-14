@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.adapters
 
 import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
@@ -88,4 +89,8 @@ object PreFetchedFeatureAdapter
     USER_NUM_RECENT_FOLLOWED_IMPRESSIONS,
     USER_LAST_FOLLOWED_IMPRESSION_DURATION,
   )
+}
+
+} catch {
+  case e: Exception =>
 }

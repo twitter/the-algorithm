@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.entity_tweets
 
 import com.twitter.conversions.DurationOps._
@@ -57,4 +58,8 @@ class EntityTweetsRepositoryBuilder(config: RuntimeConfiguration, configBuilder:
 
     new EntityTweetsRepository(entityTweetsSource)
   }
+}
+
+} catch {
+  case e: Exception =>
 }

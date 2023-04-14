@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -110,4 +111,8 @@ object UserStateStoreModule extends TwitterModule {
       statsReceiver.scope("UserStateStore")
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

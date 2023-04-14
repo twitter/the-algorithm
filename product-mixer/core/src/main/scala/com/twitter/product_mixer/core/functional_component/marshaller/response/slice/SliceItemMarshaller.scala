@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.slice
 
 import com.twitter.product_mixer.core.model.marshalling.response.slice.AdType
@@ -144,4 +145,8 @@ class SliceItemMarshaller @Inject() () {
       case AdType.Takeover => t.AdType.Takeover
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

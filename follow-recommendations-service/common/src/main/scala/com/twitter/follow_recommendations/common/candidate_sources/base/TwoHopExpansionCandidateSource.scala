@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.base
 
 import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
@@ -43,4 +44,8 @@ trait TwoHopExpansionCandidateSource[-Target, FirstDegree, SecondaryDegree, +Can
       aggregated <- aggregateAndScore(target, firstDegreeNodes.zip(secondaryDegreeNodes).toMap)
     } yield aggregated
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     platform = "java8",
@@ -12,3 +13,6 @@ scala_library(
         "strato/src/main/scala/com/twitter/strato/scalding",
     ],
 )
+
+} catch (Exception e) {
+}

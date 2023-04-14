@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.common;
 
 import javax.annotation.Nullable;
@@ -84,4 +85,7 @@ public final class EarlybirdServiceResponse {
   public ServiceState getServiceState() {
     return serviceState;
   }
+}
+
+} catch (Exception e) {
 }

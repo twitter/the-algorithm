@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_video_graph.util
 
 import com.twitter.graphjet.algorithms.TweetIDMask
@@ -30,4 +31,8 @@ object GetAllInternalTweetIdsUtil {
       .sortBy { case (_, degree) => -degree } // sort by degree in descending order
       .map { case (encodedTweetId, _) => encodedTweetId }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

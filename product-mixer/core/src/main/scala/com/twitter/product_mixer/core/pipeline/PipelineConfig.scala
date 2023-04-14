@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline
 
 import com.twitter.product_mixer.core.model.common.identifier.HasComponentIdentifier
@@ -17,4 +18,8 @@ trait PipelineConfigCompanion {
   val stepsInOrder: Seq[PipelineStepIdentifier]
 
   val stepsAsyncFeatureHydrationCanBeCompletedBy: Set[PipelineStepIdentifier] = Set.empty
+}
+
+} catch {
+  case e: Exception =>
 }

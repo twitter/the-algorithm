@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.color
 
 sealed trait RosettaColor
@@ -45,3 +46,7 @@ case object DeepRedRosettaColor extends RosettaColor
 case object MediumRedRosettaColor extends RosettaColor
 case object LightRedRosettaColor extends RosettaColor
 case object FadedRedRosettaColor extends RosettaColor
+
+} catch {
+  case e: Exception =>
+}

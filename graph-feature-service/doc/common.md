@@ -1,3 +1,4 @@
+try {
 # Common thrift types
 
 GFS uses several thrift datastructures which are common to multiple queries. They are listed below.
@@ -60,3 +61,6 @@ struct UserWithScore {
   2: required double score
 }
 ```
+
+} catch (Exception e) {
+}

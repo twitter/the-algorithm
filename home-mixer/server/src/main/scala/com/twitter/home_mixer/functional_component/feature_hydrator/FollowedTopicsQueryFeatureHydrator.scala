@@ -1,3 +1,4 @@
+try {
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.conversions.DurationOps._
@@ -38,4 +39,8 @@ case class FollowedTopicsQueryFeatureHydrator @Inject() (
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.9),
     HomeMixerAlertConfig.BusinessHours.defaultLatencyAlert(1500.millis)
   )
+}
+
+} catch {
+  case e: Exception =>
 }

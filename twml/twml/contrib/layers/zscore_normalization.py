@@ -1,3 +1,4 @@
+try:
 """
 Contains the twml.layers.ZscoreNormalization layer.
 """
@@ -245,3 +246,6 @@ def zscore_normalization(
                     dense_mask=dense_mask,
                     zero_debias=zero_debias,
                     handle_single=handle_single)
+
+except Exception:
+  pass

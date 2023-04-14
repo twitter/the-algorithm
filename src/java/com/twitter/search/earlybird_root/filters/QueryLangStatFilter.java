@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.Map;
@@ -111,4 +112,7 @@ public class QueryLangStatFilter
 
     return service.apply(requestContext);
   }
+}
+
+} catch (Exception e) {
 }

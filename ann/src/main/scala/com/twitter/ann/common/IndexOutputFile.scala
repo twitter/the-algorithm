@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.common
 
 import com.google.common.io.ByteStreams
@@ -223,4 +224,8 @@ class IndexOutputFile(val abstractFile: AbstractFile, val resourceId: ResourceId
     val in = ByteStreams.toByteArray(getInputStream())
     MetadataCodec.decode(ArrayByteBufferCodec.encode(in))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

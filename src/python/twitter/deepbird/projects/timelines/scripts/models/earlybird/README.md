@@ -1,3 +1,4 @@
+try {
 # Earlybird Light Ranker
 
 *Note: the light ranker is an old part of the stack which we are currently in the process of replacing.
@@ -61,3 +62,6 @@ Examples of realtime features used are:
 
 - Number of tweet likes/replies/retweets
 - pToxicity and pBlock scores provided by health models
+
+} catch (Exception e) {
+}

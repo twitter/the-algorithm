@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.common.alert
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
@@ -45,3 +46,7 @@ case class GenericClient(
   requestMetric: String,
   latencyMetric: String)
     extends Source
+
+} catch {
+  case e: Exception =>
+}

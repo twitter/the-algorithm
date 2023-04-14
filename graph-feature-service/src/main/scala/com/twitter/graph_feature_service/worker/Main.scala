@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.worker
 
 import com.google.inject.Module
@@ -55,4 +56,8 @@ class WorkerMain extends ThriftServer with Mtls {
     Await.result(graphContainer.warmup)
     handle[WorkerWarmupHandler]()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

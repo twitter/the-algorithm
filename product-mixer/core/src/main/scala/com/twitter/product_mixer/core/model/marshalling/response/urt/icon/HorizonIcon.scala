@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.icon
 
 sealed trait HorizonIcon
@@ -41,3 +42,7 @@ case object CameraVideo extends HorizonIcon
 case object ShoppingClock extends HorizonIcon
 case object ArrowRight extends HorizonIcon
 case object SpeakerOff extends HorizonIcon
+
+} catch {
+  case e: Exception =>
+}

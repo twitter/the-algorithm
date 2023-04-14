@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -826,4 +827,7 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
           null);
     }
   }
+}
+
+} catch (Exception e) {
 }

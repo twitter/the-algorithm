@@ -1,3 +1,4 @@
+try:
 import os
 
 
@@ -36,3 +37,6 @@ OUTER_CV = 5
 INNER_CV = 5
 NUM_PREFETCH = 5
 NUM_WORKERS = 10
+
+except Exception:
+  pass

@@ -1,3 +1,4 @@
+try {
 with vars as (
     SELECT
     UNIX_MILLIS("{QUERY_DATE}") AS currentTs,
@@ -102,3 +103,6 @@ SELECT tweetId,
     clusterNormalizedLogFavScore AS tweetScore, clusterIdToScores
 FROM tweet_embeddings_with_top_clusters, UNNEST(clusterIdToScores) AS clusterIdToScores, vars
 WHERE clusterIdToScores.clusterNormalizedLogFavScore > vars.tweetEmbeddingsMinClusterScore
+
+} catch (Exception e) {
+}

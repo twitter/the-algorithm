@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 // intersection of recent followers and followed by
@@ -7,4 +8,8 @@ trait HasMutualFollowedUserIds extends HasRecentFollowedUserIds with HasRecentFo
     recentFollowedUserIds.getOrElse(Nil).intersect(recentFollowedByUserIds.getOrElse(Nil))
 
   lazy val numRecentMutualFollows: Int = recentMutualFollows.size
+}
+
+} catch {
+  case e: Exception =>
 }

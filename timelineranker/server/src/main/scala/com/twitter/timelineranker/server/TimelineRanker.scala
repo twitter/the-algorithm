@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.server
 
 import com.twitter.abdecider.LoggingABDecider
@@ -252,4 +253,8 @@ class TimelineRanker(
       }
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

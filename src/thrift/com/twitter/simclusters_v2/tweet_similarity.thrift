@@ -1,3 +1,4 @@
+try {
 namespace java com.twitter.simclusters_v2.thriftjava
 namespace py gen.twitter.simclusters_v2.tweet_similarity
 #@namespace scala com.twitter.simclusters_v2.thriftscala
@@ -14,3 +15,6 @@ struct LabelledTweetPairs {
   2: required FeaturedTweet candidateFeaturedTweet
   3: required bool label
 }(persisted = 'true', hasPersonalData = 'true')
+
+} catch (Exception e) {
+}

@@ -1,3 +1,4 @@
+try {
 #include "internal/error.h"
 #include "internal/thrift.h"
 
@@ -160,3 +161,6 @@ TWMLAPI uint64_t TensorRecordWriter::write(twml::TensorRecord &record) {
 }
 
 }  // namespace twml
+
+} catch (const std::exception& e) {
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.List;
@@ -175,4 +176,7 @@ public class ThriftTweetParserStage extends TwitterBaseStage<IngesterTweetEvent,
       branches.add(trimmedBranch);
     }
   }
+}
+
+} catch (Exception e) {
 }

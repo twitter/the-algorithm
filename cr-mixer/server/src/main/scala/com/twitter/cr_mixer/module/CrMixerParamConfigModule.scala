@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -13,4 +14,8 @@ object CrMixerParamConfigModule extends TwitterModule {
   def provideConfig(): Config = {
     CrMixerParamConfig.config
   }
+}
+
+} catch {
+  case e: Exception =>
 }

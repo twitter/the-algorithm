@@ -1,3 +1,4 @@
+try {
 syntax = "proto3";
 
 option cc_enable_arenas = true;
@@ -21,4 +22,7 @@ service ModelService {
   // longer served.
   rpc HandleReloadConfigRequest(ReloadConfigRequest)
       returns (ReloadConfigResponse);
+}
+
+} catch (Exception e) {
 }

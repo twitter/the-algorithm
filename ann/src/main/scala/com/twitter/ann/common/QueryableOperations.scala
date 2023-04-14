@@ -1,3 +1,4 @@
+try {
 package com.twitter.ann.common
 
 import com.twitter.ann.common.EmbeddingType.EmbeddingVector
@@ -23,4 +24,8 @@ object QueryableOperations {
       }
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

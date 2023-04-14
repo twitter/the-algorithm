@@ -1,3 +1,4 @@
+try {
 # Tweet Search System (Earlybird)
 > **TL;DR** Tweet Search System (Earlybird) find tweets from people you follow, rank them, and serve the tweets to Home.
 
@@ -48,3 +49,6 @@ Earlybird roots fanout requests to different Earlybird clusters or partitions. U
 * "Omnisearch index formats" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/2016/omnisearch-index-formats)
 
 
+
+} catch (Exception e) {
+}

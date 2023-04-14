@@ -1,3 +1,4 @@
+try {
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
 #include "tensorflow/core/framework/op_kernel.h"
@@ -82,3 +83,6 @@ REGISTER_KERNEL_BUILDER(
   Name("Hashmap")
   .Device(DEVICE_CPU),
   Hashmap);
+
+} catch (const std::exception& e) {
+}

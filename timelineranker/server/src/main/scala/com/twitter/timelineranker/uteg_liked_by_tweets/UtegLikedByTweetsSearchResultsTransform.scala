@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.uteg_liked_by_tweets
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -33,4 +34,8 @@ class UtegLikedByTweetsSearchResultsTransform(
         envelope.copy(searchResults = results)
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

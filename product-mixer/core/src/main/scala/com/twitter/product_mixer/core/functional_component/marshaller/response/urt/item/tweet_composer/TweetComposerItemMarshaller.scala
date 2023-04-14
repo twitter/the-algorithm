@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet_composer
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
@@ -19,4 +20,8 @@ class TweetComposerItemMarshaller @Inject() (
         url = urlMarshaller(tweetComposer.url)
       )
     )
+}
+
+} catch {
+  case e: Exception =>
 }

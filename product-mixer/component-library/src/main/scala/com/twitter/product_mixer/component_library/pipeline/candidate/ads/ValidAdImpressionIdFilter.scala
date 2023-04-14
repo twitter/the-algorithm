@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.ads
 
 import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
@@ -21,4 +22,8 @@ object ValidAdImpressionIdFilter extends Filter[PipelineQuery, AdsCandidate] {
 
     Stitch.value(FilterResult(kept, removed))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

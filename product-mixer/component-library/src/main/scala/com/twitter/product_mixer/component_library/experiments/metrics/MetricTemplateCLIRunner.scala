@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.experiments.metrics
 
 import com.twitter.product_mixer.component_library.experiments.metrics.PlaceholderConfig.PlaceholdersMap
@@ -98,4 +99,8 @@ trait MetricTemplateCLIRunner {
       // arguments are bad, error message will have been displayed
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

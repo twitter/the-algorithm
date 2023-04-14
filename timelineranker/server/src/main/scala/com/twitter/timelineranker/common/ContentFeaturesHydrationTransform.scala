@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelineranker.common
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -109,4 +110,8 @@ class ContentFeaturesHydrationTransform(
       Future.value(request)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

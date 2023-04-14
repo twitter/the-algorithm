@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates.sgs
 
 import com.twitter.follow_recommendations.common.base.Predicate
@@ -30,4 +31,8 @@ object RecentFollowingPredicate {
   val ValidStitch: Stitch[PredicateResult.Valid.type] = Stitch.value(PredicateResult.Valid)
   val AlreadyFollowedStitch: Stitch[PredicateResult.Invalid] =
     Stitch.value(PredicateResult.Invalid(Set(FilterReason.AlreadyFollowed)))
+}
+
+} catch {
+  case e: Exception =>
 }

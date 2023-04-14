@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.query;
 
 import java.util.Map;
@@ -86,4 +87,7 @@ public class CollectQueryTypeVisitor extends QueryVisitor<Boolean> {
     }
     return found;
   }
+}
+
+} catch (Exception e) {
 }

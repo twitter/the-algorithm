@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PrerollMetadata
@@ -13,4 +14,8 @@ class PrerollMetadataMarshaller @Inject() (
       preroll = prerollMetadata.preroll.map(prerollMarshaller(_)),
       videoAnalyticsScribePassthrough = prerollMetadata.videoAnalyticsScribePassthrough
     )
+}
+
+} catch {
+  case e: Exception =>
 }

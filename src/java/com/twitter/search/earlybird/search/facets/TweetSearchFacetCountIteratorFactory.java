@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search.facets;
 
 import java.io.IOException;
@@ -38,4 +39,7 @@ public final class TweetSearchFacetCountIteratorFactory extends FacetCountIterat
       return new CSFFacetCountIterator(reader, fieldInfo);
     }
   }
+}
+
+} catch (Exception e) {
 }

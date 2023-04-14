@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.param
 
 import com.twitter.cr_mixer.model.ModelConfig
@@ -57,4 +58,8 @@ object CustomizedRetrievalBasedTwhinParams {
       .set(stringFSOverrides: _*)
       .build()
   }
+}
+
+} catch {
+  case e: Exception =>
 }

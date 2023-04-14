@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -222,4 +223,7 @@ public class IntBlockPool implements Flushable {
           poolName);
     }
   }
+}
+
+} catch (Exception e) {
 }

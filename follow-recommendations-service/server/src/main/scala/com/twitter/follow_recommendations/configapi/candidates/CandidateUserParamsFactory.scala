@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.configapi.candidates
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -32,4 +33,8 @@ class CandidateUserParamsFactory[T <: HasParams with HasDisplayLocation] @Inject
       candidateContext
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

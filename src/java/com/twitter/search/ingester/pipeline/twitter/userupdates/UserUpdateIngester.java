@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter.userupdates;
 
 import java.util.AbstractMap;
@@ -289,4 +290,7 @@ public class UserUpdateIngester {
       super("User " + userId + " not found.");
     }
   }
+}
+
+} catch (Exception e) {
 }

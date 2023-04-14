@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding
 
 import com.twitter.dal.client.dataset.KeyValDALDataset
@@ -351,4 +352,8 @@ object EntityToSimClustersEmbeddingsJob {
   def embeddingsLitePath(modelVersion: ModelVersion, pathSuffix: String): String = {
     s"/user/cassowary/processed/entity_real_graph/simclusters_embedding/lite/$modelVersion/$pathSuffix/"
   }
+}
+
+} catch {
+  case e: Exception =>
 }

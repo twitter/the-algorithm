@@ -1,3 +1,4 @@
+try {
 # See
 # Checkout the README to see how to deploy the job
 
@@ -39,3 +40,6 @@ job = Job(
 )
 
 jobs=[job]
+
+} catch (Exception e) {
+}

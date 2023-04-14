@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.ingester.pipeline.twitter.kafka;
 
 import java.util.Collection;
@@ -256,4 +257,7 @@ public class KafkaProducerStage<T> extends TwitterBaseStage<T, Void> {
   public void setKafkaClusterPath(String kafkaClusterPath) {
     this.kafkaClusterPath = kafkaClusterPath;
   }
+}
+
+} catch (Exception e) {
 }

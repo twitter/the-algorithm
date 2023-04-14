@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.controllers
 
 import com.twitter.conversions.DurationOps._
@@ -77,4 +78,8 @@ class SimClustersANNController @Inject() (
 
 object SimClustersANNController {
   val DefaultResponse: Response[Seq[SimClustersANNTweetCandidate]] = Response(Seq.empty)
+}
+
+} catch {
+  case e: Exception =>
 }

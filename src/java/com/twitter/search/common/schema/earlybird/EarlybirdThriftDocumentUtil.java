@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.schema.earlybird;
 
 import java.io.IOException;
@@ -374,4 +375,7 @@ public final class EarlybirdThriftDocumentUtil {
     }
     return false;
   }
+}
+
+} catch (Exception e) {
 }

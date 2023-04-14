@@ -1,3 +1,4 @@
+try {
 package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.training_data_generation
 
 import com.twitter.ml.api.constant.SharedFeatures
@@ -62,4 +63,8 @@ class EarlybirdExampleSampler(
         .addFeatures(ImportanceFeature, RecapFeatures.IS_EARLYBIRD_UNIFIED_ENGAGEMENT)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

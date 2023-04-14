@@ -1,3 +1,4 @@
+try {
 scala_library(
     name = "labels",
     sources = ["*.scala"],
@@ -47,3 +48,6 @@ create_datasets(
         "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
     ],
 )
+
+} catch (Exception e) {
+}

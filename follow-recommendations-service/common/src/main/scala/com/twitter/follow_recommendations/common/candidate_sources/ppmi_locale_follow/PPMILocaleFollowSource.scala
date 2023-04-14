@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -81,4 +82,8 @@ class PPMILocaleFollowSource @Inject() (
 object PPMILocaleFollowSource {
   val Identifier = CandidateSourceIdentifier(Algorithm.PPMILocaleFollow.toString)
   val DefaultMaxCandidatesToReturn = 100
+}
+
+} catch {
+  case e: Exception =>
 }

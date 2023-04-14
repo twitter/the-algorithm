@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DirectSponsorshipType
@@ -16,4 +17,8 @@ class SponsorshipTypeMarshaller @Inject() () {
     case IndirectSponsorshipType => urt.SponsorshipType.Indirect
     case NoSponsorshipSponsorshipType => urt.SponsorshipType.NoSponsorship
   }
+}
+
+} catch {
+  case e: Exception =>
 }

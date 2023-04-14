@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.similarity_engine
 
 import com.twitter.cr_mixer.config.TimeoutConfig
@@ -133,4 +134,8 @@ object EarlybirdSimilarityEngineRouter {
       ),
       query.params
     )
+}
+
+} catch {
+  case e: Exception =>
 }

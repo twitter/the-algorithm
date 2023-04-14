@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root;
 
 import javax.annotation.Nullable;
@@ -68,4 +69,7 @@ public class RealtimeCgScatterGatherModule extends ScatterGatherModule {
             decider
         );
   }
+}
+
+} catch (Exception e) {
 }

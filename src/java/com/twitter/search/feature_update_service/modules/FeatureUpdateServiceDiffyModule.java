@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.feature_update_service.modules;
 
 import com.twitter.decider.Decider;
@@ -32,4 +33,7 @@ public class FeatureUpdateServiceDiffyModule extends MtlsJavaDarkTrafficFilterMo
       }
     };
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DcmUrlOverrideType
@@ -14,4 +15,8 @@ class UrlOverrideTypeMarshaller @Inject() () {
     case UnknownUrlOverrideType => urt.UrlOverrideType.Unknown
     case DcmUrlOverrideType => urt.UrlOverrideType.Dcm
   }
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item
 
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
@@ -17,4 +18,8 @@ class GenericSummaryActionMarshaller @Inject() (
       url = urlMarshaller(genericSummaryItemAction.url),
       clientEventInfo = genericSummaryItemAction.clientEventInfo.map(clientEventInfoMarshaller(_))
     )
+}
+
+} catch {
+  case e: Exception =>
 }

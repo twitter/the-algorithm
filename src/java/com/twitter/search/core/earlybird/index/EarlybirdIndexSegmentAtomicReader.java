@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index;
 
 import java.io.IOException;
@@ -136,4 +137,7 @@ public abstract class EarlybirdIndexSegmentAtomicReader extends LeafReader {
   public Schema getSchema() {
     return segmentData.getSchema();
   }
+}
+
+} catch (Exception e) {
 }

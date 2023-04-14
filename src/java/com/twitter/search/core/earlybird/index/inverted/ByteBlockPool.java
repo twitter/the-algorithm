@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -55,4 +56,7 @@ public class ByteBlockPool extends BaseByteBlockPool implements Flushable {
               flushInfo.getIntProperty(BYTE_OFFSET_PROP_NAME));
     }
   }
+}
+
+} catch (Exception e) {
 }

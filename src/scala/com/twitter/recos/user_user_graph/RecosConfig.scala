@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.user_user_graph
 
 import com.twitter.recos.model.Constants
@@ -34,4 +35,8 @@ object RecosConfig {
   println("RecosConfig -     expectedNumRightNodes " + expectedNumRightNodes)
   println("RecosConfig -     numRightNodeMetadataTypes " + numRightNodeMetadataTypes)
   println("RecosConfig -         salsaRunnerConfig " + Constants.salsaRunnerConfig)
+}
+
+} catch {
+  case e: Exception =>
 }

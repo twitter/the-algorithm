@@ -1,3 +1,4 @@
+try {
 package com.twitter.recos.graph_common
 
 import com.twitter.finagle.stats.StatsReceiver
@@ -56,4 +57,8 @@ class RightNodeInfoHandler(graphHelper: BipartiteGraphHelper, statsReceiver: Sta
       Future.value(NodeInfo(edges = edges))
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

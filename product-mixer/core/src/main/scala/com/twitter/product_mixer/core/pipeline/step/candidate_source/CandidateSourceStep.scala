@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.step.candidate_source
 
 import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
@@ -82,3 +83,7 @@ case class CandidateSourceConfig[
   ],
   resultTransformer: CandidatePipelineResultsTransformer[CandidateSourceResult, Candidate],
   resultFeaturesTransformers: Seq[CandidateFeatureTransformer[CandidateSourceResult]])
+
+} catch {
+  case e: Exception =>
+}

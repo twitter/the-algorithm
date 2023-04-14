@@ -1,3 +1,4 @@
+try:
 # pylint: disable=no-member
 """
 Implementing a base layer for twml
@@ -48,3 +49,6 @@ class Layer(base.Layer):
 
     """
     raise NotImplementedError
+
+except Exception:
+  pass

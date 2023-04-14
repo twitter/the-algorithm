@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird_root.mergers;
 
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
@@ -41,4 +42,7 @@ public final class PartitionResponseAccumulator extends ResponseAccumulator {
   protected boolean isMergingAcrossTiers() {
     return false;
   }
+}
+
+} catch (Exception e) {
 }

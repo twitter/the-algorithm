@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.engine
 
 import com.twitter.servo.util.Gate
@@ -23,4 +24,8 @@ trait DeciderableVisibilityRuleEngine {
     thriftSafetyLevel: ThriftSafetyLevel,
     visibilityResultBuilder: VisibilityResultBuilder
   ): Stitch[VisibilityResult]
+}
+
+} catch {
+  case e: Exception =>
 }

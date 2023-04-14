@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.module
 
 import com.google.inject.Provides
@@ -192,4 +193,8 @@ object EmbeddingStoreModule extends TwitterModule {
           throw new UnsupportedOperationException("Invalid Internal Id")
       }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

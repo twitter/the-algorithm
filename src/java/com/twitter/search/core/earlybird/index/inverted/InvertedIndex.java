@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
@@ -141,4 +142,7 @@ public abstract class InvertedIndex implements FacetLabelProvider, Flushable {
    * @return  the document frequency of this term in this index.
    */
   public abstract int getDF(int termID);
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic
 
 import com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic.TopicCandidateUrtItemBuilder.TopicClientEventInfoElement
@@ -43,4 +44,8 @@ case class VerticalGridTopicCandidateUrtItemBuilder[-Query <: PipelineQuery](
       url = urlBuilder.map(_.apply(query, topicCandidate, candidateFeatures))
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

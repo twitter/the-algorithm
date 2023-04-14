@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.feature_hydration.sources
 
 import com.twitter.timelines.configapi.DurationConversion
@@ -145,4 +146,8 @@ object FeatureStoreSourceParams {
       with HasDurationConversion {
     override def durationConversion: DurationConversion = DurationConversion.FromMillis
   }
+}
+
+} catch {
+  case e: Exception =>
 }

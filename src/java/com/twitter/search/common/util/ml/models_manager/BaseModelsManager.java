@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.common.util.ml.models_manager;
 
 import java.io.BufferedReader;
@@ -290,4 +291,7 @@ public abstract class BaseModelsManager<T> implements Runnable {
       }
     }
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.pipeline.step.async_feature_map
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -68,3 +69,7 @@ case class AsyncFeatureMapStep[
 case class AsyncFeatureMapStepConfig(
   stepToHydrateFor: PipelineStepIdentifier,
   currentStep: PipelineStepIdentifier)
+
+} catch {
+  case e: Exception =>
+}

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.models
 
 import com.twitter.finagle.tracing.Trace
@@ -59,4 +60,8 @@ object TrackingToken {
 
 trait HasTrackingToken {
   def trackingToken: Option[TrackingToken]
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.icon._
@@ -49,4 +50,8 @@ class HorizonIconMarshaller @Inject() () {
     case ArrowRight => urt.HorizonIcon.ArrowRight
     case SpeakerOff => urt.HorizonIcon.SpeakerOff
   }
+}
+
+} catch {
+  case e: Exception =>
 }

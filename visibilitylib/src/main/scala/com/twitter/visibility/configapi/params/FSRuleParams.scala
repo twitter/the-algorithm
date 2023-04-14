@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi.params
 
 import com.twitter.timelines.configapi.Bounded
@@ -210,4 +211,8 @@ private[visibility] object FSRuleParams {
   object FosnrFallbackDropRulesEnabledParam
       extends FSRuleParam(FeatureSwitchKey.FosnrFallbackDropRulesEnabled, false)
   object FosnrRulesEnabledParam extends FSRuleParam(FeatureSwitchKey.FosnrRulesEnabled, true)
+}
+
+} catch {
+  case e: Exception =>
 }

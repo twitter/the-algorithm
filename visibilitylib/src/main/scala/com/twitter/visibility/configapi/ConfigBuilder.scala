@@ -1,3 +1,4 @@
+try {
 package com.twitter.visibility.configapi
 
 import com.twitter.decider.Decider
@@ -40,4 +41,8 @@ class ConfigBuilder(
         VisibilityFeatureSwitches.config(statsReceiver, logger)
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

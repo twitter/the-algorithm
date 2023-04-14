@@ -1,3 +1,4 @@
+try:
 import datetime
 
 from absl import logging
@@ -40,3 +41,6 @@ class StopAtTimeHook(tf.train.SessionRunHook):
   def stop_requested(self):
     """ true if this hook requested a stop """
     return self._stop_requested
+
+except Exception:
+  pass

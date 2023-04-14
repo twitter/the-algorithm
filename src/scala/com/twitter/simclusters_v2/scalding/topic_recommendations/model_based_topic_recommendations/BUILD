@@ -1,3 +1,4 @@
+try {
 scala_library(
     sources = ["*.scala"],
     platform = "java8",
@@ -68,3 +69,6 @@ create_datarecord_datasets(
     segment_type = "snapshot",
     tags = ["bazel-compatible"],
 )
+
+} catch (Exception e) {
+}

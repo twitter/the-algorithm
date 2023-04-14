@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.slice
 
 import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
@@ -23,4 +24,8 @@ class SliceTransportMarshaller @Inject() (sliceItemMarshaller: SliceItemMarshall
         )
       ))
   }
+}
+
+} catch {
+  case e: Exception =>
 }

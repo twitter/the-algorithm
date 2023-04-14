@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.archive;
 
 import java.io.IOException;
@@ -81,4 +82,7 @@ public class ArchiveSegmentDataProvider implements SegmentDataProvider {
       }
     };
   }
+}
+
+} catch (Exception e) {
 }

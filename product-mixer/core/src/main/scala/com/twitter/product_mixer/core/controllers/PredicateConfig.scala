@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.controllers
 
 import com.twitter.product_mixer.core.functional_component.common.alert.predicate.Predicate
@@ -19,4 +20,8 @@ private[core] object PredicateConfig {
     predicate.datapointsPastThreshold,
     predicate.duration,
     predicate.metricGranularity.unit)
+}
+
+} catch {
+  case e: Exception =>
 }

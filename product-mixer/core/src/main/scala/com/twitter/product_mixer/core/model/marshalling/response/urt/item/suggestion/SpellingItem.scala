@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
@@ -29,4 +30,8 @@ case class SpellingItem(
   override val entryNamespace: EntryNamespace = SpellingItem.SpellingEntryNamespace
 
   override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+}
+
+} catch {
+  case e: Exception =>
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.common.predicates
 
 import com.google.inject.name.Named
@@ -118,4 +119,8 @@ object InactivePredicate {
   )
   val ValidCandidateStates: Set[UserState] =
     Set(UserState.New, UserState.VeryLight, UserState.Light, UserState.NearZero)
+}
+
+} catch {
+  case e: Exception =>
 }

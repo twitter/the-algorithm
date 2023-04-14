@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclusters_v2.scalding.embedding.abuse
 
 import com.twitter.ml.api.Feature
@@ -214,4 +215,8 @@ object AdhocAbuseSimClusterFeaturesScaldingJob extends AdhocExecutionApp with Ca
       )
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

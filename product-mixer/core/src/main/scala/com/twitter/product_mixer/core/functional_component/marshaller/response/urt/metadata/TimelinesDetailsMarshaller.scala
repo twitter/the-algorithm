@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
 
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
@@ -13,4 +14,8 @@ class TimelinesDetailsMarshaller @Inject() () {
     controllerData = timelinesDetails.controllerData,
     sourceData = timelinesDetails.sourceData
   )
+}
+
+} catch {
+  case e: Exception =>
 }

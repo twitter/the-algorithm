@@ -1,3 +1,4 @@
+try {
 /*
  * This file defines additional thrift objects that should be specified in FRS request for context of recommendation, specifically the previous recommendations / new interactions in an interactive flow (series of follow steps). These typically are sent from OCF
  */
@@ -18,3 +19,6 @@ struct RecommendationStep {
 struct FlowContext {
   1: required list<RecommendationStep> steps
 }(hasPersonalData='true')
+
+} catch (Exception e) {
+}

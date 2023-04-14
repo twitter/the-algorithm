@@ -1,3 +1,4 @@
+try {
 package com.twitter.simclustersann.exceptions
 
 import com.twitter.finagle.RequestException
@@ -14,3 +15,7 @@ case class InvalidRequestForSimClustersAnnVariantException(
         s"processed by service variant ($actualServiceName)." +
         s" Expected service variant: $expectedServiceName.",
       null)
+
+} catch {
+  case e: Exception =>
+}

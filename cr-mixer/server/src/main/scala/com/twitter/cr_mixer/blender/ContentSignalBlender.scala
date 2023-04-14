@@ -1,3 +1,4 @@
+try {
 package com.twitter.cr_mixer.blender
 
 import com.twitter.cr_mixer.model.BlendedCandidate
@@ -118,4 +119,8 @@ case class ContentSignalBlender @Inject() (globalStats: StatsReceiver) {
       Time.fromMilliseconds(0L)
     }
   }
+}
+
+} catch {
+  case e: Exception =>
 }

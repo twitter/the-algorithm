@@ -1,3 +1,4 @@
+try {
 package com.twitter.graph_feature_service.server.modules
 
 import com.google.inject.Provides
@@ -88,4 +89,8 @@ object GetIntersectionStoreModule extends TwitterModule {
       }
     )
   }
+}
+
+} catch {
+  case e: Exception =>
 }

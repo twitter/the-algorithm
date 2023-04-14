@@ -1,3 +1,4 @@
+try {
 package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline
 
 import com.twitter.onboarding.task.service.thriftscala.GetInjectionsRequest
@@ -64,4 +65,8 @@ class FlipPromptCandidatePipelineConfig[Query <: PipelineQuery with HasFlipInjec
   override val featuresFromCandidateSourceTransformers: Seq[
     CandidateFeatureTransformer[IntermediatePrompt]
   ] = Seq(FlipCandidateFeatureTransformer)
+}
+
+} catch {
+  case e: Exception =>
 }

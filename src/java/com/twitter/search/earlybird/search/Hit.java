@@ -1,3 +1,4 @@
+try {
 package com.twitter.search.earlybird.search;
 
 import javax.annotation.Nullable;
@@ -56,4 +57,7 @@ public class Hit implements Comparable<Hit> {
   public void setHasExplanation(boolean hasExplanation) {
     this.hasExplanation = hasExplanation;
   }
+}
+
+} catch (Exception e) {
 }

@@ -1,3 +1,4 @@
+try {
 package com.twitter.follow_recommendations.flows.content_recommender_flow
 
 import com.twitter.timelines.configapi.FSBoundedParam
@@ -114,4 +115,8 @@ object ContentRecommenderFlowCandidateSourceWeightsParams {
         1d,
         0d,
         1000d)
+}
+
+} catch {
+  case e: Exception =>
 }
