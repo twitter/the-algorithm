@@ -207,6 +207,9 @@ impl<T: Model> PredictionService for PredictService<T> {
                         PredictResult::DropDueToOverload => Err(Status::resource_exhausted("")),
                         PredictResult::ModelNotFound(idx) => {
                             Err(Status::not_found(format!("model index {}", idx)))
+                        },
+                        PredictResult::ModelNotReady(idx) => {
+                            Err(Status::unavailable(format!("model index {}", idx)))
                         }
                         PredictResult::ModelVersionNotFound(idx, version) => Err(
                             Status::not_found(format!("model index:{}, version {}", idx, version)),

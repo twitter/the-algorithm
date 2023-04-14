@@ -1,7 +1,7 @@
 use anyhow::{anyhow, Result};
 use arrayvec::ArrayVec;
 use itertools::Itertools;
-use log::{error, info, warn};
+use log::{error, info};
 use std::fmt::{Debug, Display};
 use std::string::String;
 use std::sync::Arc;
@@ -179,17 +179,17 @@ impl<T: Model> PredictService<T> {
         //initialize the latest version array
         let mut cur_versions = vec!["".to_owned(); MODEL_SPECS.len()];
         loop {
-            let config = utils::read_config(&meta_file).unwrap_or_else(|e| {
-                warn!("config file {} not found due to: {}", meta_file, e);
-                Value::Null
-            });
             info!("***polling for models***"); //nice deliminter
-            info!("config:{}", config);
             if let Some(ref cli) = ARGS.modelsync_cli {
                 if let Err(e) = call_external_modelsync(cli, &cur_versions).await {
                     error!("model sync cli running error:{}", e)
                 }
             }
+            let config = utils::read_config(&meta_file).unwrap_or_else(|e| {
+                info!("config file {} not found due to: {}", meta_file, e);
+                Value::Null
+            });
+            info!("config:{}", config);
             for (idx, cur_version) in cur_versions.iter_mut().enumerate() {
                 let model_dir = &ARGS.model_dir[idx];
                 PredictService::scan_load_latest_model_from_model_dir(
@@ -229,26 +229,32 @@ impl<T: Model> PredictService<T> {
             let no_more_msg = match msg {
                 Ok(PredictMessage::Predict(model_spec_at, version, val, resp, ts)) => {
                     if let Some(model_predictors) = all_model_predictors.get_mut(model_spec_at) {
-                        match version {
-                            None => model_predictors[0].push(val, resp, ts),
-                            Some(the_version) => match model_predictors
-                                .iter_mut()
-                                .find(|x| x.model.version() == the_version)
-                            {
-                                None => resp
-                                    .send(PredictResult::ModelVersionNotFound(
-                                        model_spec_at,
-                                        the_version,
-                                    ))
-                                    .unwrap_or_else(|e| {
-                                        error!("cannot send back version error: {:?}", e)
-                                    }),
-                                Some(predictor) => predictor.push(val, resp, ts),
-                            },
+                        if model_predictors.is_empty() {
+                            resp.send(PredictResult::ModelNotReady(model_spec_at))
+                                .unwrap_or_else(|e| error!("cannot send back model not ready error: {:?}", e));
+                        }
+                        else {
+                            match version {
+                                None => model_predictors[0].push(val, resp, ts),
+                                Some(the_version) => match model_predictors
+                                    .iter_mut()
+                                    .find(|x| x.model.version() == the_version)
+                                {
+                                    None => resp
+                                        .send(PredictResult::ModelVersionNotFound(
+                                            model_spec_at,
+                                            the_version,
+                                        ))
+                                        .unwrap_or_else(|e| {
+                                            error!("cannot send back version error: {:?}", e)
+                                        }),
+                                    Some(predictor) => predictor.push(val, resp, ts),
+                                },
+                            }
                         }
                     } else {
                         resp.send(PredictResult::ModelNotFound(model_spec_at))
-                            .unwrap_or_else(|e| error!("cannot send back model error: {:?}", e))
+                            .unwrap_or_else(|e| error!("cannot send back model not found error: {:?}", e))
                     }
                     MPSC_CHANNEL_SIZE.dec();
                     false
