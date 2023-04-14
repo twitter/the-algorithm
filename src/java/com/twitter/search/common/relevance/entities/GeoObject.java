@@ -128,7 +128,7 @@ public class GeoObject {
     return source;
   }
 
-  /** Convers this GeoObject instance to a ThriftGeoTags instance. */
+  /** Converts this GeoObject instance to a ThriftGeoTags instance. */
   public ThriftGeoTags toThriftGeoTags(long twitterMessageId) {
     ThriftGeoTags geoTags = new ThriftGeoTags();
     geoTags.setStatusId(twitterMessageId);

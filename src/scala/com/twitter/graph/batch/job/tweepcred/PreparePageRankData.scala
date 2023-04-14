@@ -177,7 +177,7 @@ class PreparePageRankData(args: Args) extends Job(args) {
       .joinWithLarger('src_id_input -> 'dst_id, edges)
       .discard('src_id_input, 'mass_prior)
 
-    // aggreate by the source id
+    // aggregate by the source id
     val nodes = filterByDst
       .groupBy('src_id) {
         _.mapReduceMap(('dst_id, 'weight) -> ('dst_ids, 'weights)) /* map1 */ { a: (Long, Float) =>

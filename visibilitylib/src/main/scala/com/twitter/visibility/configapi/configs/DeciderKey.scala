@@ -585,7 +585,7 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
   )
 
   val EnableSuperFollowerConnectionsSafetyLevel: Value = Value(
-    "visibility_library_enable_super_follower_connnections_safety_level"
+    "visibility_library_enable_super_follower_connections_safety_level"
   )
 
   val EnableSuperLikeSafetyLevel: Value = Value(
@@ -1007,7 +1007,7 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
     "visibility_library_enable_localized_interstitial_generator"
   )
 
-  val EnableProfileMixeMediaSafetyLevel: Value = Value(
+  val EnableProfileMixerMediaSafetyLevel: Value = Value(
     "visibility_library_enable_profile_mixer_media_safety_level")
 
   val EnableConvosLocalizedInterstitial: Value = Value(

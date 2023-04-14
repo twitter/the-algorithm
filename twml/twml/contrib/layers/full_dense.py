@@ -22,7 +22,7 @@ class FullDense(Layer):
   and ``bias`` is a bias vector created by the layer.
 
   However, this layer breaks up ``weight`` into ``num_partitions`` parts,
-  for the purpose of even disribution of weights across parameter servers
+  for the purpose of even distribution of weights across parameter servers
   for distributed training.
 
   Note - This layer is created to allow distributed training optimizations,
@@ -301,7 +301,7 @@ def full_dense(inputs, output_size,
   (only if `use_bias` is `True`).
 
   However, this layer breaks up ``weight`` into ``num_partitions`` parts,
-  for the purpose of even disribution of weights across parameter servers
+  for the purpose of even distribution of weights across parameter servers
   for distributed training.
 
   Note - This layer is created to allow distributed training optimizations,

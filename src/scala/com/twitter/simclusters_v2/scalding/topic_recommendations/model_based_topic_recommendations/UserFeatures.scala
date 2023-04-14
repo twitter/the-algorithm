@@ -9,7 +9,7 @@ object UserFeatures {
   val UserSimClusterFeatures =
     new Feature.SparseContinuous(
       "user.simclusters.interested_in"
-    ) // User's interestedIn simcluster embeddding
+    ) // User's interestedIn simcluster embedding
 
   val UserCountryFeature = new Feature.Text("user.country") // user's country code
 

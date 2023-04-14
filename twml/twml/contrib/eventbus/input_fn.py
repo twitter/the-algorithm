@@ -11,13 +11,13 @@ The training data records are loaded from an EventBus reader.
 
 def get_eventbus_data_record_generator(eventbus_reader):
   """
-  This module provides a data record generater from EventBus reader.
+  This module provides a data record generator from EventBus reader.
 
   Args:
     eventbus_reader: EventBus reader
 
   Returns:
-    gen: Data record generater
+    gen: Data record generator
   """
   eventbus_reader.initialize()
   counter = [0]

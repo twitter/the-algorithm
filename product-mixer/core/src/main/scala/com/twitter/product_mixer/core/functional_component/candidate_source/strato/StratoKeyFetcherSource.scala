@@ -29,7 +29,7 @@ trait StratoKeyFetcherSource[StratoKey, StratoValue, Candidate]
    * Often, it just extracts a Seq from within a larger wrapper object.
    *
    * If there is global metadata that you need to include, you can zip it with the candidates,
-   * returning something like Seq((candiate, metadata), (candidate, metadata)) etc.
+   * returning something like Seq((candidate, metadata), (candidate, metadata)) etc.
    */
   protected def stratoResultTransformer(stratoResult: StratoValue): Seq[Candidate]
 

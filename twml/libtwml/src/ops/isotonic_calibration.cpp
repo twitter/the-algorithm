@@ -24,7 +24,7 @@ This operation calibrates probabilities by fitting to a piece-wise non-decreasin
 Input
   input: A tensor containing uncalibrated probabilities.
   xs: A tensor containing the boundaries of the bins.
-  ys: A tensor contianing calibrated values for the corresponding bins.
+  ys: A tensor containing calibrated values for the corresponding bins.
 
 Expected Sizes:
   input: [batch_size, num_labels].

@@ -53,7 +53,7 @@ object TweetStormJob {
     lazy val profile = SimClustersProfile.fetchTweetJobProfile(Environment(env), AltSetting.Alt)
 
     lazy val favoriteEventSource = TimelineEventSource(
-      // Note: do not share the same subsriberId with other jobs. Apply a new one if needed
+      // Note: do not share the same subscriberId with other jobs. Apply a new one if needed
       SubscriberId(profile.timelineEventSourceSubscriberId)
     ).source
 

@@ -303,7 +303,7 @@ object SimClustersANNCandidateSource {
     minTweetCandidateAge: Duration)
 
   /**
-   * Contains same fields as [[SimClustersANNConfig]], to specify which fields are to be overriden
+   * Contains same fields as [[SimClustersANNConfig]], to specify which fields are to be overridden
    * for experimental purposes.
    *
    * All fields in this class must be optional.

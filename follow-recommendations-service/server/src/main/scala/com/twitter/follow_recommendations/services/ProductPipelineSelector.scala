@@ -69,7 +69,7 @@ class ProductPipelineSelector @Inject() (
     // in randomness for the WeightedCandidateSourceRanker
     val randomizationSeed = new Random().nextLong()
 
-    val oldFRSPiplelineRequest = request.copy(
+    val oldFRSPipelineRequest = request.copy(
       debugParams = Some(
         request.debugParams.getOrElse(
           DebugParams(None, Some(DebugOptions(randomizationSeed = Some(randomizationSeed))))))
@@ -84,7 +84,7 @@ class ProductPipelineSelector @Inject() (
 
     StatsUtil
       .profileStitch(
-        readFromOldFrsPipeline(oldFRSPiplelineRequest, params),
+        readFromOldFrsPipeline(oldFRSPipelineRequest, params),
         darkReadStats.scope("frs_timing")).applyEffect { frsOldPipelineResponse =>
         Stitch.async(
           StatsUtil

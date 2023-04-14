@@ -41,7 +41,7 @@ import static com.twitter.search.core.earlybird.index.inverted.PayloadUtil.EMPTY
  * position by simply decrementing the value pointer.
  *
  * To understand how the skip list works, first understand how insert works, then the rest will be
- * more comprehendable.
+ * more comprehendible.
  *
  * A skip list will be implemented in a circle linked way:
  *   - the list head node will have the sentinel value, which is the advisory greatest value
@@ -299,7 +299,7 @@ public class SkipListContainer<K> implements Flushable {
    * Notice inserting supports duplicate keys and duplicate values.
    *
    * Duplicate keys with different values or positions will be inserted consecutively.
-   * Duplciate keys with identical values will be ignored, and the duplicate will not be stored in
+   * Duplicate keys with identical values will be ignored, and the duplicate will not be stored in
    * the posting list.
    *
    * @param key is the key of the given value.

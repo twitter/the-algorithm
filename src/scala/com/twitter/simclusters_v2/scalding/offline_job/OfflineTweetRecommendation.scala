@@ -48,7 +48,7 @@ object OfflineTweetRecommendation {
   )(
     implicit uniqueID: UniqueID
   ): Execution[TypedPipe[(Long, Seq[ScoredTweet])]] = {
-    val tweetRecommendedCount = Stat("NumTweetsRecomended")
+    val tweetRecommendedCount = Stat("NumTweetsRecommended")
     val targetUserCount = Stat("NumTargetUsers")
     val userWithRecsCount = Stat("NumUsersWithAtLeastTweetRec")
 

@@ -79,7 +79,7 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
   protected abstract boolean needsToBeBatched(T element);
 
   /**
-   * Tranform from type T to U element.
+   * Transform from type T to U element.
    * T and U might be different types so this function will help with the transformation
    * if the incoming T element is filtered out and is bypass directly to the next stage
    * that takes incoming objects of type U

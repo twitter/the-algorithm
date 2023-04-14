@@ -1,4 +1,4 @@
-pub mod validatior {
+pub mod validator {
     pub mod cli_validator {
         use crate::cli_args::{ARGS, MODEL_SPECS};
 

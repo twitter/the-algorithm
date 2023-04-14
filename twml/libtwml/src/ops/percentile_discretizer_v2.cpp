@@ -82,7 +82,7 @@ Operation
     (0, 1.2) (1, 2.4) and (2, 3.6), with feature IDs indicating the 0th, 1st, and 2nd
     elements of the vector
 
-  The disretizer performs the following operation:
+  The discretizer performs the following operation:
     (F,x) -> (map(x|F),1).
   Hence, we have that map(x|F) is a new feature ID, and the value observed for that
     feature is 1. We might read map(x|F) as 'the map of x for feature F'.

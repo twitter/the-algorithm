@@ -63,7 +63,7 @@ object PersistentTweetStormJob {
     lazy val stratoClient = ClientConfigs.stratoClient(profile.serviceIdentifier(zone))
 
     lazy val favoriteEventSource = TimelineEventSource(
-      // Note: do not share the same subsriberId with other jobs. Apply a new one if needed
+      // Note: do not share the same subscriberId with other jobs. Apply a new one if needed
       SubscriberId(profile.timelineEventSourceSubscriberId)
     ).kafkaSource
 

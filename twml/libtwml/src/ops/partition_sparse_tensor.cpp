@@ -36,7 +36,7 @@ Outputs
   List of dense tensors containing for each partition:
     - partitioned indices tensor ([ids, keys] from partitioned batch)
     - partitioned values tensor
-  The list lenth is 2 * num_partitions. Example:
+  The list length is 2 * num_partitions. Example:
   [ [ids_1, keys_1], values_1, [ids_2, keys_2], values_2, ... ]
 )doc");
 

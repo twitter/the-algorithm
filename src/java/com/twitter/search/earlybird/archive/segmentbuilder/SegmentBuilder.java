@@ -222,7 +222,7 @@ public class SegmentBuilder {
   void run() {
     LOG.info("Config values: {}", EarlybirdConfig.allValuesAsString());
 
-    // Sleep some time uninterruptibly before get started so that if multiple instances are running,
+    // Sleep some time uninterruptedly before get started so that if multiple instances are running,
     // the HDFS name node and zookeeper wont be overwhelmed
     // Say, we have 100 instances (instance_arg will have value from 0 - 99, our
     // STARTUP_BATCH_SIZE_ARG is 20 and startUpSleepMins is 3 mins. Then the first 20 instances
@@ -477,7 +477,7 @@ public class SegmentBuilder {
         hasBuiltSegment = true;
 
         if (originalSegment instanceof NotYetBuiltSegment) {
-          // Record the total time spent on successfully building a semgent, used to compute the
+          // Record the total time spent on successfully building a segment, used to compute the
           // average segment building time.
           long timeSpent = System.currentTimeMillis() - startMillis;
           segmentsBuiltLocally.increment();

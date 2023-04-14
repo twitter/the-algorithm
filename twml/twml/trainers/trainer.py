@@ -216,7 +216,7 @@ class Trainer(object):
         * the ``build_graph_fn`` is called once or twice per epoch (once per training,
           once per evaluation). All data loading (and preprocessing) logic not required
           for serving should be in the ``input_fn`` passed to ``learn``, ``train``,
-          ``evalulate``, etc.
+          ``evaluate``, etc.
 
       optimize_loss_fn:
         Defaults to Trainer.get_train_op. A function that takes params and loss as arguments
@@ -267,7 +267,7 @@ class Trainer(object):
         *Warning*: This could create too many these json files which can be a potential problem,
         e.g. for  HDFS there is normally quota forfile count, so use with caution.
 
-        Note: this argument is ignored when a non-None ``hooks`` argument is pasesd to
+        Note: this argument is ignored when a non-None ``hooks`` argument is passed to
         ``train``, ``learn``, or ``predict`` methods. The hook can be added manually by passing
         ``trainer.train(..., hooks=myhooks.extend(trainer.get_train_hooks()))``, for example.
     """
@@ -671,12 +671,12 @@ class Trainer(object):
     <https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator#export_savedmodel>`_.
 
     Note that a valid self._export_output_fn is required.
-    If export_ouput_fn is provided, it is used to set the self._export_output_fn.
+    If export_output_fn is provided, it is used to set the self._export_output_fn.
 
     Args:
       serving_input_receiver_fn:
         function preparing the model for inference requests.
-        This funtion returns the ``features`` dict passed to ``build_graph``.
+        This function returns the ``features`` dict passed to ``build_graph``.
       export_dir:
         directory to export a SavedModel for prediction servers.
         Defaults to ``[save_dir]/exported_models``.
@@ -1022,7 +1022,7 @@ class Trainer(object):
         Defaults to 0.
       max_duration:
         A float. When this argument is defined, the job will automatically terminate after
-        `max_duration` seconds if it has not already compeleted. 
+        `max_duration` seconds if it has not already completed. 
 
     Returns:
       The directory where the checkpoints were saved.
@@ -1223,9 +1223,9 @@ class Trainer(object):
 
     Args:
       train_input_fn:
-        Function to iterate through training set. It is passed to estimator.train_and_evalute
+        Function to iterate through training set. It is passed to estimator.train_and_evaluate
       eval_input_fn:
-        Function to iterate through evaluation set. It is passed to estimator.train_and_evalute.
+        Function to iterate through evaluation set. It is passed to estimator.train_and_evaluate.
       train_max_steps:
         maximum number of global steps of training to run.
         Defaults to params.train_max_steps.
@@ -1274,7 +1274,7 @@ class Trainer(object):
         Defaults to 0.
       max_duration:
         A float. When this argument is defined, the job will automatically terminate after
-        `max_duration` seconds if it has not already compeleted. 
+        `max_duration` seconds if it has not already completed. 
 
     Returns:
       The directory where the checkpoints were saved.
@@ -1430,7 +1430,7 @@ class Trainer(object):
       hooks:
         List of SessionRunHooks used for evaluation. Defaults to None.
         Note that, unlike learn(), hooks defaults to None instead of self.get_eval_hooks()
-        as the latter may implement early-stopping, which isn't necessarilty the desired
+        as the latter may implement early-stopping, which isn't necessarily the desired
         behavior when calling evaluate() on its own.
       name:
         Name of the evaluation if user needs to run multiple evaluations on different data sets.

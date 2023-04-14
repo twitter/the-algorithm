@@ -45,7 +45,7 @@ class Warmup(
 
     // send forwarding requests but ignore failures
     forwardingClient.getTimelines(Seq(reverseChronQuery)).unit.handle {
-      case e => logger.warning(e, "fowarding request failed")
+      case e => logger.warning(e, "forwarding request failed")
     }
 
     Future.join(localWarmups).unit

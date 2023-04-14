@@ -19,7 +19,7 @@ object GuiceNamedConstants {
   final val TWO_HOP_RANDOM_WALK_FETCHER = "two_hop_random_walk_fetcher"
   final val USER_RECOMMENDABILITY_FETCHER = "user_recommendability_fetcher"
   final val USER_STATE_FETCHER = "user_state_fetcher"
-  final val UTT_ACCOUNT_RECOMMENDATIONS_FETCHER = "utt_account_recomendations_fetcher"
+  final val UTT_ACCOUNT_RECOMMENDATIONS_FETCHER = "utt_account_recommendations_fetcher"
   final val UTT_SEED_ACCOUNTS_FETCHER = "utt_seed_accounts_fetcher"
 
   final val ELECTION_CANDIDATES_FETCHER = "election_candidates_fetcher"

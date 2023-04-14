@@ -21,7 +21,7 @@ import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineC
 import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
 import com.twitter.finagle.memcached.{Client => MemcachedClient}
 
-object TweetBasedTwHINSimlarityEngineModule extends TwitterModule {
+object TweetBasedTwHINSimilarityEngineModule extends TwitterModule {
   @Provides
   @Named(ModuleNames.TweetBasedTwHINANNSimilarityEngine)
   def providesTweetBasedTwHINANNSimilarityEngine(

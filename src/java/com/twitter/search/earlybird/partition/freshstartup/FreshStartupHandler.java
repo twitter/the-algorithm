@@ -357,7 +357,7 @@ public class FreshStartupHandler {
     }
 
     // Check that something weird didn't happen where we end up with segment ids
-    // which are in non-incresing order.
+    // which are in non-increasing order.
     // Goes from oldest to newest.
     for (int i = 1; i < segmentBuildInfos.size(); i++) {
       long startTweetId = segmentBuildInfos.get(i).getStartTweetId();

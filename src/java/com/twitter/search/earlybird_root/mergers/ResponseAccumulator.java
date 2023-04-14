@@ -232,7 +232,7 @@ public abstract class ResponseAccumulator {
   }
 
   private void recordMinMaxSearchedIdsAndUpdateStats(
-      EarlybirdResponseDebugMessageBuilder responseMessageBuidler,
+      EarlybirdResponseDebugMessageBuilder responseMessageBuilder,
       EarlybirdRequest request,
       EarlybirdResponse response,
       ThriftSearchResults searchResults) {
@@ -247,7 +247,7 @@ public abstract class ResponseAccumulator {
       minIds.add(searchResults.getMinSearchedStatusID());
     }
 
-    updateMinMaxIdStats(responseMessageBuidler, request, response, searchResults, isMaxIdSet,
+    updateMinMaxIdStats(responseMessageBuilder, request, response, searchResults, isMaxIdSet,
         isMinIdSet);
   }
 

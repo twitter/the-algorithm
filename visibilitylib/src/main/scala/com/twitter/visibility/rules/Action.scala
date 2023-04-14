@@ -656,7 +656,7 @@ case class TweetInterstitial(
         downrank.map(_.toDownrankThrift()),
         avoid.map(_.toAvoidThrift()),
         mediaInterstitial.map(_.toMediaActionThrift()),
-        tweetVisibilityNudge.map(_.toTweetVisbilityNudgeThrift()),
+        tweetVisibilityNudge.map(_.toTweetVisibilityNudgeThrift()),
         abusiveQuality.map(_.toConversationSectionAbusiveQualityThrift()),
         appealable.map(_.toAppealableThrift())
       )
@@ -779,7 +779,7 @@ case class TweetVisibilityNudge(
   override def toHealthActionTypeThrift: Option[HealthActionType] =
     Some(HealthActionType.TweetVisibilityNudge)
 
-  def toTweetVisbilityNudgeThrift(): thriftscala.TweetVisibilityNudge =
+  def toTweetVisibilityNudgeThrift(): thriftscala.TweetVisibilityNudge =
     thriftscala.TweetVisibilityNudge(tweetVisibilityNudgeActions =
       localizedNudge.map(_.localizedNudgeActions.map(_.toThrift())))
 }

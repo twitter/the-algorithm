@@ -43,7 +43,7 @@ public final class QueryParsingUtils {
    *
    * @param request the earlybird request to parse.
    * @return null if the request does not specify a serialized query.
-   * @throws QueryParserException if querry parsing fails.
+   * @throws QueryParserException if query parsing fails.
    */
   @Nullable
   static Query getParsedQuery(EarlybirdRequest request) throws QueryParserException {

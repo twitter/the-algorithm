@@ -1153,7 +1153,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
   }
 
   /**
-   * Create earlybird basic features and dervied features for current document.
+   * Create earlybird basic features and derived features for current document.
    * @return a FeatureHandler object where you can keep adding extra feature values, or you can
    * call .getFeatures() on it to get a Thrift object to return.
    */

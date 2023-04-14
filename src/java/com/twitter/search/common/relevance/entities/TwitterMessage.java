@@ -195,7 +195,7 @@ public class TwitterMessage {
   private TwitterQuotedMessage quotedMessage;
   private List<String> places;
   // maps from original url (the t.co url) to ThriftExpandedUrl, which contains the
-  // expanded url and the spiderduck response (canoicalLastHopUrl and mediatype)
+  // expanded url and the spiderduck response (canonicalLastHopUrl and mediatype)
   private final Map<String, ThriftExpandedUrl> expandedUrls;
   // maps the photo status id to the media url
   private Map<Long, String> photoUrls;
@@ -217,7 +217,7 @@ public class TwitterMessage {
   // tweet features map for multiple versions of penguin
   private Map<PenguinVersion, VersionedTweetFeatures> versionedTweetFeaturesMap;
 
-  // Engagments count: favorites, retweets and replies
+  // Engagements count: favorites, retweets and replies
   private int numFavorites = 0;
   private int numRetweets = 0;
   private int numReplies = 0;
@@ -545,8 +545,8 @@ public class TwitterMessage {
     this.numRetweets = numRetweets;
   }
 
-  public void setNumReplies(int numRepliess) {
-    this.numReplies = numRepliess;
+  public void setNumReplies(int numReplies) {
+    this.numReplies = numReplies;
   }
 
   public void addEscherbirdAnnotation(EscherbirdAnnotation annotation) {

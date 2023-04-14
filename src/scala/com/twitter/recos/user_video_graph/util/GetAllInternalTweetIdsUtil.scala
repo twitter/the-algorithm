@@ -26,7 +26,7 @@ object GetAllInternalTweetIdsUtil {
   ): Seq[Long] = {
     encodedTweetIds
       .map { encodedTweetId => (encodedTweetId, bipartiteGraph.getRightNodeDegree(encodedTweetId)) }
-      .filter { case (_, degree) => degree > 0 } // keep only tweetds with positive degree
+      .filter { case (_, degree) => degree > 0 } // keep only tweets with positive degree
       .sortBy { case (_, degree) => -degree } // sort by degree in descending order
       .map { case (encodedTweetId, _) => encodedTweetId }
   }

@@ -179,7 +179,7 @@ class InMemoryLoadTestQueryRecorder[T](
     latencyHistogram.add(queryLatency.inMicroseconds)
     counter.incrementAndGet()
     // Requests are assumed to have started around the time time of the first time record was called
-    // plus the time it took for that query to hhave completed.
+    // plus the time it took for that query to have completed.
     val (elapsedSinceFirstCall, firstQueryLatency) = elapsedTimeFun.get()
     val durationSoFar = elapsedSinceFirstCall() + firstQueryLatency
     elapsedTime.set(durationSoFar)

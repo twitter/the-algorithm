@@ -130,7 +130,7 @@ struct RecommendTweetEntityResponse {
 }
 
 struct SocialProofRequest {
-  1: required list<i64>                                  inputTweets             // Only for some tweets we need requst its social proofs.
+  1: required list<i64>                                  inputTweets             // Only for some tweets we need request its social proofs.
   2: required map<i64, double>                           seedsWithWeights        // a set of seed users with weights
   3: optional i64                                        requesterId             // id of the requesting user
   4: optional list<recos_common.SocialProofType>         socialProofTypes        // the list of social proof types to return

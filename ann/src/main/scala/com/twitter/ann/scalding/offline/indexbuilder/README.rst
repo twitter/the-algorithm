@@ -58,7 +58,7 @@ This job builds an ANN index based on hnsw algorithm using producer embeddings (
 Job arguments
 *************
 
-Enviroment variables (resources):
+Environment variables (resources):
 ==============
 - **CPU** Number of cpu cores (default: 32)
 - **RAM_GB** RAM in gigabytes (default: 150)
@@ -95,7 +95,7 @@ General arguments (specified as **--profile.{options}**):
 - **num_dimensions** Dimension of embedding in the input data. An exception will be thrown if any entry does not have a number of dimensions equal to this number.
 - **metric** Distance metric (InnerProduct/Cosine/L2)
 - **concurrency_level** Specifies how many parallel inserts happen to the index. This should probably be set to the number of cores on the machine.
-- **algo** The kind of index you want to ouput. The supported options right now are:
+- **algo** The kind of index you want to output. The supported options right now are:
 
   1. **hnsw** (Metric supported: Cosine, L2, InnerProduct)
 

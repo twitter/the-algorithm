@@ -3,7 +3,7 @@ namespace java com.twitter.cr_mixer.thriftjava
 #@namespace strato com.twitter.cr_mixer
 
 struct HomeContext {
-	2: optional i32 maxResults // enabled for QuaityFactor related DDGs only
+	2: optional i32 maxResults // enabled for QualityFactor related DDGs only
 } (persisted='true', hasPersonalData='false')
 
 struct NotificationsContext {

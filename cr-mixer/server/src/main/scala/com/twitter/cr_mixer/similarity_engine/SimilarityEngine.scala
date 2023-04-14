@@ -65,7 +65,7 @@ object SimilarityEngine extends Logging {
    * We need some further refactor work to make it more flexible.
    *
    * @param deciderConfig Gate the Engine by a decider. If specified,
-   * @param enableFeatureSwitch. DO NOT USE IT FOR NOW. It needs some refactorting. Please set it to None (SD-20268)
+   * @param enableFeatureSwitch. DO NOT USE IT FOR NOW. It needs some refactoring. Please set it to None (SD-20268)
    */
   case class GatingConfig(
     deciderConfig: Option[DeciderConfig],
@@ -107,7 +107,7 @@ object SimilarityEngine extends Logging {
    *
    * @param underlyingStore un-cached store implementation
    * @param keyPrefix       a prefix differentiates 2 stores if they share the same key space.
-   *                        e.x. 2 implementations of ReadableStore[UserId, Seq[Candidiate] ]
+   *                        e.x. 2 implementations of ReadableStore[UserId, Seq[Candidate] ]
    *                        can use prefix "store_v1", "store_v2"
    * @return                A ReadableStore with a MemCache wrapper
    */

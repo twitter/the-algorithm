@@ -15,7 +15,7 @@ object GetRelatedTweetCandidatesUtil {
    * for non-tweetBasedRelatedTweet, We don't have a query tweet, to keep scoring function consistent,
    * scorePreFactor = 1000.0 / LHSuserSize (queryTweetDegree's average is ~10k, 1000 ~= 10k/log(10k))
    * Though scorePreFactor is applied for all results within a request, it's still useful to make score comparable across requests,
-   * so we can have a unifed min_score and help with downstream score normalization
+   * so we can have a unified min_score and help with downstream score normalization
    * **/
   def getRelatedTweetCandidates(
     relatedTweetCandidates: Seq[Long],

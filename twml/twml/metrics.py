@@ -420,7 +420,7 @@ def rce_metric(aggregates):
     of the values produced by rce_transform(), and should be scalars.
   output is the value of RCE
   '''
-  # cummulative weighted loss of model predictions
+  # cumulative weighted loss of model predictions
   total_weighted_loss = aggregates['weighted_loss']
   total_weighted_labels = aggregates['weighted_labels']
   total_weight = aggregates['weight']
@@ -980,7 +980,7 @@ def get_binary_class_metric_fn(metrics=None):
       - ctr (same as positive sample ratio.)
       - rce (cross entropy loss compared to the baseline model of always predicting ctr)
       - nrce (normalized rce, do not use this one if you do not understand what it is)
-      - `arce <http://go/arce>`_ (a more recent proposed improvment over NRCE)
+      - `arce <http://go/arce>`_ (a more recent proposed improvement over NRCE)
       - arce_original
       - lolly_nrce (NRCE as it is computed in Lolly, with Taylor expansion)
       - pr_auc

@@ -140,7 +140,7 @@ message UpdateContextRequest {
   repeated DeviceAttributes cluster_device_attributes = 2;
 
   // The ID of the context to be updated. A context with the specified ID must
-  // already exist on the recepient server of this request.
+  // already exist on the recipient server of this request.
   fixed64 context_id = 3;
 
   // The view ID of the context, which should be contiguously incremented when
@@ -319,7 +319,7 @@ service EagerService {
   // preserved by RPC stream or executor.
   // This request type should only be used for executing component functions.
   // Ordering of component functions should be enforced by their corresponding
-  // main functions. The runtime ensures the following invarients for component
+  // main functions. The runtime ensures the following invariants for component
   // functions (CFs) and their main functions (MFs):
   // (1) MF1 -> MF2 ==> CF1 -> CF2 ("->" indicates order of execution);
   // (2) MF1 || MF2 ==> CF1 || CF2 ("||" indicates possible parallel execution);

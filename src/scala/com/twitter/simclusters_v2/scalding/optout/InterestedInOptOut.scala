@@ -78,7 +78,7 @@ object InterestedInOptOut {
   def writeInterestedInThriftOutputExecution(
     interestedIn: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
     modelVersion: String,
-    interestedInThriftDatset: SnapshotDALDataset[UserToInterestedInClusters],
+    interestedInThriftDataset: SnapshotDALDataset[UserToInterestedInClusters],
     thriftOutputPath: String,
     dateRange: DateRange
   ): Execution[Unit] = {
@@ -88,7 +88,7 @@ object InterestedInOptOut {
           UserToInterestedInClusters(userId, modelVersion, clusters.clusterIdToScores)
       }
       .writeDALSnapshotExecution(
-        interestedInThriftDatset,
+        interestedInThriftDataset,
         D.Daily,
         D.Suffix(thriftOutputPath),
         D.EBLzo(),

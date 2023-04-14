@@ -3,11 +3,11 @@ import tensorflow.compat.v1 as tf
 
 def get_pairwise_scores(tensor_input):
   """
-  This is so far used in pariwise learning-to-rank
+  This is so far used in pairwise learning-to-rank
 
   Arguments:
     tensor_input: a dense `Tensor` of shape [n_data, 1]
-      n_data is the number of teet candidates
+      n_data is the number of test candidates
 
   Returns:
     pairwise scores: a dense `Tensor` of shape [n_data, n_data].
@@ -17,10 +17,10 @@ def get_pairwise_scores(tensor_input):
 
 def get_pairwise_label_scores(labels):
   """
-  This is so far used in pariwise learning-to-rank
+  This is so far used in pairwise learning-to-rank
   Args:
     labels: a dense `Tensor` of shape [n_data, 1]
-      n_data is the number of teet candidates
+      n_data is the number of test candidates
   Returns:
     pairwise label scores: a dense `Tensor` of shape [n_data, n_data].
       each value is within [0, 1]

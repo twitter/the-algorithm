@@ -5,7 +5,7 @@ from twml.contrib.utils import masks, math_fns
 def get_pair_loss(pairwise_label_scores, pairwise_predicted_scores,
                   params):
   """
-  Paiwise learning-to-rank ranknet loss
+  Pairwise learning-to-rank ranknet loss
   Check paper https://www.microsoft.com/en-us/research/publication/
   learning-to-rank-using-gradient-descent/
   for more information
@@ -38,7 +38,7 @@ def get_pair_loss(pairwise_label_scores, pairwise_predicted_scores,
 def get_lambda_pair_loss(pairwise_label_scores, pairwise_predicted_scores,
                   params, swapped_ndcg):
   """
-  Paiwise learning-to-rank lambdarank loss
+  Pairwise learning-to-rank lambdarank loss
   faster than the previous gradient method
   Note: this loss depends on ranknet cross-entropy
   delta NDCG is applied to ranknet cross-entropy

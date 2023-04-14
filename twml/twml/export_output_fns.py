@@ -1,5 +1,5 @@
 '''
-Contains implemenations of DataRecordTrainer.get_export_output_fns that specify how to
+Contains implementations of DataRecordTrainer.get_export_output_fns that specify how to
 export model graph outputs from build_graph to DataRecords for prediction servers.
 
 Modelers can use the functions in this module as the export_output_fn parameter of

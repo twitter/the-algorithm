@@ -36,7 +36,7 @@ public class TweetypieModule extends TwitterModule {
       ThriftMux.Client thriftMux,
       StatsReceiver statsReceiver) throws InterruptedException {
     // TweetService is TweetService (tweetypie) with different api
-    // Since TweetService will be primarly used for interacting with
+    // Since TweetService will be primarily used for interacting with
     // tweetypie's flexible schema (MH), we will increase request
     // timeout and retries but share other settings from TweetService.
     @SuppressWarnings("unchecked")

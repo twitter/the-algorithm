@@ -88,11 +88,11 @@ class ZscoreNormalization(Layer):
   def _training_pass(self, input, dense_mask, input_dtype, handle_single, zero_debias):
     epsilon = self.epsilon
     moving_mean, moving_var = self.moving_mean, self.moving_var
-    # calculate the number of exisiting value for each feature
+    # calculate the number of existing value for each feature
     tensor_batch_num = tf.reduce_sum(tf.cast(dense_mask, self.data_type), axis=0)
     mask_ones = tf.cast(tensor_batch_num, tf.bool)
     eps_vector = tf.fill(tf.shape(tensor_batch_num), epsilon)
-    # the following filled 0 with epision
+    # the following filled 0 with epsilon
     tensor_batch_num_eps = tf.where(mask_ones,
                                     tensor_batch_num,
                                     eps_vector
@@ -188,7 +188,7 @@ class ZscoreNormalization(Layer):
       see adam paper. https://arxiv.org/abs/1412.6980)
     handle_single: bool
       if std==0, and feature is not missing value, set the value to 1, instead of 0.
-      This is super rare if input only consists of continous feature.
+      This is super rare if input only consists of continuos feature.
       But if one-hot feature is included,
       they will all have same values 1, in that case, make sure to set handle_single to true.
     """
@@ -234,7 +234,7 @@ def zscore_normalization(
     see adam paper. https://arxiv.org/abs/1412.6980)
   handle_single: bool
     if std==0, and feature is not missing value, set the value to 1, instead of 0.
-    This is super rare if input only consists of continous feature.
+    This is super rare if input only consists of continuos feature.
     But if one-hot feature is included,
     they will all have same values 1, in that case, make sure to set handle_single to true.
   """

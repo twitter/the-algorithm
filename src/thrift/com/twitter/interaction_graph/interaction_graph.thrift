@@ -31,7 +31,7 @@ enum FeatureName {
   num_tweet_quotes = 24
   num_push_opens = 25
   num_ntab_clicks = 26,
-  num_rt_favories = 27,
+  num_rt_favorites = 27,
   num_rt_replies = 28,
   num_rt_tweet_quotes = 29,
   num_rt_retweets = 30,

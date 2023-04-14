@@ -67,8 +67,8 @@ class Partition(Layer):
         indices_x:
           indices of the hashmap for partition x
     """
-    partioned_val = tf.dynamic_partition(input_vals, partition_ids, self.partitions)
-    partioned_keys = tf.dynamic_partition(input_keys, partition_ids, self.partitions)
-    partioned_indices = tf.dynamic_partition(tf.range(tf.shape(partition_ids)[0]),
+    partitioned_val = tf.dynamic_partition(input_vals, partition_ids, self.partitions)
+    partitioned_keys = tf.dynamic_partition(input_keys, partition_ids, self.partitions)
+    partitioned_indices = tf.dynamic_partition(tf.range(tf.shape(partition_ids)[0]),
                                              tf.cast(partition_ids, tf.int32), self.partitions)
-    return [partioned_val, partioned_keys, partioned_indices]
+    return [partitioned_val, partitioned_keys, partitioned_indices]

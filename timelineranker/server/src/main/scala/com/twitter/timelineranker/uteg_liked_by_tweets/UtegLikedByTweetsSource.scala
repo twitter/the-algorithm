@@ -261,7 +261,7 @@ class UtegLikedByTweetsSource(
       statsReceiver = baseScope
     ).build()
 
-  // use OutOfNetworkTweetsSearchFeaturesHydrationTransform for rectweets
+  // use OutOfNetworkTweetsSearchFeaturesHydrationTransform for retweets
   private[this] val tweetsSearchFeaturesHydrationTransform =
     FutureArrow
       .choose[HydratedCandidatesAndFeaturesEnvelope, HydratedCandidatesAndFeaturesEnvelope](

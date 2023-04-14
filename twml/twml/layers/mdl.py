@@ -61,7 +61,7 @@ class MDL(Layer):  # noqa: T000
         contains the features ID that MDL discretizes and knows about.
         The hash map (hash_keys->hash_values) is used for two reasons:
           1. divide inputs into two feature spaces: MDL vs non-MDL
-          2. transate the MDL features into a hash_feature ID that MDL understands.
+          2. translate the MDL features into a hash_feature ID that MDL understands.
         The hash_map is expected to contain n_feature items.
       hash_values:
         translates the feature IDs into hash_feature IDs for MDL.

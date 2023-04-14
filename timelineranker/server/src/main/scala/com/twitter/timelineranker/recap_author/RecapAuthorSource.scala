@@ -35,7 +35,7 @@ import com.twitter.util.Future
  * parent class, for details on how this override works). For example, one
  * can choose to retrieve replies, retweets and/or extended replies
  * by changing the options passed in, which get added to ''filters''.
- * 2. The visiblityEnforcer passed in, which controls what visibility rules
+ * 2. The visibilityEnforcer passed in, which controls what visibility rules
  * are applied to the tweets returned from earlybird (e.g. mutes, blocks).
  */
 class RecapAuthorSource(
@@ -60,7 +60,7 @@ class RecapAuthorSource(
    * are not "replies" i.e. those that begin with the @-handle.
    * For tweets to non-followed users that are replies, these are "extended replies"
    * and are handled separately by the dynamic filters (see Recap.scala for details).
-   * Reply and retweet filtering is also handled by dynamic filters, overriden by
+   * Reply and retweet filtering is also handled by dynamic filters, overridden by
    * TweetKindOptions passed in with the query (again, details in Recap.scala)
    * We however do not filter out tweets from non-followed users, unlike RecapSource,
    * because one of the main use cases of this endpoint is to retrieve tweets from out

@@ -718,7 +718,7 @@ object ClusterHdfsGraphApp extends TwitterExecutionApp {
             var z = new SparseBinaryMatrix(assumedNumberOfNodes, k)
             val err = new PrintWriter(System.err)
 
-            println("Going to initalize from random neighborhoods")
+            println("Going to initialize from random neighborhoods")
             z.initFromBestNeighborhoods(
               graph,
               (gr: Graph, i: Integer) => algoConfig.rng.nextDouble,

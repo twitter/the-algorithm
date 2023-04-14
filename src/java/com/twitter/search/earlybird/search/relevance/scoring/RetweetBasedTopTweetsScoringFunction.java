@@ -15,7 +15,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
 
 /**
  * A toptweets query cache index selection scoring function that is based purely on retweet counts.
- * The goal of this scoring functon is to deprecate itweet score in entirety.
+ * The goal of this scoring function is to deprecate itweet score in entirety.
  *
  * Once all legacy itweet scores are drained from existing earlybird index, new parus score replaces
  * existing itweet score position, then this class will be deprecated, a new scoring function

@@ -4,7 +4,7 @@ package com.twitter.search.core.earlybird.index.inverted;
  * A packed ints writer writing packed values (int/long) into {@link IntBlockPool}.
  * @see IntBlockPoolPackedLongsReader
  *
- * A standard useage would be:
+ * A standard usage would be:
  * - set writer at an int block pool pointer and number of bits per packed value:
  *   {@link #jumpToInt(int, int)}
  * - write: {@link #writePackedInt(int)} or {@link #writePackedLong(long)}

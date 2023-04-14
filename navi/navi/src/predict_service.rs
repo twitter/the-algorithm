@@ -18,7 +18,7 @@ use crate::bootstrap::TensorInput;
 use crate::{MAX_NUM_MODELS, MAX_VERSIONS_PER_MODEL, META_INFO, metrics, ModelFactory, PredictMessage, PredictResult, TensorReturnEnum, utils};
 
 use crate::cli_args::{ARGS, MODEL_SPECS};
-use crate::cores::validator::validatior::cli_validator;
+use crate::cores::validator::validator::cli_validator;
 use crate::metrics::MPSC_CHANNEL_SIZE;
 use serde_json::{self, Value};
 
@@ -183,7 +183,7 @@ impl<T: Model> PredictService<T> {
                 warn!("config file {} not found due to: {}", meta_file, e);
                 Value::Null
             });
-            info!("***polling for models***"); //nice deliminter
+            info!("***polling for models***"); //nice delimiter
             info!("config:{}", config);
             if let Some(ref cli) = ARGS.modelsync_cli {
                 if let Err(e) = call_external_modelsync(cli, &cur_versions).await {

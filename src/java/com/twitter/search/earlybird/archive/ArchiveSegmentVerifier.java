@@ -28,12 +28,12 @@ public final class ArchiveSegmentVerifier {
     }
 
     if (!segmentInfo.isComplete()) {
-      LOG.warn("ArchiveSegmentVerifyer got incomplete segment.");
+      LOG.warn("ArchiveSegmentVerifier got incomplete segment.");
       return false;
     }
 
     if (!segmentInfo.isOptimized()) {
-      LOG.warn("ArchiveSegmentVerifyer got unoptimized segment.");
+      LOG.warn("ArchiveSegmentVerifier got unoptimized segment.");
       return false;
     }
 

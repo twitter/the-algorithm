@@ -8,7 +8,7 @@ namespace twml {
 
     // Encodes a batch of model predictions as a list of Thrift DataRecord
     // objects inside a Thrift BatchPredictionResponse object. Prediction
-    // values are continousFeatures inside each DataRecord.
+    // values are continuosFeatures inside each DataRecord.
     //
     // The BatchPredictionResponseWriter TensorFlow operator uses this class
     // to determine the size of the output tensor to allocate. The operator

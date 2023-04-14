@@ -13,7 +13,7 @@ object FlagNames {
    */
   final val CacheDest = "cache_module.dest"
   final val CacheTimeout = "cache_module.timeout"
-  // Only turn on the async update when the SANN Cluster has the production taffic.
+  // Only turn on the async update when the SANN Cluster has the production traffic.
   final val CacheAsyncUpdate = "cache_module.async_update"
 
   /**

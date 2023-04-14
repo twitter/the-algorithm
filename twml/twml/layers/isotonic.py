@@ -12,7 +12,7 @@ import numpy as np
 class Isotonic(Layer):
   """
   This layer is created by the IsotonicCalibrator.
-  Typically it is used intead of sigmoid activation on the output unit.
+  Typically it is used instead of sigmoid activation on the output unit.
 
   Arguments:
     n_unit:

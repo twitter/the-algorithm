@@ -7,7 +7,7 @@ import twml
 
 class HashedPercentileDiscretizerCalibrator(PercentileDiscretizerCalibrator):
   ''' Accumulates features and their respective values for HashedPercentileDiscretizer calibration.
-  This calibrator perfoms the same actions as PercentileDiscretizerCalibrator but it's
+  This calibrator performs the same actions as PercentileDiscretizerCalibrator but it's
   `to_layer` method returns a HashedPercentileDiscretizer instead.
   '''
 

@@ -158,7 +158,7 @@ object KnnHelper {
    * @param reducers number of reducers for grouping
    * @param isSearchSpaceLarger Used for optimization: Is the search space larger than the query space? Ignored if numOfSearchGroups > 1.
    * @param numOfSearchGroups we divide the search space into these groups (randomly). Useful when the search space is too large. Overrides isSearchSpaceLarger.
-   * @param numReplicas Each search group will be responsible for 1/numReplicas queryEmebeddings.
+   * @param numReplicas Each search group will be responsible for 1/numReplicas queryEmbeddings.
    *                    This might speed up the search when the size of the index embeddings is
    *                    large.
    * @tparam A type of query entity
@@ -226,7 +226,7 @@ object KnnHelper {
    *                          the search space is too large. Search groups are shards. Choose this
    *                          number by ensuring searchSpaceEmbeddings.size / numOfSearchGroups
    *                          embeddings will fit into memory.
-   * @param numReplicas Each search group will be responsible for 1/numReplicas queryEmebeddings.
+   * @param numReplicas Each search group will be responsible for 1/numReplicas queryEmbeddings.
    *                    By increasing this number, we can parallelize the work and reduce end to end
    *                    running times.
    * @param indexingStrategy How we will search for nearest neighbors within a search group

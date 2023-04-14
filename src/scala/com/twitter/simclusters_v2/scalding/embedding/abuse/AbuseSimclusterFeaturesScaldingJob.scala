@@ -85,7 +85,7 @@ object AbuseSimclusterFeaturesScaldingJob {
 
 /**
  * This job creates single-side features used to predict the abuse reports in search. The features
- * are put into manhattan and availabe in feature store. We expect that search will be able to use
+ * are put into manhattan and available in feature store. We expect that search will be able to use
  * these features directly. They may be useful for other models as well.
  */
 object SearchAbuseSimclusterFeaturesScaldingJob extends ScheduledExecutionApp {

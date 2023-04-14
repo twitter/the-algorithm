@@ -168,7 +168,7 @@ class ProductPipelineBuilder[TRequest <: Request, Query <: PipelineQuery, Respon
   }
 
   def pipelineSelectorStep(
-    pipelineByIdentifer: Map[ComponentIdentifier, Pipeline[Query, Response]],
+    pipelineByIdentifier: Map[ComponentIdentifier, Pipeline[Query, Response]],
     pipelineSelector: Query => ComponentIdentifier,
     context: Executor.Context
   ): Step[Query, PipelineSelectorExecutorResult] =
@@ -178,7 +178,7 @@ class ProductPipelineBuilder[TRequest <: Request, Query <: PipelineQuery, Respon
       override def executorArrow: Arrow[
         Query,
         PipelineSelectorExecutorResult
-      ] = pipelineSelectorExecutor.arrow(pipelineByIdentifer, pipelineSelector, context)
+      ] = pipelineSelectorExecutor.arrow(pipelineByIdentifier, pipelineSelector, context)
 
       override def inputAdaptor(
         query: ProductPipelineRequest[TRequest],

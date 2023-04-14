@@ -86,7 +86,7 @@ object HydrationSourcesModule extends TwitterModule {
         val key = authorDatasetKey.withPkey(id)
         manhattanReadOnlyEndpoint
           .get(key = key, valueDesc = authorValDesc).map(_.map(value =>
-            clearUnsedFieldsForAuthorFeature(value.contents)))
+            clearUnusedFieldsForAuthorFeature(value.contents)))
       }
       authorCacheUnderlyingManhattanCall
     } else {
@@ -95,7 +95,7 @@ object HydrationSourcesModule extends TwitterModule {
         stStat.incr()
         val timelinesAuthorFeaturesFetcher = timelinesAuthorFeaturesColumn.fetcher
         timelinesAuthorFeaturesFetcher
-          .fetch(id).map(result => result.v.map(clearUnsedFieldsForAuthorFeature))
+          .fetch(id).map(result => result.v.map(clearUnusedFieldsForAuthorFeature))
       }
       authorCacheUnderlyingStratoCall
     }
@@ -141,7 +141,7 @@ object HydrationSourcesModule extends TwitterModule {
   }
 
   // clear out fields we don't need to save cache space
-  private def clearUnsedFieldsForAuthorFeature(entry: AuthorFeatures): AuthorFeatures = {
+  private def clearUnusedFieldsForAuthorFeature(entry: AuthorFeatures): AuthorFeatures = {
     entry.unsetUserTopics.unsetUserHealth.unsetAuthorCountryCodeAggregates.unsetOriginalAuthorCountryCodeAggregates
   }
 

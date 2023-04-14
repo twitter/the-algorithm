@@ -178,17 +178,17 @@ public interface FacetLabelProvider {
    * The methods on this provider should NOT be called under normal circumstances!
    *
    * When a facet misses inverted index and does not use CSF, this InaccessibleFacetLabelProvider
-   * will be used as a dummy provider. Then, unexptectedFacetLabelAccess counter will be
+   * will be used as a dummy provider. Then, unexpectedFacetLabelAccess counter will be
    * incremented when this provider is used later.
    *
    * Also see:
    * {@link FacetUtil}
    */
   class InaccessibleFacetLabelProvider implements FacetLabelProvider {
-    private final SearchCounter unexptectedFacetLabelAccess;
+    private final SearchCounter unexpectedFacetLabelAccess;
 
     public InaccessibleFacetLabelProvider(String fieldName) {
-      this.unexptectedFacetLabelAccess =
+      this.unexpectedFacetLabelAccess =
           SearchCounter.export("unexpected_facet_label_access_for_field_" + fieldName);
     }
 
@@ -197,7 +197,7 @@ public interface FacetLabelProvider {
       return new FacetLabelAccessor() {
         @Override
         protected boolean seek(long termID) {
-          unexptectedFacetLabelAccess.increment();
+          unexpectedFacetLabelAccess.increment();
           return false;
         }
       };

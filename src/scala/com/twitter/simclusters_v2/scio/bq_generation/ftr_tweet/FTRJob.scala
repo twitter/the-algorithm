@@ -35,7 +35,7 @@ trait FTRJob extends ScioBeamJob[DateRangeOptions] {
   val isAdhoc: Boolean
   val outputTable: BQTableDetails
   val keyValDatasetOutputPath: String
-  val tweetRecommentationsSnapshotDataset: KeyValDALDataset[KeyVal[Long, CandidateTweetsList]]
+  val tweetRecommendationsSnapshotDataset: KeyValDALDataset[KeyVal[Long, CandidateTweetsList]]
   val scoreKey: String
   val scoreColumn: String
 
@@ -162,7 +162,7 @@ trait FTRJob extends ScioBeamJob[DateRangeOptions] {
       }.saveAsCustomOutput(
         name = "WriteFtrTweetRecommendationsToKeyValDataset",
         DAL.writeVersionedKeyVal(
-          tweetRecommentationsSnapshotDataset,
+          tweetRecommendationsSnapshotDataset,
           PathLayout.VersionedPath(prefix =
             ((if (!isAdhoc)
                 RootMHPath
@@ -183,7 +183,7 @@ object FTRAdhocJob extends FTRJob {
     BQTableDetails("twttr-recos-ml-prod", "simclusters", "offline_tweet_recommendations_ftr_adhoc")
   override val keyValDatasetOutputPath = Config.IIKFFTRAdhocANNOutputPath
 
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
+  override val tweetRecommendationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
     OfflineTweetRecommendationsFtrAdhocScalaDataset
@@ -199,7 +199,7 @@ object IIKF2020DecayedSumBatchJobProd extends FTRJob {
     "offline_tweet_recommendations_decayed_sum"
   )
   override val keyValDatasetOutputPath = Config.IIKFDecayedSumANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
+  override val tweetRecommendationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
     OfflineTweetRecommendationsDecayedSumScalaDataset
@@ -214,7 +214,7 @@ object IIKF2020FTRAt5Pop1000batchJobProd extends FTRJob {
     "user",
     "offline_tweet_recommendations_ftrat5_pop_biased_1000")
   override val keyValDatasetOutputPath = Config.IIKFFTRAt5Pop1000ANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
+  override val tweetRecommendationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
     OfflineTweetRecommendationsFtrat5PopBiased1000ScalaDataset
@@ -229,7 +229,7 @@ object IIKF2020FTRAt5Pop10000batchJobProd extends FTRJob {
     "user",
     "offline_tweet_recommendations_ftrat5_pop_biased_10000")
   override val keyValDatasetOutputPath = Config.IIKFFTRAt5Pop10000ANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
+  override val tweetRecommendationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
     OfflineTweetRecommendationsFtrat5PopBiased10000ScalaDataset

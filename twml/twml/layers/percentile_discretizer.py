@@ -65,7 +65,7 @@ class PercentileDiscretizer(Layer):
         The hash map (hash_keys->hash_values) is used for two reasons:
           1. divide inputs into two feature spaces:
           PercentileDiscretizer vs non-PercentileDiscretizer
-          2. transate the PercentileDiscretizer features into a hash_feature ID that
+          2. translate the PercentileDiscretizer features into a hash_feature ID that
           PercentileDiscretizer understands.
         The hash_map is expected to contain n_feature items.
       hash_values:

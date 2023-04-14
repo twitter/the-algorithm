@@ -80,7 +80,7 @@ message NodeDef {
     // FB, then `original_funcs` would be {FA, FB}. If the node is in the top
     // level graph, the `original_func` is empty. This information, with the
     // `original_node_names` can be used to map errors originating at the
-    // current ndoe to some top level source code.
+    // current node to some top level source code.
     repeated string original_func_names = 2;
   }
 

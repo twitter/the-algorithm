@@ -2,7 +2,7 @@ import tensorflow.compat.v1 as tf
 from twml.contrib.utils import math_fns
 
 
-def mean_max_normalizaiton(dense_tensor):
+def mean_max_normalization(dense_tensor):
   """
   In-batch normalization
   Args:
@@ -20,7 +20,7 @@ def mean_max_normalizaiton(dense_tensor):
   return dense_tensor
 
 
-def standard_normalizaiton(dense_tensor):
+def standard_normalization(dense_tensor):
   """
   In-batch normalization
   z-normalization or standard_normalization in batch

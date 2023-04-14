@@ -54,8 +54,8 @@ case class UserUserGraphWriter(
       recosHoseMessage.rightId,
       getEdgeType(recosHoseMessage.action),
       recosHoseMessage.edgeMetadata.getOrElse(0L),
-      EMTPY_NODE_METADATA,
-      EMTPY_NODE_METADATA
+      EMPTY_NODE_METADATA,
+      EMPTY_NODE_METADATA
     )
   }
 
@@ -72,12 +72,12 @@ case class UserUserGraphWriter(
       recosHoseMessage.rightId,
       getEdgeType(recosHoseMessage.action),
       recosHoseMessage.edgeMetadata.getOrElse(0L),
-      EMTPY_NODE_METADATA,
-      EMTPY_NODE_METADATA
+      EMPTY_NODE_METADATA,
+      EMPTY_NODE_METADATA
     )
   }
 }
 
 private object UserUserGraphWriter {
-  final val EMTPY_NODE_METADATA = new Array[Array[Int]](1)
+  final val EMPTY_NODE_METADATA = new Array[Array[Int]](1)
 }

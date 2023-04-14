@@ -46,7 +46,7 @@ public class FacetCountAggregator implements FacetTermCollector {
       if (facetSearchParam.getFacetFieldRequest().getPath() != null
           && !facetSearchParam.getFacetFieldRequest().getPath().isEmpty()) {
         throw new IllegalArgumentException(
-            "this collector dosen't support hierarchical facets: "
+            "this collector doesn't support hierarchical facets: "
             + facetSearchParam.getFacetFieldRequest().getPath());
       }
 

@@ -193,7 +193,7 @@ trait BlobDataRecordCompatible extends DataRecordCompatible[ByteBuffer] {
 }
 
 /**
- * Converter for going from a Map[String, Double] feature value to Sparse Double/Continious ML Feature.
+ * Converter for going from a Map[String, Double] feature value to Sparse Double/Continuous ML Feature.
  */
 trait SparseContinuousDataRecordCompatible extends DataRecordCompatible[Map[String, Double]] {
   override type DataRecordType = JMap[String, JDouble]

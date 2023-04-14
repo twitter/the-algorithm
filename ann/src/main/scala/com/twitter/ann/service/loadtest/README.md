@@ -155,7 +155,7 @@ $ oscar hdfs \
     --sample_percent $SAMPLE_PERCENT
 ```
 
-It will sample 0.1% of embeddings and store them in `tab` format to hdfs that can be direcly used as `query_set` for loadtest.
+It will sample 0.1% of embeddings and store them in `tab` format to hdfs that can be directly used as `query_set` for loadtest.
 
 # Knn Truth Set Generator
 

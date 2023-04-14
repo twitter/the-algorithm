@@ -55,7 +55,7 @@ object ExtendedRepliesFilter {
         tweet.inReplyToTweetId
           .flatMap(
             sourceTweetsById.get
-          ) // there must be an in-reply-to tweet matching the following properities
+          ) // there must be an in-reply-to tweet matching the following properties
           .exists { inReplyToTweet =>
             (inReplyToTweet.userId > 0) && // and the in-reply to author is valid
             (inReplyToTweet.userId != viewingUserId) && // the reply can not be in reply to the viewing user's tweet

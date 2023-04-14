@@ -112,7 +112,7 @@ private[visibility] object VisibilityDeciders {
     NotificationsWrite -> DeciderKey.EnableNotificationsWriteSafetyLevel,
     NotificationsWriterV2 -> DeciderKey.EnableNotificationsWriterV2SafetyLevel,
     NotificationsWriterTweetHydrator -> DeciderKey.EnableNotificationsWriterTweetHydratorSafetyLevel,
-    ProfileMixerMedia -> DeciderKey.EnableProfileMixeMediaSafetyLevel,
+    ProfileMixerMedia -> DeciderKey.EnableProfileMixerMediaSafetyLevel,
     ProfileMixerFavorites -> DeciderKey.EnableProfileMixerFavoritesSafetyLevel,
     QuickPromoteTweetEligibility -> DeciderKey.EnableQuickPromoteTweetEligibilitySafetyLevel,
     QuoteTweetTimeline -> DeciderKey.EnableQuoteTweetTimelineSafetyLevel,

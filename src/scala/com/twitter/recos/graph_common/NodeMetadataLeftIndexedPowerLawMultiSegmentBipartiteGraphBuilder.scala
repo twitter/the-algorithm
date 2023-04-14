@@ -39,7 +39,7 @@ object NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphBuilder {
     edgeTypeMask: EdgeTypeMask)
 
   /**
-   * This apply function returns a mutuable bipartiteGraph
+   * This apply function returns a mutable bipartiteGraph
    *
    * @param graphBuilderConfig is the graph builder config
    *

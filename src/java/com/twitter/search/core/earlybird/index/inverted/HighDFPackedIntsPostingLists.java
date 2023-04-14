@@ -610,7 +610,7 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
   @Override
   public EarlybirdPostingsEnum postings(
       int postingListPointer, int numPostings, int flags) throws IOException {
-    // Positions are omitted but position enumerator are requried.
+    // Positions are omitted but position enumerator are required.
     if (omitPositions && PostingsEnum.featureRequested(flags, PostingsEnum.POSITIONS)) {
       GETTING_POSITIONS_WITH_OMIT_POSITIONS.increment();
     }

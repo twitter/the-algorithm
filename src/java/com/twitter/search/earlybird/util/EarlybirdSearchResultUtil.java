@@ -62,7 +62,7 @@ public final class EarlybirdSearchResultUtil {
   }
 
   /**
-   * Populate language histogram inside ThriftSerachResults.
+   * Populate language histogram inside ThriftSearchResults.
    */
   public static void setLanguageHistogram(ThriftSearchResults results,
                                           LanguageHistogram languageHistogram) {

@@ -59,9 +59,9 @@ case class PairedInteractionFeatures(
 
     unhealthyInteractionSimClusterEmbedding.embedding.flatMap { simClusterWithScore =>
       val clusterId = simClusterWithScore.clusterId
-      val postiveScoreOption = clusterToScoreMap.get(clusterId)
-      postiveScoreOption.flatMap { postiveScore =>
-        ClusterPair(clusterId, postiveScore, simClusterWithScore.score)
+      val positiveScoreOption = clusterToScoreMap.get(clusterId)
+      positiveScoreOption.flatMap { positiveScore =>
+        ClusterPair(clusterId, positiveScore, simClusterWithScore.score)
       }
     }
   }

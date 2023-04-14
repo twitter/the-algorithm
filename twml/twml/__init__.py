@@ -1,4 +1,4 @@
-""" Importing the pyton op wrappers """
+""" Importing the python op wrappers """
 
 import os
 

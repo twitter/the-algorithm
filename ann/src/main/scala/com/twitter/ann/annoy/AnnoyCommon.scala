@@ -36,7 +36,7 @@ object AnnoyCommon {
 
 case class AnnoyRuntimeParams(
   /* Number of vectors to evaluate while searching. A larger value will give more accurate results, but will take longer time to return.
-   * Default value would be numberOfTrees*numberOfNeigboursRequested
+   * Default value would be numberOfTrees*numberOfNeighboursRequested
    */
   nodesToExplore: Option[Int])
     extends RuntimeParams {

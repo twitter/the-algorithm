@@ -49,7 +49,7 @@ public final class GeoQuadTreeQueryBuilder {
    */
   public static Query buildGeoQuadTreeQuery(GeoCode geocode,
                                             TerminationTracker terminationTracker) {
-    Query geoHashDisjuntiveQuery = GeoQuadTreeQueryBuilderUtil.buildGeoQuadTreeQuery(
+    Query geoHashDisjunctiveQuery = GeoQuadTreeQueryBuilderUtil.buildGeoQuadTreeQuery(
         geocode, EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName());
 
     // 5. Create post filtering accepter
@@ -57,7 +57,7 @@ public final class GeoQuadTreeQueryBuilder {
             ? new CenterRadiusAccepter(geocode.latitude, geocode.longitude, geocode.distanceKm)
             : GeoTwoPhaseQuery.ALL_DOCS_ACCEPTER;
 
-    return new GeoTwoPhaseQuery(geoHashDisjuntiveQuery, accepter, terminationTracker);
+    return new GeoTwoPhaseQuery(geoHashDisjunctiveQuery, accepter, terminationTracker);
   }
 
   /**
@@ -99,13 +99,13 @@ public final class GeoQuadTreeQueryBuilder {
         geoHashSet.add(intersectingCells.next().getTokenBytesNoLeaf(new BytesRef()));
       }
     }
-    MultiTermDisjunctionQuery geoHashDisjuntiveQuery = new MultiTermDisjunctionQuery(
+    MultiTermDisjunctionQuery geoHashDisjunctiveQuery = new MultiTermDisjunctionQuery(
         EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName(), geoHashSet);
 
     // 5. Create post filtering accepter
     final GeoDocAccepter accepter = new BoundingBoxAccepter(boundingBox);
 
-    return new GeoTwoPhaseQuery(geoHashDisjuntiveQuery, accepter, terminationTracker);
+    return new GeoTwoPhaseQuery(geoHashDisjunctiveQuery, accepter, terminationTracker);
   }
 
   private abstract static class GeoDocAccepter extends SecondPhaseDocAccepter {
