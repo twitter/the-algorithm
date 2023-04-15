@@ -36,8 +36,8 @@ object SpaceSafetyLabelType extends SafetyLabelType {
     s.SpaceSafetyLabelType.HatefulHighRecall -> HatefulHighRecall,
     s.SpaceSafetyLabelType.ViolenceHighRecall -> ViolenceHighRecall,
     s.SpaceSafetyLabelType.HighToxicityModelScore -> HighToxicityModelScore,
-    s.SpaceSafetyLabelType.UkraineCrisisTopic -> UkraineCrisisTopic,
-    s.SpaceSafetyLabelType.DoNotPublicPublish -> DoNotPublicPublish,
+    s.SpaceSafetyLabelType.DeprecatedSpaceSafetyLabel14 -> Deprecated,
+    s.SpaceSafetyLabelType.DeprecatedSpaceSafetyLabel15 -> Deprecated,
     s.SpaceSafetyLabelType.Reserved16 -> Deprecated,
     s.SpaceSafetyLabelType.Reserved17 -> Deprecated,
     s.SpaceSafetyLabelType.Reserved18 -> Deprecated,
@@ -68,10 +68,6 @@ object SpaceSafetyLabelType extends SafetyLabelType {
   case object HatefulHighRecall extends SpaceSafetyLabelType
   case object ViolenceHighRecall extends SpaceSafetyLabelType
   case object HighToxicityModelScore extends SpaceSafetyLabelType
-
-  case object UkraineCrisisTopic extends SpaceSafetyLabelType
-
-  case object DoNotPublicPublish extends SpaceSafetyLabelType
 
   case object Deprecated extends SpaceSafetyLabelType
   case object Unknown extends SpaceSafetyLabelType

@@ -33,7 +33,7 @@ enum EmbeddingType {
   Pop10000RankDecay11Tweet = 31,
   OonPop1000RankDecayTweet = 32,
 
-  // [Experimental] Offline generated produciton-like LogFavScore-based Tweet Embedding
+  // [Experimental] Offline generated production-like LogFavScore-based Tweet Embedding
   OfflineGeneratedLogFavBasedTweet = 40,
 
   // Reserve 51-59 for Ads Embedding
@@ -104,7 +104,7 @@ enum EmbeddingType {
   //Reserved 401 - 500 for Space embedding
   FavBasedApeSpace = 401 // DEPRECATED
   LogFavBasedListenerSpace = 402 // DEPRECATED
-  LogFavBasedAPESpeakerSpace = 403 // DEPRCATED
+  LogFavBasedAPESpeakerSpace = 403 // DEPRECATED
   LogFavBasedUserInterestedInListenerSpace = 404 // DEPRECATED
 
   // Experimental, internal-only IDs

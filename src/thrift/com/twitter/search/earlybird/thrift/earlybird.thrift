@@ -831,7 +831,7 @@ struct ThriftSearchResult {
   12: optional list<hits.ThriftHits> cardTitleHitHighlights
   13: optional list<hits.ThriftHits> cardDescriptionHitHighlights
 
-  // Expansion types, if expandResult == False, the expasions set should be ignored.
+  // Expansion types, if expandResult == False, the expansions set should be ignored.
   8: optional bool expandResult = 0
   9: optional set<expansions.ThriftTweetExpansionType> expansions
 
@@ -971,7 +971,7 @@ struct ThriftTermStatisticsResults {
   // The binIds will correspond to the times of the hits matching the driving search query for this
   // term statistics request.
   // If there were no hits matching the search query, numBins binIds will be returned, but the
-  // values of the binIds will not meaninfully correspond to anything related to the query, and
+  // values of the binIds will not meaningfully correspond to anything related to the query, and
   // should not be used. Such cases can be identified by ThriftSearchResults.numHitsProcessed being
   // set to 0 in the response, and the response not being early terminated.
   3: optional list<i32> binIds
@@ -1097,7 +1097,7 @@ struct ThriftSearchResults {
   // Superroots' schema merge/choose logic when returning results to clients:
   // . pick the schema based on the order of: realtime > protected > archive
   // . because of the above ordering, it is possible that archive earlybird schema with a new flush
-  //   verion (with new bit features) might be lost to older realtime earlybird schema; this is
+  //   version (with new bit features) might be lost to older realtime earlybird schema; this is
   //   considered to to be rare and acceptable because one realtime earlybird deploy would fix it
   21: optional features.ThriftSearchFeatureSchema featureSchema
 

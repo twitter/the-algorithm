@@ -494,6 +494,9 @@ visibility_library_enable_trends_representative_tweet_safety_level:
 visibility_library_enable_trusted_friends_user_list_safety_level:
   default_availability: 10000
 
+visibility_library_enable_twitter_delegate_user_list_safety_level:
+  default_availability: 10000
+
 visibility_library_enable_tweet_detail_safety_level:
   default_availability: 10000
 
@@ -758,7 +761,7 @@ visibility_library_enable_short_circuiting_from_blender_visibility_library:
 visibility_library_enable_short_circuiting_from_search_visibility_library:
   default_availability: 0
 
-visibility_library_enable_nsfw_text_topics_drop_rule:
+visibility_library_enable_nsfw_text_high_precision_drop_rule:
   default_availability: 10000
 
 visibility_library_enable_spammy_tweet_rule_verdict_logging:
