@@ -18,7 +18,7 @@ Product surfaces at Twitter are built on a shared set of data, models, and softw
 |       | [recos-injector](recos-injector/README.md) | Streaming event processor for building input streams for [GraphJet](https://github.com/twitter/GraphJet) based services. |
 |       | [graph-feature-service](graph-feature-service/README.md) | Serves graph features for a directed pair of Users (e.g. how many of User A's following liked Tweets from User B). |
 |       | [topic-social-proof](topic-social-proof/README.md) | Identifies topics related to individual Tweets. |
-| Software framework | [navi](navi/README.md) | High performance, machine learning model serving written in Rust. |
+| Software framework | [navi](navi/README.md) | High performance, machine learning model server written in Rust. |
 |                    | [product-mixer](product-mixer/README.md) | Software framework for building feeds of content. |
 |                    | [twml](twml/README.md) | Legacy machine learning framework built on TensorFlow v1. |
 
