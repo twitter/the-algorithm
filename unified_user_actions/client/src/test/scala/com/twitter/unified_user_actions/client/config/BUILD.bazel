@@ -1,0 +1,12 @@
+junit_tests(
+    sources = ["**/*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/junit",
+        "3rdparty/jvm/org/scalatest",
+        "3rdparty/jvm/org/scalatestplus:junit",
+        "finatra/inject/inject-core/src/test/scala:test-deps",
+        "unified_user_actions/client/src/main/scala/com/twitter/unified_user_actions/client/config",
+    ],
+)
