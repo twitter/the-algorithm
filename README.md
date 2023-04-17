@@ -24,11 +24,11 @@ Product surfaces at Twitter are built on a shared set of data, models, and softw
 
 The product surface currently included in this repository is the For You Timeline.
 
-### For You Timeline
+## For You Timeline
 
 The diagram below illustrates how major services and jobs interconnect to construct a For You Timeline.
 
-![](docs/system-diagram.png)
+![system-diagram](docs/system-diagram.png)
 
 The core components of the For You Timeline included in this repository are listed below:
 
