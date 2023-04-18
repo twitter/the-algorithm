@@ -12,7 +12,6 @@ Note: similar to tf.metrics.*, batches added into a metric via its update_op are
 
 """
 
-from collections import OrderedDict
 from functools import partial
 from typing import Callable, Dict, List, Optional, Tuple
 
@@ -244,7 +243,7 @@ def get_search_metric_fn(
             weights of the samples..
         """
 
-        eval_metric_ops = OrderedDict()
+        eval_metric_ops = dict()
 
         preds = graph_output["output"]
 

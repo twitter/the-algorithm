@@ -4,7 +4,6 @@ Its components conform to conventions used by the ``tf.metrics`` module.
 
 """
 
-from collections import OrderedDict
 from functools import partial
 from typing import Callable, Collection, Dict, List, Optional, Sequence, Tuple, Union
 
@@ -498,23 +497,23 @@ def ce(p_true: tf.Tensor, p_est: Optional[tf.Tensor] = None) -> tf.Tensor:
     return _binary_cross_entropy(pred=p_est, target=p_true, name=None)
 
 
-def rce_transform(outputs, labels: tf.Tensor, weights: tf.Tensor) -> OrderedDict:
+def rce_transform(outputs, labels: tf.Tensor, weights: tf.Tensor) -> dict:
     """
-    Construct an OrderedDict of quantities to aggregate over eval batches
+    Construct an dict of quantities to aggregate over eval batches
     outputs, labels, weights are TensorFlow tensors, and are assumed to
-      be of shape [N] for batch_size = N
-    Each entry in the output OrderedDict should also be of shape [N]
+        be of shape [N] for batch_size = N
+    Each entry in the output dict should also be of shape [N]
     """
-    out_vals = OrderedDict()
+    out_vals = dict()
     out_vals["weighted_loss"] = weights * ce(p_true=labels, p_est=outputs)
     out_vals["weighted_labels"] = labels * weights
     out_vals["weight"] = weights
     return out_vals
 
 
-def rce_metric(aggregates: OrderedDict) -> tf.Tensor:
+def rce_metric(aggregates: dict) -> tf.Tensor:
     """
-    input ``aggregates`` is an OrderedDict with the same keys as those created
+    input ``aggregates`` is an dict with the same keys as those created
         by rce_transform(). The dict values are the aggregates (reduce_sum)
         of the values produced by rce_transform(), and should be scalars.
     output is the value of RCE
@@ -533,8 +532,8 @@ def metric_std_err(
     labels: tf.Tensor,
     predictions: tf.Tensor,
     weights: tf.Tensor = None,
-    transform: Callable[[tf.Tensor, tf.Tensor, tf.Tensor], OrderedDict] = rce_transform,
-    metric: Callable[[OrderedDict], tf.Tensor] = rce_metric,
+    transform: Callable[[tf.Tensor, tf.Tensor, tf.Tensor], dict] = rce_transform,
+    metric: Callable[[dict], tf.Tensor] = rce_metric,
     metrics_collections: Optional[Collection[tf.Variable]] = None,
     updates_collections: Optional[Collection[tf.Variable]] = None,
     name: str = "rce_std_err",
@@ -552,12 +551,12 @@ def metric_std_err(
             .. code-block:: python
 
             def transform(outputs, labels, weights):
-                out_vals = OrderedDict()
+                out_vals = dict()
                 ...
                 return out_vals
 
             where outputs, labels, and weights are all tensors of shape [eval_batch_size].
-            The returned OrderedDict() should have values that are tensors of shape  [eval_batch_size].
+            The returned dict() should have values that are tensors of shape  [eval_batch_size].
             These will be aggregated across many batches in the eval dataset, to produce
             one scalar value per key of out_vals.
         metric: a function of the following form
@@ -568,7 +567,7 @@ def metric_std_err(
                 ...
                 return metric_value
 
-            where aggregates is an OrderedDict() having the same keys created by transform().
+            where aggregates is an dict() having the same keys created by transform().
             Each of the corresponding dict values is the reduce_sum of the values produced by
             transform(), and is a TF scalar. The return value should be a scalar representing
             the value of the desired metric.
@@ -597,7 +596,7 @@ def metric_std_err(
         weights = tf.reshape(weights, [-1])
 
         # first apply the supplied transform function to the output, label, weight data
-        # returns an OrderedDict of 1xN tensors for N input samples
+        # returns an dict of 1xN tensors for N input samples
         # for each sample, compute f = transform(pred, l, w)
         transformed = transform(predictions, labels, weights)
 
@@ -639,11 +638,11 @@ def metric_std_err(
         )
 
         def compute_output(
-            agg1: tf.Tensor, agg2: tf.Tensor, samp_cnt: tf.Tensor
+            agg_1: tf.Tensor, agg_2: tf.Tensor, samp_cnt: tf.Tensor
         ) -> tf.Tensor:
             """Compute the metric value and its standard error."""
             # decompose the aggregates back into a dict to pass to the user-supplied metric fn
-            aggregates_dict = OrderedDict()
+            aggregates_dict = dict()
             for i, key in enumerate(transformed.keys()):
                 aggregates_dict[key] = agg_1[i]
 
@@ -1251,7 +1250,7 @@ def get_binary_class_metric_fn(metrics: Optional[List[str]] = None) -> Callable:
             weights of the samples..
         """
 
-        eval_metric_ops = OrderedDict()
+        eval_metric_ops = dict()
 
         preds = graph_output["output"]
 
@@ -1403,7 +1402,7 @@ def get_multi_binary_class_metric_fn(
             weights of the samples..
         """
 
-        eval_metric_ops = OrderedDict()
+        eval_metric_ops = dict()
 
         preds = graph_output["output"]
 
@@ -1630,11 +1629,11 @@ def combine_metric_fns(*fn_list) -> Callable:
       *fn_list: Multiple metric functions to be combined
 
     Returns:
-      Combined metric function.
+        Combined metric function.
     """
 
-    def combined_metric_ops(*args, **kwargs) -> OrderedDict:
-        eval_metric_ops = OrderedDict()
+    def combined_metric_ops(*args, **kwargs) -> dict:
+        eval_metric_ops = dict()
         for fn in fn_list:
             eval_metric_ops.update(fn(*args, **kwargs))
         return eval_metric_ops

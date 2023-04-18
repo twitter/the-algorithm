@@ -1,5 +1,4 @@
 # checkstyle: noqa
-from collections import OrderedDict
 from typing import Dict, Optional
 
 import tensorflow.compat.v1 as tf
@@ -32,7 +31,7 @@ def get_multi_binary_class_metric_fn(
         graph_output: Dict[str, tf.Tensor],
         labels: tf.Tensor,
         weights: tf.Tensor,
-    ) -> OrderedDict:
+    ) -> dict:
         """
         Args:
             graph_output:
@@ -43,7 +42,7 @@ def get_multi_binary_class_metric_fn(
                 weights of the samples.
 
         Returns:
-            OrderedDict of metric name to tuple of (value_op, update_op).
+            dict of metric name to tuple of (value_op, update_op).
         """
 
         # Added to support the example weights overriding.
@@ -51,7 +50,7 @@ def get_multi_binary_class_metric_fn(
         # Added to support per engagement metrics for both TF and Lolly scores.
         labels = tf.tile(labels, [1, 2])
 
-        eval_metric_ops = OrderedDict()
+        eval_metric_ops = dict()
 
         preds = graph_output["output"]
 

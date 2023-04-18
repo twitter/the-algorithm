@@ -2,7 +2,6 @@ import argparse
 import os
 import re
 import time
-from collections import OrderedDict
 from typing import Dict, Optional, Tuple
 
 import numpy as np
@@ -57,11 +56,11 @@ def load_initializers_from_csv(
             Specifies the separator to use when splitting each line into values.
             Default value is a whitespace (same as glove format).
         vocab:
-            OrderedDict mapping words to np.array embedding vectors. Initializes the vocabulary.
+            dict mapping words to np.array embedding vectors. Initializes the vocabulary.
             Duplicate words found in the file are ignored.
             Defaults to a vocabulary of two words::
 
-                vocab = OrderedDict()
+                vocab = dict()
                 vocab[''] = np.random.randn(embedding_size)
                 vocab['<UNK>'] = np.random.randn(embedding_size)
 
@@ -82,14 +81,14 @@ def load_initializers_from_csv(
 
     is_user_vocab = True
     if vocab is None:
-        vocab = OrderedDict()
+        vocab = dict()
         vocab[""] = True
         vocab["<UNK>"] = True
         is_user_vocab = False
 
-    elif not isinstance(vocab, OrderedDict):
+    elif not isinstance(vocab, dict):
         raise RuntimeError(
-            "Expecting vocab argument of type OrderedDict or None. "
+            "Expecting vocab argument of type dict or None. "
             "Got type %s instead." % type(vocab).__name__
         )
 

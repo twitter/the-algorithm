@@ -11,7 +11,6 @@ We will have to write wrapper classes to create one metric per label.
 Note: similar to tf.metrics.*, batches added into a metric via its update_op are cumulative!
 """
 
-from collections import OrderedDict
 from typing import Callable, List, Optional, Tuple, Union
 
 import tensorflow.compat.v1 as tf
@@ -100,7 +99,7 @@ def get_metric_topK_fn_helper(
     topK: Tuple[int] = (5, 5, 5),
     predcol: Optional[int] = None,
     labelcol: Optional[int] = None,
-) -> Callable[[dict, tf.Tensor, tf.Tensor], OrderedDict]:
+) -> Callable[[dict, tf.Tensor, tf.Tensor], dict]:
     """
     Helper function to get metric function for topK evaluation
 
@@ -140,7 +139,7 @@ def get_metric_topK_fn_helper(
 
     def get_eval_metric_ops(
         graph_output: dict, labels: tf.Tensor, weights: tf.Tensor
-    ) -> OrderedDict:
+    ) -> dict:
         """
         Get Evaluation Metric Ops
 
@@ -156,7 +155,7 @@ def get_metric_topK_fn_helper(
             dict:
                 Evaluation Metric Ops
         """
-        eval_metric_ops = OrderedDict()
+        eval_metric_ops = dict()
 
         if predcol is None:
             pred = graph_output["output"]
@@ -216,7 +215,7 @@ def get_numeric_metric_fn(
     topK: Tuple[int] = (5, 5, 5),
     predcol: Optional[int] = None,
     labelcol: Optional[int] = None,
-) -> Callable[[dict, tf.Tensor, tf.Tensor], OrderedDict]:
+) -> Callable[[dict, tf.Tensor, tf.Tensor], dict]:
     if metrics is None:
         metrics = list(DEFAULT_NUMERIC_METRICS)
     metrics = list(set(metrics))
@@ -237,7 +236,7 @@ def get_single_binary_task_metric_fn(
     classnames: List[str],
     topK: Tuple[int] = (5, 5, 5),
     use_topK: bool = False,
-) -> Callable[[dict, tf.Tensor, tf.Tensor], OrderedDict]:
+) -> Callable[[dict, tf.Tensor, tf.Tensor], dict]:
     """
     graph_output['output']:        [BatchSz, 1]        [pred_Task1]
     labels:                        [BatchSz, 2]        [Task1, NumericLabel]
@@ -272,7 +271,7 @@ def get_dual_binary_tasks_metric_fn(
     classnames: List[str],
     topK: Tuple[int] = (5, 5, 5),
     use_topK: bool = False,
-) -> Callable[[dict, tf.Tensor, tf.Tensor], OrderedDict]:
+) -> Callable[[dict, tf.Tensor, tf.Tensor], dict]:
     """
     Args:
         metrics (List[str]):

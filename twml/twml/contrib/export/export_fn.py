@@ -2,7 +2,6 @@
 Functions for exporting models for different modes.
 """
 import os
-from collections import OrderedDict
 from typing import List
 
 import tensorflow.compat.v1 as tf
@@ -299,7 +298,7 @@ def export_feature_spec(dir_path: str, feature_spec_dict: dict) -> str:
     except NameError:
         pass
 
-    yaml.add_representer(OrderedDict, ordered_dict_representer)
+    yaml.add_representer(dict, ordered_dict_representer)
 
     fbase = "feature_spec.yaml"
     fname = fbase.encode("utf-8") if type(dir_path) != str else fbase
