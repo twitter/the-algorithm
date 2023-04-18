@@ -47,14 +47,8 @@ def get_feature_config(data_spec_path: str, label: str) -> FeatureConfigBuilder:
                 ("extended_encoded_tweet_features.label_spam_hi_rcl_flag", "A"),
                 ("extended_encoded_tweet_features.periscope_exists", "A"),
                 ("extended_encoded_tweet_features.periscope_has_been_featured", "A"),
-                (
-                    "extended_encoded_tweet_features.periscope_is_currently_featured",
-                    "A",
-                ),
-                (
-                    "extended_encoded_tweet_features.periscope_is_from_quality_source",
-                    "A",
-                ),
+                ("extended_encoded_tweet_features.periscope_is_currently_featured","A"),
+                ("extended_encoded_tweet_features.periscope_is_from_quality_source", "A"),
                 ("extended_encoded_tweet_features.periscope_is_live", "A"),
                 ("extended_encoded_tweet_features.quote_count", "A"),
                 ("extended_encoded_tweet_features.reply_count_v2", "A"),

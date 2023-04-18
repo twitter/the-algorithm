@@ -30,4 +30,4 @@ def make_feature_id(name: str, num_bits: int) -> np.int64:
 def limit_bits(value: int, num_bits: int) -> int:
     """Limits the number of bits in the given value."""
 
-    return value & ((2**num_bits) - 1)
+    return value & ((1<<num_bits) - 1)

@@ -40,9 +40,7 @@ class TFModelDiscretizerBuilder(object):
         :return: a HashingDiscretizer instance.
         """
         discretized_features = tf_model_initializer["features"]["discretized"]
-
         max_bins = 0
-
         feature_ids = []
         bin_vals = []
         for feature_name in discretized_features:
@@ -53,12 +51,9 @@ class TFModelDiscretizerBuilder(object):
                 np.float(bin_boundary) for bin_boundary in bin_boundaries
             ]
             bin_vals.append(np_bin_boundaries)
-
             max_bins = max(max_bins, len(np_bin_boundaries))
-
         feature_ids_np = np.array(feature_ids)
         bin_vals_np = np.array(bin_vals).flatten()
-
         return HashingDiscretizer(
             feature_ids=feature_ids_np,
             bin_vals=bin_vals_np,

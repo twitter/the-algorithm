@@ -16,9 +16,10 @@ class TFModelWeightsInitializerBuilder(object):
         """
         :return: (bias_initializer, weight_initializer)
         """
-        initial_weights = np.zeros((2**self.num_bits, 1))
 
+        initial_weights = np.zeros((1 << self.num_bits, 1))
         features = tf_model_initializer["features"]
+
         self._set_binary_feature_weights(initial_weights, features["binary"])
         self._set_discretized_feature_weights(initial_weights, features["discretized"])
 
@@ -27,8 +28,12 @@ class TFModelWeightsInitializerBuilder(object):
         ), twml.contrib.initializers.PartitionConstant(initial_weights)
 
     def _set_binary_feature_weights(
-        self, initial_weights: np.ndarray, binary_features: Dict[str, float]
+        self,
+        initial_weights: np.ndarray,
+        binary_features: Dict[str, float],
     ) -> None:
+        """set weights for binary features"""
+
         for feature_name, weight in binary_features.items():
             feature_id = make_feature_id(feature_name, self.num_bits)
             initial_weights[feature_id][0] = weight
@@ -38,6 +43,8 @@ class TFModelWeightsInitializerBuilder(object):
         initial_weights: np.ndarray,
         discretized_features: Dict[str, Dict[str, Any]],
     ) -> None:
+        """set weights for discretized features"""
+
         for feature_name, discretized_feature in discretized_features.items():
             feature_id = make_feature_id(feature_name, self.num_bits)
             for bin_idx, weight in enumerate(discretized_feature["weights"]):

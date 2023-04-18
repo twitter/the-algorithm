@@ -89,7 +89,7 @@ class FactorizationMachine(Layer):
         # 2**30 is 1GB. 2 * (2**30) is 2GB.
         dtype = tf.as_dtype(self.dtype)
         requested_size = input_shape[1] * self.num_latent_variables * dtype.size
-        if requested_size >= 2**31:
+        if requested_size >= (1<<31):
             raise ValueError(
                 "Weight tensor can not be larger than 2GB. "
                 % "Requested Dimensions(%d, %d) of type %s (%d bytes total)"(

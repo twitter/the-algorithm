@@ -187,7 +187,7 @@ class FullSparse(Layer):
         requested_size = (
             math.ceil(float(split_dim) / num_partitions) * other_dim * dtype.size
         )
-        if requested_size >= 2**31:
+        if requested_size >= 1 << 31:
             raise ValueError(
                 "Weight tensor partitions cannot be larger than 2GB.\n"
                 "Requested Dimensions(%d, %d) of type %s (%d bytes total) over %d partitions.\n"
