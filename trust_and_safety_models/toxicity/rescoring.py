@@ -1,11 +1,18 @@
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 from toxicity_ml_pipeline.load_model import reload_model_weights
 from toxicity_ml_pipeline.utils.helpers import load_inference_func, upload_model
 
 
 def score(
-    language, df, gcs_model_path, batch_size=64, text_col="text", kw="", **kwargs
+    language: str,
+    df: pd.DataFrame,
+    gcs_model_path: str,
+    batch_size: int = 64,
+    text_col: str = "text",
+    kw: str = "",
+    **kwargs,
 ):
     if language != "en":
         raise NotImplementedError(
@@ -41,7 +48,13 @@ def score(
         )
 
 
-def _get_score(inference_func, df, text_col="text", kw="", batch_size=64):
+def _get_score(
+    inference_func: tf.function,
+    df: pd.DataFrame,
+    text_col: str = "text",
+    kw: str = "",
+    batch_size: int = 64,
+) -> pd.DataFrame:
     score_col = f"prediction_{kw}"
     beginning = 0
     end = df.shape[0]

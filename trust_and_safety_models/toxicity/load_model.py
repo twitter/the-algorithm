@@ -22,7 +22,7 @@ except ModuleNotFoundError:
 LOCAL_MODEL_DIR = os.path.join(LOCAL_DIR, "models")
 
 
-def reload_model_weights(weights_dir, language, **kwargs):
+def reload_model_weights(weights_dir, language: str, **kwargs):
     optimizer = tf.keras.optimizers.Adam(0.01)
     model_type = (
         "twitter_bert_base_en_uncased_mlm"
@@ -35,7 +35,7 @@ def reload_model_weights(weights_dir, language, **kwargs):
     return model
 
 
-def _locally_copy_models(model_type):
+def _locally_copy_models(model_type: str):
     if model_type == "twitter_multilingual_bert_base_cased_mlm":
         preprocessor = "bert_multi_cased_preprocess_3"
     elif model_type == "twitter_bert_base_en_uncased_mlm":
@@ -43,9 +43,7 @@ def _locally_copy_models(model_type):
     else:
         raise NotImplementedError
 
-    copy_cmd = """mkdir {local_dir}
-gsutil cp -r ...
-gsutil cp -r ..."""
+    copy_cmd = "mkdir {local_dir}\ngsutil cp -r ...\ngsutil cp -r ..."
     execute_command(
         copy_cmd.format(
             model_type=model_type, preprocessor=preprocessor, local_dir=LOCAL_MODEL_DIR
@@ -55,7 +53,7 @@ gsutil cp -r ..."""
     return preprocessor
 
 
-def load_encoder(model_type, trainable):
+def load_encoder(model_type: str, trainable: bool):
     try:
         model = TextEncoder(
             max_seq_lengths=MAX_SEQ_LENGTH,
@@ -80,7 +78,7 @@ def load_encoder(model_type, trainable):
     return model
 
 
-def get_loss(loss_name, from_logits, **kwargs):
+def get_loss(loss_name: str, from_logits, **kwargs):
     loss_name = loss_name.lower()
     if loss_name == "bce":
         print("Binary CE loss")
@@ -117,7 +115,7 @@ def get_loss(loss_name, from_logits, **kwargs):
     )
 
 
-def _add_additional_embedding_layer(doc_embedding, glorot, seed):
+def _add_additional_embedding_layer(doc_embedding, glorot, seed: int):
     doc_embedding = tf.keras.layers.Dense(
         768, activation="tanh", kernel_initializer=glorot
     )(doc_embedding)
@@ -213,11 +211,11 @@ def load_bertweet(**kwargs):
 
 
 def load(
-    optimizer,
-    seed,
-    model_type="twitter_multilingual_bert_base_cased_mlm",
-    loss_name="BCE",
-    trainable=True,
+    optimizer: str,
+    seed: int,
+    model_type: str = "twitter_multilingual_bert_base_cased_mlm",
+    loss_name: str = "BCE",
+    trainable: bool = True,
     **kwargs,
 ):
     if model_type == "bertweet-base":

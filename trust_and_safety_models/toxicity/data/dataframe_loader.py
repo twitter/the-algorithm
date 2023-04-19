@@ -222,7 +222,7 @@ class ENLoaderWithSampling(ENLoader):
 
     def sample(
         self,
-        df,
+        df: pd.DataFrame,
         first_set: pd.DataFrame,
         second_set: pd.DataFrame,
         keyword_sampling: bool,
@@ -300,13 +300,13 @@ class I18nLoader(DataframeLoader):
         self.accepted_languages = ACCEPTED_LANGUAGES
         self.query_settings = dict(QUERY_SETTINGS)
 
-    def produce_query(self, language, query, dataset, table, lang):
+    def produce_query(self, language: str, query: str, dataset: str, table: str, lang: str) -> str:
         query = query.format(dataset=dataset, table=table)
         add_query = f"AND reviewed.{lang}='{language}'"
         query += add_query
         return query
 
-    def query_keys(self, language, task=2, size="50"):
+    def query_keys(self, language: str, task: int=2, size: str="50"):
         if task == 2:
             if language == "ar":
                 self.query_settings["adhoc_v2"]["table"] = "..."
@@ -323,7 +323,7 @@ class I18nLoader(DataframeLoader):
             f"There are no other tasks than 2 or 3. {task} does not exist."
         )
 
-    def load_data(self, language, test=False, task=2):
+    def load_data(self, language: str, test: bool=False, task: int=2):
         if language not in self.accepted_languages:
             raise ValueError(
                 f"Language not in the data {language}. Accepted values are "

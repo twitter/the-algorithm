@@ -3,6 +3,7 @@ from datetime import datetime
 from importlib import import_module
 
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 from toxicity_ml_pipeline.data.data_preprocessing import (
     DefaultENNoPreprocessor,
@@ -247,7 +248,9 @@ class Trainer(object):
             return warm_up_schedule
         return learning_rate_fn
 
-    def get_optimizer(self, schedule):
+    def get_optimizer(
+        self, schedule: tf.keras.optimizers.schedules.LearningRateSchedule
+    ):
         optim_args = {
             "learning_rate": schedule,
             "beta_1": 0.9,
@@ -277,7 +280,7 @@ class Trainer(object):
 
         return optimizer, callbacks
 
-    def load_data(self):
+    def load_data(self) -> pd.DataFrame:
         if self.project == 435 or self.project == 211:
             if self.dataset_type is None:
                 data_loader = ENLoader(
@@ -299,7 +302,7 @@ class Trainer(object):
 
         return df
 
-    def preprocess(self, df):
+    def preprocess(self, df: pd.DataFrame):
         if self.project == 435 or self.project == 211:
             if self.preprocessing is None:
                 data_prepro = DefaultENNoPreprocessor()
@@ -318,7 +321,7 @@ class Trainer(object):
             num_classes=self.num_classes,
         )
 
-    def load_model(self, optimizer):
+    def load_model(self, optimizer: tf.keras.optimizers.Optimizer):
         smart_bias_value = (
             np.log(self.perc_training_tox / (1 - self.perc_training_tox))
             if self.smart_bias_init
@@ -354,7 +357,12 @@ class Trainer(object):
         return model
 
     def _train_single_fold(
-        self, mb_generator, test_data, steps_per_epoch, fold, val_data=None
+        self,
+        mb_generator: tf.data.Dataset,
+        test_data: pd.DataFrame,
+        steps_per_epoch: int,
+        fold: int,
+        val_data: pd.DataFrame = None,
     ):
         steps_per_epoch = 100 if self.test else steps_per_epoch
 
@@ -376,7 +384,6 @@ class Trainer(object):
         }
 
         model.fit(mb_generator, **training_args)
-        return
 
     def train_full_model(self):
         print("Setting up random seed.")

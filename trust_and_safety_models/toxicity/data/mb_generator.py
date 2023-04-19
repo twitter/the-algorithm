@@ -78,11 +78,9 @@ class BalancedMiniBatchLoader(object):
             )
 
         self.n_inner_splits = n_inner_splits if n_inner_splits is not None else INNER_CV
-
         self.seed = seed
         self.mb_size = mb_size
         self.fold = fold
-
         self.sample_weights = sample_weights
         self.dual_head = dual_head
         self.huggingface = huggingface
@@ -99,7 +97,7 @@ class BalancedMiniBatchLoader(object):
             os.path.join(local_model_dir, "bertweet-base"), normalization=True
         )
 
-    def tokenize_function(self, el):
+    def tokenize_function(self, el: dict) -> dict:
         return self.tokenizer(
             el["text"],
             max_length=MAX_SEQ_LENGTH,
@@ -110,12 +108,12 @@ class BalancedMiniBatchLoader(object):
             return_attention_mask=False,
         )
 
-    def _get_stratified_kfold(self, n_splits):
+    def _get_stratified_kfold(self, n_splits: int) -> StratifiedKFold:
         return StratifiedKFold(shuffle=True, n_splits=n_splits, random_state=self.seed)
 
-    def _get_time_fold(self, df):
-        test_begin_date = pandas.to_datetime(self.test_begin_date).date()
-        test_end_date = pandas.to_datetime(self.test_end_date).date()
+    def _get_time_fold(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+        test_begin_date = pd.to_datetime(self.test_begin_date).date()
+        test_end_date = pd.to_datetime(self.test_end_date).date()
         print(f"Test is going from {test_begin_date} to {test_end_date}.")
         test_data = df.query("@test_begin_date <= date <= @test_end_date")
 
@@ -123,7 +121,7 @@ class BalancedMiniBatchLoader(object):
         other_set = df.query(query)
         return other_set, test_data
 
-    def _get_outer_cv_fold(self, df):
+    def _get_outer_cv_fold(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
         labels = df.int_label
         stratifier = self._get_stratified_kfold(n_splits=self.n_outer_splits)
 
@@ -132,20 +130,18 @@ class BalancedMiniBatchLoader(object):
             if k == self.fold:
                 break
             k += 1
-
         train_data = df.iloc[train_index].copy()
         test_data = df.iloc[test_index].copy()
-
         return train_data, test_data
 
-    def get_steps_per_epoch(self, nb_pos_examples):
+    def get_steps_per_epoch(self, nb_pos_examples: int) -> int:
         return int(
             max(TARGET_POS_PER_EPOCH, nb_pos_examples)
             / self.mb_size
             / self.perc_training_tox
         )
 
-    def make_huggingface_tensorflow_ds(self, group, mb_size=None, shuffle=True):
+    def make_huggingface_tensorflow_ds(self, group, mb_size=None, shuffle: bool = True):
         huggingface_ds = Dataset.from_pandas(group).map(
             self.tokenize_function, batched=True
         )
@@ -164,7 +160,9 @@ class BalancedMiniBatchLoader(object):
             return tensorflow_ds.repeat()
         return tensorflow_ds
 
-    def make_pure_tensorflow_ds(self, df, nb_samples):
+    def make_pure_tensorflow_ds(
+        self, df: pd.DataFrame, nb_samples: int
+    ) -> tf.data.Dataset:
         buffer_size = nb_samples * 2
 
         if self.sample_weights is not None:
@@ -188,8 +186,11 @@ class BalancedMiniBatchLoader(object):
         return ds
 
     def get_balanced_dataset(
-        self, training_data, size_limit=None, return_as_batch=True
-    ):
+        self,
+        training_data: pd.DataFrame,
+        size_limit: int = None,
+        return_as_batch: bool = True,
+    ) -> tf.data.Dataset:
         training_data = training_data.sample(frac=1, random_state=self.seed)
         nb_samples = training_data.shape[0] if not size_limit else size_limit
 
@@ -198,8 +199,13 @@ class BalancedMiniBatchLoader(object):
         if size_limit:
             training_data = training_data[: size_limit * num_classes]
 
+        percent_tox = (
+            100
+            * training_data[training_data.int_label == toxic_class].shape[0]
+            / nb_samples
+        )
         print(
-            f"... {nb_samples} examples, incl. {(100 * training_data[training_data.int_label == toxic_class].shape[0] / nb_samples):.2f}% tox in train, {num_classes} classes"
+            f"... {nb_samples} examples, incl. {percent_tox:.2f}% tox in train, {num_classes} classes"
         )
         label_groups = training_data.groupby("int_label")
         if self.huggingface:
@@ -273,7 +279,9 @@ class BalancedMiniBatchLoader(object):
 
             yield mini_batches, steps_per_epoch, val_data, test_data
 
-    def simple_cv_load(self, full_df: pd.DataFrame):
+    def simple_cv_load(
+        self, full_df: pd.DataFrame
+    ) -> Tuple[tf.data.Dataset, pd.DataFrame, int]:
         full_df = self._compute_int_labels(full_df)
 
         train_data, test_data = self.get_outer_fold(df=full_df)
@@ -287,7 +295,9 @@ class BalancedMiniBatchLoader(object):
 
         return mini_batches, test_data, steps_per_epoch
 
-    def no_cv_load(self, full_df: pd.DataFrame):
+    def no_cv_load(
+        self, full_df: pd.DataFrame
+    ) -> Tuple[tf.data.Dataset, pd.DataFrame, int]:
         full_df = self._compute_int_labels(full_df)
 
         val_test = full_df[full_df.origin == "precision"].copy(deep=True)

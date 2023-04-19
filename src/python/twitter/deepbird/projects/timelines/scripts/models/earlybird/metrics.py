@@ -1,5 +1,5 @@
 # checkstyle: noqa
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 import tensorflow.compat.v1 as tf
 

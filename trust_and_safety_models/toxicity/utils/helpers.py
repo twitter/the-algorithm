@@ -13,7 +13,7 @@ except ModuleNotFoundError:
     pass
 
 
-def upload_model(full_gcs_model_path):
+def upload_model(full_gcs_model_path: str):
     folder_name = full_gcs_model_path
     if folder_name[:5] != "gs://":
         folder_name = "gs://" + folder_name
@@ -50,7 +50,9 @@ def upload_model(full_gcs_model_path):
     return weights_dir
 
 
-def compute_precision_fixed_recall(labels, preds, fixed_recall):
+def compute_precision_fixed_recall(
+    labels: np.ndarray, preds: np.ndarray, fixed_recall: float
+):
     precision_values, recall_values, thresholds = precision_recall_curve(
         y_true=labels, probas_pred=preds
     )
@@ -61,7 +63,7 @@ def compute_precision_fixed_recall(labels, preds, fixed_recall):
     return result, thresholds[index_recall - 1]
 
 
-def load_inference_func(model_folder):
+def load_inference_func(model_folder: str):
     model = tf.saved_model.load(model_folder, ["serve"])
     inference_func = model.signatures["serving_default"]
     return inference_func
@@ -73,7 +75,7 @@ def execute_query(client, query):
     return df
 
 
-def execute_command(cmd, print_=True):
+def execute_command(cmd: str, print_: bool = True):
     s = subprocess.run(cmd, shell=True, capture_output=print_, check=True)
     if print_:
         print(s.stderr.decode("utf-8"))
@@ -95,9 +97,7 @@ def check_gpu():
     print(l)
 
 
-def set_seeds(seed):
+def set_seeds(seed: int):
     np.random.seed(seed)
-
     python_random.seed(seed)
-
     tf.random.set_seed(seed)

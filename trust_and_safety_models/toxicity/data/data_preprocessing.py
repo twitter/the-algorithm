@@ -7,13 +7,13 @@ from toxicity_ml_pipeline.settings.hcomp_settings import TOXIC_35
 
 TOXIC_35_set = set(TOXIC_35)
 
-url_group = r"(\bhttps?:\/\/\S+)"
-mention_group = r"(\B@\S+)"
-urls_mentions_re = re.compile(url_group + r"|" + mention_group, re.IGNORECASE)
-url_re = re.compile(url_group, re.IGNORECASE)
-mention_re = re.compile(mention_group, re.IGNORECASE)
-newline_re = re.compile(r"\n+", re.IGNORECASE)
-and_re = re.compile(r"&\s?amp\s?;", re.IGNORECASE)
+URL_GROUP = r"(\bhttps?:\/\/\S+)"
+MENTION_GROUP = r"(\B@\S+)"
+URLS_MENTIONS_RE = re.compile(URL_GROUP + r"|" + MENTION_GROUP, re.IGNORECASE)
+URL_RE = re.compile(URL_GROUP, re.IGNORECASE)
+MENTION_RE = re.compile(MENTION_GROUP, re.IGNORECASE)
+NEWLINE_RE = re.compile(r"\n+", re.IGNORECASE)
+AND_RE = re.compile(r"&\s?amp\s?;", re.IGNORECASE)
 
 
 class DataframeCleaner(ABC):
@@ -98,22 +98,22 @@ class DefaultENNoPreprocessor(DataframeCleaner):
 
 
 class DefaultENPreprocessor(DefaultENNoPreprocessor):
-    def _clean(self, adhoc_df):
+    def _clean(self, adhoc_df: pd.DataFrame) -> pd.DataFrame:
         print(
             "... removing \\n and replacing @mentions and URLs by placeholders. "
             "Emoji filtering is not done."
         )
         adhoc_df["text"] = [
-            url_re.sub("URL", tweet) for tweet in adhoc_df.raw_text.values
+            URL_RE.sub("URL", tweet) for tweet in adhoc_df.raw_text.values
         ]
         adhoc_df["text"] = [
-            mention_re.sub("MENTION", tweet) for tweet in adhoc_df.text.values
+            MENTION_RE.sub("MENTION", tweet) for tweet in adhoc_df.text.values
         ]
         adhoc_df["text"] = [
-            newline_re.sub(" ", tweet).lstrip(" ").rstrip(" ")
+            NEWLINE_RE.sub(" ", tweet).lstrip(" ").rstrip(" ")
             for tweet in adhoc_df.text.values
         ]
-        adhoc_df["text"] = [and_re.sub("&", tweet) for tweet in adhoc_df.text.values]
+        adhoc_df["text"] = [AND_RE.sub("&", tweet) for tweet in adhoc_df.text.values]
         return adhoc_df
 
 
@@ -121,10 +121,10 @@ class Defaulti18nPreprocessor(DataframeCleaner):
     def _clean(self, adhoc_df):
         print("... removing @mentions, \\n and URLs. Emoji filtering is not done.")
         adhoc_df["text"] = [
-            urls_mentions_re.sub("", tweet) for tweet in adhoc_df.raw_text.values
+            URLS_MENTIONS_RE.sub("", tweet) for tweet in adhoc_df.raw_text.values
         ]
         adhoc_df["text"] = [
-            newline_re.sub(" ", tweet).lstrip(" ").rstrip(" ")
+            NEWLINE_RE.sub(" ", tweet).lstrip(" ").rstrip(" ")
             for tweet in adhoc_df.text.values
         ]
         return adhoc_df

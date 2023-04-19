@@ -1,6 +1,8 @@
 import os
 from collections import defaultdict
+from typing import List
 
+import numpy as np
 import tensorflow as tf
 import wandb
 from sklearn.metrics import average_precision_score, roc_auc_score
@@ -87,13 +89,13 @@ class GradientLoggingTensorBoard(SyncingTensorBoard):
 class AdditionalResultLogger(tf.keras.callbacks.Callback):
     def __init__(
         self,
-        data,
-        set_,
-        fixed_recall=0.85,
-        from_logits=False,
-        dataset_transform_func=None,
-        batch_size=64,
-        dual_head=None,
+        data: tf.data.Dataset,
+        set_: str,
+        fixed_recall: float = 0.85,
+        from_logits: bool = False,
+        dataset_transform_func: callable = None,
+        batch_size: int = 64,
+        dual_head: List[str] = None,
         *args,
         **kwargs,
     ):
@@ -144,7 +146,7 @@ class AdditionalResultLogger(tf.keras.callbacks.Callback):
             self.fixed_recall = fixed_recall
             self.batch_size = batch_size
 
-    def compute_precision_fixed_recall(self, labels, preds):
+    def compute_precision_fixed_recall(self, labels: np.ndarray, preds: np.ndarray):
         result, _ = compute_precision_fixed_recall(
             labels=labels, preds=preds, fixed_recall=self.fixed_recall
         )
@@ -159,7 +161,9 @@ class AdditionalResultLogger(tf.keras.callbacks.Callback):
         if self.counter % 2000 == 0:
             self.additional_evaluations(step=self.counter, eval_time="batch")
 
-    def _binary_evaluations(self, preds, label_name=None, class_index=None):
+    def _binary_evaluations(
+        self, preds: np.ndarray, label_name=None, class_index: int = None
+    ):
         mask = None
         curr_labels = self.labels
         if label_name is not None:
@@ -180,7 +184,7 @@ class AdditionalResultLogger(tf.keras.callbacks.Callback):
             "roc_auc": roc_auc_score(y_true=curr_labels, y_score=preds),
         }
 
-    def _multiclass_evaluations(self, preds):
+    def _multiclass_evaluations(self, preds: np.ndarray):
         pr_auc_l = average_precision_score(
             y_true=self.labels, y_score=preds, **self.metric_kw
         )
@@ -192,7 +196,7 @@ class AdditionalResultLogger(tf.keras.callbacks.Callback):
 
         return metrics
 
-    def additional_evaluations(self, step, eval_time):
+    def additional_evaluations(self, step: int, eval_time: str):
         print("Evaluating ", self.set_, eval_time, step)
 
         preds = self.model.predict(x=self.data, batch_size=self.batch_size)
@@ -232,7 +236,7 @@ class AdditionalResultLogger(tf.keras.callbacks.Callback):
 
         self.log_metrics(metrics, step=step, eval_time=eval_time)
 
-    def log_metrics(self, metrics_d, step, eval_time):
+    def log_metrics(self, metrics_d: dict, step: int, eval_time: str):
         commit = False if self.set_ == "validation" else True
         to_report = {self.set_: {**metrics_d, **self.best_metrics}}
 

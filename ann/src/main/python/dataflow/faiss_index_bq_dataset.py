@@ -3,7 +3,7 @@ import logging
 import os
 import pkgutil
 import sys
-from typing import List, Union
+from typing import Dict, List, Optional
 from urllib.parse import urlsplit
 
 import apache_beam as beam
@@ -11,7 +11,7 @@ import faiss
 from apache_beam.options.pipeline_options import PipelineOptions
 
 
-def parse_d6w_config(argv: Union[List[str], None] = None):
+def parse_d6w_config(argv: Optional[List[str]] = None):
     """Parse d6w config.
     :param argv: d6w config
     :return: dictionary containing d6w config
@@ -93,8 +93,8 @@ def get_bq_query():
     return pkgutil.get_data(__name__, "bq.sql").decode("utf-8")
 
 
-def parse_metric(config):
-    metric_str: str = config["metric"].lower()
+def parse_metric(config: Dict[str, str]):
+    metric_str = config["metric"].lower()
     if metric_str == "l2":
         return faiss.METRIC_L2
     elif metric_str == "ip":
@@ -142,10 +142,7 @@ def run_pipeline(argv: List[str] = []):
                 config["metric"],
                 config["gpu"],
             )
-        )
-
-        # Make linter happy
-        index_built
+        )  # pylint: disable=unused-variable
 
 
 class MergeAndBuildIndex(beam.CombineFn):
@@ -159,7 +156,7 @@ class MergeAndBuildIndex(beam.CombineFn):
     def create_accumulator(self):
         return []
 
-    def add_input(self, accumulator, element):
+    def add_input(self, accumulator: List, element) -> List:
         accumulator.append(element)
         return accumulator
 

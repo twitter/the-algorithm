@@ -3,7 +3,7 @@ from keras import backend
 from keras.utils import losses_utils, tf_utils
 
 
-def inv_kl_divergence(y_true, y_pred):
+def inv_kl_divergence(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
     y_pred = tf.convert_to_tensor(y_pred)
     y_true = tf.cast(y_true, y_pred.dtype)
     y_true = backend.clip(y_true, backend.epsilon(), 1)
@@ -11,7 +11,7 @@ def inv_kl_divergence(y_true, y_pred):
     return tf.reduce_sum(y_pred * tf.math.log(y_pred / y_true), axis=-1)
 
 
-def masked_bce(y_true, y_pred):
+def masked_bce(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
     y_true = tf.cast(y_true, dtype=tf.float32)
     mask = y_true != -1
 
@@ -28,7 +28,7 @@ class LossFunctionWrapper(tf.keras.losses.Loss):
         self.fn = fn
         self._fn_kwargs = kwargs
 
-    def call(self, y_true, y_pred):
+    def call(self, y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
         if tf.is_tensor(y_pred) and tf.is_tensor(y_true):
             y_pred, y_true = losses_utils.squeeze_or_expand_dimensions(y_pred, y_true)
 
@@ -37,7 +37,7 @@ class LossFunctionWrapper(tf.keras.losses.Loss):
         )
         return ag_fn(y_true, y_pred, **self._fn_kwargs)
 
-    def get_config(self):
+    def get_config(self) -> dict:
         config = {}
         for k, v in self._fn_kwargs.items():
             config[k] = backend.eval(v) if tf_utils.is_tensor_or_variable(v) else v
@@ -47,11 +47,13 @@ class LossFunctionWrapper(tf.keras.losses.Loss):
 
 class InvKLD(LossFunctionWrapper):
     def __init__(
-        self, reduction=losses_utils.ReductionV2.AUTO, name="inv_kl_divergence"
+        self, reduction=losses_utils.ReductionV2.AUTO, name: str = "inv_kl_divergence"
     ):
         super().__init__(inv_kl_divergence, name=name, reduction=reduction)
 
 
 class MaskedBCE(LossFunctionWrapper):
-    def __init__(self, reduction=losses_utils.ReductionV2.AUTO, name="masked_bce"):
+    def __init__(
+        self, reduction=losses_utils.ReductionV2.AUTO, name: str = "masked_bce"
+    ):
         super().__init__(masked_bce, name=name, reduction=reduction)

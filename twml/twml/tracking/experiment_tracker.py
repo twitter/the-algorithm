@@ -401,13 +401,13 @@ class ExperimentTracker(object):
             logging.error("Failed to export feature spec. Error: %s", str(err))
 
     @property
-    def path(self) -> Union[Dict[str, str], None]:
+    def path(self) -> Optional[Dict[str, str]]:
         if self.disabled:
             return None
         return get_components_from_id(self.tracking_path, ensure_valid_id=False)
 
     @property
-    def experiment_id(self) -> Union[str, None]:
+    def experiment_id(self) -> Optional[str]:
         """Return the experiment id."""
         if self.disabled:
             return None
