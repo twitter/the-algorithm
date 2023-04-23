@@ -7,5 +7,5 @@ enable_emit_tweet_edge_from_reply:
   default_availability: 0
 
 enable_unfavorite_edge:
-  comment: "Decides when processing a UnfavoriteEvent from Timeline events, whether to process unfav edges"
+  comment: "Decides when processing a UnfavoriteEvent from Timeline events, whether to process unfavorite edges"
   default_availability: 0
