@@ -1,0 +1,29 @@
+<configuration>
+    <!-- ===================================================== -->
+    <!-- Console appender for local debugging and testing -->
+    <!-- ===================================================== -->
+    <appender name="STDOUT" class="com.twitter.unified_user_actions.kafka.serde.TestLogAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Root Config -->
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <!-- Per-Package Config -->
+    <logger name="com.twitter" level="info"/>
+    <logger name="com.twitter.zookeeper.client.internal" level="warn"/>
+    <logger name="com.twitter.zookeeper.client.internal.ClientCnxnSocket" level="error"/>
+    <logger name="com.twitter.logging.ScribeHandler" level="warn"/>
+    <logger name="com.twitter.finatra" level="info"/>
+
+    <logger name="org.apache.kafka" level="info"/>
+    <logger name="org.apache.kafka.clients" level="info"/>
+    <logger name="org.apache.kafka.clients.NetworkClient" level="warn"/>
+    <logger name="org.apache.kafka.clients.consumer.internals" level="info"/>
+    <logger name="org.apache.kafka.common.network" level="warn" />
+</configuration>
+

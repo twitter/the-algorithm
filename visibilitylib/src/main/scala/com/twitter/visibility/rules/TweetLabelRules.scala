@@ -144,6 +144,9 @@ object NsfwCardImageAvoidAllUsersTweetLabelRule
       action = Avoid(Some(AvoidReason.ContainsNsfwMedia)),
     ) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+
+  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
+    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
 }
 
 object NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule
@@ -247,6 +250,9 @@ object GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule
       TweetSafetyLabelType.GoreAndViolenceHighPrecision
     ) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+
+  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
+    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
 }
 
 object GoreAndViolenceHighPrecisionAllUsersTweetLabelRule
@@ -266,6 +272,9 @@ object NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule
       TweetSafetyLabelType.NsfwReportedHeuristics
     ) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+
+  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
+    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
 }
 
 object NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule
@@ -274,6 +283,9 @@ object NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule
       TweetSafetyLabelType.NsfwReportedHeuristics
     ) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+
+  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
+    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
 }
 
 object NsfwReportedHeuristicsAllUsersTweetLabelRule
@@ -294,6 +306,9 @@ object GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule
       TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
     ) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+
+  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
+    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
 }
 
 object GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule
@@ -302,6 +317,9 @@ object GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule
       TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
     ) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+
+  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
+    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
 }
 
 object GoreAndViolenceHighPrecisionAllUsersTweetLabelDropRule
@@ -791,7 +809,7 @@ object SkipTweetDetailLimitedEngagementTweetLabelRule
 object DynamicProductAdDropTweetLabelRule
     extends TweetHasLabelRule(Drop(Unspecified), TweetSafetyLabelType.DynamicProductAd)
 
-object NsfwTextTweetLabelTopicsDropRule
+object NsfwTextHighPrecisionTweetLabelDropRule
     extends RuleWithConstantAction(
       Drop(Reason.Nsfw),
       And(
@@ -803,7 +821,7 @@ object NsfwTextTweetLabelTopicsDropRule
       )
     )
     with DoesLogVerdict {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextTopicsDropRuleParam)
+  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextHighPrecisionDropRuleParam)
   override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
     TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.NsfwTextHighPrecision))
 }
@@ -832,7 +850,10 @@ object DoNotAmplifyTweetLabelAvoidRule
     extends TweetHasLabelRule(
       Avoid(),
       TweetSafetyLabelType.DoNotAmplify
-    )
+    ) {
+  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
+    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+}
 
 object NsfaHighPrecisionTweetLabelAvoidRule
     extends TweetHasLabelRule(

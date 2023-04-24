@@ -6,8 +6,6 @@ import com.twitter.search.earlybird.thriftscala.EarlybirdService
 import com.twitter.search.earlybird.thriftscala.ThriftSearchQuery
 import com.twitter.util.Time
 import com.twitter.search.common.query.thriftjava.thriftscala.CollectorParams
-import com.twitter.search.common.ranking.thriftscala.ThriftAgeDecayRankingParams
-import com.twitter.search.common.ranking.thriftscala.ThriftLinearFeatureRankingParams
 import com.twitter.search.common.ranking.thriftscala.ThriftRankingParams
 import com.twitter.search.common.ranking.thriftscala.ThriftScoringFunctionType
 import com.twitter.search.earlybird.thriftscala.ThriftSearchRelevanceOptions
@@ -97,7 +95,7 @@ object EarlybirdTensorflowBasedSimilarityEngine {
       // Whether to collect conversation IDs. Remove it for now.
       // collectConversationId = Gate.True(), // true for Home
       rankingMode = ThriftSearchRankingMode.Relevance,
-      relevanceOptions = Some(getRelevanceOptions(query.useTensorflowRanking)),
+      relevanceOptions = Some(getRelevanceOptions),
       collectorParams = Some(
         CollectorParams(
           // numResultsToReturn defines how many results each EB shard will return to search root
@@ -116,13 +114,11 @@ object EarlybirdTensorflowBasedSimilarityEngine {
   // The specific values of recap relevance/reranking options correspond to
   // experiment: enable_recap_reranking_2988,timeline_internal_disable_recap_filter
   // bucket    : enable_rerank,disable_filter
-  private def getRelevanceOptions(useTensorflowRanking: Boolean): ThriftSearchRelevanceOptions = {
+  private def getRelevanceOptions: ThriftSearchRelevanceOptions = {
     ThriftSearchRelevanceOptions(
       proximityScoring = true,
       maxConsecutiveSameUser = Some(2),
-      rankingParams =
-        if (useTensorflowRanking) Some(getTensorflowBasedRankingParams)
-        else Some(getLinearRankingParams),
+      rankingParams = Some(getTensorflowBasedRankingParams),
       maxHitsToProcess = Some(500),
       maxUserBlendCount = Some(3),
       proximityPhraseWeight = 9.0,
@@ -131,41 +127,12 @@ object EarlybirdTensorflowBasedSimilarityEngine {
   }
 
   private def getTensorflowBasedRankingParams: ThriftRankingParams = {
-    getLinearRankingParams.copy(
+    ThriftRankingParams(
       `type` = Some(ThriftScoringFunctionType.TensorflowBased),
       selectedTensorflowModel = Some("timelines_rectweet_replica"),
+      minScore = -1.0e100,
       applyBoosts = false,
       authorSpecificScoreAdjustments = None
     )
   }
-
-  private def getLinearRankingParams: ThriftRankingParams = {
-    ThriftRankingParams(
-      `type` = Some(ThriftScoringFunctionType.Linear),
-      minScore = -1.0e100,
-      retweetCountParams = Some(ThriftLinearFeatureRankingParams(weight = 20.0)),
-      replyCountParams = Some(ThriftLinearFeatureRankingParams(weight = 1.0)),
-      reputationParams = Some(ThriftLinearFeatureRankingParams(weight = 0.2)),
-      luceneScoreParams = Some(ThriftLinearFeatureRankingParams(weight = 2.0)),
-      textScoreParams = Some(ThriftLinearFeatureRankingParams(weight = 0.18)),
-      urlParams = Some(ThriftLinearFeatureRankingParams(weight = 2.0)),
-      isReplyParams = Some(ThriftLinearFeatureRankingParams(weight = 1.0)),
-      favCountParams = Some(ThriftLinearFeatureRankingParams(weight = 30.0)),
-      langEnglishUIBoost = 0.5,
-      langEnglishTweetBoost = 0.2,
-      langDefaultBoost = 0.02,
-      unknownLanguageBoost = 0.05,
-      offensiveBoost = 0.1,
-      inTrustedCircleBoost = 3.0,
-      multipleHashtagsOrTrendsBoost = 0.6,
-      inDirectFollowBoost = 4.0,
-      tweetHasTrendBoost = 1.1,
-      selfTweetBoost = 2.0,
-      tweetHasImageUrlBoost = 2.0,
-      tweetHasVideoUrlBoost = 2.0,
-      useUserLanguageInfo = true,
-      ageDecayParams = Some(ThriftAgeDecayRankingParams(slope = 0.005, base = 1.0))
-    )
-  }
-
 }

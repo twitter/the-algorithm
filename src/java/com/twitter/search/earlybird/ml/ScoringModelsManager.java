@@ -22,13 +22,13 @@ import static com.twitter.search.modeling.tweet_ranking.TweetScoringFeatures.Fea
 /**
  * Loads the scoring models for tweets and provides access to them.
  *
- * This class relies on a list ModelLoader objects to retrieve the objects from them. It will
+ * This class relies on a list of ModelLoader objects to retrieve the objects from them. It will
  * return the first model found according to the order in the list.
  *
  * For production, we load models from 2 sources: classpath and HDFS. If a model is available
  * from HDFS, we return it, otherwise we use the model from the classpath.
  *
- * The models used in for default requests (i.e. not experiments) MUST be present in the
+ * The models used for default requests (i.e. not experiments) MUST be present in the
  * classpath, this allows us to avoid errors if they can't be loaded from HDFS.
  * Models for experiments can live only in HDFS, so we don't need to redeploy Earlybird if we
  * want to test them.
