@@ -1,0 +1,1 @@
+# This prevents SQ query from grabbing //:all since it traverses up once to find a BUILD

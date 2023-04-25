@@ -1,0 +1,19 @@
+junit_tests(
+    sources = ["*.scala"],
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/org/mockito:mockito-core",
+        "3rdparty/jvm/org/mockito:mockito-scala",
+        "3rdparty/jvm/org/scalatest",
+        "3rdparty/jvm/org/scalatestplus:junit",
+        "featureswitches/dynmap/src/main/scala/com/twitter/dynmap:dynmap-core",
+        "finatra/inject/inject-core/src/test/scala/com/twitter/inject",
+        "graphql/thrift/src/main/thrift/com/twitter/graphql:graphql-scala",
+        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher",
+        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher/graphql",
+        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher/hydrator:default",
+        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher/hydrator:noop",
+        "unified_user_actions/enricher/src/test/scala/com/twitter/unified_user_actions/enricher:fixture",
+        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
+    ],
+)
