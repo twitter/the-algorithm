@@ -20,6 +20,7 @@ Product surfaces at Twitter are built on a shared set of data, models, and softw
 |       | [topic-social-proof](topic-social-proof/README.md) | Identifies topics related to individual Tweets. |
 | Software framework | [navi](navi/README.md) | High performance, machine learning model serving written in Rust. |
 |                    | [product-mixer](product-mixer/README.md) | Software framework for building feeds of content. |
+|                    | [timelines-aggregation-framework](timelines/data_processing/ml_util/aggregation_framework/README.md) | Framework for generating aggregate features in batch or real time.
 |                    | [twml](twml/README.md) | Legacy machine learning framework built on TensorFlow v1. |
 
 The product surface currently included in this repository is the For You Timeline.
