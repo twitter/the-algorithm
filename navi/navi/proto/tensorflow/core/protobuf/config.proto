@@ -532,7 +532,7 @@ message ConfigProto {
 
     // We removed the flag client_handles_error_formatting. Marking the tag
     // number as reserved.
-    // TODO: Should we just remove this tag so that it can be
+    // TODO(shikharagarwal): Should we just remove this tag so that it can be
     // used in future for other purpose?
     reserved 2;
 
@@ -576,7 +576,7 @@ message ConfigProto {
     // - If isolate_session_state is true, session states are isolated.
     // - If isolate_session_state is false, session states are shared.
     //
-    // TODO: Add a single API that consistently treats
+    // TODO(b/129330037): Add a single API that consistently treats
     // isolate_session_state and ClusterSpec propagation.
     bool share_session_state_in_clusterspec_propagation = 8;
 
@@ -704,7 +704,7 @@ message ConfigProto {
 
 // Options for a single Run() call.
 message RunOptions {
-  // TODO Turn this into a TraceOptions proto which allows
+  // TODO(pbar) Turn this into a TraceOptions proto which allows
   // tracing to be controlled in a more orthogonal manner?
   enum TraceLevel {
     NO_TRACE = 0;
@@ -781,7 +781,7 @@ message RunMetadata {
   repeated GraphDef partition_graphs = 3;
 
   message FunctionGraphs {
-    // TODO: Include some sort of function/cache-key identifier?
+    // TODO(nareshmodi): Include some sort of function/cache-key identifier?
     repeated GraphDef partition_graphs = 1;
 
     GraphDef pre_optimization_graph = 2;

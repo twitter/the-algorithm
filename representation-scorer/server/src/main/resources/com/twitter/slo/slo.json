@@ -1,0 +1,55 @@
+{
+  "servers": [
+    {
+      "name": "strato",
+      "indicators": [
+        {
+          "id": "success_rate_3m",
+          "indicator_type": "SuccessRateIndicator",
+          "duration": 3,
+          "duration_unit": "MINUTES"
+        }, {
+          "id": "latency_3m_p99",
+          "indicator_type": "LatencyIndicator",
+          "duration": 3,
+          "duration_unit": "MINUTES",
+          "percentile": 0.99
+        }
+      ],
+      "objectives": [
+        {
+          "indicator": "success_rate_3m",
+          "objective_type": "SuccessRateObjective",
+          "operator": ">=",
+          "threshold": 0.995
+        },
+        {
+          "indicator": "latency_3m_p99",
+          "objective_type": "LatencyObjective",
+          "operator": "<=",
+          "threshold": 50
+        }
+      ],
+      "long_term_objectives": [
+        {
+          "id": "success_rate_28_days",
+          "objective_type": "SuccessRateObjective",
+          "operator": ">=",
+          "threshold": 0.993,
+          "duration": 28,
+          "duration_unit": "DAYS"
+        },
+        {
+          "id": "latency_p99_28_days",
+          "objective_type": "LatencyObjective",
+          "operator": "<=",
+          "threshold": 60,
+          "duration": 28,
+          "duration_unit": "DAYS",
+          "percentile": 0.99
+        }
+      ]
+    }
+  ],
+  "@version": 1
+}

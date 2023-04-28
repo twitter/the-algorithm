@@ -13,21 +13,22 @@ pub mod onnx {
     use dr_transform::converter::{BatchPredictionRequestToTorchTensorConverter, Converter};
     use itertools::Itertools;
     use log::{debug, info};
-    use ort::environment::Environment;
-    use ort::session::Session;
-    use ort::tensor::InputTensor;
-    use ort::{ExecutionProvider, GraphOptimizationLevel, SessionBuilder};
+    use dr_transform::ort::environment::Environment;
+    use dr_transform::ort::session::Session;
+    use dr_transform::ort::tensor::InputTensor;
+    use dr_transform::ort::{ExecutionProvider, GraphOptimizationLevel, SessionBuilder};
+    use dr_transform::ort::LoggingLevel;
     use serde_json::Value;
     use std::fmt::{Debug, Display};
     use std::sync::Arc;
     use std::{fmt, fs};
     use tokio::time::Instant;
-
     lazy_static! {
         pub static ref ENVIRONMENT: Arc<Environment> = Arc::new(
             Environment::builder()
                 .with_name("onnx home")
-                .with_log_level(ort::LoggingLevel::Error)
+                .with_log_level(LoggingLevel::Error)
+                .with_global_thread_pool(ARGS.onnx_global_thread_pool_options.clone())
                 .build()
                 .unwrap()
         );
@@ -101,23 +102,30 @@ pub mod onnx {
             let meta_info = format!("{}/{}/{}", ARGS.model_dir[idx], version, META_INFO);
             let mut builder = SessionBuilder::new(&ENVIRONMENT)?
                 .with_optimization_level(GraphOptimizationLevel::Level3)?
-                .with_parallel_execution(ARGS.onnx_use_parallel_mode == "true")?
-                .with_inter_threads(
-                    utils::get_config_or(
-                        model_config,
-                        "inter_op_parallelism",
-                        &ARGS.inter_op_parallelism[idx],
-                    )
-                    .parse()?,
-                )?
-                .with_intra_threads(
-                    utils::get_config_or(
-                        model_config,
-                        "intra_op_parallelism",
-                        &ARGS.intra_op_parallelism[idx],
-                    )
-                    .parse()?,
-                )?
+                .with_parallel_execution(ARGS.onnx_use_parallel_mode == "true")?;
+            if ARGS.onnx_global_thread_pool_options.is_empty() {
+                builder = builder
+                    .with_inter_threads(
+                        utils::get_config_or(
+                            model_config,
+                            "inter_op_parallelism",
+                            &ARGS.inter_op_parallelism[idx],
+                        )
+                            .parse()?,
+                    )?
+                    .with_intra_threads(
+                        utils::get_config_or(
+                            model_config,
+                            "intra_op_parallelism",
+                            &ARGS.intra_op_parallelism[idx],
+                        )
+                            .parse()?,
+                    )?;
+            }
+            else {
+                builder = builder.with_disable_per_session_threads()?;
+            }
+            builder = builder
                 .with_memory_pattern(ARGS.onnx_use_memory_pattern == "true")?
                 .with_execution_providers(&OnnxModel::ep_choices())?;
             match &ARGS.profiling {
@@ -181,7 +189,7 @@ pub mod onnx {
                     &version,
                     reporting_feature_ids,
                     Some(metrics::register_dynamic_metrics),
-                )),
+                )?),
             };
             onnx_model.warmup()?;
             Ok(onnx_model)

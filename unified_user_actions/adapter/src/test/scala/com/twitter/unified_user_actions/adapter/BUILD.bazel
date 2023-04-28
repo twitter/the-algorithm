@@ -1,0 +1,23 @@
+junit_tests(
+    sources = ["**/*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/junit",
+        "3rdparty/jvm/org/scalatest",
+        "3rdparty/jvm/org/scalatestplus:junit",
+        "finatra/inject/inject-core/src/test/scala:test-deps",
+        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/ads_callback_engagements",
+        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/client_event",
+        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/common",
+        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/email_notification_event",
+        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/favorite_archival_events",
+        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/retweet_archival_events",
+        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/social_graph_event",
+        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/tls_favs_event",
+        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/tweetypie_event",
+        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/user_modification_event",
+        "unified_user_actions/adapter/src/main/scala/com/twitter/unified_user_actions/adapter/uua_aggregates",
+        "util/util-mock/src/main/scala/com/twitter/util/mock",
+    ],
+)

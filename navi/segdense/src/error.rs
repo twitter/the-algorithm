@@ -5,13 +5,13 @@ use std::fmt::Display;
  */
 #[derive(Debug)]
 pub enum SegDenseError {
-  IoError(std::io::Error),
-  Json(serde_json::Error),
-  JsonMissingRoot,
-  JsonMissingObject,
-  JsonMissingArray,
-  JsonArraySize,
-  JsonMissingInputFeature,
+    IoError(std::io::Error),
+    Json(serde_json::Error),
+    JsonMissingRoot,
+    JsonMissingObject,
+    JsonMissingArray,
+    JsonArraySize,
+    JsonMissingInputFeature,
 }
 
 impl Display for SegDenseError {
@@ -25,19 +25,18 @@ impl Display for SegDenseError {
       SegDenseError::JsonArraySize => write!(f, "SegDense JSON: Array size not as expected!"),
       SegDenseError::JsonMissingInputFeature => write!(f, "SegDense JSON: Missing input feature!"),
     }
-  }
 }
 
 impl std::error::Error for SegDenseError {}
 
 impl From<std::io::Error> for SegDenseError {
-  fn from(err: std::io::Error) -> Self {
-    SegDenseError::IoError(err)
-  }
+    fn from(err: std::io::Error) -> Self {
+        SegDenseError::IoError(err)
+    }
 }
 
 impl From<serde_json::Error> for SegDenseError {
-  fn from(err: serde_json::Error) -> Self {
-    SegDenseError::Json(err)
-  }
+    fn from(err: serde_json::Error) -> Self {
+        SegDenseError::Json(err)
+    }
 }

@@ -1,10 +1,10 @@
+use log::debug;
 use std::fs;
-use log::{debug};
 
-use serde_json::{Value, Map};
+use serde_json::{Map, Value};
 
 use crate::error::SegDenseError;
-use crate::mapper::{FeatureMapper, FeatureInfo, MapWriter};
+use crate::mapper::{FeatureInfo, FeatureMapper, MapWriter};
 use crate::segdense_transform_spec_home_recap_2022::{self as seg_dense, InputFeature};
 
 pub fn load_config(file_name: &str) -> seg_dense::Root {
@@ -42,15 +42,8 @@ pub fn safe_load_config(json_str: &str) -> Result<FeatureMapper, SegDenseError> 
     load_from_parsed_config(root)
 }
 
-pub fn load_from_parsed_config_ref(root: &seg_dense::Root) -> FeatureMapper {
-    load_from_parsed_config(root.clone()).unwrap_or_else(
-      |error| panic!("Error loading all_config.json - {}", error))
-}
-
 // Perf note : make 'root' un-owned
-pub fn load_from_parsed_config(root: seg_dense::Root) ->
-    Result<FeatureMapper, SegDenseError> {
-
+pub fn load_from_parsed_config(root: seg_dense::Root) -> Result<FeatureMapper, SegDenseError> {
     let v = root.input_features_map;
 
     // Do error check
@@ -84,7 +77,7 @@ pub fn load_from_parsed_config(root: seg_dense::Root) ->
             Some(info) => {
                 debug!("{:?}", info);
                 fm.set(feature_id, info)
-            },
+            }
             None => (),
         }
     }
@@ -92,19 +85,22 @@ pub fn load_from_parsed_config(root: seg_dense::Root) ->
     Ok(fm)
 }
 #[allow(dead_code)]
-fn add_feature_info_to_mapper(feature_mapper: &mut FeatureMapper, input_features: &Vec<InputFeature>) {
+fn add_feature_info_to_mapper(
+    feature_mapper: &mut FeatureMapper,
+    input_features: &Vec<InputFeature>,
+) {
     for input_feature in input_features.iter() {
-            let feature_id = input_feature.feature_id;
-            let feature_info = to_feature_info(input_feature);
-    
-            match feature_info {
-                Some(info) => {
-                    debug!("{:?}", info);
-                    feature_mapper.set(feature_id, info)
-                },
-                None => (),
+        let feature_id = input_feature.feature_id;
+        let feature_info = to_feature_info(input_feature);
+
+        match feature_info {
+            Some(info) => {
+                debug!("{:?}", info);
+                feature_mapper.set(feature_id, info)
             }
+            None => (),
         }
+    }
 }
 
 pub fn to_feature_info(input_feature: &seg_dense::InputFeature) -> Option<FeatureInfo> {
@@ -137,7 +133,7 @@ pub fn to_feature_info(input_feature: &seg_dense::InputFeature) -> Option<Featur
             2 => 0,
             3 => 2,
             _ => -1,
-        }
+        },
     };
 
     if input_feature.index < 0 {
@@ -154,4 +150,3 @@ pub fn to_feature_info(input_feature: &seg_dense::InputFeature) -> Option<Featur
         index_within_tensor: input_feature.index,
     })
 }
-
