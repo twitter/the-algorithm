@@ -18,9 +18,11 @@ Product surfaces at Twitter are built on a shared set of data, models, and softw
 |       | [recos-injector](recos-injector/README.md) | Streaming event processor for building input streams for [GraphJet](https://github.com/twitter/GraphJet) based services. |
 |       | [graph-feature-service](graph-feature-service/README.md) | Serves graph features for a directed pair of Users (e.g. how many of User A's following liked Tweets from User B). |
 |       | [topic-social-proof](topic-social-proof/README.md) | Identifies topics related to individual Tweets. |
+|       | [representation-scorer](representation-scorer/README.md) | Compute scores between pairs of entities (Users, Tweets, etc.) using embedding similarity. |
 | Software framework | [navi](navi/README.md) | High performance, machine learning model serving written in Rust. |
 |                    | [product-mixer](product-mixer/README.md) | Software framework for building feeds of content. |
-|                    | [timelines-aggregation-framework](timelines/data_processing/ml_util/aggregation_framework/README.md) | Framework for generating aggregate features in batch or real time.
+|                    | [timelines-aggregation-framework](timelines/data_processing/ml_util/aggregation_framework/README.md) | Framework for generating aggregate features in batch or real time. |
+|                    | [representation-manager](representation-manager/README.md) | Service to retrieve embeddings (i.e. SimClusers and TwHIN). |
 |                    | [twml](twml/README.md) | Legacy machine learning framework built on TensorFlow v1. |
 
 The product surface currently included in this repository is the For You Timeline.
