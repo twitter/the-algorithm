@@ -1,3 +1,2 @@
-fn main() {
-    std::process::exit(0);
-}
+#![no_std]
+fn main() {}
