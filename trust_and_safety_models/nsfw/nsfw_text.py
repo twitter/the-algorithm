@@ -134,7 +134,7 @@ history = model.fit(
   steps_per_epoch=len(ds_train)
 )
 
-model.predict(["xxx 🍑"])
+model.predict(["xxx 🍑 🇫🇷"])
 
 preds = X_val.processed_text.apply(apply_model)
 print(classification_report(y_val, preds >= 0.90, digits=4))
