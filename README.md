@@ -24,6 +24,7 @@ Product surfaces at Twitter are built on a shared set of data, models, and softw
 |                    | [timelines-aggregation-framework](timelines/data_processing/ml_util/aggregation_framework/README.md) | Framework for generating aggregate features in batch or real time. |
 |                    | [representation-manager](representation-manager/README.md) | Service to retrieve embeddings (i.e. SimClusers and TwHIN). |
 |                    | [twml](twml/README.md) | Legacy machine learning framework built on TensorFlow v1. |
+|                    | [Tweetypie](tweetypie/server/README.md) | Core Tweet service that handles the reading and writing of Tweet data. |
 
 The product surface currently included in this repository is the For You Timeline.
 
