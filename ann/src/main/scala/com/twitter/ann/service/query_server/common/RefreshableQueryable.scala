@@ -123,7 +123,7 @@ class RefreshableQueryable[T, P <: RuntimeParams, D <: Distance[D]](
   /**
    * ANN query for ids with key as group id
    * @param embedding: Embedding/Vector to be queried with.
-   * @param numOfNeighbors: Number of neighbours to be queried for.
+   * @param numOfNeighbors: Number of neighbors to be queried for.
    * @param runtimeParams: Runtime params associated with index to control accuracy/latency etc.
    * @param key: Optional key to lookup specific ANN index and perform query there
    *  @return List of approximate nearest neighbour ids.
@@ -146,7 +146,7 @@ class RefreshableQueryable[T, P <: RuntimeParams, D <: Distance[D]](
   /**
    * ANN query for ids with key as group id with distance
    * @param embedding: Embedding/Vector to be queried with.
-   * @param numOfNeighbors: Number of neighbours to be queried for.
+   * @param numOfNeighbors: Number of neighbors to be queried for.
    * @param runtimeParams: Runtime params associated with index to control accuracy/latency etc.
    * @param key: Optional key to lookup specific ANN index and perform query there
    *  @return List of approximate nearest neighbour ids with distance from the query embedding.
@@ -180,7 +180,7 @@ class RefreshableQueryable[T, P <: RuntimeParams, D <: Distance[D]](
    * ANN query for ids.
    *
    * @param embedding       : Embedding/Vector to be queried with.
-   * @param numOfNeighbors  : Number of neighbours to be queried for.
+   * @param numOfNeighbors  : Number of neighbors to be queried for.
    * @param runtimeParams   : Runtime params associated with index to control accuracy/latency etc.
    *
    * @return List of approximate nearest neighbour ids.
@@ -197,7 +197,7 @@ class RefreshableQueryable[T, P <: RuntimeParams, D <: Distance[D]](
    * ANN query for ids with distance.
    *
    * @param embedding      : Embedding/Vector to be queried with.
-   * @param numOfNeighbors : Number of neighbours to be queried for.
+   * @param numOfNeighbors : Number of neighbors to be queried for.
    * @param runtimeParams  : Runtime params associated with index to control accuracy/latency etc.
    *
    * @return List of approximate nearest neighbour ids with distance from the query embedding.

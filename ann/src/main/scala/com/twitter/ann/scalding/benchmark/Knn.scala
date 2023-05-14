@@ -77,9 +77,9 @@ trait KnnJobBase {
       .getEmbeddings
 
     KnnHelper
-    // Refer to the documentation of findNearestNeighboursWithIndexingStrategy for more
+    // Refer to the documentation of findNearestneighborsWithIndexingStrategy for more
     // information about how to set these settings.
-      .findNearestNeighboursWithIndexingStrategy[UserId, B, D](
+      .findNearestneighborsWithIndexingStrategy[UserId, B, D](
         queryEmbeddings = consumerPipe,
         searchSpaceEmbeddings = itemPipe.asInstanceOf[TypedPipe[EmbeddingWithEntity[B]]],
         numNeighbors = args.int("candidate_per_user", 20),

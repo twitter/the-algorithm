@@ -118,7 +118,7 @@ trait QueryableIndexAdapter[T, D <: Distance[D]] extends Queryable[T, FaissParam
             1,
             // Array of query embeddings
             toFloatArray(normalizedEmbedding).cast(),
-            // Number of neighbours to return
+            // Number of neighbors to return
             numOfNeighbors,
             // Location to store neighbour distances
             distances.cast(),
@@ -155,7 +155,7 @@ trait QueryableIndexAdapter[T, D <: Distance[D]] extends Queryable[T, FaissParam
             1,
             // Array of query embeddings
             toFloatArray(normalizedEmbedding).cast(),
-            // Number of neighbours to return
+            // Number of neighbors to return
             numOfNeighbors,
             // Location to store neighbour distances
             distances.cast(),

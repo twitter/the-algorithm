@@ -29,31 +29,31 @@ class QueryIndexThriftController[T, P <: RuntimeParams, D <: Distance[D]] @Injec
   val trackingStatName = "ann_query"
 
   private[this] val stats = statsReceiver.scope(trackingStatName)
-  private[this] val numOfNeighboursRequested = stats.stat("num_of_neighbours_requested")
-  private[this] val numOfNeighboursResponse = stats.stat("num_of_neighbours_response")
+  private[this] val numOfneighborsRequested = stats.stat("num_of_neighbors_requested")
+  private[this] val numOfneighborsResponse = stats.stat("num_of_neighbors_response")
   private[this] val queryKeyNotFound = stats.stat("query_key_not_found")
 
   /**
-   * Implements AnnQueryService.query, returns nearest neighbours for a given query
+   * Implements AnnQueryService.query, returns nearest neighbors for a given query
    */
   val query: Service[Query.Args, Query.SuccessType] = { args: Query.Args =>
     thriftServer.track(trackingStatName) {
       val query = args.query
       val key = query.key
       val embedding = embeddingSerDe.fromThrift(query.embedding)
-      val numOfNeighbours = query.numberOfNeighbors
+      val numOfneighbors = query.numberOfNeighbors
       val withDistance = query.withDistance
       val runtimeParams = runtimeParamInjection.invert(query.runtimeParams).get
-      numOfNeighboursRequested.add(numOfNeighbours)
+      numOfneighborsRequested.add(numOfneighbors)
 
       val result = if (withDistance) {
         val nearestNeighbors = if (queryable.isInstanceOf[QueryableGrouped[T, P, D]]) {
           queryable
             .asInstanceOf[QueryableGrouped[T, P, D]]
-            .queryWithDistance(embedding, numOfNeighbours, runtimeParams, key)
+            .queryWithDistance(embedding, numOfneighbors, runtimeParams, key)
         } else {
           queryable
-            .queryWithDistance(embedding, numOfNeighbours, runtimeParams)
+            .queryWithDistance(embedding, numOfneighbors, runtimeParams)
         }
 
         nearestNeighbors.map { list =>
@@ -69,10 +69,10 @@ class QueryIndexThriftController[T, P <: RuntimeParams, D <: Distance[D]] @Injec
         val nearestNeighbors = if (queryable.isInstanceOf[QueryableGrouped[T, P, D]]) {
           queryable
             .asInstanceOf[QueryableGrouped[T, P, D]]
-            .query(embedding, numOfNeighbours, runtimeParams, key)
+            .query(embedding, numOfneighbors, runtimeParams, key)
         } else {
           queryable
-            .query(embedding, numOfNeighbours, runtimeParams)
+            .query(embedding, numOfneighbors, runtimeParams)
         }
 
         nearestNeighbors
@@ -84,7 +84,7 @@ class QueryIndexThriftController[T, P <: RuntimeParams, D <: Distance[D]] @Injec
       }
 
       result.map(NearestNeighborResult(_)).onSuccess { r =>
-        numOfNeighboursResponse.add(r.nearestNeighbors.size)
+        numOfneighborsResponse.add(r.nearestNeighbors.size)
       }
     }
   }

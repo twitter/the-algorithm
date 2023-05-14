@@ -56,7 +56,7 @@ object KnnTruthSetGenerator extends TwitterExecutionApp {
 
     // calculate and write knn
     val knnExecution = KnnHelper
-      .findNearestNeighbours(
+      .findNearestneighbors(
         queryEmbeddings,
         indexEmbeddings,
         metric,

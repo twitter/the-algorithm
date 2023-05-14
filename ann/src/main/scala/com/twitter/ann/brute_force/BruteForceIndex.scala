@@ -55,17 +55,17 @@ class BruteForceIndex[T, D <: Distance[D]] private (
 
   override def query(
     embedding: EmbeddingVector,
-    numOfNeighbours: Int,
+    numOfneighbors: Int,
     runtimeParams: BruteForceRuntimeParams.type
   ): Future[List[T]] = {
-    queryWithDistance(embedding, numOfNeighbours, runtimeParams).map { neighborsWithDistance =>
+    queryWithDistance(embedding, numOfneighbors, runtimeParams).map { neighborsWithDistance =>
       neighborsWithDistance.map(_.neighbor)
     }
   }
 
   override def queryWithDistance(
     embedding: EmbeddingVector,
-    numOfNeighbours: Int,
+    numOfneighbors: Int,
     runtimeParams: BruteForceRuntimeParams.type
   ): Future[List[NeighborWithDistance[T, D]]] = {
     futurePool {
@@ -80,7 +80,7 @@ class BruteForceIndex[T, D <: Distance[D]] private (
           val neighborWithDistance =
             NeighborWithDistance(entity.id, metric.distance(entity.embedding, embedding))
           priorityQueue.+=(neighborWithDistance)
-          if (priorityQueue.size > numOfNeighbours) {
+          if (priorityQueue.size > numOfneighbors) {
             priorityQueue.dequeue()
           }
         }
@@ -127,17 +127,17 @@ class SerializableBruteForceIndex[T, D <: Distance[D]](
 
   override def query(
     embedding: EmbeddingVector,
-    numOfNeighbours: Int,
+    numOfneighbors: Int,
     runtimeParams: BruteForceRuntimeParams.type
   ): Future[List[T]] =
-    bruteForceIndex.query(embedding, numOfNeighbours, runtimeParams)
+    bruteForceIndex.query(embedding, numOfneighbors, runtimeParams)
 
   override def queryWithDistance(
     embedding: EmbeddingVector,
-    numOfNeighbours: Int,
+    numOfneighbors: Int,
     runtimeParams: BruteForceRuntimeParams.type
   ): Future[List[NeighborWithDistance[T, D]]] =
-    bruteForceIndex.queryWithDistance(embedding, numOfNeighbours, runtimeParams)
+    bruteForceIndex.queryWithDistance(embedding, numOfneighbors, runtimeParams)
 
   override def toDirectory(serializationDirectory: ResourceId): Unit = {
     toDirectory(new IndexOutputFile(serializationDirectory))

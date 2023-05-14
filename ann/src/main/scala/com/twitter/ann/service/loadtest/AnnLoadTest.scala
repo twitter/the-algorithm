@@ -38,10 +38,10 @@ class AnnIndexQueryLoadTest(
 
 /**
  * @param embedding Embedding vector
- * @param trueNeighbours List of true neighbour ids. Empty in case true neighbours dataset not available
+ * @param trueneighbors List of true neighbour ids. Empty in case true neighbors dataset not available
  * @tparam T Type of neighbour
  */
-case class Query[T](embedding: EmbeddingVector, trueNeighbours: Seq[T] = Seq.empty)
+case class Query[T](embedding: EmbeddingVector, trueneighbors: Seq[T] = Seq.empty)
 
 class AnnIndexBuildLoadTest(
   buildRecorder: LoadTestBuildRecorder,

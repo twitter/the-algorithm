@@ -71,7 +71,7 @@ public class HnswIndex<T, Q> {
    * Creates instance of hnsw index.
    *
    * @param distFnIndex      Any distance metric/non metric that specifies similarity between two items for indexing.
-   * @param distFnQuery      Any distance metric/non metric that specifies similarity between item for which nearest neighbours queried for and already indexed item.
+   * @param distFnQuery      Any distance metric/non metric that specifies similarity between item for which nearest neighbors queried for and already indexed item.
    * @param efConstruction   Provide speed vs index quality tradeoff, higher the value better the quality and higher the time to create index.
    *                         Valid range of efConstruction can be anywhere between 1 and tens of thousand. Typically, it should be set so that a search of M
    *                         neighbors with ef=efConstruction should end in recall>0.95.
@@ -307,7 +307,7 @@ public class HnswIndex<T, Q> {
             }
           }
         }
-        final ImmutableList<T> neighbours = selectNearestNeighboursByHeuristic(
+        final ImmutableList<T> neighbors = selectNearestneighborsByHeuristic(
             candidates,
             layer == 0 ? maxM0 : maxM
         );
@@ -316,10 +316,10 @@ public class HnswIndex<T, Q> {
         if (temp.isEmpty()) {
           LOG.debug("existing linkslist is empty. Corrupt index");
         }
-        if (neighbours.isEmpty()) {
+        if (neighbors.isEmpty()) {
           LOG.debug("predicted linkslist is empty. Corrupt index");
         }
-        setConnectionList(neigh, layer, neighbours);
+        setConnectionList(neigh, layer, neighbors);
 
       }
 
@@ -390,10 +390,10 @@ public class HnswIndex<T, Q> {
 
     // Using maxM here. Its implementation is ambiguous in HNSW paper,
     // so using the way it is getting used in Hnsw lib.
-    final ImmutableList<T> neighbours = selectNearestNeighboursByHeuristic(candidates, maxM);
-    setConnectionList(item, level, neighbours);
+    final ImmutableList<T> neighbors = selectNearestneighborsByHeuristic(candidates, maxM);
+    setConnectionList(item, level, neighbors);
     final int M = level == 0 ? maxM0 : maxM;
-    for (T nn : neighbours) {
+    for (T nn : neighbors) {
       if (nn.equals(item)) {
         continue;
       }
@@ -425,7 +425,7 @@ public class HnswIndex<T, Q> {
               distFnIndex
           );
           queue.enqueue(item);
-          updatedConnections = selectNearestNeighboursByHeuristic(queue, M);
+          updatedConnections = selectNearestneighborsByHeuristic(queue, M);
         }
         if (updatedConnections.isEmpty()) {
           LOG.debug("Internal error: predicted linkslist is empty");
@@ -436,7 +436,7 @@ public class HnswIndex<T, Q> {
         curLock.unlock();
       }
     }
-    return neighbours.get(0);
+    return neighbors.get(0);
   }
 
   /*
@@ -476,12 +476,12 @@ public class HnswIndex<T, Q> {
 
 
   @VisibleForTesting
-  protected ImmutableList<T> selectNearestNeighboursByHeuristic(
+  protected ImmutableList<T> selectNearestneighborsByHeuristic(
       final DistancedItemQueue<T, T> candidates, // Max queue
       final int maxConnections
   ) {
     Preconditions.checkState(!candidates.isMinQueue(),
-        "candidates in selectNearestNeighboursByHeuristic should be a max queue");
+        "candidates in selectNearestneighborsByHeuristic should be a max queue");
 
     final T baseElement = candidates.getOrigin();
     if (candidates.size() <= maxConnections) {
@@ -526,27 +526,27 @@ public class HnswIndex<T, Q> {
   }
 
   /**
-   * Search the index for the neighbours.
+   * Search the index for the neighbors.
    *
    * @param query           Query
-   * @param numOfNeighbours Number of neighbours to search for.
+   * @param numOfneighbors Number of neighbors to search for.
    * @param ef              This param controls the accuracy of the search.
    *                        Bigger the ef better the accuracy on the expense of latency.
-   *                        Keep it atleast number of neighbours to find.
-   * @return Neighbours
+   *                        Keep it atleast number of neighbors to find.
+   * @return neighbors
    */
-  public List<DistancedItem<T>> searchKnn(final Q query, final int numOfNeighbours, final int ef) {
+  public List<DistancedItem<T>> searchKnn(final Q query, final int numOfneighbors, final int ef) {
     final HnswMeta<T> metadata = graphMeta.get();
     if (metadata.getEntryPoint().isPresent()) {
       T entryPoint = bestEntryPointUntilLayer(metadata.getEntryPoint().get(),
           query, metadata.getMaxLevel(), 0, distFnQuery);
-      // Get the actual neighbours from 0th layer
-      final List<DistancedItem<T>> neighbours =
-          searchLayerForCandidates(query, entryPoint, Math.max(ef, numOfNeighbours),
+      // Get the actual neighbors from 0th layer
+      final List<DistancedItem<T>> neighbors =
+          searchLayerForCandidates(query, entryPoint, Math.max(ef, numOfneighbors),
               0, distFnQuery, false).dequeueAll();
-      Collections.reverse(neighbours);
-      return neighbours.size() > numOfNeighbours
-          ? neighbours.subList(0, numOfNeighbours) : neighbours;
+      Collections.reverse(neighbors);
+      return neighbors.size() > numOfneighbors
+          ? neighbors.subList(0, numOfneighbors) : neighbors;
     } else {
       return Collections.emptyList();
     }

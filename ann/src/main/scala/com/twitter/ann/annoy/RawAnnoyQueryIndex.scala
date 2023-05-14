@@ -88,25 +88,25 @@ private[this] class RawAnnoyQueryIndex[D <: Distance[D]](
     with AutoCloseable {
   override def query(
     embedding: EmbeddingVector,
-    numOfNeighbours: Int,
+    numOfneighbors: Int,
     runtimeParams: AnnoyRuntimeParams
   ): Future[List[Long]] = {
-    queryWithDistance(embedding, numOfNeighbours, runtimeParams)
+    queryWithDistance(embedding, numOfneighbors, runtimeParams)
       .map(_.map(_.neighbor))
   }
 
   override def queryWithDistance(
     embedding: EmbeddingVector,
-    numOfNeighbours: Int,
+    numOfneighbors: Int,
     runtimeParams: AnnoyRuntimeParams
   ): Future[List[NeighborWithDistance[Long, D]]] = {
     futurePool {
       val queryVector = embedding.toArray
-      val neigboursToRequest = neighboursToRequest(numOfNeighbours, runtimeParams)
+      val neigboursToRequest = neighborsToRequest(numOfneighbors, runtimeParams)
       val neigbours = index
         .getNearestWithDistance(queryVector, neigboursToRequest)
         .asScala
-        .take(numOfNeighbours)
+        .take(numOfneighbors)
         .map { nn =>
           val id = nn.getFirst.toLong
           val distance = metric.fromAbsoluteDistance(nn.getSecond)
@@ -120,20 +120,20 @@ private[this] class RawAnnoyQueryIndex[D <: Distance[D]](
 
   // Annoy java lib do not expose param for numOfNodesToExplore.
   // Default number is numOfTrees*numOfNeigbours.
-  // Simple hack is to artificially increase the numOfNeighbours to be requested and then just cap it before returning.
-  private[this] def neighboursToRequest(
-    numOfNeighbours: Int,
+  // Simple hack is to artificially increase the numOfneighbors to be requested and then just cap it before returning.
+  private[this] def neighborsToRequest(
+    numOfneighbors: Int,
     annoyParams: AnnoyRuntimeParams
   ): Int = {
     annoyParams.nodesToExplore match {
       case Some(nodesToExplore) => {
         val neigboursToRequest = nodesToExplore / numOfTrees
-        if (neigboursToRequest < numOfNeighbours)
-          numOfNeighbours
+        if (neigboursToRequest < numOfneighbors)
+          numOfneighbors
         else
           neigboursToRequest
       }
-      case _ => numOfNeighbours
+      case _ => numOfneighbors
     }
   }
 

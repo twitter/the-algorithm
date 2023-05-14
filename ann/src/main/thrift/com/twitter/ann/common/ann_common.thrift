@@ -34,7 +34,7 @@ struct AnnoyRuntimeParam {
 
 struct HnswRuntimeParam {
   // More the value of ef better the recall with but at cost of latency.
-  // Set it greater than equal to number of neighbours required.
+  // Set it greater than equal to number of neighbors required.
   1: i32 ef
 }
 
@@ -46,11 +46,11 @@ struct FaissRuntimeParam {
   1: optional i32 nprobe
   // Depth of search in HNSW. Higher is slower / more precise.
   2: optional i32 quantizer_ef
-  // How many times more neighbours are requested from underlying index by IndexRefine.
+  // How many times more neighbors are requested from underlying index by IndexRefine.
   3: optional i32 quantizer_kfactor_rf
   // Same as 1: but for quantizer
   4: optional i32 quantizer_nprobe
-  // Hamming distance threshold to filter neighbours when searching.
+  // Hamming distance threshold to filter neighbors when searching.
   5: optional i32 ht
 }
 
@@ -79,7 +79,7 @@ struct HnswInternalIndexMetadata {
 struct HnswGraphEntry {
   1: i32 level
   2: binary key
-  3: list<binary> neighbours
+  3: list<binary> neighbors
 } (persisted = 'true', strato.graphql.typename='HnswGraphEntry')
 
 enum IndexType {
@@ -122,7 +122,7 @@ struct NearestNeighbor {
 
 struct NearestNeighborResult {
   // This list is ordered from nearest to furthest neighbor
-  1: required list<NearestNeighbor> nearestNeighbors
+  1: required list<NearestNeighbor> nearestneighbors
 }
 
 // Different runtime/tuning params while querying for indexes to control accuracy/latency etc..
@@ -136,7 +136,7 @@ struct NearestNeighborQuery {
   1: required embedding.Embedding embedding
   2: required bool with_distance
   3: required RuntimeParams runtimeParams,
-  4: required i32 numberOfNeighbors,
+  4: required i32 numberOfneighbors,
   // The purpose of the key here is to load the index in memory as a map of Option[key] to index
   // If the key is not specified in the query, the map value corresponding to None key will be used
   // as the queryable index to perform Nearest Neighbor search on

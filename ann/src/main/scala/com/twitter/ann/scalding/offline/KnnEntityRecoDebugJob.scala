@@ -8,7 +8,7 @@ import com.twitter.scalding._
 import com.twitter.scalding_internal.job.TwitterExecutionApp
 
 /**
- * This job do an exhaustive search for nearest neighbours helpful for debugging recommendations
+ * This job do an exhaustive search for nearest neighbors helpful for debugging recommendations
  * for a given list of sample queryIds and entity embeddings for the recos to be made.
  * Sample job script:
   ./bazel bundle ann/src/main/scala/com/twitter/ann/scalding/offline:ann-offline-deploy
@@ -72,7 +72,7 @@ object KnnEntityRecoDebugJob extends TwitterExecutionApp {
     val searchSpaceEmbeddings =
       searchSpaceEntityKind.parser.getEmbeddingFormat(args, "search_space").getEmbeddings
 
-    val nearestNeighborString = findNearestNeighbours(
+    val nearestNeighborString = findNearestneighbors(
       queryEmbeddings,
       searchSpaceEmbeddings,
       metric,

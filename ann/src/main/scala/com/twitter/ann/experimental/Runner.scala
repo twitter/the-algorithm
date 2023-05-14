@@ -19,7 +19,7 @@ object Runner {
   def main(args: Array[String]): Unit = {
     val rng = new Random()
     val dimen = 300
-    val neighbours = 20
+    val neighbors = 20
     val trainDataSetSize = 2000
     val testDataSetSize = 30
 
@@ -110,7 +110,7 @@ object Runner {
         time(
           Await
             .result(
-              bruteforce.query(embedding, neighbours, BruteForceRuntimeParams))
+              bruteforce.query(embedding, neighbors, BruteForceRuntimeParams))
             .toSet)
       bruteForceTime += timeTakenB
 
@@ -120,9 +120,9 @@ object Runner {
       hnswEfConfigCopy.keys.foreach { ef =>
         val (nn, timeTaken) =
           time(Await
-            .result(hnswQueryable.query(embedding, neighbours, HnswParams(ef)))
+            .result(hnswQueryable.query(embedding, neighbors, HnswParams(ef)))
             .toSet)
-        val recall = (list.intersect(nn).size) * 1.0f / neighbours
+        val recall = (list.intersect(nn).size) * 1.0f / neighbors
         val (oldTime, oldRecall) = hnswEfConfig(ef)
         hnswEfConfig.put(ef, (oldTime + timeTaken, oldRecall + recall))
       }
@@ -133,10 +133,10 @@ object Runner {
             Await.result(
               annoyQuery
                 .query(embedding,
-                  neighbours,
+                  neighbors,
                   AnnoyRuntimeParams(nodesToExplore = Some(nodes)))
                 .map(_.toSet)))
-        val recall = (list.intersect(nn).size) * 1.0f / neighbours
+        val recall = (list.intersect(nn).size) * 1.0f / neighbors
         val (oldTime, oldRecall) = annoyConfig(nodes)
         annoyConfig.put(nodes, (oldTime + timeTaken, oldRecall + recall))
       }

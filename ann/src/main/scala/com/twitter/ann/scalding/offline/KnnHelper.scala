@@ -165,7 +165,7 @@ object KnnHelper {
    * @tparam B type of search space entity
    * @tparam D type of distance
    */
-  def findNearestNeighbours[A <: EntityId, B <: EntityId, D <: Distance[D]](
+  def findNearestneighbors[A <: EntityId, B <: EntityId, D <: Distance[D]](
     queryEmbeddings: TypedPipe[EmbeddingWithEntity[A]],
     searchSpaceEmbeddings: TypedPipe[EmbeddingWithEntity[B]],
     metric: Metric[D],
@@ -192,7 +192,7 @@ object KnnHelper {
 
     if (numOfSearchGroups > 1) {
       val indexingStrategy = BruteForceIndexingStrategy(metric)
-      findNearestNeighboursWithIndexingStrategy(
+      findNearestneighborsWithIndexingStrategy(
         queryEmbeddings,
         searchSpaceEmbeddings,
         numNeighbors,
@@ -203,7 +203,7 @@ object KnnHelper {
         useCounters = useCounters
       )
     } else {
-      findNearestNeighboursViaCross(
+      findNearestneighborsViaCross(
         filteredQueryEmbeddings,
         searchSpaceEmbeddings,
         metric,
@@ -245,7 +245,7 @@ object KnnHelper {
    * @return a pipe keyed by the index embedding. The values are the list of numNeighbors nearest
    *         neighbors along with their distances.
    */
-  def findNearestNeighboursWithIndexingStrategy[A <: EntityId, B <: EntityId, D <: Distance[D]](
+  def findNearestneighborsWithIndexingStrategy[A <: EntityId, B <: EntityId, D <: Distance[D]](
     queryEmbeddings: TypedPipe[EmbeddingWithEntity[A]],
     searchSpaceEmbeddings: TypedPipe[EmbeddingWithEntity[B]],
     numNeighbors: Int,
@@ -356,7 +356,7 @@ object KnnHelper {
       }.getOrElse(pipe)
   }
 
-  private[this] def findNearestNeighboursViaCross[A <: EntityId, B <: EntityId, D <: Distance[D]](
+  private[this] def findNearestneighborsViaCross[A <: EntityId, B <: EntityId, D <: Distance[D]](
     queryEmbeddings: TypedPipe[EmbeddingWithEntity[A]],
     searchSpaceEmbeddings: TypedPipe[EmbeddingWithEntity[B]],
     metric: Metric[D],

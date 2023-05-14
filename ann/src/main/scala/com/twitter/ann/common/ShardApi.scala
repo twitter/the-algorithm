@@ -49,7 +49,7 @@ class ShardedAppendable[T, P <: RuntimeParams, D <: Distance[D]](
 
 /**
  * Composition of sequence of queryable indices, it queries all the indices,
- * and merges the result in memory to return the K nearest neighbours
+ * and merges the result in memory to return the K nearest neighbors
  * @param indices: Sequence of queryable indices
  * @tparam T: Type of id
  * @tparam P: Type of runtime param
@@ -65,8 +65,8 @@ class ComposedQueryable[T, P <: RuntimeParams, D <: Distance[D]](
     numOfNeighbors: Int,
     runtimeParams: P
   ): Future[List[T]] = {
-    val neighbours = queryWithDistance(embedding, numOfNeighbors, runtimeParams)
-    neighbours.map(list => list.map(nn => nn.neighbor))
+    val neighbors = queryWithDistance(embedding, numOfNeighbors, runtimeParams)
+    neighbors.map(list => list.map(nn => nn.neighbor))
   }
 
   override def queryWithDistance(

@@ -86,7 +86,7 @@ public final class HnswIndexIOUtil {
         entry.read(protocol);
         final HnswNode<T> node = HnswNode.from(entry.level,
             injection.invert(ArrayByteBufferCodec.decode(entry.key)).get());
-        final List<T> list = entry.getNeighbours().stream()
+        final List<T> list = entry.getneighbors().stream()
             .map(bb -> injection.invert(ArrayByteBufferCodec.decode(bb)).get())
             .collect(Collectors.toList());
         graph.put(node, ImmutableList.copyOf(list.iterator()));
@@ -123,7 +123,7 @@ public final class HnswIndexIOUtil {
       final List<ByteBuffer> nn = graph.getOrDefault(node, ImmutableList.of()).stream()
           .map(t -> ByteBuffer.wrap(injection.apply(t)))
           .collect(Collectors.toList());
-      entry.setNeighbours(nn);
+      entry.setneighbors(nn);
       entry.write(protocol);
     }
 

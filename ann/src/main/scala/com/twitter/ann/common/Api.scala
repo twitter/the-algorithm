@@ -26,7 +26,7 @@ trait Queryable[T, P <: RuntimeParams, D <: Distance[D]] {
   /**
    * ANN query for ids.
    * @param embedding: Embedding/Vector to be queried with.
-   * @param numOfNeighbors: Number of neighbours to be queried for.
+   * @param numOfNeighbors: Number of neighbors to be queried for.
    * @param runtimeParams: Runtime params associated with index to control accuracy/latency etc.
    * @return List of approximate nearest neighbour ids.
    */
@@ -39,7 +39,7 @@ trait Queryable[T, P <: RuntimeParams, D <: Distance[D]] {
   /**
    * ANN query for ids with distance.
    * @param embedding: Embedding/Vector to be queried with.
-   * @param numOfNeighbors: Number of neighbours to be queried for.
+   * @param numOfNeighbors: Number of neighbors to be queried for.
    * @param runtimeParams: Runtime params associated with index to control accuracy/latency etc.
    * @return List of approximate nearest neighbour ids with distance from the query embedding.
    */
@@ -56,7 +56,7 @@ trait QueryableGrouped[T, P <: RuntimeParams, D <: Distance[D]] extends Queryabl
   /**
    * ANN query for ids.
    * @param embedding: Embedding/Vector to be queried with.
-   * @param numOfNeighbors: Number of neighbours to be queried for.
+   * @param numOfNeighbors: Number of neighbors to be queried for.
    * @param runtimeParams: Runtime params associated with index to control accuracy/latency etc.
    * @param key: Optional key to lookup specific ANN index and perform query there
    * @return List of approximate nearest neighbour ids.
@@ -71,7 +71,7 @@ trait QueryableGrouped[T, P <: RuntimeParams, D <: Distance[D]] extends Queryabl
   /**
    * ANN query for ids with distance.
    * @param embedding: Embedding/Vector to be queried with.
-   * @param numOfNeighbors: Number of neighbours to be queried for.
+   * @param numOfNeighbors: Number of neighbors to be queried for.
    * @param runtimeParams: Runtime params associated with index to control accuracy/latency etc.
    * @param key: Optional key to lookup specific ANN index and perform query there
    * @return List of approximate nearest neighbour ids with distance from the query embedding.
@@ -91,7 +91,7 @@ trait RuntimeParams {}
 
 /**
  * ANN query result with distance.
- * @param neighbor : Id of the neighbours
+ * @param neighbor : Id of the neighbors
  * @param distance: Distance of neighbour from query ex: D: CosineDistance, L2Distance, InnerProductDistance
  */
 case class NeighborWithDistance[T, D <: Distance[D]](neighbor: T, distance: D)
@@ -99,14 +99,14 @@ case class NeighborWithDistance[T, D <: Distance[D]](neighbor: T, distance: D)
 /**
  * ANN query result with seed entity for which this neighbor was provided.
  * @param seed: Seed Id for which ann query was called
- * @param neighbor : Id of the neighbours
+ * @param neighbor : Id of the neighbors
  */
 case class NeighborWithSeed[T1, T2](seed: T1, neighbor: T2)
 
 /**
  * ANN query result with distance with seed entity for which this neighbor was provided.
  * @param seed: Seed Id for which ann query was called
- * @param neighbor : Id of the neighbours
+ * @param neighbor : Id of the neighbors
  * @param distance: Distance of neighbour from query ex: D: CosineDistance, L2Distance, InnerProductDistance
  */
 case class NeighborWithDistanceWithSeed[T1, T2, D <: Distance[D]](

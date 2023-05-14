@@ -86,7 +86,7 @@ trait InterestedInTwiceBaseApp[T] {
   /**
    * Randomly select up to maxNeighborsByUser neighbors for each user.
    * Attempts to equally sample both follow and fav edges (e.g. maxNeighborsByUser/2 for each).
-   * However, if one type of edge is insufficient, backfill with other type up to maxNeighborsByUser neighbours.
+   * However, if one type of edge is insufficient, backfill with other type up to maxNeighborsByUser neighbors.
    * @param userUserGraph User-User follow/fav graph.
    * @param maxNeighborsByUser How many neighbors to keep for each user.
    */

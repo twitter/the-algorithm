@@ -180,7 +180,7 @@ $ export QUERY_SET_PATH=/user/$USER/query_set
 $ export METRIC=InnerProduct
 $ export QUERY_ENTITY_KIND=user
 $ export INDEX_ENTITY_KIND=user
-$ export NEIGHBOURS=10
+$ export neighbors=10
 
 $ oscar hdfs \
   --screen --tee log.txt \
@@ -190,7 +190,7 @@ $ oscar hdfs \
   --min-split-size 284217728 \
   --host hadoopnest1.smf1.twitter.com \
   --tool com.twitter.ann.scalding.offline.KnnTruthSetGenerator -- \
-  --neighbors $NEIGHBOURS \
+  --neighbors $neighbors \
   --metric $METRIC \
   --query_entity_kind $QUERY_ENTITY_KIND \
   --query.embedding_path $QUERY_EMBEDDINGS_PATH \
@@ -208,7 +208,7 @@ $ oscar hdfs \
   --reducers 100
 ```
 
-It will sample 90% of index set embeddings and 50% of query embeddings from total and then it will generate 3 datasets from the same that are index set, query set and true nearest neighbours from query to index in the tab format.
+It will sample 90% of index set embeddings and 50% of query embeddings from total and then it will generate 3 datasets from the same that are index set, query set and true nearest neighbors from query to index in the tab format.
 `Note`: The reason for using high sample percent is due to the fact the sample embeddings dataset is small. For real use cases query set should be really small.
 Set `--reducers` according to the embeddings dataset size.
 

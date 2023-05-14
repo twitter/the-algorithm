@@ -32,7 +32,7 @@ class ConnectedComponentsClusteringMethod(
       case (source, idx) => idx -> source
     }.toSeq: _*)
 
-    val neighbours = sourcesById.map {
+    val neighbors = sourcesById.map {
       case (srcIdx, (_, src)) =>
         sourcesById
           .collect {
@@ -51,8 +51,8 @@ class ConnectedComponentsClusteringMethod(
     recordStatCallback(StatSimilarityGraphTotalBuildTime, timeSinceGraphBuildStart().inMilliseconds)
 
     val timeSinceClusteringAlgRunStart = Stopwatch.start()
-    val nEdges = neighbours.map(_.length).sum / 2 // Graph expects count of undirected edges
-    val graph = new Graph(sourcesById.size, nEdges, neighbours)
+    val nEdges = neighbors.map(_.length).sum / 2 // Graph expects count of undirected edges
+    val graph = new Graph(sourcesById.size, nEdges, neighbors)
 
     val clusters = ConnectedComponents
       .connectedComponents(graph).asScala.toSet

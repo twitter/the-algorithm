@@ -101,7 +101,7 @@ class AnnLoadTestWorker(
         // underneath LoadTestRecorder will record results for load test
         // knnMap should be truncated to be same size as query result
         configuration.recorder.recordQueryResult(
-          query.trueNeighbours,
+          query.trueneighbors,
           res,
           elapsed.apply()
         )
