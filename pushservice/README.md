@@ -17,9 +17,9 @@ RefreshForPushHandler follows these steps:
 - Fetch Candidates
     - Retrieves a list of potential candidates for the push by querying various candidate sources using the target
 - Candidate Hydration
-    - Hydrates the candidate details with batch calls to different downstream services.
+    - Hydrates the candidate details with batch calls to different downstream services
 - Pre-rank Filtering, also called Light Filtering
-    - Filters the hydrated candidates with lightweight RPC calls.
+    - Filters the hydrated candidates with lightweight RPC calls
 - Rank
     - Perform feature hydration for candidates and target user
     - Performs light ranking on candidates
@@ -36,7 +36,7 @@ SendHandler follows these steps:
 - Building Target
     - Builds a target user object based on the given user ID
 - Candidate Hydration
-    - Hydrates the candidate details with batch calls to different downstream services.
+    - Hydrates the candidate details with batch calls to different downstream services
 - Feature Hydration
     - Perform feature hydration for candidates and target user
 - Take Step, also called Heavy Filtering
