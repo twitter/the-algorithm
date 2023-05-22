@@ -39,14 +39,18 @@ impl PredictRequest {
     ) -> Vec<TensorInput> {
         let mut model_inputs = Vec::<TensorInput>::new();
         for input_name in inputs.as_slice() {
-            let input_tensor = self
+            self.make_inputs(&mut model_inputs);
+        }
+        model_inputs
+    }
+
+    #[inline(always)]
+    fn make_inputs(model_inputs: &mut Vec<TensorInput>) {
+        let input_tensor = self
                 .inputs
                 .get_mut(input_name)
                 .unwrap_or_else(|| panic!("can't find {:?}", input_name));
-            let dims = match &input_tensor.tensor_shape {
-                None => None,
-                Some(data) => Some(data.dim.iter().map(|d| d.size).collect_vec()),
-            };
+            let dims = input_tensor.tensor_shape.as_ref().map(|data| data.dim.iter().map(|d| d.size).collect_vec());
             match input_tensor.dtype() {
                 DataType::DtFloat => model_inputs.push(TensorInput::new(
                     TensorInputEnum::Float(std::mem::take(&mut input_tensor.float_val)),
@@ -80,9 +84,8 @@ impl PredictRequest {
                 )),
                 _ => panic!("unsupport input tensor type {:?}", input_tensor.dtype()),
             }
-        }
-        model_inputs
     }
+
     #[inline(always)]
     pub fn take_model_spec(&mut self) -> (String, Option<i64>) {
         let model_spec = self.model_spec.as_mut().unwrap();

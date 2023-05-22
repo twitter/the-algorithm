@@ -212,7 +212,7 @@ lazy_static! {
                 inputs.push(OnceCell::new());
             } else {
                 inputs.push(OnceCell::with_value(
-                    o.split(",")
+                    o.split(',')
                         .map(|s| s.to_owned())
                         .collect::<ArrayVec<String, MAX_NUM_INPUTS>>(),
                 ));
@@ -225,7 +225,7 @@ lazy_static! {
         let mut outputs = ArrayVec::<ArrayVec<String, MAX_NUM_OUTPUTS>, MAX_NUM_MODELS>::new();
         for o in ARGS.output.iter() {
             outputs.push(
-                o.split(",")
+                o.split(',')
                     .map(|s| s.to_owned())
                     .collect::<ArrayVec<String, MAX_NUM_OUTPUTS>>(),
             );
