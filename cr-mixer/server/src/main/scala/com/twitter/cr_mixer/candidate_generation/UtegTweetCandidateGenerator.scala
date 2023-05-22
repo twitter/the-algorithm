@@ -57,7 +57,7 @@ class UtegTweetCandidateGenerator @Inject() (
          * supported by the any existing Candidate type, so we created TweetWithScoreAndSocialProof
          * instead.
          *
-         * However, filters and light ranker expect Candidate-typed param to work. In order to minimise the
+         * However, filters and light ranker expect Candidate-typed param to work. In order to minimize the
          * changes to them, we are doing conversions from/to TweetWithScoreAndSocialProof to/from Candidate
          * in this method.
          */

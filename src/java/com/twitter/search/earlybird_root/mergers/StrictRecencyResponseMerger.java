@@ -212,7 +212,7 @@ public class StrictRecencyResponseMerger extends RecencyResponseMerger {
       // We don't need to worry about the tier bottom when merging partition responses in the full
       // archive cluster: if all partitions were exhausted and we didn't trim the results, then
       // the early-terminated flag on the merged response will be false. If at least one partition
-      // is early-terminated, or we trimmed some results, then the ealry-terminated flag on the
+      // is early-terminated, or we trimmed some results, then the early-terminated flag on the
       // merged response will be true, and we should continue getting results from this tier before
       // we move to the next one.
       return false;

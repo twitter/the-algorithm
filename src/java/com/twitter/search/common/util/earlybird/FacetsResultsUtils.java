@@ -54,7 +54,7 @@ public final class FacetsResultsUtils {
 
   /**
    * Prepare facet fields with empty entries and check if we need termStats for filtering.
-   * Returns true if termStats filtering is needed (thus the termStats servie call).
+   * Returns true if termStats filtering is needed (thus the termStats service call).
    * @param facetRequest The related facet request.
    * @param facetFieldInfoMap The facet field info map to fill, a map from facet type to the facet
    * fiels results info.

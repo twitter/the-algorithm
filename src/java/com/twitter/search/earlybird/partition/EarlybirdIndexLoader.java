@@ -156,7 +156,7 @@ public class EarlybirdIndexLoader {
     FlushInfo segmentsFlushInfo = indexInfo.getSubProperties(EarlybirdIndexFlusher.SEGMENTS);
     List<String> segmentNames = Lists.newArrayList(segmentsFlushInfo.getKeyIterator());
 
-    // This should only happen if you're running in stagingN and loading a prod index through
+    // This should only happen if you're running in staging and loading a prod index through
     // the read_index_from_prod_location flag. In this case, we point to a directory that has
     // a lot more than the number of segments we want in staging and we trim this list to the
     // desired number.

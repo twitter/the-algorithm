@@ -59,7 +59,7 @@ case class SimilarityEngineInfo(
  *
  * @param sourceInfoOpt - this is optional as many consumerBased CG does not have a source
  * @param similarityEngineInfo - the similarity engine used in Candidate Generation (eg., TweetBasedUnifiedSE). It can be an atomic SE or an composite SE
- * @param contributingSimilarityEngines - only composite SE will have it (e.g., SANNN, UTG). Otherwise it is an empty Seq. All contributing SEs mst be atomic
+ * @param contributingSimilarityEngines - only composite SE will have it (e.g., SANN, UTG). Otherwise it is an empty Seq. All contributing SEs mst be atomic
  */
 case class CandidateGenerationInfo(
   sourceInfoOpt: Option[SourceInfo],

@@ -24,7 +24,7 @@ abstract class BaseQueryIndexServer extends ThriftServer with Mtls {
   protected val environment: Flag[String] = flag[String]("environment", "service environment")
 
   /**
-   * Override with method to provide more module to guice.
+   * Override with method to provide more module to guide.
    */
   protected def additionalModules: Seq[Module]
 
