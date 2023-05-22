@@ -534,7 +534,7 @@ class ExperimentTracker(object):
         paths.append(os.path.join(path, name))
 
     paths.sort()
-    hash_object = hashlib.new('sha1')
+    hash_object = hashlib.new('sha256')
 
     for path in paths:
       with tf.io.gfile.GFile(path, "rb") as file:
