@@ -75,21 +75,23 @@ class WorkerGetIntersectionHandler @Inject() (
               val rightNeighborsOpt =
                 rightEdgeMap.get(featureType.rightEdgeType).flatMap(_.get(candidateId))
 
-              if (leftNeighborsOpt.isEmpty && rightNeighborsOpt.isEmpty) {
-                EmptyWorkerIntersectionValue
-              } else if (rightNeighborsOpt.isEmpty) {
-                EmptyWorkerIntersectionValue.copy(
-                  leftNodeDegree = computeArraySize(leftNeighborsOpt.get)
-                )
-              } else if (leftNeighborsOpt.isEmpty) {
-                EmptyWorkerIntersectionValue.copy(
-                  rightNodeDegree = computeArraySize(rightNeighborsOpt.get)
-                )
-              } else {
-                IntersectionValueCalculator(
-                  leftNeighborsOpt.get,
-                  rightNeighborsOpt.get,
-                  request.intersectionIdLimit)
+              (leftNeighborsOpt, rightNeighborsOpt) match {
+                case (Some(leftNeighbors), None) =>
+                  EmptyWorkerIntersectionValue.copy(
+                    leftNodeDegree = computeArraySize(leftNeighbors)
+                  )
+                case (None, Some(rightNeighbors)) =>
+                  EmptyWorkerIntersectionValue.copy(
+                    rightNodeDegree = computeArraySize(rightNeighbors)
+                  )
+                case (Some(leftNeighbors), Some(rightNeighbors)) =>
+                  IntersectionValueCalculator(
+                    leftNeighbors,
+                    rightNeighbors,
+                    request.intersectionIdLimit
+                  )
+                case _ =>
+                  EmptyWorkerIntersectionValue
               }
           }
         }
