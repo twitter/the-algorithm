@@ -43,7 +43,6 @@ class RelatedTweetCandidateGenerator @Inject() (
   def get(
     query: RelatedTweetCandidateGeneratorQuery
   ): Future[Seq[InitialCandidate]] = {
-
     val allStats = stats.scope("all")
     val perProductStats = stats.scope("perProduct", query.product.toString)
     StatsUtil.trackItemsStats(allStats) {
@@ -90,9 +89,9 @@ class RelatedTweetCandidateGenerator @Inject() (
   }
 
   /***
-   * fetch Candidates from TweetBased/ProducerBased Unified Similarity Engine,
-   * and apply VF filter based on TweetInfoStore
-   * To align with the downstream processing (filter, rank), we tend to return a Seq[Seq[InitialCandidate]]
+   * Fetch Candidates from TweetBased/ProducerBased Unified Similarity Engine,
+   * and apply VF filter based on TweetInfoStore.
+   * To align with the downstream processing (filter, rank). We tend to return a Seq[Seq[InitialCandidate]]
    * instead of a Seq[Candidate] even though we only have a Seq in it.
    */
   private def getCandidatesFromSimilarityEngine[QueryType](
@@ -103,7 +102,7 @@ class RelatedTweetCandidateGenerator @Inject() (
 
     /***
      * We wrap the query to be a Seq of queries for the Sim Engine to ensure evolvability of candidate generation
-     * and as a result, it will return Seq[Seq[InitialCandidate]]
+     * and as a result, it will return Seq[Seq[InitialCandidate]].
      */
     val engineQueries =
       Seq(fromParamsForRelatedTweet(query.internalId, query.params))
@@ -138,7 +137,7 @@ class RelatedTweetCandidateGenerator @Inject() (
     Future.collect(tweetInfoStore.multiGet(tweetIds)).map { tweetInfos =>
       /***
        * If tweetInfo does not exist, we will filter out this tweet candidate.
-       * This tweetInfo filter also acts as the VF filter
+       * This tweetInfo filter also acts as the VF filter.
        */
       candidates.collect {
         case candidate if tweetInfos.getOrElse(candidate.tweetId, None).isDefined =>

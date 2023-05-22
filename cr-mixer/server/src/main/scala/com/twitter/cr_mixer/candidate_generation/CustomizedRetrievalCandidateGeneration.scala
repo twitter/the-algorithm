@@ -28,7 +28,7 @@ import javax.inject.Singleton
 import scala.collection.mutable.ArrayBuffer
 
 /**
- * A candidate generator that fetches similar tweets from multiple customized retrieval based candidate sources
+ * A candidate generator that fetches similar tweets from multiple customized retrieval based candidate sources.
  *
  * Different from [[TweetBasedCandidateGeneration]], this store returns candidates from different
  * similarity engines without blending. In other words, this class shall not be thought of as a

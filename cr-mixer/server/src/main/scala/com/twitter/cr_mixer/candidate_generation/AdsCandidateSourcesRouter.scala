@@ -90,7 +90,6 @@ case class AdsCandidateSourcesRouter @Inject() (
     realGraphSeeds: Map[UserId, Double],
     params: configapi.Params
   ): Future[Seq[Seq[InitialAdsCandidate]]] = {
-
     val simClustersANN1ConfigId = params(SimClustersANNParams.SimClustersANN1ConfigId)
 
     val tweetBasedSANNMinScore = params(
@@ -296,7 +295,7 @@ case class AdsCandidateSourcesRouter @Inject() (
       params
     )
 
-    // dark traffic to simclusters-ann-2
+    // Dark traffic to simclusters-ann-2
     if (decider.isAvailable(DeciderConstants.enableSimClustersANN2DarkTrafficDeciderKey)) {
       val simClustersANN2ConfigId = params(SimClustersANNParams.SimClustersANN2ConfigId)
       val sann2Query = SimClustersANNSimilarityEngine.fromParams(
@@ -329,7 +328,6 @@ case class AdsCandidateSourcesRouter @Inject() (
     sourceInfo: Option[SourceInfo],
     params: configapi.Params
   ) = {
-
     val query = ProducerBasedUserAdGraphSimilarityEngine.fromParams(
       sourceInfo.get.internalId,
       params
@@ -352,7 +350,6 @@ case class AdsCandidateSourcesRouter @Inject() (
     sourceInfo: Option[SourceInfo],
     params: configapi.Params
   ) = {
-
     val query = TweetBasedUserAdGraphSimilarityEngine.fromParams(
       sourceInfo.get.internalId,
       params
@@ -375,7 +372,6 @@ case class AdsCandidateSourcesRouter @Inject() (
     realGraphSeeds: Map[UserId, Double],
     params: configapi.Params
   ) = {
-
     val query = ConsumersBasedUserAdGraphSimilarityEngine
       .fromParams(realGraphSeeds, params)
 
@@ -394,7 +390,7 @@ case class AdsCandidateSourcesRouter @Inject() (
           CandidateGenerationInfo(
             Some(sourceInfo),
             similarityEngineInfo,
-            Seq.empty // Atomic Similarity Engine. Hence it has no contributing SEs
+            Seq.empty // Atomic Similarity Engine. Hence it has no contributing SEs.
           )
         )
       })
@@ -404,7 +400,7 @@ case class AdsCandidateSourcesRouter @Inject() (
     similarityEngine: HnswANNSimilarityEngine,
     similarityEngineType: SimilarityEngineType,
     requestUserId: UserId,
-    sourceInfo: Option[SourceInfo], // if none, then it's consumer-based similarity engine
+    sourceInfo: Option[SourceInfo], // If none, then it's consumer-based similarity engine.
     model: String
   ): Future[Seq[TweetWithCandidateGenerationInfo]] = {
     val internalId =
@@ -455,7 +451,7 @@ case class AdsCandidateSourcesRouter @Inject() (
               CandidateGenerationInfo(
                 None,
                 similarityEngineInfo,
-                Seq.empty // Atomic Similarity Engine. Hence it has no contributing SEs
+                Seq.empty // Atomic Similarity Engine. Hence it has no contributing SEs.
               )
             )
           }

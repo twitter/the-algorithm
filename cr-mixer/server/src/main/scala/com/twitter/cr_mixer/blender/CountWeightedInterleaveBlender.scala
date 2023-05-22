@@ -70,9 +70,9 @@ object CountWeightedInterleaveBlender {
    * We pass two parameters to the weighted interleaver:
    * @param rankerWeightShrinkage shrinkage parameter between [0, 1] that determines how close we
    *                              stay to uniform sampling. The bigger the shrinkage the
-   *                              closer we are to uniform round robin
+   *                              closer we are to uniform round robin.
    * @param maxWeightAdjustments max number of weighted sampling to do prior to defaulting to
-   *                             uniform. Set so that we avoid infinite loops (e.g. if weights are
+   *                             uniform. Set so that we avoid infinite loops. (e.g. if weights are
    *                             0)
    */
   case class WeightedBlenderQuery(

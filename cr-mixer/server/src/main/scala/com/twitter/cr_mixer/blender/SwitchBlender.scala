@@ -27,7 +27,7 @@ case class SwitchBlender @Inject() (
     userState: UserState,
     inputCandidates: Seq[Seq[InitialCandidate]],
   ): Future[Seq[BlendedCandidate]] = {
-    // Take out empty seq
+    // Take out the empty seq.
     val nonEmptyCandidates = inputCandidates.collect {
       case candidates if candidates.nonEmpty =>
         candidates
@@ -43,7 +43,7 @@ case class SwitchBlender @Inject() (
     }
 
     val candidatesToBlend = nonEmptyCandidates.sortBy(_.head)(innerSignalSorting)
-    // Blend based on specified blender rules
+    // Blend based on specified blender rules.
     params(BlenderParams.BlendingAlgorithmParam) match {
       case BlendingAlgorithmEnum.RoundRobin =>
         defaultBlender.blend(candidatesToBlend)

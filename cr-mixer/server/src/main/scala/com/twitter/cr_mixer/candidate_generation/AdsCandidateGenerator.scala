@@ -39,24 +39,25 @@ class AdsCandidateGenerator @Inject() (
   def get(query: AdsCandidateGeneratorQuery): Future[Seq[RankedAdsCandidate]] = {
     val allStats = stats.scope("all")
     val perProductStats = stats.scope("perProduct", query.product.toString)
-
     StatsUtil.trackItemsStats(allStats) {
       StatsUtil.trackItemsStats(perProductStats) {
         for {
-          // fetch source signals
+          // Fetch source signals.
           sourceSignals <- StatsUtil.trackBlockStats(fetchSourcesStats) {
             fetchSources(query)
           }
+
           realGraphSeeds <- StatsUtil.trackItemMapStats(fetchRealGraphSeedsStats) {
             fetchSeeds(query)
           }
-          // get initial candidates from similarity engines
-          // hydrate lineItemInfo and filter out non active ads
+
+          // Get initial candidates from similarity engines.
+          // Hydrate lineItemInfo and filter out non active ads.
           initialCandidates <- StatsUtil.trackBlockStats(fetchCandidatesStats) {
             fetchCandidates(query, sourceSignals, realGraphSeeds)
           }
 
-          // blend candidates
+          // Blend candidates.
           blendedCandidates <- StatsUtil.trackItemsStats(interleaveStats) {
             interleave(initialCandidates)
           }
@@ -73,7 +74,6 @@ class AdsCandidateGenerator @Inject() (
         }
       }
     }
-
   }
 
   def fetchSources(
@@ -95,7 +95,6 @@ class AdsCandidateGenerator @Inject() (
         .fetchCandidates(query.userId, sourceSignals, realGraphSeeds, query.params),
       query.params(AdsParams.EnableScribe)
     )
-
   }
 
   private def fetchSeeds(
@@ -121,7 +120,6 @@ class AdsCandidateGenerator @Inject() (
     scoreBoostFactor: Double,
     statsReceiver: StatsReceiver,
   ): Future[Seq[RankedAdsCandidate]] = {
-
     val candidateSize = candidates.size
     val rankedCandidates = candidates.zipWithIndex.map {
       case (candidate, index) =>

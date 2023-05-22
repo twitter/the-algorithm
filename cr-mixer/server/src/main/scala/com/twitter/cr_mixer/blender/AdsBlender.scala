@@ -26,18 +26,17 @@ case class AdsBlender @Inject() (globalStats: StatsReceiver) {
   def blend(
     inputCandidates: Seq[Seq[InitialAdsCandidate]],
   ): Future[Seq[BlendedAdsCandidate]] = {
-
-    // Filter out empty candidate sequence
+    // Filter out empty candidate sequence.
     val candidates = inputCandidates.filter(_.nonEmpty)
     val (interestedInCandidates, twistlyCandidates) =
       candidates.partition(_.head.candidateGenerationInfo.sourceInfoOpt.isEmpty)
-    // First interleave twistly candidates
+    // Interleave twistly candidates.
     val interleavedTwistlyCandidates = InterleaveUtil.interleave(twistlyCandidates)
 
     val twistlyAndInterestedInCandidates =
       Seq(interestedInCandidates.flatten, interleavedTwistlyCandidates)
 
-    // then interleave  twistly candidates with interested in to make them even
+    // Interleave twistly candidates with interested in to make them even.
     val interleavedCandidates = InterleaveUtil.interleave(twistlyAndInterestedInCandidates)
 
     stats.stat("candidates").add(interleavedCandidates.size)
@@ -45,6 +44,7 @@ case class AdsBlender @Inject() (globalStats: StatsReceiver) {
     val blendedCandidates = buildBlendedAdsCandidate(inputCandidates, interleavedCandidates)
     Future.value(blendedCandidates)
   }
+
   private def buildBlendedAdsCandidate(
     inputCandidates: Seq[Seq[InitialAdsCandidate]],
     interleavedCandidates: Seq[InitialAdsCandidate]
@@ -73,5 +73,4 @@ case class AdsBlender @Inject() (globalStats: StatsReceiver) {
     }
     tweetIdMap.toMap
   }
-
 }

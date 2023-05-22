@@ -179,7 +179,7 @@ case class SimClustersInterestedInCandidateGeneration @Inject() (
             else
               Future.None
 
-          // AddressBookInterestedIn Queries
+          // AddressBookInterestedIn Queries.
           val userAddressBookInterestedInCandidateResultFut =
             if (query.enableAddressBookNextInterestedIn && query.enableProdSimClustersANNSimilarityEngine)
               getInterestedInCandidateResult(
@@ -397,7 +397,7 @@ object SimClustersInterestedInCandidateGeneration {
     internalId: InternalId,
     params: configapi.Params,
   ): Query = {
-    // SimClusters common configs
+    // SimClusters common configs.
     val simClustersModelVersion =
       ModelVersions.Enum.enumToSimClustersModelVersionMap(params(GlobalParams.ModelVersionParam))
     val simClustersANNConfigId = params(SimClustersANNParams.SimClustersANNConfigId)
@@ -415,13 +415,13 @@ object SimClustersInterestedInCandidateGeneration {
     val simClustersAddressBookInterestedInMinScore = params(
       InterestedInParams.MinScoreAddressBookParam)
 
-    // InterestedIn embeddings parameters
+    // InterestedIn embeddings parameters.
     val interestedInEmbedding = params(InterestedInParams.InterestedInEmbeddingIdParam)
     val nextInterestedInEmbedding = params(InterestedInParams.NextInterestedInEmbeddingIdParam)
     val addressbookInterestedInEmbedding = params(
       InterestedInParams.AddressBookInterestedInEmbeddingIdParam)
 
-    // Prod SimClustersANN Query
+    // Prod SimClustersANN Query.
     val interestedInSimClustersANNQuery =
       SimClustersANNSimilarityEngine.fromParams(
         internalId,
@@ -446,7 +446,7 @@ object SimClustersInterestedInCandidateGeneration {
         simClustersANNConfigId,
         params)
 
-    // Experimental SANN cluster Query
+    // Experimental SANN cluster Query.
     val interestedInExperimentalSimClustersANNQuery =
       SimClustersANNSimilarityEngine.fromParams(
         internalId,
@@ -471,7 +471,7 @@ object SimClustersInterestedInCandidateGeneration {
         experimentalSimClustersANNConfigId,
         params)
 
-    // SimClusters ANN cluster 1 Query
+    // SimClusters ANN cluster 1 Query.
     val interestedInSimClustersANN1Query =
       SimClustersANNSimilarityEngine.fromParams(
         internalId,
@@ -496,7 +496,7 @@ object SimClustersInterestedInCandidateGeneration {
         simClustersANN1ConfigId,
         params)
 
-    // SimClusters ANN cluster 2 Query
+    // SimClusters ANN cluster 2 Query.
     val interestedInSimClustersANN2Query =
       SimClustersANNSimilarityEngine.fromParams(
         internalId,
@@ -521,7 +521,7 @@ object SimClustersInterestedInCandidateGeneration {
         simClustersANN2ConfigId,
         params)
 
-    // SimClusters ANN cluster 3 Query
+    // SimClusters ANN cluster 3 Query.
     val interestedInSimClustersANN3Query =
       SimClustersANNSimilarityEngine.fromParams(
         internalId,
@@ -546,7 +546,7 @@ object SimClustersInterestedInCandidateGeneration {
         simClustersANN3ConfigId,
         params)
 
-    // SimClusters ANN cluster 5 Query
+    // SimClusters ANN cluster 5 Query.
     val interestedInSimClustersANN5Query =
       SimClustersANNSimilarityEngine.fromParams(
         internalId,
@@ -554,7 +554,8 @@ object SimClustersInterestedInCandidateGeneration {
         simClustersModelVersion,
         simClustersANN5ConfigId,
         params)
-    // SimClusters ANN cluster 4 Query
+
+    // SimClusters ANN cluster 4 Query.
     val interestedInSimClustersANN4Query =
       SimClustersANNSimilarityEngine.fromParams(
         internalId,

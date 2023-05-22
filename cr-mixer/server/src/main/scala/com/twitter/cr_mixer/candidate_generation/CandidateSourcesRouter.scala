@@ -96,7 +96,6 @@ case class CandidateSourcesRouter @Inject() (
     sourceGraphs: Map[String, Option[GraphSourceInfo]],
     params: configapi.Params,
   ): Future[Seq[Seq[InitialCandidate]]] = {
-
     val tweetBasedCandidatesFuture = getCandidates(
       getTweetBasedSourceInfo(sourceSignals),
       params,
@@ -225,7 +224,7 @@ case class CandidateSourcesRouter @Inject() (
           consumersBasedUvgRealGraphInCandidatesFuture,
           customizedRetrievalBasedCandidatesFuture
         )).map { candidatesList =>
-        // remove empty innerSeq
+        // Remove empty innerSeq.
         val result = candidatesList.flatten.filter(_.nonEmpty)
         stats.stat("numOfSequences").add(result.size)
         stats.stat("flattenCandidatesWithDup").add(result.flatten.size)
@@ -262,7 +261,7 @@ case class CandidateSourcesRouter @Inject() (
               CandidateGenerationInfo(
                 sourceInfo,
                 similarityEngineInfo,
-                Seq.empty // Atomic Similarity Engine. Hence it has no contributing SEs
+                Seq.empty // Atomic Similarity Engine. Hence it has no contributing SEs.
               )
             )
           }
@@ -330,7 +329,7 @@ case class CandidateSourcesRouter @Inject() (
               CandidateGenerationInfo(
                 None,
                 similarityEngineInfo,
-                Seq.empty // Atomic Similarity Engine. Hence it has no contributing SEs
+                Seq.empty // Atomic Similarity Engine. Hence it has no contributing SEs.
               )
             )
           }
@@ -358,7 +357,7 @@ case class CandidateSourcesRouter @Inject() (
       engine.getCandidates(EngineQuery(query, params)).map {
         _.map {
           _.map { tweetWithScore =>
-            // define filters
+            // Define filters.
             TweetWithCandidateGenerationInfo(
               tweetWithScore.tweetId,
               CandidateGenerationInfo(
@@ -401,7 +400,7 @@ case class CandidateSourcesRouter @Inject() (
               CandidateGenerationInfo(
                 None,
                 similarityEngineInfo,
-                Seq.empty // Atomic Similarity Engine. Hence it has no contributing SEs
+                Seq.empty // Atomic Similarity Engine. Hence it has no contributing SEs.
               )
             )
           }
