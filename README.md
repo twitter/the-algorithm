@@ -62,6 +62,9 @@ The core components of Recommended Notifications included in this repository are
 
 We include Bazel BUILD files for most components, but not a top-level BUILD or WORKSPACE file. We plan to add a more complete build and test system in the future.
 
+# Summary 
+The Twitter Recommendation Algorithm is a system that recommends content to users by using different components like community detection, knowledge graph embeddings, and models for detecting abusive content. It also provides recommendations for accounts to follow and Tweets to see. The system ranks Tweets based on various signals, and filters content to ensure legal compliance and user trust. Overall, the algorithm uses advanced machine learning and data processing techniques to deliver personalized content to Twitter users.
+
 ## Contributing
 
 We invite the community to submit GitHub issues and pull requests for suggestions on improving the recommendation algorithm. We are working on tools to manage these suggestions and sync changes to our internal repository. Any security concerns or issues should be routed to our official [bug bounty program](https://hackerone.com/twitter) through HackerOne. We hope to benefit from the collective intelligence and expertise of the global community in helping us identify issues and suggest improvements, ultimately leading to a better Twitter.
