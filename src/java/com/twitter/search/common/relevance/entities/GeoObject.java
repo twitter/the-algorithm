@@ -153,27 +153,12 @@ public class GeoObject {
     if (a == null && b == null) {
       return true;
     }
-    if ((a == null && b != null) || (a != null && b == null)) {
-      return false;
-    }
-
-    if (a.accuracy != b.accuracy) {
-      return false;
-    }
-    if (Math.abs(a.latitude - b.latitude) > COORDS_EQUALITY_THRESHOLD) {
-      return false;
-    }
-    if (Math.abs(a.longitude - b.longitude) > COORDS_EQUALITY_THRESHOLD) {
-      return false;
-    }
-    if (Double.compare(a.radius, b.radius) != 0) {
-      return false;
-    }
-    if (a.source != b.source) {
-      return false;
-    }
-
-    return true;
+    return a != null && b != null &&
+      a.accuracy == b.accuracy &&
+      Math.abs(a.latitude - b.latitude) <= COORDS_EQUALITY_THRESHOLD &&
+      Math.abs(a.longitude - b.longitude) <= COORDS_EQUALITY_THRESHOLD &&
+      Double.compare(a.radius, b.radius) == 0 && 
+      a.source == b.source;
   }
 
   @Override
