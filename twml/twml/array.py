@@ -2,100 +2,102 @@
 
 import ctypes as ct
 
+import numpy as np
 from absl import logging
 from libtwml import CLIB
-import numpy as np
-
 
 _NP_TO_TWML_TYPE = {
-  'float32': ct.c_int(1),
-  'float64': ct.c_int(2),
-  'int32': ct.c_int(3),
-  'int64': ct.c_int(4),
-  'int8': ct.c_int(5),
-  'uint8': ct.c_int(6),
+    "float32": ct.c_int(1),
+    "float64": ct.c_int(2),
+    "int32": ct.c_int(3),
+    "int64": ct.c_int(4),
+    "int8": ct.c_int(5),
+    "uint8": ct.c_int(6),
 }
 
 
 class Array(object):
-  """
-  Wrapper class to allow numpy arrays to work with twml functions.
-  """
-
-  def __init__(self, array):
     """
-    Wraps numpy array and creates a handle that can be passed to C functions from libtwml.
-
-    array: Numpy array
+    Wrapper class to allow numpy arrays to work with twml functions.
     """
-    if not isinstance(array, np.ndarray):
-      raise TypeError("Input must be a numpy array")
 
-    try:
-      ttype = _NP_TO_TWML_TYPE[array.dtype.name]
-    except KeyError as err:
-      logging.error("Unsupported numpy type")
-      raise err
+    def __init__(self, array: np.ndarray):
+        """
+        Wraps numpy array and creates a handle that can be passed to C functions from libtwml.
 
-    handle = ct.c_void_p(0)
-    ndim = ct.c_int(array.ndim)
-    dims = array.ctypes.get_shape()
-    isize = array.dtype.itemsize
+        array: Numpy array
+        """
+        if not isinstance(array, np.ndarray):
+            raise TypeError("Input must be a numpy array")
 
-    strides_t = ct.c_size_t * array.ndim
-    strides = strides_t(*[n // isize for n in array.strides])
+        try:
+            ttype = _NP_TO_TWML_TYPE[array.dtype.name]
+        except KeyError as err:
+            logging.error("Unsupported numpy type")
+            raise err
 
-    err = CLIB.twml_tensor_create(ct.pointer(handle),
-                                  array.ctypes.get_as_parameter(),
-                                  ndim, dims, strides, ttype)
+        handle = ct.c_void_p(0)
+        ndim = ct.c_int(array.ndim)
+        dims = array.ctypes.get_shape()
+        isize = array.dtype.itemsize
 
-    if err != 1000:
-      raise RuntimeError("Error from libtwml")
+        strides_t = ct.c_size_t * array.ndim
+        strides = strides_t(*[n // isize for n in array.strides])
 
-    # Store the numpy array to ensure it isn't deleted before self
-    self._array = array
+        err = CLIB.twml_tensor_create(
+            ct.pointer(handle),
+            array.ctypes.get_as_parameter(),
+            ndim,
+            dims,
+            strides,
+            ttype,
+        )
 
-    self._handle = handle
+        if err != 1000:
+            raise RuntimeError("Error from libtwml")
 
-    self._type = ttype
+        # Store the numpy array to ensure it isn't deleted before self
+        self._array = array
+        self._handle = handle
+        self._type = ttype
 
-  @property
-  def handle(self):
-    """
-    Return the twml handle
-    """
-    return self._handle
+    @property
+    def handle(self) -> ct.c_void_p:
+        """
+        Return the twml handle
+        """
+        return self._handle
 
-  @property
-  def shape(self):
-    """
-    Return the shape
-    """
-    return self._array.shape
+    @property
+    def shape(self) -> tuple:
+        """
+        Return the shape
+        """
+        return self._array.shape
 
-  @property
-  def ndim(self):
-    """
-    Return the shape
-    """
-    return self._array.ndim
+    @property
+    def ndim(self) -> int:
+        """
+        Return the shape
+        """
+        return self._array.ndim
 
-  @property
-  def array(self):
-    """
-    Return the numpy array
-    """
-    return self._array
+    @property
+    def array(self) -> np.ndarray:
+        """
+        Return the numpy array
+        """
+        return self._array
 
-  @property
-  def dtype(self):
-    """
-    Return numpy dtype
-    """
-    return self._array.dtype
+    @property
+    def dtype(self) -> np.dtype:
+        """
+        Return numpy dtype
+        """
+        return self._array.dtype
 
-  def __del__(self):
-    """
-    Delete the handle
-    """
-    CLIB.twml_tensor_delete(self._handle)
+    def __del__(self) -> None:
+        """
+        Delete the handle
+        """
+        CLIB.twml_tensor_delete(self._handle)
