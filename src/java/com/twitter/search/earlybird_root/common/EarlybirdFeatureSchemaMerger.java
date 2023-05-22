@@ -253,8 +253,8 @@ public class EarlybirdFeatureSchemaMerger {
 
     // We do not need checksum for exported vars as all cached schemas are from the majority of the
     // responses.
-    featureSchemas.keySet().stream().forEach(key -> exportedVersions.add(key.getVersion()));
-    exportedVersions.stream().forEach(version -> {
+    featureSchemas.keySet().forEach(key -> exportedVersions.add(key.getVersion()));
+    exportedVersions.forEach(version -> {
       builder.append('_');
       builder.append(version);
     });
