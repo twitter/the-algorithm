@@ -16,7 +16,7 @@ import com.twitter.logging.LoggerFactory
 import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
 import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
 import com.twitter.scribelib.marshallers.ClientDataProvider
-import com.twitter.scribelib.marshallers.ExternalRefererDataProvider
+import com.twitter.scribelib.marshallers.ExternalReferrerDataProvider
 import com.twitter.scribelib.marshallers.ScribeSerialization
 import com.twitter.timelines.configapi.HasParams
 import com.twitter.util.Time
@@ -125,7 +125,7 @@ object FrsLogger {
     /** The id of the current user. When the user is logged out, this method should return None. */
     override val userId: Option[Long] = clientContext.userId
 
-    /** The id of the guest, which is present in logged-in or loged-out states */
+    /** The id of the guest, which is present in logged-in or logged-out states */
     override val guestId: Option[Long] = clientContext.guestId
 
     /** The personalization id (pid) of the user, used to personalize Twitter services */
@@ -153,12 +153,12 @@ object FrsLogger {
     override val isSsl: Option[Boolean] = Some(true)
 
     /** The referring URL to the current page for web-based clients, if applicable */
-    override val referer: Option[String] = None
+    override val referrer: Option[String] = None
 
     /**
      * The external site, partner, or email that lead to the current Twitter application. Returned value consists of a
      * tuple including the encrypted referral data and the type of referral
      */
-    override val externalReferer: Option[ExternalRefererDataProvider] = None
+    override val externalReferrer: Option[ExternalReferrerDataProvider] = None
   }
 }

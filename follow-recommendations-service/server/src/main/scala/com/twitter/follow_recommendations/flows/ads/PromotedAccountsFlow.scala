@@ -69,7 +69,7 @@ class PromotedAccountsFlow @Inject() (
   }
 
   /**
-   * transform the candidates after ranking (e.g. dedupping, grouping and etc)
+   * transform the candidates after ranking (e.g. deduping, grouping and etc)
    */
   protected override def postRankerTransform: Transform[
     PromotedAccountsFlowRequest,

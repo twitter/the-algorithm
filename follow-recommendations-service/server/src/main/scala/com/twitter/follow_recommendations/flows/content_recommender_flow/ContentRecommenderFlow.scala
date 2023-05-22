@@ -133,7 +133,7 @@ class ContentRecommenderFlow @Inject() (
     CandidateUser
   ] = {
     new DedupTransform[ContentRecommenderRequest, CandidateUser]
-      .observe(statsReceiver.scope("dedupping"))
+      .observe(statsReceiver.scope("deduping"))
   }
 
   protected override def validateCandidates: Predicate[

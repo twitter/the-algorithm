@@ -105,7 +105,7 @@ class RepeatedProfileVisitsSource @Inject() (
     val recommendationThreshold = params.getInt(RepeatedProfileVisitsParams.RecommendationThreshold)
     val bucketingThreshold = params.getInt(RepeatedProfileVisitsParams.BucketingThreshold)
 
-    // Get the list of repeatedly visited profilts. Only keep accounts with >= bucketingThreshold visits.
+    // Get the list of repeatedly visited profiles. Only keep accounts with >= bucketingThreshold visits.
     val repeatedVisitedAccountsStitch: Stitch[Map[Long, Int]] =
       getRepeatedVisitedAccounts(params, userId).map(_.filter(kv => kv._2 >= bucketingThreshold))
 
