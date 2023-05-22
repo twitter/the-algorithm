@@ -294,7 +294,7 @@ object UpdateKnownForSBFRunner {
    * @param allEdges sims graph
    * @param maxNeighborsPerNode number of neighbors for each user
    *
-   * @return simsGraph of users and neighbors with their mapped interger ids
+   * @return simsGraph of users and neighbors with their mapped integer ids
    */
   def getMappedSimsGraph(
     mappedUsers: TypedPipe[(Int, UserId)],
@@ -674,7 +674,7 @@ object UpdateKnownForSBFRunner {
       val srm = MHAlgorithm.heuristicallyScoreClusterAssignments(graph, optimizedZ)
 
       // Get the knownfor assignments of users from the heuristic scores
-      // assigned based on neigbhorhood of the user and their cluster assignments
+      // assigned based on neighborhood of the user and their cluster assignments
       // The returned result has userIDs in the mapped integer indices
       val knownForAssignmentsFromClusterScores: List[(Int, List[(ClusterId, Float)])] =
         getKnownForHeuristicScores(srm)

@@ -42,7 +42,7 @@ object FlipQueryTransformer
 
     val requestTargetingContext: flip.RequestTargetingContext =
       flip.RequestTargetingContext(
-        rankingDisablerWithLatestControlsAvaliable =
+        rankingDisablerWithLatestControlsAvailable =
           query.rankingDisablerWithLatestControlsAvailable,
         reactivePromptContext = None,
         isEmptyState = query.isEmptyState,

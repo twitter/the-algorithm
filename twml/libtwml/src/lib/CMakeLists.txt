@@ -27,7 +27,7 @@ target_include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../../include
   PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${TF_INC}  # Absail dependency from tensorflow
+  ${TF_INC}  # Abseil dependency from tensorflow
   )
 
 set_target_properties(twml PROPERTIES

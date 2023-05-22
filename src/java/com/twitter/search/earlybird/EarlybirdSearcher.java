@@ -1216,7 +1216,7 @@ public class EarlybirdSearcher {
         == ThriftScoringFunctionType.TENSORFLOW_BASED;
   }
   /**
-   * Optionally, if requested and needed, will create a new AntiGamingFilter. Otherwize, no
+   * Optionally, if requested and needed, will create a new AntiGamingFilter. Otherwise, no
    * AntiGamingFilter will be used for this query.
    * @param hasSpecifiedTweets whether the request has searchStatusIds specified.
    * @param hasSpecifiedFromUserIds whether the request has fromUserIDFilter64 specified.

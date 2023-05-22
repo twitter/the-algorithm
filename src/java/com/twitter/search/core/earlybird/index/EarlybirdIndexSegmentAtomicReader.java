@@ -70,7 +70,7 @@ public abstract class EarlybirdIndexSegmentAtomicReader extends LeafReader {
   public FieldInfos getFieldInfos() {
     if (fieldInfos == null) {
       // TwitterInMemoryIndexReader is constructed per query, and this call is only needed for
-      // optimize. We wouldn't want to create a new FieldInfos per search, so we deffer it.
+      // optimize. We wouldn't want to create a new FieldInfos per search, so we defer it.
       Schema schema = segmentData.getSchema();
       final Set<String> fieldSet = Sets.newHashSet(segmentData.getPerFieldMap().keySet());
       fieldSet.addAll(segmentData.getDocValuesManager().getDocValueNames());

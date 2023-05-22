@@ -10,7 +10,7 @@ use time::format_description::well_known::Rfc3339;
 ///Navi is configured through CLI arguments(for now) defined below.
 //TODO: use clap_serde to make it config file driven
 pub struct Args {
-    #[clap(short, long, help = "gRPC port Navi runs ons")]
+    #[clap(short, long, help = "gRPC port Navi runs on")]
     pub port: i32,
     #[clap(long, default_value_t = 9000, help = "prometheus metrics port")]
     pub prometheus_port: u16,
@@ -76,7 +76,7 @@ pub struct Args {
     #[clap(
         short,
         long,
-        help = "most runtimes support loading ops custom writen. currently only implemented for TF"
+        help = "most runtimes support loading ops custom written. currently only implemented for TF"
     )]
     pub customops_lib: Option<String>,
     #[clap(

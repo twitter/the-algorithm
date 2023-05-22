@@ -125,7 +125,7 @@ namespace twml {
   /**
    * @param output tensor to hold linear or nearest interpolation output.
    *    This function does not allocate space.
-   *    The output tensor must have space allcoated.
+   *    The output tensor must have space allocated.
    * @param input input tensor; size must match output.
    *    input is assumed to have size [batch_size, number_of_labels].
    * @param xs the bins.

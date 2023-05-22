@@ -51,7 +51,7 @@ object InferredEntities {
   ): TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])] = {
     val entityEmbeddings = EntityEmbeddingsSources
       .getReverseIndexedSemanticCoreEntityEmbeddingsSource(
-        EmbeddingType.FavBasedSematicCoreEntity,
+        EmbeddingType.FavBasedSemanticCoreEntity,
         ModelVersions.Model20M145K2020, // only support the latest 2020 model
         dateRange.embiggen(Days(7)(timeZone)) // read 7 days before & after to give buffer
       )

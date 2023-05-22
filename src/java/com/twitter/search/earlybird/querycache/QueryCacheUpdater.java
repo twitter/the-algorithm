@@ -124,7 +124,7 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
 
     // Schedule the task.
     ScheduledFuture future = scheduleNewTask(qcTask,
-        PeriodicActionParams.withIntialWaitAndFixedDelay(
+        PeriodicActionParams.withInitialWaitAndFixedDelay(
             initialDelayAsMS, updateIntervalAsMS, TimeUnit.MILLISECONDS
         )
     );

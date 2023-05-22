@@ -167,7 +167,7 @@ class SparseMaxNorm(Layer):
     with tf.device(self.max_x.device):
       return self._call(inputs, **kwargs)
 
-# For backwards compatiblity and also because I don't want to change all the tests.
+# For backwards compatibility and also because I don't want to change all the tests.
 MaxNorm = SparseMaxNorm
 
 
@@ -181,7 +181,7 @@ def sparse_max_norm(inputs,
                     name=None,
                     reuse=None):
   """
-  Functional inteface to SparseMaxNorm.
+  Functional interface to SparseMaxNorm.
 
   Args:
     inputs:

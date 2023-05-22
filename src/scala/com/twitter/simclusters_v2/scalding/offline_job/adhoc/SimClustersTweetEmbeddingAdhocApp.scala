@@ -155,7 +155,7 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
       .sortWithTakePerRow(Configs.topKClustersPerTweet)(Ordering.by(-_._2))
       .fork
 
-    // get the cluster -> top tweets by taking top K in each colum
+    // get the cluster -> top tweets by taking top K in each column
     val clusterTopTweets = tweetClusterScoreMatrix
       .sortWithTakePerCol(Configs.topKTweetsPerCluster)(Ordering.by(-_._2))
       .fork

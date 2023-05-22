@@ -20,7 +20,7 @@ Attr
   feature_names: a list of string feature names (list(string)).
 
 Outputs
-  ouput: hashes corresponding to the string feature names (int64).
+  output: hashes corresponding to the string feature names (int64).
 )doc");
 
 

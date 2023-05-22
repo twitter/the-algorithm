@@ -7,7 +7,7 @@ import com.twitter.timelines.visibility.VisibilityEnforcer
 import com.twitter.util.Future
 
 /**
- * Transform which uses an instance of a VisiblityEnforcer to filter down HydratedTweets
+ * Transform which uses an instance of a VisibiltyEnforcer to filter down HydratedTweets
  */
 class VisibilityEnforcingTransform(visibilityEnforcer: VisibilityEnforcer)
     extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {

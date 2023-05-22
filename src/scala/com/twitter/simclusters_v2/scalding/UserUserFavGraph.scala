@@ -106,7 +106,7 @@ object UserUserFavGraph {
       endTime,
       minScoreToKeep
     )
-    removeDeactivedOrSuspendedUsers(fullGraph, userSource)
+    removeDeactivatedOrSuspendedUsers(fullGraph, userSource)
   }
 
   def processRawFavEvents(
@@ -267,7 +267,7 @@ object UserUserFavGraph {
       }
   }
 
-  def removeDeactivedOrSuspendedUsers(
+  def removeDeactivatedOrSuspendedUsers(
     full: TypedPipe[EdgeWithDecayedWeights],
     userSource: TypedPipe[FlatUser]
   )(

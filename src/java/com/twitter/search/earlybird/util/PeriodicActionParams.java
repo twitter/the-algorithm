@@ -58,7 +58,7 @@ public final class PeriodicActionParams {
   // The order of what happens is:
   //   initial delay, run task, wait X time, run task, wait X time, etc.
   // Runs can't overlap.
-  public static PeriodicActionParams withIntialWaitAndFixedDelay(
+  public static PeriodicActionParams withInitialWaitAndFixedDelay(
       long initialDelayDuration,
       long intervalDuration,
       TimeUnit intervalUnit) {
@@ -70,7 +70,7 @@ public final class PeriodicActionParams {
   public static PeriodicActionParams withFixedDelay(
       long intervalDuration,
       TimeUnit intervalUnit) {
-    return withIntialWaitAndFixedDelay(0, intervalDuration, intervalUnit);
+    return withInitialWaitAndFixedDelay(0, intervalDuration, intervalUnit);
   }
 
   boolean isFixedDelay() {

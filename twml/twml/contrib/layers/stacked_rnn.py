@@ -93,7 +93,7 @@ class StackedRNN(twml.layers.Layer):
     is_training:
       Flag to specify if the layer is used in training mode or not.
     cell_type:
-      Sepcifies the type of RNN. Can be "LSTM". "GRU" is not yet implemented.
+      Specifies the type of RNN. Can be "LSTM". "GRU" is not yet implemented.
     is_bidirectional:
       Specifies if the stacked RNN layer is bidirectional.
       This is for forward compatibility, this is not yet implemented.
@@ -178,7 +178,7 @@ def stacked_rnn(inputs, sequence_lengths, num_units,
     is_training:
       Flag to specify if the layer is used in training mode or not.
     cell_type:
-      Sepcifies the type of RNN. Can be "LSTM" or "GRU".
+      Specifies the type of RNN. Can be "LSTM" or "GRU".
     is_bidirectional:
       Specifies if the stacked RNN layer is bidirectional.
       Defaults to False.

@@ -88,7 +88,7 @@ object InferredKnownForSemanticCoreEntitiesBatchApp extends ScheduledExecutionAp
 
     val clusterToEntities = EntityEmbeddingsSources
       .getReverseIndexedSemanticCoreEntityEmbeddingsSource(
-        EmbeddingType.FavBasedSematicCoreEntity,
+        EmbeddingType.FavBasedSemanticCoreEntity,
         ModelVersions.Model20M145K2020,
         dateRange.embiggen(Days(7)) // read 7 days before & after to give buffer
       )
@@ -168,7 +168,7 @@ object InferredSemanticCoreEntitiesFromKnownForAdhocApp extends AdhocExecutionAp
 
     val clusterToEntitiesUpdated = EntityEmbeddingsSources
       .getReverseIndexedSemanticCoreEntityEmbeddingsSource(
-        EmbeddingType.FavBasedSematicCoreEntity,
+        EmbeddingType.FavBasedSemanticCoreEntity,
         ModelVersions.Model20M145KUpdated,
         dateRange.embiggen(Days(4)) // read 4 days before & after to give buffer
       )

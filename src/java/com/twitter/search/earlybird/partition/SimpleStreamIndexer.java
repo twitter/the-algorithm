@@ -175,7 +175,7 @@ public abstract class SimpleStreamIndexer<K, V> {
 
   protected abstract void validateAndIndexRecord(ConsumerRecord<K, V> record);
 
-  // Shutdown hook which can be called from a seperate thread. Calling consumer.wakeup() interrupts
+  // Shutdown hook which can be called from a separate thread. Calling consumer.wakeup() interrupts
   // the running indexer and causes it to first stop polling for new records before gracefully
   // closing the consumer.
   public void close() {

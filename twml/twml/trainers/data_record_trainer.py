@@ -37,7 +37,7 @@ The data is a read from multiple ``part-*.[compression]`` files.
 The default behavior of ``DataRecordTrainer`` is to read sparse features from ``DataRecords``.
 This is a legacy default piping format at Twitter.
 The ``DataRecordTrainer`` is flexible enough for research and yet simple enough
-for a new beginner ML practioner.
+for a new beginner ML practitioner.
 
 By means of the feature string to key hashing function,
 the ``[train,eval]_feature_config`` constructor arguments

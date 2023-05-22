@@ -41,7 +41,7 @@ class FeatureMask : public OpKernel {
         std::vector<int64> feature_list_keep;
         OP_REQUIRES_OK(context, context->GetAttr("list_keep", &feature_list_keep));
         // create set that contains the content of the feature_list_keep, since tensorflow does not allow
-        // me to directly ouput the contents of list_keep to a set
+        // me to directly output the contents of list_keep to a set
         feature_set_keep = std::set<int64>(feature_list_keep.begin(), feature_list_keep.end());
       }
 

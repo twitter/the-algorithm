@@ -267,7 +267,7 @@ class Trainer(object):
         *Warning*: This could create too many these json files which can be a potential problem,
         e.g. for  HDFS there is normally quota forfile count, so use with caution.
 
-        Note: this argument is ignored when a non-None ``hooks`` argument is pasesd to
+        Note: this argument is ignored when a non-None ``hooks`` argument is passed to
         ``train``, ``learn``, or ``predict`` methods. The hook can be added manually by passing
         ``trainer.train(..., hooks=myhooks.extend(trainer.get_train_hooks()))``, for example.
     """
@@ -671,12 +671,12 @@ class Trainer(object):
     <https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator#export_savedmodel>`_.
 
     Note that a valid self._export_output_fn is required.
-    If export_ouput_fn is provided, it is used to set the self._export_output_fn.
+    If export_output_fn is provided, it is used to set the self._export_output_fn.
 
     Args:
       serving_input_receiver_fn:
         function preparing the model for inference requests.
-        This funtion returns the ``features`` dict passed to ``build_graph``.
+        This function returns the ``features`` dict passed to ``build_graph``.
       export_dir:
         directory to export a SavedModel for prediction servers.
         Defaults to ``[save_dir]/exported_models``.
@@ -1223,9 +1223,9 @@ class Trainer(object):
 
     Args:
       train_input_fn:
-        Function to iterate through training set. It is passed to estimator.train_and_evalute
+        Function to iterate through training set. It is passed to estimator.train_and_evaluate
       eval_input_fn:
-        Function to iterate through evaluation set. It is passed to estimator.train_and_evalute.
+        Function to iterate through evaluation set. It is passed to estimator.train_and_evaluate.
       train_max_steps:
         maximum number of global steps of training to run.
         Defaults to params.train_max_steps.

@@ -215,7 +215,7 @@ def _get_attentions(raw_scores):
 
 
 def _get_attrank_cross_entropy(labels, logits):
-  # logits is not safe based on their satement
+  # logits is not safe based on their statement
   # do not use this function directly elsewhere
   results = labels * math_fns.safe_log(logits) + (1 - labels) * math_fns.safe_log(1 - logits)
   results = (-1) * results

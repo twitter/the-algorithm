@@ -137,7 +137,7 @@ class BatchPredictionRequestTrainer(DataRecordTrainer):  # pylint: disable=abstr
       dest='model_use_binary_values',
       help='Use the use_binary_values optimization')
 
-    # control hom many featues we keep in sparse tensors
+    # control hom many features we keep in sparse tensors
     # 12 is enough for learning-to-rank for now
     parser.add_argument(
       '--input_size_bits', type=int, default=12,

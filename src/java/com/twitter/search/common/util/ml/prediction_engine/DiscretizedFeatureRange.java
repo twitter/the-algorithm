@@ -3,7 +3,7 @@ package com.twitter.search.common.util.ml.prediction_engine;
 import com.google.common.base.Preconditions;
 
 /**
- * The discretized value range for a continous feature. After discretization a continuous feature
+ * The discretized value range for a continuous feature. After discretization a continuous feature
  * may become multiple discretized binary features, each occupying a range. This class stores this
  * range and a weight for it.
  */

@@ -481,8 +481,8 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
 
   /**
    * Trim results based on search range. The search range [x, y] is determined by:
-   *   x is the maximun of the minimun search IDs;
-   *   y is the minimun of the maximum search IDs.
+   *   x is the maximum of the minimum search IDs;
+   *   y is the minimum of the maximum search IDs.
    *
    * Ids out side of this range are removed.
    * If we do not get enough results after the removal, we add IDs back until we get enough results.
@@ -618,7 +618,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
 
   protected static void filterResultsByMergedMinMaxIds(
       ThriftSearchResults results, long maxStatusId, long minStatusId, TrimStats trimStats) {
-    List<ThriftSearchResult> trimedResults =
+    List<ThriftSearchResult> trimmedResults =
         Lists.newArrayListWithCapacity(results.getResultsSize());
 
     for (ThriftSearchResult result : results.getResults()) {
@@ -629,10 +629,10 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
       } else if (statusId < minStatusId) {
         trimStats.increaseMinIdFilterCount();
       } else {
-        trimedResults.add(result);
+        trimmedResults.add(result);
       }
     }
 
-    results.setResults(trimedResults);
+    results.setResults(trimmedResults);
   }
 }

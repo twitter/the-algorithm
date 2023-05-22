@@ -299,7 +299,7 @@ public class SkipListContainer<K> implements Flushable {
    * Notice inserting supports duplicate keys and duplicate values.
    *
    * Duplicate keys with different values or positions will be inserted consecutively.
-   * Duplciate keys with identical values will be ignored, and the duplicate will not be stored in
+   * Duplicate keys with identical values will be ignored, and the duplicate will not be stored in
    * the posting list.
    *
    * @param key is the key of the given value.
@@ -641,7 +641,7 @@ public class SkipListContainer<K> implements Flushable {
    *
    * @param pointer points to the value, of which the pointer value will be updated.
    * @param level indicates the level of the forward pointer will be set. It is zero indexed.
-   * @param target the value fo the target pointer which will be set.
+   * @param target the value for the target pointer which will be set.
    */
   private void setForwardPointer(int pointer, int level, int target) {
     // Update header tower if given pointer points to headerTower.

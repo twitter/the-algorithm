@@ -94,7 +94,7 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
     cardsWithDescriptions =
         SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_card_descriptions");
     cardsWithUnknownLanguage =
-        SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_unknown_card_lanuage");
+        SearchRateCounter.export(getStageNamePrefix() + "_tweets_th_unknown_card_language");
     tweetsNotFound = SearchRateCounter.export(getStageNamePrefix() + "_tweets_not_found");
     malformedUrls = SearchRateCounter.export(getStageNamePrefix() + "_malformed_urls");
     urlMismatches = SearchRateCounter.export(getStageNamePrefix() + "_url_mismatches");

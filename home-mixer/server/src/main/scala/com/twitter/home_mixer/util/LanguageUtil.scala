@@ -6,7 +6,7 @@ import com.twitter.service.metastore.gen.{thriftscala => smg}
 
 object LanguageUtil {
 
-  private val DafaultMinProducedLanguageRatio = 0.05
+  private val DefaultMinProducedLanguageRatio = 0.05
   private val DefaultMinConsumedLanguageConfidence = 0.8
 
   /**
@@ -17,7 +17,7 @@ object LanguageUtil {
    */
   def computeLanguages(
     userLanguages: smg.UserLanguages,
-    minProducedLanguageRatio: Double = DafaultMinProducedLanguageRatio,
+    minProducedLanguageRatio: Double = DefaultMinProducedLanguageRatio,
     minConsumedLanguageConfidence: Double = DefaultMinConsumedLanguageConfidence
   ): Seq[scc.ThriftLanguage] = {
     val languageConfidenceMap = computeLanguageConfidenceMap(

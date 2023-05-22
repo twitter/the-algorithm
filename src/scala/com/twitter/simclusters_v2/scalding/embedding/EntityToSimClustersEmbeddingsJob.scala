@@ -263,7 +263,7 @@ trait EntityToSimClustersEmbeddingApp extends ScheduledExecutionApp {
         .collect {
           case (
                 SimClustersEmbeddingId(
-                  EmbeddingType.FavBasedSematicCoreEntity,
+                  EmbeddingType.FavBasedSemanticCoreEntity,
                   ModelVersion.Model20m145kUpdated,
                   InternalId.EntityId(entityId)),
                 clustersWithScores) =>
@@ -297,12 +297,12 @@ object EntityToSimClustersEmbeddingsJob {
   ): (Entity, ScoreType.ScoreType) => SimClustersEmbeddingId = {
     case (Entity.SemanticCore(SemanticCoreEntity(entityId, _)), ScoreType.FavScore) =>
       SimClustersEmbeddingId(
-        EmbeddingType.FavBasedSematicCoreEntity,
+        EmbeddingType.FavBasedSemanticCoreEntity,
         modelVersion,
         InternalId.EntityId(entityId))
     case (Entity.SemanticCore(SemanticCoreEntity(entityId, _)), ScoreType.FollowScore) =>
       SimClustersEmbeddingId(
-        EmbeddingType.FollowBasedSematicCoreEntity,
+        EmbeddingType.FollowBasedSemanticCoreEntity,
         modelVersion,
         InternalId.EntityId(entityId))
     case (Entity.Hashtag(Hashtag(hashtag)), ScoreType.FavScore) =>

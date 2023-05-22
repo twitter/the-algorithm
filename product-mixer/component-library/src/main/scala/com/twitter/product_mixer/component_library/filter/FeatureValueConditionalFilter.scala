@@ -22,7 +22,7 @@ trait ShouldApplyFilter[FeatureValue] {
 
 /**
  * A filter that applies the [[filter]] for candidates for which [[shouldApplyFilter]] is true, and keeps the others
- * @param feature feature to determine whether to apply underyling filter
+ * @param feature feature to determine whether to apply underlying filter
  * @param shouldApplyFilter function to determine whether to apply filter
  * @param filter the actual filter to apply if shouldApplyFilter is True
  * @tparam Query The domain model for the query or request
