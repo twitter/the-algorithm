@@ -178,7 +178,7 @@ case object InnerProduct
         Success(InnerProductDistance(cosineDistance.distance.toFloat))
       case distance =>
         Failure(
-          new IllegalArgumentException(s"Expected a inner product distance but got $distance")
+          new IllegalArgumentException(s"Expected an inner product distance but got $distance")
         )
     }
   }
@@ -254,7 +254,7 @@ case object Edit extends Metric[EditDistance] with Injection[EditDistance, Servi
         Success(EditDistance(cosineDistance.distance.toFloat))
       case distance =>
         Failure(
-          new IllegalArgumentException(s"Expected a inner product distance but got $distance")
+          new IllegalArgumentException(s"Expected an inner product distance but got $distance")
         )
     }
   }
