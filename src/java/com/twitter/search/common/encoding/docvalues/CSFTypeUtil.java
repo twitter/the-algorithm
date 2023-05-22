@@ -25,10 +25,14 @@ public final class CSFTypeUtil {
       return 0;
     }
 
-    int offset = startOffset + valueIndex * Integer.BYTES;
-    return ((data[offset] & 0xFF) << 24)
-        | ((data[offset + 1] & 0xFF) << 16)
-        | ((data[offset + 2] & 0xFF) << 8)
-        | (data[offset + 3] & 0xFF);
+    // Validate input parameters
+    if (startOffset < 0 || valueIndex < 0 || startOffset + valueIndex * Integer.BYTES > data.length) {
+      throw new IllegalArgumentException("Invalid input parameters");
+    }
+
+    final int offset = startOffset + valueIndex * Integer.BYTES;
+    final ByteBuffer buffer = ByteBuffer.wrap(data, offset, Integer.BYTES).order(ByteOrder.BIG_ENDIAN);
+
+    return buffer.getInt();
   }
-}
+
