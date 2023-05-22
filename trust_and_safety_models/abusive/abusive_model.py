@@ -31,7 +31,7 @@ ptos_prototype = Model(
   export_path="...",
   features=features,
 )
-print(ptos_prototype)
+
 
 cq_loader = BigQueryFeatureLoader(gcp_project=COMPUTE_PROJECT)
 labels = [
@@ -58,7 +58,6 @@ SELECT
 ...
 """
 
-print(train_query)
 train = cq_loader.load_features(ptos_prototype, "", "", custom_query=train_query)
 val = cq_loader.load_features(ptos_prototype, "", "", custom_query=val_query)
 print(train.describe(model=ptos_prototype))
@@ -105,7 +104,7 @@ def get_positive_weights():
   return pos_weight_tensor
 
 pos_weight_tensor = get_positive_weights()
-print(pos_weight_tensor)
+
 
 class TextEncoderPooledOutput(TextEncoder):
   def call(self, x):
@@ -224,7 +223,6 @@ SELECT
 test = cq_loader.load_features(ptos_prototype, "", "", custom_query=test_query)
 test = test.to_tf_dataset().map(parse_labeled_data)
 
-print(test)
 
 test_only_media = test.filter(lambda x, y: tf.equal(x["has_media"], True))
 test_only_nsfw = test.filter(lambda x, y: tf.greater_equal(x["precision_nsfw"], 0.95))
@@ -268,7 +266,6 @@ for name, df in subsets.items():
   metrics[name] = eval_model(candidate_model, df)
 [(name, m.pr_auc) for name, m in metrics.items()]
 for name, x in [(name, m.pr_auc.to_string(index=False).strip().split("\n")) for name, m in metrics.items()]:
-  print(name)
   for y in x:
     print(y.strip(), end="\t")
   print(".")
