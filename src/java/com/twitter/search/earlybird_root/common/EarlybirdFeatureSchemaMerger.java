@@ -149,7 +149,7 @@ public class EarlybirdFeatureSchemaMerger {
    * (This is done inside superroot)
    * @param requestContext the search request context
    * @param mergedResponse the merged result inside the superroot
-   * @param realtimeResponse the realtime tier resposne
+   * @param realtimeResponse the realtime tier response
    * @param protectedResponse the protected tier response
    * @param fullArchiveResponse the full archive tier response
    * @param statsPrefix
