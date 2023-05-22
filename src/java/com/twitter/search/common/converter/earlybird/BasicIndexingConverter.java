@@ -500,6 +500,58 @@ public class BasicIndexingConverter {
 
   /**
    * Build the correct ThriftIndexingEvent's fields based on retweet and reply status.
+   *
+   * <pre>
+   *
+   * We have six combinations here. A tweet can be
+   *   1) a reply to another tweet (then it has both in-reply-to-user-id and
+   *      in-reply-to-status-id set),
+   *   2) directed-at a user (then it only has in-reply-to-user-id set),
+   *   3) not a reply at all.
+   * Additionally, it may or may not be a retweet (if it is, then it has retweet-user-id and
+   * retweet-status-id set).
+   *
+   * We want to set some fields unconditionally, and some fields (reference-author-id and
+   * shared-status-id) depending on the reply/retweet combination.
+   *
+   * 1. Normal tweet (not a reply, not a retweet). None of the fields should be set.
+   *
+   * 2. Reply to a tweet (both in-reply-to-user-id and in-reply-to-status-id set).
+   *   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
+   *   SHARED_STATUS_ID_CSF         should be set to in-reply-to-status-id
+   *   IS_REPLY_FLAG                should be set
+   *
+   * 3. Directed-at a user (only in-reply-to-user-id is set).
+   *   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
+   *   IS_REPLY_FLAG                should be set
+   *
+   * 4. Retweet of a normal tweet (retweet-user-id and retweet-status-id are set).
+   *   RETWEET_SOURCE_USER_ID_FIELD should be set to retweet-user-id
+   *   SHARED_STATUS_ID_CSF         should be set to retweet-status-id
+   *   IS_RETWEET_FLAG              should be set
+   *
+   * 5. Retweet of a reply (both in-reply-to-user-id and in-reply-to-status-id set,
+   * retweet-user-id and retweet-status-id are set).
+   *   RETWEET_SOURCE_USER_ID_FIELD should be set to retweet-user-id
+   *   SHARED_STATUS_ID_CSF         should be set to retweet-status-id (retweet beats reply!)
+   *   IS_RETWEET_FLAG              should be set
+   *   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
+   *   IS_REPLY_FLAG                should NOT be set
+   *
+   * 6. Retweet of a directed-at tweet (only in-reply-to-user-id is set,
+   * retweet-user-id and retweet-status-id are set).
+   *   RETWEET_SOURCE_USER_ID_FIELD should be set to retweet-user-id
+   *   SHARED_STATUS_ID_CSF         should be set to retweet-status-id
+   *   IS_RETWEET_FLAG              should be set
+   *   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
+   *   IS_REPLY_FLAG                should NOT be set
+   *
+   * In other words:
+   * SHARED_STATUS_ID_CSF logic: if this is a retweet SHARED_STATUS_ID_CSF should be set to
+   * retweet-status-id, otherwise if it's a reply to a tweet, it should be set to
+   * in-reply-to-status-id.
+   *
+   * </pre>
    */
   public static void buildRetweetAndReplyFields(
       long retweetUserIdVal,
@@ -508,68 +560,19 @@ public class BasicIndexingConverter {
       long inReplyToUserIdVal,
       boolean strict,
       EarlybirdThriftDocumentBuilder builder) {
-    Optional<Long> retweetUserId = Optional.of(retweetUserIdVal).filter(x -> x > 0);
-    Optional<Long> sharedStatusId = Optional.of(sharedStatusIdVal).filter(x -> x > 0);
-    Optional<Long> inReplyToUserId = Optional.of(inReplyToUserIdVal).filter(x -> x > 0);
-    Optional<Long> inReplyToStatusId = Optional.of(inReplyToStatusIdVal).filter(x -> x > 0);
-
-    // We have six combinations here. A Tweet can be
-    //   1) a reply to another tweet (then it has both in-reply-to-user-id and
-    //      in-reply-to-status-id set),
-    //   2) directed-at a user (then it only has in-reply-to-user-id set),
-    //   3) not a reply at all.
-    // Additionally, it may or may not be a Retweet (if it is, then it has retweet-user-id and
-    // retweet-status-id set).
-    //
-    // We want to set some fields unconditionally, and some fields (reference-author-id and
-    // shared-status-id) depending on the reply/retweet combination.
-    //
-    // 1. Normal tweet (not a reply, not a retweet). None of the fields should be set.
-    //
-    // 2. Reply to a tweet (both in-reply-to-user-id and in-reply-to-status-id set).
-    //   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
-    //   SHARED_STATUS_ID_CSF         should be set to in-reply-to-status-id
-    //   IS_REPLY_FLAG                should be set
-    //
-    // 3. Directed-at a user (only in-reply-to-user-id is set).
-    //   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
-    //   IS_REPLY_FLAG                should be set
-    //
-    // 4. Retweet of a normal tweet (retweet-user-id and retweet-status-id are set).
-    //   RETWEET_SOURCE_USER_ID_FIELD should be set to retweet-user-id
-    //   SHARED_STATUS_ID_CSF         should be set to retweet-status-id
-    //   IS_RETWEET_FLAG              should be set
-    //
-    // 5. Retweet of a reply (both in-reply-to-user-id and in-reply-to-status-id set,
-    // retweet-user-id and retweet-status-id are set).
-    //   RETWEET_SOURCE_USER_ID_FIELD should be set to retweet-user-id
-    //   SHARED_STATUS_ID_CSF         should be set to retweet-status-id (retweet beats reply!)
-    //   IS_RETWEET_FLAG              should be set
-    //   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
-    //   IS_REPLY_FLAG                should NOT be set
-    //
-    // 6. Retweet of a directed-at tweet (only in-reply-to-user-id is set,
-    // retweet-user-id and retweet-status-id are set).
-    //   RETWEET_SOURCE_USER_ID_FIELD should be set to retweet-user-id
-    //   SHARED_STATUS_ID_CSF         should be set to retweet-status-id
-    //   IS_RETWEET_FLAG              should be set
-    //   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
-    //   IS_REPLY_FLAG                should NOT be set
-    //
-    // In other words:
-    // SHARED_STATUS_ID_CSF logic: if this is a retweet SHARED_STATUS_ID_CSF should be set to
-    // retweet-status-id, otherwise if it's a reply to a tweet, it should be set to
-    // in-reply-to-status-id.
+    Predicate<Long> isGreaterThanZero = id -> id > 0;
+    Optional<Long> retweetUserId = Optional.of(retweetUserIdVal).filter(isGreaterThanZero);
+    Optional<Long> sharedStatusId = Optional.of(sharedStatusIdVal).filter(isGreaterThanZero);
+    Optional<Long> inReplyToUserId = Optional.of(inReplyToUserIdVal).filter(isGreaterThanZero);
+    Optional<Long> inReplyToStatusId = Optional.of(inReplyToStatusIdVal).filter(isGreaterThanZero);
 
     Preconditions.checkState(retweetUserId.isPresent() == sharedStatusId.isPresent());
 
     if (retweetUserId.isPresent()) {
       builder.withNativeRetweet(retweetUserId.get(), sharedStatusId.get());
 
-      if (inReplyToUserId.isPresent()) {
-        // Set IN_REPLY_TO_USER_ID_FIELD even if this is a retweet of a reply.
-        builder.withInReplyToUserID(inReplyToUserId.get());
-      }
+      // Set IN_REPLY_TO_USER_ID_FIELD even if this is a retweet of a reply.
+      inReplyToUserId.ifPresent(builder::withInReplyToUserID);
     } else {
       // If this is a retweet of a reply, we don't want to mark it as a reply, or override fields
       // set by the retweet logic.

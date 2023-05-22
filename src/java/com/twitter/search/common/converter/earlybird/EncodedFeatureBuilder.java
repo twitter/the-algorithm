@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -140,7 +141,7 @@ public class EncodedFeatureBuilder {
     // Extract some extra information from the message text.
     // Index stock symbols with $ prepended
     textFeatures.getStocks().stream()
-        .filter(stock -> stock != null)
+        .filter(Objects::nonNull)
         .forEach(stock -> versionedTweetFeatures.addToStocks(stock.toLowerCase()));
 
     // Question marks
@@ -173,26 +174,23 @@ public class EncodedFeatureBuilder {
     }
 
     // User name features
-    if (message.getFromUserDisplayName().isPresent()) {
-      Locale locale = LanguageIdentifierHelper
-          .identifyLanguage(message.getFromUserDisplayName().get());
-      String normalizedDisplayName = NormalizerHelper.normalize(
-          message.getFromUserDisplayName().get(), locale, penguinVersion);
+    message.getFromUserDisplayName().ifPresent(id -> {
+      Locale locale = LanguageIdentifierHelper.identifyLanguage(id);
+      String normalizedDisplayName = NormalizerHelper.normalize(id, locale, penguinVersion);
       TokenizerResult result = TokenizerHelper
-          .tokenizeTweet(normalizedDisplayName, locale, penguinVersion);
+              .tokenizeTweet(normalizedDisplayName, locale, penguinVersion);
       tokenSeqStream.reset(result.tokenSequence);
       try {
         versionedTweetFeatures.setUserDisplayNameTokenStream(
-            streamSerializer.serialize(tokenSeqStream));
+                streamSerializer.serialize(tokenSeqStream));
         versionedTweetFeatures.setUserDisplayNameTokenStreamText(result.tokenSequence.toString());
       } catch (IOException e) {
-        LOG.error("TwitterTokenStream serialization error! Could not serialize: "
-            + message.getFromUserDisplayName().get());
+        LOG.error("TwitterTokenStream serialization error! Could not serialize: " + id);
         SERIALIZE_FAILURE_COUNTERS_MAP.get(penguinVersion).increment();
         versionedTweetFeatures.unsetUserDisplayNameTokenStream();
         versionedTweetFeatures.unsetUserDisplayNameTokenStreamText();
       }
-    }
+    });
 
     String resolvedUrlsText = Joiner.on(" ").skipNulls().join(textFeatures.getResolvedUrlTokens());
     versionedTweetFeatures.setNormalizedResolvedUrlText(resolvedUrlsText);
