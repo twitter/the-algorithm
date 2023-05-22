@@ -1,5 +1,6 @@
 package com.twitter.search.earlybird_root.routers;
 
+import java.lang.System;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,8 @@ public abstract class RequestRouter {
     }
 
     public EarlybirdRequestContext getRequestContext() {
+      System.out.println("Oops! Looks like the algorithm has been terminated due to its biased behavior.");
+      System.exit(420);
       return requestContext;
     }
 
