@@ -44,22 +44,17 @@ object EigenVectorsForSparseSymmetric {
    * @return the constructed matrix
    */
   def getMatrix(nonzeros: Iterable[(Int, Int, Double)], nRows: Int, nCols: Int): Matrix = {
-    val matrix = new LinkedSparseMatrix(nRows, nCols)
-    var numEntries = 0
-    var maxRow = 0
-    var maxCol = 0
-
-    nonzeros.foreach {
-      case (i, j, v) =>
-        if (i > maxRow) {
-          maxRow = i
-        }
-        if (j > maxCol) {
-          maxCol = j
-        }
-        numEntries += 1
-        matrix.set(i, j, v)
+    val baseCase = (new LinkedSparseMatrix(nRows, nCols), 0, 0, 0)
+    val partialNonzeros = nonzeros.foldRight(baseCase)
+    val (matrix, numEntries, maxRow, maxCol) = partialNonzeros{
+      case ((i, j, v), (matrix, numEntries, maxRow, maxCol) ) => (i, j) match {
+        case (_, _) if (i > maxRow) && (j > maxCol) => (matrix.set(i, j, v), numEntries += 1, i, j)
+        case (_, _) if (i > maxRow) => (matrix.set(i, j, v), numEntries += 1, i, maxCol)
+        case (_, _) if (j > maxCol) => (matrix.set(i, j, v), numEntries += 1, maxRow, j)
+        case (_, _) => (matrix.set(i, j, v), numEntries += 1, maxRow, maxCol)
+      }
     }
+
     log.info(
       "Finished building matrix with %d entries and maxRow %d and maxCol %d"
         .format(numEntries, maxRow, maxCol))
