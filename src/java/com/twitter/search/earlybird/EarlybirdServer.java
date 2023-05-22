@@ -949,7 +949,6 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
   protected static class EarlybirdThriftRequestLoggingUtil {
     private static final int DEFAULT_MAX_ENTRIES_TO_LOG = 50000;
     private static final int DEFAULT_BUFFER_SIZE = 10000;
-    private static final int DEFAULT_LOGGING_SLEEP_MS = 100;
 
     @VisibleForTesting
     protected static volatile boolean thriftLoggerBusy = false;
@@ -998,13 +997,8 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
         try {
           int count = 0;
           while (count < maxEntriesToLog) {
-            if (REQUEST_BUFFER.isEmpty()) {
-              Thread.sleep(DEFAULT_LOGGING_SLEEP_MS);
-              continue;
-            }
-
             try {
-              EarlybirdRequest ebRequest = REQUEST_BUFFER.poll();
+              EarlybirdRequest ebRequest = REQUEST_BUFFER.take();
               String logLine = serializeThriftObject(ebRequest, serializer);
               thriftLogWriter.write(logLine);
               count++;
