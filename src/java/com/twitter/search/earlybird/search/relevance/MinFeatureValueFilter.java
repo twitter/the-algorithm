@@ -102,7 +102,7 @@ public final class MinFeatureValueFilter extends Query implements FilteredQuery.
   @Override
   public FilteredQuery.DocIdFilter getDocIdFilter(LeafReaderContext context) throws IOException {
     final NumericDocValues featureDocValues = context.reader().getNumericDocValues(featureName);
-    return (docId) -> featureDocValues.advanceExact(docId)
+    return docId -> featureDocValues.advanceExact(docId)
         && ((byte) featureDocValues.longValue() >= minValue);
   }
 

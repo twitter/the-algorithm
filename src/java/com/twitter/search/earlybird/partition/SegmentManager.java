@@ -502,10 +502,7 @@ public class SegmentManager {
         partitionConfig.getIndexingHashPartitionID(),
         partitionConfig.getNumPartitions());
 
-    SegmentInfo segmentInfo =
-        new SegmentInfo(timeSlice.getSegment(), earlybirdSegmentFactory, segmentSyncConfig);
-
-    return segmentInfo;
+    return new SegmentInfo(timeSlice.getSegment(), earlybirdSegmentFactory, segmentSyncConfig);
   }
 
   /**
@@ -531,10 +528,8 @@ public class SegmentManager {
   public SegmentWriter createSegmentWriter(long timesliceID) throws IOException {
     SegmentInfo segmentInfo = createSegmentInfo(timesliceID);
 
-    SegmentWriter writer = new SegmentWriter(
+    return new SegmentWriter(
         segmentInfo, searchIndexingMetricSet.updateFreshness);
-
-    return writer;
   }
 
   private void updateAllListeners(String message) {
@@ -817,6 +812,6 @@ public class SegmentManager {
 
   @VisibleForTesting
   ArrayList<Long> getTimeSliceIdsForTests() {
-    return new ArrayList<Long>(segmentWriters.keySet());
+    return new ArrayList<>(segmentWriters.keySet());
   }
 }
