@@ -27,7 +27,7 @@ public class EarlybirdSchemaBuilder extends SchemaBuilder {
 
   /**
    * Configure the specified field to be Out-of-order.
-   * In the realtime cluster, this causes Earlybird to used the skip list posting format.
+   * In the realtime cluster, this causes Earlybird to use the skip list posting format.
    */
   public final EarlybirdSchemaBuilder withOutOfOrderEnabledForField(String fieldName) {
     if (!shouldIncludeField(fieldName)) {
