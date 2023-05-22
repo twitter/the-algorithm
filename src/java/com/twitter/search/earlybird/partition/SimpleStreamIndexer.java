@@ -86,7 +86,7 @@ public abstract class SimpleStreamIndexer<K, V> {
   }
 
   /**
-   * Consume updates on startup until current (eg. until we've seen a record within 5 seconds
+   * Consume updates on startup until current (e.g. until we've seen a record within 5 seconds
    * of current time.)
    */
   public void readRecordsUntilCurrent() {

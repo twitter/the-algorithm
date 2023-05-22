@@ -139,7 +139,7 @@ object NewPipelineArrowBuilder {
 }
 
 /**
- * This is a pipeline specific instance of a step, i.e, a generic step with the step identifier
+ * This is a pipeline specific instance of a step, i.e., a generic step with the step identifier
  * within the pipeline and its executor configs.
  * @param stepIdentifier Step identifier of the step within a pipeline
  * @param executorConfig Config to execute the step with

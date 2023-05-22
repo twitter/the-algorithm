@@ -47,7 +47,7 @@ case class SelectorStep[
     config: Seq[Selector[Query]]
   ): State = input.updateCandidatesWithDetails(executorResult.selectedCandidates)
 
-  // Selection is a bit different to other steps (i.e, other steps, empty means don't change anything)
+  // Selection is a bit different to other steps (i.e., other steps, empty means don't change anything)
   // where an empty selection list drops all candidates.
   override def isEmpty(config: Seq[Selector[Query]]): Boolean = false
 }

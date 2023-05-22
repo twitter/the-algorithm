@@ -9,7 +9,7 @@ import com.twitter.util.Future
 
 /***
  * A SourceGraphFetcher is a trait that extends from `SourceFetcher`
- * and is specialized in tackling User Graph (eg., RealGraphOon, FRS) fetch.
+ * and is specialized in tackling User Graph (e.g., RealGraphOon, FRS) fetch.
  *
  * The [[ResultType]] of a SourceGraphFetcher is a `GraphSourceInfo` which contains a userSeedSet.
  * When we pass in userId, the underlying store returns one GraphSourceInfo.

@@ -91,7 +91,7 @@ General arguments (specified as **--profile.{options}**):
 
   3. **input.{feature_store_args}** For feature store related args like `feature_store_embedding`, `feature_store_major_version`, `date_range`:
 
-- **output_dir** Where to save the produced serialized ann index. Save to HDFS by specifying the full URI. e.g `hdfs://hadoop-dw2-nn.smf1.twitter.com/user/<user>/index_file` or using the default cluster `hdfs:///user/<user>/index_file`.
+- **output_dir** Where to save the produced serialized ann index. Save to HDFS by specifying the full URI. e.g. `hdfs://hadoop-dw2-nn.smf1.twitter.com/user/<user>/index_file` or using the default cluster `hdfs:///user/<user>/index_file`.
 - **num_dimensions** Dimension of embedding in the input data. An exception will be thrown if any entry does not have a number of dimensions equal to this number.
 - **metric** Distance metric (InnerProduct/Cosine/L2)
 - **concurrency_level** Specifies how many parallel inserts happen to the index. This should probably be set to the number of cores on the machine.

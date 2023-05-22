@@ -5,7 +5,7 @@ User User Graph (UUG) is a Finalge thrift service built on the GraphJet framewor
 
 ## How is it used on Twitter
 UUG recommends users to follow based on who your follow graph have recently followed.
-The core idea behind UUG is collaborative filtering. UUG takes a user's weighted follow graph (i.e a list of weighted userIds) as input, 
+The core idea behind UUG is collaborative filtering. UUG takes a user's weighted follow graph (i.e. a list of weighted userIds) as input, 
 performs efficient traversal & aggregation, and returns the top weighted users basd on # of users that engaged the users, as well as 
 the engaging users' weights.
 

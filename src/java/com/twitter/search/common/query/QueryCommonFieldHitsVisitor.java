@@ -97,7 +97,7 @@ public final class QueryCommonFieldHitsVisitor extends SearchQueryVisitor<Set<St
         if (hits.isEmpty()) {
           // if it is empty, it means this query node is not of term type
           // and we do not include these in the field intersection
-          // eg. cache filters, proximity groups
+          // e.g. cache filters, proximity groups
           continue;
         }
         if (!initializedIntersections) {

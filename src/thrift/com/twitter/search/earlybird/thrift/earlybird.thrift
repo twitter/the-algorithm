@@ -1315,7 +1315,7 @@ struct EarlybirdDebugInfo {
   // Requests sent to dependent services. For example, superroot sends to realtime root,
   // archive root, etc.
   4: optional list<EarlybirdRequestResponse> sentRequests;
-  // segment level debug info (eg. hitsPerSegment, max/minSearchedTime etc.)
+  // segment level debug info (e.g. hitsPerSegment, max/minSearchedTime etc.)
   5: optional list<string> collectorDebugInfo
   6: optional list<string> termStatisticsDebugInfo
 }

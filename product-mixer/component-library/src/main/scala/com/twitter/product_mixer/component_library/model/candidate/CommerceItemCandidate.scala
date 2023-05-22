@@ -8,7 +8,7 @@ import com.twitter.product_mixer.core.model.common.UniversalNoun
  * user clicks on a CommerceProduct, they will be taken to the specific product page.
  *
  * @note Both CommerceProduct and CommerceProductGroups (below) can be shown in the same
- *       TimelineModule (i.e Carousel)
+ *       TimelineModule (i.e. Carousel)
  *
  * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
  *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
@@ -90,7 +90,7 @@ object CommerceProductCandidate {
  * versions of the top level product.
  *
  * @note Both CommerceProduct (above) and CommerceProductGroups can be shown in the same
- *       TimelineModule (i.e Carousel)
+ *       TimelineModule (i.e. Carousel)
  *
  * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
  *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the

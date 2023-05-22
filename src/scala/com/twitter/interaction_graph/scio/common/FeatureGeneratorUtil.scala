@@ -27,7 +27,7 @@ object FeatureGeneratorUtil {
 
   /**
    * Create vertex feature from InteractionGraphRawInput graph (src, dst, feature name, age, featureValue)
-   * We will represent non-directional features (eg num_create_tweets) as "outgoing" values.
+   * We will represent non-directional features (e.g., num_create_tweets) as "outgoing" values.
    * @return
    */
   def getVertexFeature(
@@ -87,7 +87,7 @@ object FeatureGeneratorUtil {
 
   /**
    * Create edge feature from InteractionGraphRawInput graph (src, dst, feature name, age, featureValue)
-   * We will exclude all non-directional features (eg num_create_tweets) from all edge aggregates
+   * We will exclude all non-directional features (e.g., num_create_tweets) from all edge aggregates
    */
   def getEdgeFeature(
     input: SCollection[InteractionGraphRawInput]

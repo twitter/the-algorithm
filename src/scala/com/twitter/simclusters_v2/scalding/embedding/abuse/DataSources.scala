@@ -95,7 +95,7 @@ object DataSources {
       case (userId, l1Norm) if l1Norm <= maxNumBlocks =>
         userId
     }
-    // retain only those users who give legit blocks (i.e those users who give less than numBlocks95)
+    // retain only those users who give legit blocks (i.e. those users who give less than numBlocks95)
     userGivingBlocks.filterRows(usersWithLegitBlocks)
   }
 }

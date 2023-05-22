@@ -78,7 +78,7 @@ class PostNuxMlCombinedRankerBuilder[
         randomSeed = request.getRandomizationSeed
       ).observe(weightedRankerStats)
 
-    // ranker that takes the first n results (ie truncates output) while merging duplicates
+    // ranker that takes the first n results (i.e. truncates output) while merging duplicates
     val firstNRankerObs = firstNRanker.observe(firstNRankerStats)
     // either ML ranker that uses deepbirdv2 to score or no ranking
     val mainRanker: Ranker[T, CandidateUser] =

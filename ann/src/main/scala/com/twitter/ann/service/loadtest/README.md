@@ -35,7 +35,7 @@ Load test results will be printed to stdout of an aurora job.
 # Loadtest ANN query service with query set
 
 An ANN query service can be load-tested with sample queries drawn from the embeddings dataset.
-For creating sample queries i.e `query_set` refer this [section](#query-set-generator).
+For creating sample queries i.e. `query_set` refer this [section](#query-set-generator).
 
 Test is run with `live` version of loadtest binary that is already available in packer.
 Example script to load test a ANN query service:

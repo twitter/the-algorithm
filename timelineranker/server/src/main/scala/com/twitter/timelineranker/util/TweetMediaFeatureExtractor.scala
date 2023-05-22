@@ -183,7 +183,7 @@ object TweetMediaFeaturesExtractor {
     }
   }.flatten
 
-  // 3rd party media providers. eg. giphy for gifs
+  // 3rd party media providers. e.g. giphy for gifs
   private def getMediaOriginProviders(mediaEntities: Seq[MediaEntity]): Seq[String] =
     for {
       mediaEntity <- mediaEntities

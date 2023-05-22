@@ -14,7 +14,7 @@ object TopicsForProducersUtils {
   ] =
     Bufferable.injectionOf[(SemanticCoreEntityId, Option[Language], Option[Country])]
 
-  // This function provides the set of 'valid' topics, i.e topics with atleast a certain number of
+  // This function provides the set of 'valid' topics, i.e. topics with atleast a certain number of
   // follows. This helps remove some noisy topic associations to producers in the dataset.
   def getValidTopics(
     topicUsers: TypedPipe[((TopicId, Option[Language], Option[Country]), UserId, Double)],

@@ -19,7 +19,7 @@ public final class CSFTypeUtil {
    * Convert bytes into a long value. Inverse function of convertToBytes.
    */
   public static int convertFromBytes(byte[] data, int startOffset, int valueIndex) {
-    // This should rarely happen, eg. when we get a corrupt ThriftIndexingEvent, we insert a new
+    // This should rarely happen, e.g. when we get a corrupt ThriftIndexingEvent, we insert a new
     // Document which is blank. Such a document results in a length 0 BytesRef.
     if (data.length == 0) {
       return 0;

@@ -8,7 +8,7 @@ import com.twitter.util.Future
 
 /***
  * A SourceSignalFetcher is a trait that extends from `SourceFetcher`
- * and is specialized in tackling Signals (eg., USS, FRS) fetch.
+ * and is specialized in tackling Signals (e.g., USS, FRS) fetch.
  * Currently, we define Signals as (but not limited to) a set of past engagements that
  * the user makes, such as RecentFav, RecentFollow, etc.
  *
