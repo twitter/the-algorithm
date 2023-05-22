@@ -117,7 +117,7 @@ void MurmurHash3_x86_32 ( const void * key, int len,
 
     h1 ^= k1;
     h1 = ROTL32(h1,13);
-    h1 = h1*5+0xe6546b64;
+    h1 = (h1*5)+0xe6546b64;
   }
 
   //----------
@@ -139,7 +139,6 @@ void MurmurHash3_x86_32 ( const void * key, int len,
   // finalization
 
   h1 ^= len;
-
   h1 = fmix32(h1);
 
   *(uint32_t*)out = h1;
@@ -192,7 +191,7 @@ void MurmurHash3_x86_128 ( const void * key, const int len,
     h4 = ROTL32(h4,13); h4 += h1; h4 = h4*5+0x32ac3b17;
   }
 
-  //----------
+  //-----------------------------------------------------
   // tail
 
   const uint8_t * tail = (const uint8_t*)(data + nblocks*16);
@@ -228,7 +227,7 @@ void MurmurHash3_x86_128 ( const void * key, const int len,
            k1 *= c1; k1  = ROTL32(k1,15); k1 *= c2; h1 ^= k1;
   };
 
-  //----------
+  //--------------------------------------------------------------
   // finalization
 
   h1 ^= len; h2 ^= len; h3 ^= len; h4 ^= len;
@@ -252,7 +251,7 @@ void MurmurHash3_x86_128 ( const void * key, const int len,
 
 //-----------------------------------------------------------------------------
 
-void MurmurHash3_x64_128 ( const void * key, const int len,
+void MurmurHash3_x64_128 (const void * key, const int len,
                            const uint32_t seed, void * out )
 {
   const uint8_t * data = (const uint8_t*)key;
@@ -283,7 +282,7 @@ void MurmurHash3_x64_128 ( const void * key, const int len,
     h2 = ROTL64(h2,31); h2 += h1; h2 = h2*5+0x38495ab5;
   }
 
-  //----------
+  //-------------------------------------------------------
   // tail
 
   const uint8_t * tail = (const uint8_t*)(data + nblocks*16);
@@ -313,7 +312,7 @@ void MurmurHash3_x64_128 ( const void * key, const int len,
            k1 *= c1; k1  = ROTL64(k1,31); k1 *= c2; h1 ^= k1;
   };
 
-  //----------
+  //--------------------------------------------------------------
   // finalization
 
   h1 ^= len; h2 ^= len;
