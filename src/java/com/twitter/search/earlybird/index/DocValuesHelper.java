@@ -1,6 +1,8 @@
 package com.twitter.search.earlybird.index;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.Terms;
@@ -9,6 +11,8 @@ import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.util.BytesRef;
 
 public final class DocValuesHelper {
+  private static final Map<String, TermsEnum> termsEnumCache = new ConcurrentHashMap<>();
+
   private DocValuesHelper() {
   }
 
@@ -22,13 +26,10 @@ public final class DocValuesHelper {
    */
   public static int getFirstDocIdWithValue(
       LeafReader reader, String indexField, BytesRef value) throws IOException {
-    TermsEnum termsEnum = getTermsEnum(reader, indexField);
-    if (termsEnum == null || !termsEnum.seekExact(value)) {
-      return DocIdSetIterator.NO_MORE_DOCS;
+    try (DocIdSetIterator docsIterator = getTermsEnum(reader, indexField).postings(null)) {
+      int docId = docsIterator.nextDoc();
+      return docId == DocIdSetIterator.NO_MORE_DOCS ? docId : docId;
     }
-
-    DocIdSetIterator docsIterator = termsEnum.postings(null);
-    return docsIterator.nextDoc();
   }
 
   /**
@@ -44,27 +45,25 @@ public final class DocValuesHelper {
    */
   public static int getLargestDocIdWithCeilOfValue(
       LeafReader reader, String indexField, BytesRef value) throws IOException {
-    TermsEnum termsEnum = getTermsEnum(reader, indexField);
-    if (termsEnum == null) {
-      return DocIdSetIterator.NO_MORE_DOCS;
+    try (DocIdSetIterator docsIterator = getTermsEnum(reader, indexField).postings(null)) {
+      int docId = docsIterator.nextDoc();
+      while (docsIterator.nextDoc() != DocIdSetIterator.NO_MORE_DOCS) {
+        docId = docsIterator.docID();
+      }
+      return docId;
     }
-    if (termsEnum.seekCeil(value) == TermsEnum.SeekStatus.END) {
-      return DocIdSetIterator.NO_MORE_DOCS;
-    }
-
-    DocIdSetIterator docsIterator = termsEnum.postings(null);
-    int docId = docsIterator.nextDoc();
-    while (docsIterator.nextDoc() != DocIdSetIterator.NO_MORE_DOCS) {
-      docId = docsIterator.docID();
-    }
-    return docId;
   }
 
   private static TermsEnum getTermsEnum(LeafReader reader, String indexField) throws IOException {
-    Terms terms = reader.terms(indexField);
-    if (terms == null) {
-      return null;
+    TermsEnum termsEnum = termsEnumCache.get(indexField);
+    if (termsEnum == null) {
+      Terms terms = reader.terms(indexField);
+      if (terms == null) {
+        return null;
+      }
+      termsEnum = terms.iterator();
+      termsEnumCache.put(indexField, termsEnum);
     }
-    return terms.iterator();
+    return termsEnum;
   }
 }
