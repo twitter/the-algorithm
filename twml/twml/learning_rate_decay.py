@@ -70,7 +70,7 @@ def get_learning_rate_decay_fn(params):
         global_step=global_step,
         decay_steps=params.decay_steps,
         end_learning_rate=params.end_learning_rate,
-        power=params.polynomial_power if 'polynomial_power' in paramsv else 1.0,
+        power=params.polynomial_power if 'polynomial_power' in paramsv else 0.5,
       )
     return polynomial_decay_fn
 
