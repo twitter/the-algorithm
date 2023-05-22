@@ -71,7 +71,7 @@ def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
       for metric_name in metrics:
         metric_name = metric_name.lower()  # metric name are case insensitive.
 
-        class_metric_name = metric_name + "_" + (classes[i] if classes is not None else str(i))
+        class_metric_name = f"{metric_name}_{classes[i] if classes is not None else i}"
 
         if class_metric_name in eval_metric_ops:
           # avoid adding duplicate metrics.
