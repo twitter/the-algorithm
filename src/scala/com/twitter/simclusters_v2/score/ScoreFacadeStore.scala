@@ -10,7 +10,7 @@ import com.twitter.storehaus.ReadableStore
 import com.twitter.util.Future
 
 /**
- * Provide a uniform access layer for all kind of Score.
+ * Provide an uniform access layer for all kind of Score.
  * @param readableStores readable stores indexed by the ScoringAlgorithm they implement
  */
 class ScoreFacadeStore private (
