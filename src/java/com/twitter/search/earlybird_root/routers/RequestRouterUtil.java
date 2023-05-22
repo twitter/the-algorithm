@@ -61,14 +61,16 @@ public final class RequestRouterUtil {
             // request. We don't expect this to happen for STRICT RECENCY but we're tracking
             // with the stat when it happens for RELEVANCE and RECENCY
             if (requestContext.getEarlybirdRequestType() == EarlybirdRequestType.STRICT_RECENCY) {
-              String logMessage = "Response has a minSearchedStatusID ({}) larger than request "
-                  + operator + " ({})."
-                  + "\nrequest type: {}"
-                  + "\nrequest: {}"
-                  + "\nmerged response: {}"
-                  + "\nrealtime response: {}"
-                  + "\nprotected response: {}"
-                  + "\nfull archive response: {}";
+              StringBuilder logMessage = new StringBuilder()
+                .append("Response has a minSearchedStatusID ({}) larger than request ")
+                .append(operator).append(" ({}).")
+                .append("\nrequest type: {}")
+                .append("\nrequest: {}")
+                .append("\nmerged response: {}")
+                .append("\nrealtime response: {}")
+                .append("\nprotected response: {}")
+                .append("\nfull archive response: {}");
+      
               List<Object> logMessageParams = Lists.newArrayList();
               logMessageParams.add(minSearchedStatusId);
               logMessageParams.add(requestMaxId.get());
@@ -95,7 +97,7 @@ public final class RequestRouterUtil {
                 logMessageParams.add(e);
               }
 
-              LOG.warn(logMessage, logMessageParams.toArray());
+              LOG.warn(logMessage.toString(), logMessageParams.toArray());
             }
           }
         }
