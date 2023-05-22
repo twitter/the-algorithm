@@ -1,26 +1,32 @@
 # checkstyle: noqa
+from datetime import datetime
+
 import tensorflow.compat.v1 as tf
-from tensorflow.python.estimator.export.export import build_raw_serving_input_receiver_fn
+import tensorflow_hub as hub
+from tensorflow.compat.v1 import logging
+from tensorflow.python.estimator.export.export import (
+  build_raw_serving_input_receiver_fn,
+)
 from tensorflow.python.framework import dtypes
 from tensorflow.python.ops import array_ops
-import tensorflow_hub as hub
-
-from datetime import datetime
-from tensorflow.compat.v1 import logging
 from twitter.deepbird.projects.timelines.configs import all_configs
+
+import twml
+from twml.contrib.calibrators.common_calibrators import (
+  build_percentile_discretizer_graph,
+  calibrate_discretizer_and_export,
+)
 from twml.trainers import DataRecordTrainer
-from twml.contrib.calibrators.common_calibrators import build_percentile_discretizer_graph
-from twml.contrib.calibrators.common_calibrators import calibrate_discretizer_and_export
-from .metrics import get_multi_binary_class_metric_fn
-from .constants import TARGET_LABEL_IDX, PREDICTED_CLASSES
+
+from .constants import PREDICTED_CLASSES, TARGET_LABEL_IDX
 from .example_weights import add_weight_arguments, make_weights_tensor
 from .lolly.data_helpers import get_lolly_logits
-from .lolly.tf_model_initializer_builder import TFModelInitializerBuilder
 from .lolly.reader import LollyModelReader
+from .lolly.tf_model_initializer_builder import TFModelInitializerBuilder
+from .metrics import get_multi_binary_class_metric_fn
 from .tf_model.discretizer_builder import TFModelDiscretizerBuilder
 from .tf_model.weights_initializer_builder import TFModelWeightsInitializerBuilder
 
-import twml
 
 def get_feature_values(features_values, params):
   if params.lolly_model_tsv:

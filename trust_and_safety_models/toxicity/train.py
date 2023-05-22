@@ -1,14 +1,16 @@
+import os
 from datetime import datetime
 from importlib import import_module
-import os
 
+import numpy as np
+import tensorflow as tf
 from toxicity_ml_pipeline.data.data_preprocessing import (
   DefaultENNoPreprocessor,
   DefaultENPreprocessor,
 )
 from toxicity_ml_pipeline.data.dataframe_loader import ENLoader, ENLoaderWithSampling
 from toxicity_ml_pipeline.data.mb_generator import BalancedMiniBatchLoader
-from toxicity_ml_pipeline.load_model import load, get_last_layer
+from toxicity_ml_pipeline.load_model import get_last_layer, load
 from toxicity_ml_pipeline.optim.callbacks import (
   AdditionalResultLogger,
   ControlledStoppingCheckpointCallback,
@@ -19,16 +21,14 @@ from toxicity_ml_pipeline.optim.schedulers import WarmUp
 from toxicity_ml_pipeline.settings.default_settings_abs import GCS_ADDRESS as ABS_GCS
 from toxicity_ml_pipeline.settings.default_settings_tox import (
   GCS_ADDRESS as TOX_GCS,
+)
+from toxicity_ml_pipeline.settings.default_settings_tox import (
   MODEL_DIR,
   RANDOM_SEED,
   REMOTE_LOGDIR,
   WARM_UP_PERC,
 )
 from toxicity_ml_pipeline.utils.helpers import check_gpu, set_seeds, upload_model
-
-import numpy as np
-import tensorflow as tf
-
 
 try:
   from tensorflow_addons.optimizers import AdamW
@@ -139,9 +139,9 @@ class Trainer(object):
     )
     print("------- Experiment name: ", experiment_name)
     self.logdir = (
-      f"..."
+      "..."
       if self.test
-      else f"..."
+      else "..."
     )
     self.checkpoint_path = f"{self.model_dir}/{experiment_name}"
 

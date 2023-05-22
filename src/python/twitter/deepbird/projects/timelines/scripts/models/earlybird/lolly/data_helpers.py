@@ -1,6 +1,8 @@
 # checkstyle: noqa
 import tensorflow.compat.v1 as tf
+
 from ..constants import EB_SCORE_IDX
+
 
 # The rationale behind this logic is available at TQ-9678.
 def get_lolly_logits(labels):

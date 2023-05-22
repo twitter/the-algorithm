@@ -1,7 +1,7 @@
 import tensorflow as tf
-from keras.utils import tf_utils
-from keras.utils import losses_utils
 from keras import backend
+from keras.utils import losses_utils, tf_utils
+
 
 def inv_kl_divergence(y_true, y_pred):
   y_pred = tf.convert_to_tensor(y_pred)

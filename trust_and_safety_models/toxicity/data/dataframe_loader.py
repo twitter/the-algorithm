@@ -287,7 +287,7 @@ class ENLoaderWithSampling(ENLoader):
 class I18nLoader(DataframeLoader):
   def __init__(self):
     super().__init__(project=...)
-    from archive.settings.... import ACCEPTED_LANGUAGES, QUERY_SETTINGS
+    from archive.settings import ACCEPTED_LANGUAGES, QUERY_SETTINGS
 
     self.accepted_languages = ACCEPTED_LANGUAGES
     self.query_settings = dict(QUERY_SETTINGS)

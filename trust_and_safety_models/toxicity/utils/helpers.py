@@ -3,11 +3,9 @@ import os
 import random as python_random
 import subprocess
 
-from toxicity_ml_pipeline.settings.default_settings_tox import LOCAL_DIR
-
 import numpy as np
 from sklearn.metrics import precision_recall_curve
-
+from toxicity_ml_pipeline.settings.default_settings_tox import LOCAL_DIR
 
 try:
   import tensorflow as tf

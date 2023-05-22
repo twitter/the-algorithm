@@ -1,6 +1,10 @@
-from importlib import import_module
 import os
+from importlib import import_module
 
+import numpy as np
+import pandas
+import tensorflow as tf
+from sklearn.model_selection import StratifiedKFold
 from toxicity_ml_pipeline.settings.default_settings_tox import (
   INNER_CV,
   LOCAL_DIR,
@@ -11,12 +15,6 @@ from toxicity_ml_pipeline.settings.default_settings_tox import (
   TARGET_POS_PER_EPOCH,
 )
 from toxicity_ml_pipeline.utils.helpers import execute_command
-
-import numpy as np
-import pandas
-from sklearn.model_selection import StratifiedKFold
-import tensorflow as tf
-
 
 try:
   from transformers import AutoTokenizer, DataCollatorWithPadding
