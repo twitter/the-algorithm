@@ -622,8 +622,9 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
     return requestDebugMode >= 5;
   }
 
-  // Use this for per-result debug info. Useful for queries with no results
-  // or a very small number of results.
+  // Use this for per-result debug info.
+  // Useful for queries with no results or a very small number of results.
+  // A value of 6 or higher indicates that verbose debug information should be collected.
   protected boolean shouldCollectVerboseDebugInfo() {
     return requestDebugMode >= 6;
   }
