@@ -51,9 +51,9 @@ object PublicInterest {
     PolicyInViolation.Scam -> Scams,
     PolicyInViolation.PlatformManipulation -> PlatformManipulation,
     PolicyInViolation.MisinformationCivic -> MisinfoCivic,
-    PolicyInViolation.AbusePolicyUkraineCrisisMisinformation -> MisinfoCrisis,
     PolicyInViolation.MisinformationGeneric -> MisinfoGeneric,
     PolicyInViolation.MisinformationMedical -> MisinfoMedical,
+    PolicyInViolation.MisinformationWar -> MisinfoWar,
   )
 
   val reasonToPolicyInViolation: Map[Reason, PolicyInViolation] = Map(
@@ -76,9 +76,9 @@ object PublicInterest {
     Scams -> PolicyInViolation.Scam,
     PlatformManipulation -> PolicyInViolation.PlatformManipulation,
     MisinfoCivic -> PolicyInViolation.MisinformationCivic,
-    MisinfoCrisis -> PolicyInViolation.AbusePolicyUkraineCrisisMisinformation,
     MisinfoGeneric -> PolicyInViolation.MisinformationGeneric,
     MisinfoMedical -> PolicyInViolation.MisinformationMedical,
+    MisinfoWar -> PolicyInViolation.MisinformationWar,
   )
 
   val ReasonToSafetyResultReason: Map[Reason, SafetyResultReason] = Map(
@@ -101,7 +101,6 @@ object PublicInterest {
     Scams -> SafetyResultReason.Scams,
     PlatformManipulation -> SafetyResultReason.PlatformManipulation,
     MisinfoCivic -> SafetyResultReason.MisinfoCivic,
-    MisinfoCrisis -> SafetyResultReason.MisinfoCrisis,
     MisinfoGeneric -> SafetyResultReason.MisinfoGeneric,
     MisinfoMedical -> SafetyResultReason.MisinfoMedical,
     IpiDevelopmentOnly -> SafetyResultReason.DevelopmentOnlyPublicInterest
@@ -118,7 +117,7 @@ object PublicInterest {
     TweetSafetyLabelType.MisinfoCivic,
     TweetSafetyLabelType.MisinfoGeneric,
     TweetSafetyLabelType.MisinfoMedical,
-    TweetSafetyLabelType.MisinfoCrisis,
+    TweetSafetyLabelType.MisinfoWar,
     TweetSafetyLabelType.IpiDevelopmentOnly
   )
 
@@ -173,14 +172,14 @@ class PublicInterestActionBuilder[T <: Action]() extends ActionBuilder[T] {
         case Some((TweetSafetyLabelType.MisinfoCivic, source)) =>
           (Reason.MisinfoCivic, LimitedEngagementReason.fromString(source.map(_.name)))
 
-        case Some((TweetSafetyLabelType.MisinfoCrisis, source)) =>
-          (Reason.MisinfoCrisis, LimitedEngagementReason.fromString(source.map(_.name)))
-
         case Some((TweetSafetyLabelType.MisinfoGeneric, source)) =>
           (Reason.MisinfoGeneric, LimitedEngagementReason.fromString(source.map(_.name)))
 
         case Some((TweetSafetyLabelType.MisinfoMedical, source)) =>
           (Reason.MisinfoMedical, LimitedEngagementReason.fromString(source.map(_.name)))
+
+        case Some((TweetSafetyLabelType.MisinfoWar, source)) =>
+          (Reason.MisinfoWar, LimitedEngagementReason.fromString(source.map(_.name)))
 
         case Some((TweetSafetyLabelType.IpiDevelopmentOnly, _)) =>
           (Reason.IpiDevelopmentOnly, Some(LimitedEngagementReason.NonCompliant))
@@ -220,14 +219,14 @@ class PublicInterestComplianceTweetNoticeActionBuilder
         case Some((TweetSafetyLabelType.MisinfoCivic, _)) =>
           Reason.MisinfoCivic
 
-        case Some((TweetSafetyLabelType.MisinfoCrisis, _)) =>
-          Reason.MisinfoCrisis
-
         case Some((TweetSafetyLabelType.MisinfoGeneric, _)) =>
           Reason.MisinfoGeneric
 
         case Some((TweetSafetyLabelType.MisinfoMedical, _)) =>
           Reason.MisinfoMedical
+
+        case Some((TweetSafetyLabelType.MisinfoWar, _)) =>
+          Reason.MisinfoWar
 
         case Some((TweetSafetyLabelType.IpiDevelopmentOnly, _)) =>
           Reason.IpiDevelopmentOnly
@@ -257,14 +256,14 @@ class PublicInterestDropActionBuilder extends ActionBuilder[Drop] {
       case Some(TweetSafetyLabelType.MisinfoCivic) =>
         Reason.MisinfoCivic
 
-      case Some(TweetSafetyLabelType.MisinfoCrisis) =>
-        Reason.MisinfoCrisis
-
       case Some(TweetSafetyLabelType.MisinfoGeneric) =>
         Reason.MisinfoGeneric
 
       case Some(TweetSafetyLabelType.MisinfoMedical) =>
         Reason.MisinfoMedical
+
+      case Some(TweetSafetyLabelType.MisinfoWar) =>
+        Reason.MisinfoWar
 
       case _ =>
         Reason.OneOff
