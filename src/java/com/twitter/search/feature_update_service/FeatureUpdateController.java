@@ -200,10 +200,10 @@ public class FeatureUpdateController implements FeatureUpdateService.ServiceIfac
   }
 
   private List<PenguinVersion> getPenguinVersions(String penguinVersionsStr) {
-    String[] tokens = penguinVersionsStr.split("\\s*,\\s*");
+    String[] tokens = penguinVersionsStr.split(",");
     List<PenguinVersion> listOfPenguinVersions = Lists.newArrayListWithCapacity(tokens.length);
     for (String token : tokens) {
-      listOfPenguinVersions.add(PenguinVersion.valueOf(token.toUpperCase()));
+      listOfPenguinVersions.add(PenguinVersion.valueOf(token.trim().toUpperCase()));
     }
     LOG.info(String.format("Using Penguin Versions: %s", listOfPenguinVersions));
     return listOfPenguinVersions;
