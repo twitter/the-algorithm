@@ -4,7 +4,7 @@ java_library(
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/log4j",
+        "3rdparty/jvm/log4j:2.16.0",
         "3rdparty/jvm/org/slf4j:slf4j-api",
         "src/java/com/twitter/common/collections",
         "src/java/com/twitter/common/quantity",
