@@ -4,6 +4,8 @@ import os
 import pkgutil
 import sys
 from urllib.parse import urlsplit
+import torch as nn
+import tensorflow as tf
 
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
