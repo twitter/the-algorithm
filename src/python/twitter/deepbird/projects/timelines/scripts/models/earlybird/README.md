@@ -1,10 +1,10 @@
 # Earlybird Light Ranker
 
-*Note: the light ranker is an old part of the stack which we are currently in the process of replacing.
+*Note: The `light ranker` is an old part of the stack which we are currently in the process of replacing.
 The current model was last trained several years ago, and uses some very strange features.
 We are working on training a new model, and eventually rebuilding this part of the stack entirely.*
 
-The Earlybird light ranker is a logistic regression model which predicts the likelihood that the user will engage with a
+The Earlybird light ranker is a `logistic regression model` which predicts the likelihood that the user will engage with a
 tweet.
 It is intended to be a simplified version of the heavy ranker which can run on a greater amount of tweets.
 
@@ -28,17 +28,10 @@ The light ranker features pipeline is as follows:
 
 Some of these components are explained below:
 
-- Index Ingester: an indexing pipeline that handles the tweets as they are generated. This is the main input of
-  Earlybird, it produces Tweet Data (the basic information about the tweet, the text, the urls, media entities, facets,
-  etc) and Static Features (the features you can compute directly from a tweet right now, like whether it has URL, has
-  Cards, has quotes, etc); All information computed here are stored in index and flushed as each realtime index segments
-  become full. They are loaded back later from disk when Earlybird restarts. Note that the features may be computed in a
-  non-trivial way (like deciding the value of hasUrl), they could be computed and combined from some more "raw"
-  information in the tweet and from other services.
-  Signal Ingester: the ingester for Realtime Features, per-tweet features that can change after the tweet has been
-  indexed, mostly social engagements like retweetCount, favCount, replyCount, etc, along with some (future) spam signals
-  that's computed with later activities. These were collected and computed in a Heron topology by processing multiple
-  event streams and can be extended to support more features.
+- Index Ingester is an indexing pipeline that handles tweets as they are generated. This is the main input of Earlybird. It produces Tweet Data, which includes basic
+ information about the tweet such as text, URLs, media entities, facets, and so on. It also produces Static Features, which are the features that can be computed directly from a tweet at the time of indexing, such as whether it has a URL, cards, quotes, etc. All the information computed here is stored in the index and is flushed as each realtime index segment becomes full. They are loaded back later from disk when Earlybird restarts. Note that the features may be computed in a non-trivial way, such as deciding the value of "hasUrl". They could be computed and combined from some more "raw" information in the tweet and from other services.
+
+  Signal Ingester is the ingester for Realtime Features. These are per-tweet features that can change after the tweet has been indexed, mostly social engagements such as retweetCount, favCount, replyCount, etc., along with some (future) spam signals that are computed with later activities. They are collected and computed in a Heron topology  by processing multiple event streams and can be extended to support more features.
 - User Table Features is another set of features per user. They are from User Table Updater, a different input that
   processes a stream written by our user service. It's used to store sparse realtime user
   information. These per-user features are propagated to the tweet being scored by
@@ -49,15 +42,15 @@ Some of these components are explained below:
 
 The scoring function in Earlybird uses both static and realtime features. Examples of static features used are:
 
-- Whether the tweet is a retweet
-- Whether the tweet contains a link
-- Whether this tweet has any trend words at ingestion time
-- Whether the tweet is a reply
+- Whether the tweet is a retweet.
+- Whether the tweet contains a link.
+- Whether this tweet has any trend words at ingestion time.
+- Whether the tweet is a reply.
 - A score for the static quality of the text, computed in TweetTextScorer.java in the Ingester. Based on the factors
   such as offensiveness, content entropy, "shout" score, length, and readability.
-- tweepcred, see top-level README.md
+- tweepcred, see top-level README.md.
 
 Examples of realtime features used are:
 
-- Number of tweet likes/replies/retweets
-- pToxicity and pBlock scores provided by health models
+- Number of tweet likes/replies/retweets.
+- pToxicity and pBlock scores provided by health models.
