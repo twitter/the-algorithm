@@ -119,5 +119,5 @@ object NewTweetsPillCandidatePipelineConfig {
 
   // Unlimited display time (until user takes action)
   val DisplayDuration = -1.millisecond
-  val TriggerDelay = 4.minutes
+  val TriggerDelay = 5.minutes
 }
