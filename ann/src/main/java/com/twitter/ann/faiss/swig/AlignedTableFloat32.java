@@ -27,13 +27,12 @@ public class AlignedTableFloat32 {
   }
 
   public synchronized void delete() {
-    if (swigCPtr != 0) {
-      if (swigCMemOwn) {
-        swigCMemOwn = false;
-        swigfaissJNI.delete_AlignedTableFloat32(swigCPtr);
-      }
-      swigCPtr = 0;
+    if (swigCPtr == 0) return;
+    if (swigCMemOwn) {
+      swigCMemOwn = false;
+      swigfaissJNI.delete_AlignedTableFloat32(swigCPtr);
     }
+    swigCPtr = 0;
   }
 
   public void setTab(SWIGTYPE_p_faiss__AlignedTableTightAllocT_float_32_t value) {
