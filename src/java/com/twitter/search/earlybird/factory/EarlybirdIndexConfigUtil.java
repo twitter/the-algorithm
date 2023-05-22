@@ -3,11 +3,12 @@ package com.twitter.search.earlybird.factory;
 import com.twitter.decider.Decider;
 import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
 import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.RealtimeEarlybirdIndexConfig;
-import com.twitter.search.earlybird.archive.ArchiveOnDiskEarlybirdIndexConfig;
 import com.twitter.search.earlybird.archive.ArchiveSearchPartitionManager;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
+import com.twitter.search.earlybird.factory.configStrategy.ArchiveOnDiskEarlybirdIndexConfigStrategy;
+import com.twitter.search.earlybird.factory.configStrategy.EarlybirdIndexConfigContext;
+import com.twitter.search.earlybird.factory.configStrategy.RealtimeEarlybirdIndexConfigStrategy;
 import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
 
 public final class EarlybirdIndexConfigUtil {
@@ -20,19 +21,17 @@ public final class EarlybirdIndexConfigUtil {
   public static EarlybirdIndexConfig createEarlybirdIndexConfig(
       Decider decider, SearchIndexingMetricSet searchIndexingMetricSet,
       CriticalExceptionHandler criticalExceptionHandler) {
+    EarlybirdIndexConfigContext context = new EarlybirdIndexConfigContext();
     if (isArchiveSearch()) {
-      return new ArchiveOnDiskEarlybirdIndexConfig(decider, searchIndexingMetricSet,
-          criticalExceptionHandler);
+      context.setStrategy(new ArchiveOnDiskEarlybirdIndexConfigStrategy());
     } else if (isProtectedSearch()) {
-      return new RealtimeEarlybirdIndexConfig(
-          EarlybirdCluster.PROTECTED, decider, searchIndexingMetricSet, criticalExceptionHandler);
+      context.setStrategy(new RealtimeEarlybirdIndexConfigStrategy(EarlybirdCluster.PROTECTED));
     } else if (isRealtimeCG()) {
-      return new RealtimeEarlybirdIndexConfig(
-          EarlybirdCluster.REALTIME_CG, decider, searchIndexingMetricSet, criticalExceptionHandler);
+      context.setStrategy(new RealtimeEarlybirdIndexConfigStrategy(EarlybirdCluster.REALTIME_CG));
     } else {
-      return new RealtimeEarlybirdIndexConfig(
-          EarlybirdCluster.REALTIME, decider, searchIndexingMetricSet, criticalExceptionHandler);
+      context.setStrategy(new RealtimeEarlybirdIndexConfigStrategy(EarlybirdCluster.REALTIME));
     }
+    return context.createEarlybirdIndexConfig(decider, searchIndexingMetricSet, criticalExceptionHandler);
   }
 
   public static boolean isArchiveSearch() {
