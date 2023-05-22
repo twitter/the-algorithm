@@ -1,18 +1,27 @@
+import datetime
+import os
+import getpass
+from dataclasses import asdict
+import utils
+
 import tensorflow as tf
+import tensorflow_hub as hub
+import numpy as np
+import pandas as pd
 
-physical_devices = tf.config.list_physical_devices('GPU') 
-for device in physical_devices:
-    tf.config.experimental.set_memory_growth(device, True)
+import wandb
+from wandb.keras import WandbCallback
 
+from notebook_eval_utils import SparseMultilabelEvaluator, EvalConfig
 from twitter.hmli.nimbus.modeling.model_config import FeatureType, EncodingType, Feature, Model, LogType
 from twitter.hmli.nimbus.modeling.feature_loader import BigQueryFeatureLoader
 from twitter.cuad.representation.models.text_encoder import TextEncoder
 from twitter.cuad.representation.models.optimization import create_optimizer
 from twitter.hmli.nimbus.modeling.feature_encoder import FeatureEncoder
 
-import numpy as np
-import pandas as pd
-import utils
+physical_devices = tf.config.list_physical_devices('GPU') 
+for device in physical_devices:
+    tf.config.experimental.set_memory_growth(device, True)
 
 cat_names = [
 ...
@@ -154,9 +163,6 @@ model.weights
 model.summary()
 pr_auc.name
 
-import getpass
-import wandb
-from wandb.keras import WandbCallback
 try:
   wandb_key = ...
   wandb.login(...)
@@ -170,8 +176,6 @@ try:
 except FileNotFoundError:
   print('Wandb key not found')
   run = wandb.init(mode='disabled')
-import datetime
-import os
 
 start_train_time = datetime.datetime.now()
 print(start_train_time.strftime("%m-%d-%Y (%H:%M:%S)"))
@@ -194,8 +198,6 @@ early_stopping_callback = tf.keras.callbacks.EarlyStopping(patience=7,
 model.fit(train_ds, epochs=params["epochs"], validation_data=val_ds, callbacks=[cp_callback, early_stopping_callback],
         steps_per_epoch=params["steps_per_epoch"], 
         verbose=2)
-
-import tensorflow_hub as hub
 
 gs_model_path = ...
 reloaded_keras_layer = hub.KerasLayer(gs_model_path)
@@ -232,9 +234,6 @@ test_no_media = test.filter(lambda x, y: tf.equal(x["has_media"], False))
 test_media_not_nsfw = test.filter(lambda x, y: tf.logical_and(tf.equal(x["has_media"], True), tf.less(x["precision_nsfw"], 0.95)))
 for d in [test, test_only_media, test_only_nsfw, test_no_media, test_media_not_nsfw]:
   print(d.reduce(0, lambda x, _: x + 1).numpy())
-
-from notebook_eval_utils import SparseMultilabelEvaluator, EvalConfig
-from dataclasses import asdict
 
 def display_metrics(probs, targets, labels=labels):
   eval_config = EvalConfig(prediction_threshold=0.5, precision_k=0.9)
