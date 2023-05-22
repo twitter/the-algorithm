@@ -25,8 +25,9 @@ def get_saved_modules_graph(input_graph_fn):
     # If mode is train, we just need to assign a dummy loss
     # and update the train op. This is done to save the graph to save_dir.
     if mode == 'train':
-      loss = tf.constant(1)
-      train_op = tf.assign_add(tf.train.get_global_step(), 1)
-      return {'train_op': train_op, 'loss': loss}
+      return {
+                'train_op': tf.assign_add(tf.train.get_global_step(), 1),
+                'loss': tf.constant(1)
+            }
     return output
   return build_graph
