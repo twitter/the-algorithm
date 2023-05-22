@@ -1,32 +1,18 @@
 package com.twitter.simclusters_v2.scalding.embedding
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding._
+import com.twitter.dal.client.dataset.{KeyValDALDataset, SnapshotDALDataset}
+import com.twitter.scalding.*
 import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.ExplicitEndTime
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
+import com.twitter.scalding_internal.dalv2.DALWrite.{D, ExplicitEndTime, WriteExtension}
 import com.twitter.scalding_internal.job.RequiredBinaryComparators.ordSer
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.Timestamp
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInSources
+import com.twitter.simclusters_v2.common.*
+import com.twitter.simclusters_v2.hdfs_sources.{InterestedInSources, SimclustersV2GlobalLanguageEmbeddingScalaDataset, SimclustersV2GlobalLanguageEmbeddingThriftScalaDataset}
 import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
 import com.twitter.simclusters_v2.thriftscala.InternalId.ClusterId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
+import com.twitter.simclusters_v2.thriftscala.{ClustersUserIsInterestedIn, LanguageToClusters, ModelVersion, UserToInterestedInClusterScores}
 import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2GlobalLanguageEmbeddingScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2GlobalLanguageEmbeddingThriftScalaDataset
-import com.twitter.simclusters_v2.thriftscala.LanguageToClusters
+
 import java.util.TimeZone
 
 /**
