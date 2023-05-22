@@ -134,7 +134,7 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
         }));
   }
 
-  private Future<Map<Long, Card2>> batchRetrieveURLs(Set<Long> keys) {
+  private Future<Map<Long, Card2>> batchRetrieveURLs(List<Long> keys) {
     retrieveCardsTimer.start();
     totalTweets.increment(keys.size());
 
@@ -145,7 +145,7 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
 
     GetTweetsRequest request = new GetTweetsRequest()
         .setOptions(options)
-        .setTweet_ids(new ArrayList<>(keys));
+        .setTweet_ids(keys);
 
     return tweetyPieService.get_tweets(request)
         .onFailure(throwable -> {

@@ -2,7 +2,7 @@ package com.twitter.search.ingester.pipeline.util;
 
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.common.collect.Sets;
@@ -20,7 +20,7 @@ public class BatchingClient<RQ, RP> {
     /**
      * Issue a request to the underlying store which supports batches of requests.
      */
-    Future<Map<RQ, RP>> batchGet(Set<RQ> requests);
+    Future<Map<RQ, RP>> batchGet(List<RQ> requests);
   }
 
   /**
@@ -54,7 +54,7 @@ public class BatchingClient<RQ, RP> {
   }
 
   private void maybeBatchCall(RQ request) {
-    Set<RQ> frozenRequests;
+    List<RQ> frozenRequests;
     synchronized (unsentRequests) {
       unsentRequests.add(request);
       if (unsentRequests.size() < batchSize) {
@@ -63,27 +63,25 @@ public class BatchingClient<RQ, RP> {
 
       // Make a copy of requests so we can modify it inside executeBatchCall without additional
       // synchronization.
-      frozenRequests = new HashSet<>(unsentRequests);
+      frozenRequests = Arrays.asList((RQ[]) unsentRequests.toArray());
       unsentRequests.clear();
     }
 
     executeBatchCall(frozenRequests);
   }
 
-  private void executeBatchCall(Set<RQ> requests) {
+  private void executeBatchCall(List<RQ> requests) {
     batchClient.batchGet(requests)
         .onSuccess(responseMap -> {
-          for (Map.Entry<RQ, RP> entry : responseMap.entrySet()) {
-            Promise<RP> promise = promises.remove(entry.getKey());
-            if (promise != null) {
-              promise.become(Future.value(entry.getValue()));
-            }
-          }
-
-          Set<RQ> outstandingRequests = Sets.difference(requests, responseMap.keySet());
-          for (RQ request : outstandingRequests) {
+          for (RQ request : requests) {
             Promise<RP> promise = promises.remove(request);
-            if (promise != null) {
+            if (promise == null) {
+              continue;
+            }
+            RP response = responseMap.get(request);
+            if (response != null) {
+              promise.become(Future.value(response));
+            } else {
               promise.become(Future.exception(new ResponseNotReturnedException(request)));
             }
           }
