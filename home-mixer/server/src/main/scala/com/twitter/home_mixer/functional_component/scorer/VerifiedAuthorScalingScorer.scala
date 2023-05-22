@@ -16,7 +16,8 @@ import com.twitter.product_mixer.core.pipeline.PipelineQuery
 import com.twitter.stitch.Stitch
 
 /**
- * Scales scores of tweets whose author is Blue Verified by the provided scale factor
+ * Does nothing, because paying for Twitter is no indication of tweet quality,
+ * especially now that "legacy" verification is gone.
  */
 object VerifiedAuthorScalingScorer extends Scorer[PipelineQuery, TweetCandidate] {
 
@@ -31,31 +32,8 @@ object VerifiedAuthorScalingScorer extends Scorer[PipelineQuery, TweetCandidate]
     Stitch.value {
       candidates.map { candidate =>
         val score = candidate.features.getOrElse(ScoreFeature, None)
-        val updatedScore = getUpdatedScore(score, candidate, query)
-        FeatureMapBuilder().add(ScoreFeature, updatedScore).build()
+        FeatureMapBuilder().add(ScoreFeature, score).build()
       }
     }
-  }
-
-  /**
-   * We should only be applying this multiplier if the author of the candidate is Blue Verified.
-   * We also treat In-Network vs Out-of-Network differently.
-   */
-  private def getUpdatedScore(
-    score: Option[Double],
-    candidate: CandidateWithFeatures[TweetCandidate],
-    query: PipelineQuery
-  ): Option[Double] = {
-    val isAuthorBlueVerified = candidate.features.getOrElse(AuthorIsBlueVerifiedFeature, false)
-
-    if (isAuthorBlueVerified) {
-      val isCandidateInNetwork = candidate.features.getOrElse(InNetworkFeature, false)
-
-      val scaleFactor =
-        if (isCandidateInNetwork) query.params(BlueVerifiedAuthorInNetworkMultiplierParam)
-        else query.params(BlueVerifiedAuthorOutOfNetworkMultiplierParam)
-
-      score.map(_ * scaleFactor)
-    } else score
   }
 }
