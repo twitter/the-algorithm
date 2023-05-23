@@ -20,19 +20,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Function;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-
-import org.apache.thrift.TException;
-
-import com.twitter.ann.common.IndexOutputFile;
-import com.twitter.ann.common.thriftjava.HnswInternalIndexMetadata;
-import com.twitter.bijection.Injection;
-import com.twitter.logging.Logger;
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec;
-import com.twitter.search.common.file.AbstractFile;
-
 /**
  * Typed multithreaded HNSW implementation supporting creation/querying of approximate nearest neighbour
  * Paper: https://arxiv.org/pdf/1603.09320.pdf
