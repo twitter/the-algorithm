@@ -176,7 +176,7 @@ message SavedBareConcreteFunction {
   // allows the ConcreteFunction to be called with nest structure inputs. This
   // field may not be populated. If this field is absent, the concrete function
   // can only be called with flat inputs.
-  // TODO: support calling saved ConcreteFunction with structured
+  // TODO(b/169361281): support calling saved ConcreteFunction with structured
   // inputs in C++ SavedModel API.
   FunctionSpec function_spec = 4;
 }
