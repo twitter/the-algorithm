@@ -58,7 +58,7 @@ message FileSystemStoragePathSourceConfig {
 
   // A single servable name/base_path pair to monitor.
   // DEPRECATED: Use 'servables' instead.
-  // TODO: Stop using these fields, and ultimately remove them here.
+  // TODO(b/30898016): Stop using these fields, and ultimately remove them here.
   string servable_name = 1 [deprecated = true];
   string base_path = 2 [deprecated = true];
 
@@ -76,7 +76,7 @@ message FileSystemStoragePathSourceConfig {
   // check for a version to appear later.)
   // DEPRECATED: Use 'servable_versions_always_present' instead, which includes
   // this behavior.
-  // TODO: Remove 2019-10-31 or later.
+  // TODO(b/30898016): Remove 2019-10-31 or later.
   bool fail_if_zero_versions_at_startup = 4 [deprecated = true];
 
   // If true, the servable is always expected to exist on the underlying

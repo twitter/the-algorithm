@@ -1,0 +1,6 @@
+PublishServerTweetFav:
+  default_availability: 10000
+RekeyUUAIesourceClientTweetRenderImpression:
+  default_availability: 10000
+EnrichmentPlannerSampling:
+  default_availability: 10000
