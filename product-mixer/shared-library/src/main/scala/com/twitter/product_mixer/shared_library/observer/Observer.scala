@@ -163,7 +163,7 @@ object Observer {
     rollupStatsReceiver.counter(Failures)
     rollupStatsReceiver.counter(Cancelled)
 
-    /** Serialize a throwable and it's causes into a seq of Strings for scoping metrics */
+    /** Serialize a throwable and its causes into a seq of Strings for scoping metrics */
     protected def serializeThrowable(throwable: Throwable): Seq[String] =
       Throwables.mkString(throwable)
 

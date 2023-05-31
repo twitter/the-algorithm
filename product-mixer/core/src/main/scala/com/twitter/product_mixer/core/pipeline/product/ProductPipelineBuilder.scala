@@ -70,7 +70,7 @@ class ProductPipelineBuilder[TRequest <: Request, Query <: PipelineQuery, Respon
    * It's a simple, synchronous step that executes the query transformer.
    *
    * Since the output of the transformer is used in multiple other steps (Gate, Pipeline Execution),
-   * we've promoted the transformer to a step so that it's outputs can be reused easily.
+   * we've promoted the transformer to a step so that its outputs can be reused easily.
    */
   def pipelineQueryTransformerStep(
     queryTransformer: (TRequest, Params) => Query,

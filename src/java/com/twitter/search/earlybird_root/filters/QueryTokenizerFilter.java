@@ -85,7 +85,7 @@ public class QueryTokenizerFilter extends SimpleFilter<EarlybirdRequestContext, 
   public void performExpensiveInitialization() throws QueryParserException {
     SerializedQueryParser queryParser = new SerializedQueryParser(tokenizationOption);
 
-    // The Korean query parser takes a few seconds on it's own to initialize.
+    // The Korean query parser takes a few seconds on its own to initialize.
     String koreanQuery = "스포츠";
     queryParser.parse(koreanQuery);
   }

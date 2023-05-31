@@ -211,7 +211,7 @@ object UpdateKnownFor {
    *
    * This function is where all the crucial steps take place. First get the cluster that each
    * node belongs to, and then broadcast information about this node and cluster membership to each
-   * of it's neighbors. Now bring together all records with the same nodeId as the key and create
+   * of its neighbors. Now bring together all records with the same nodeId as the key and create
    * the NodeInformation dataset.
    * @param graph symmetric graph i.e. if u is in v's adj list, then v is in u's adj list.
    * @param userToClusters current knownFor.

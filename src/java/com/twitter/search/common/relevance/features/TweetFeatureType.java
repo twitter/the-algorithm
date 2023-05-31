@@ -209,7 +209,7 @@ public enum TweetFeatureType {
   /**
    * Constructing an enum for a type. The earlybirdField can be null if it's not prepared, they
    * can be here as placeholders but they can't be outputted.
-   * The normalizer is null for the timestamp features that do not require normalization
+   * The normalizer is null for the timestamp features that do not require normalization.
    */
   TweetFeatureType(boolean incremental,
                    int typeInt,

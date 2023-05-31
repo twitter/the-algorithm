@@ -106,7 +106,7 @@ private[core] trait Executor {
   def startArrowAsync[In, Out](arrow: Arrow[In, Out]): Arrow[In, Stitch[Out]] = {
     Arrow
       .map { arg: In =>
-        // wrap in a `ref` so we only compute it's value once
+        // wrap in a `ref` so we only compute its value once
         Stitch.ref(arrow(arg))
       }
       .andThen(
@@ -452,7 +452,7 @@ private[core] object Executor {
    * @note Should __never__ be called directly!
    *
    * It's expected that the contained `arrow` will invoke [[recordTraceData]] exactly ONCE
-   * during it's execution.
+   * during its execution.
    *
    * @note this does not record any data about the trace, it only sets the [[Trace]] Span
    *       for the execution of `arrow`
@@ -630,7 +630,7 @@ private[core] object Executor {
 
   /**
    * contains the scopes for recording metrics for the component by itself and
-   * the relative scope of that component within it's parent component scope
+   * the relative scope of that component within its parent component scope
    *
    * @see [[Executor.buildScopes]]
    */

@@ -254,7 +254,7 @@ object ResultsObserver {
     protected val foundCounter: Counter = statsReceiver.counter(scopes :+ Found: _*)
     protected val notFoundCounter: Counter = statsReceiver.counter(scopes :+ NotFound: _*)
 
-    /** given a [[T]] returns it's size. */
+    /** given a [[T]] returns its size. */
     protected val size: T => Int
 
     /** Records the size of the `results` using [[size]] and return the original value. */

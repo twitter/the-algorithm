@@ -80,7 +80,7 @@ object ClusterEvaluation {
    * Evaluate the quality of a cluster.
    * @param memberScores A map with the members of the cluster as the keys and their scores
    *                     inside the cluster as values. The more central a member is inside the score,
-   *                     the higher it's score is.
+   *                     the higher its score is.
    * @param membersAdjLists A map that gives the weighted neighbors of each member in the cluster.
    */
   def evaluateCluster(

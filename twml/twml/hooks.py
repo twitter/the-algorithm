@@ -478,7 +478,7 @@ class EarlyStopDuration(tf.train.SessionRunHook):
     return self.elapsed_time() > self._max_duration
 
   def elapsed_time(self) -> float:
-    # Recorded elapsed time is 0 unless it's been recorded in a file already
+    # Recorded elapsed time is 0 unless it has been recorded in a file already
     recorded_elapsed_time = 0
     if tf.io.gfile.exists(self.elapsed_file_path):
       with tf.io.gfile.GFile(self.elapsed_file_path, mode="r") as file:

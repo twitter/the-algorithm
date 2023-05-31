@@ -2,7 +2,7 @@ package com.twitter.product_mixer.core.model.common
 
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
 
-/** [[Candidate]] and it's FeatureMap */
+/** [[Candidate]] and its FeatureMap */
 trait CandidateWithFeatures[+Candidate <: UniversalNoun[Any]] {
   val candidate: Candidate
   val features: FeatureMap
