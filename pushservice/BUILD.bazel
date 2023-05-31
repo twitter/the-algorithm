@@ -1,0 +1,48 @@
+alias(
+    name = "frigate-pushservice",
+    target = ":frigate-pushservice_lib",
+)
+
+target(
+    name = "frigate-pushservice_lib",
+    dependencies = [
+        "frigate/frigate-pushservice-opensource/src/main/scala/com/twitter/frigate/pushservice",
+    ],
+)
+
+jvm_binary(
+    name = "bin",
+    basename = "frigate-pushservice",
+    main = "com.twitter.frigate.pushservice.PushServiceMain",
+    runtime_platform = "java11",
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/ch/qos/logback:logback-classic",
+        "finatra/inject/inject-logback/src/main/scala",
+        "frigate/frigate-pushservice-opensource/src/main/scala/com/twitter/frigate/pushservice",
+        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
+        "twitter-server/logback-classic/src/main/scala",
+    ],
+    excludes = [
+        exclude("com.twitter.translations", "translations-twitter"),
+        exclude("org.apache.hadoop", "hadoop-aws"),
+        exclude("org.tensorflow"),
+        scala_exclude("com.twitter", "ckoia-scala"),
+    ],
+)
+
+jvm_app(
+    name = "bundle",
+    basename = "frigate-pushservice-package-dist",
+    archive = "zip",
+    binary = ":bin",
+    tags = ["bazel-compatible"],
+)
+
+python3_library(
+    name = "mr_model_constants",
+    sources = [
+        "config/deepbird/constants.py",
+    ],
+    tags = ["bazel-compatible"],
+)

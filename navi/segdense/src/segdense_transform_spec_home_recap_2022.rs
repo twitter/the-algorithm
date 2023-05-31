@@ -164,7 +164,6 @@ pub struct ComplexFeatureTypeTransformSpec {
     pub tensor_shape: Vec<i64>,
 }
 
-
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct InputFeatureMapRecord {

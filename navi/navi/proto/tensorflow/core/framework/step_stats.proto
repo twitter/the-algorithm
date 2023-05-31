@@ -53,7 +53,7 @@ message MemoryStats {
 
 // Time/size stats recorded for a single execution of a graph node.
 message NodeExecStats {
-  // TODO: Use some more compact form of node identity than
+  // TODO(tucker): Use some more compact form of node identity than
   // the full string name.  Either all processes should agree on a
   // global id (cost_id?) for each node, or we should use a hash of
   // the name.

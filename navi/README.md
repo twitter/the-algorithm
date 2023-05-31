@@ -31,6 +31,11 @@ In navi/navi, you can run the following commands:
 - `scripts/run_onnx.sh` for [Onnx](https://onnx.ai/)
 
 Do note that you need to create a models directory and create some versions, preferably using epoch time, e.g., `1679693908377`.
+so the models structure looks like:
+  models/
+       -web_click
+        - 1809000
+        - 1809010
 
 ## Build
 You can adapt the above scripts to build using Cargo.

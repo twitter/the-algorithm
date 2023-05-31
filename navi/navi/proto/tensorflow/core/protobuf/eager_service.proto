@@ -172,7 +172,7 @@ message WaitQueueDoneRequest {
 }
 
 message WaitQueueDoneResponse {
-  // TODO: Consider adding NodeExecStats here to be able to
+  // TODO(nareshmodi): Consider adding NodeExecStats here to be able to
   // propagate some stats.
 }
 

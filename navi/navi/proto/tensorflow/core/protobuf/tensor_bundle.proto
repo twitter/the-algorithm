@@ -17,7 +17,7 @@ option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobu
 
 // Special header that is associated with a bundle.
 //
-// TODO: maybe in the future, we can add information about
+// TODO(zongheng,zhifengc): maybe in the future, we can add information about
 // which binary produced this checkpoint, timestamp, etc. Sometime, these can be
 // valuable debugging information. And if needed, these can be used as defensive
 // information ensuring reader (binary version) of the checkpoint and the writer
