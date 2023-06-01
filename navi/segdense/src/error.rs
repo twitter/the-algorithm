@@ -1,53 +1,35 @@
-use std::fmt::Display;
+use std::io;
+use thiserror::Error;
 
 /**
  * Custom error
  */
-#[derive(Debug)]
+#[derive(Debug, Error)]
 pub enum SegDenseError {
-    IoError(std::io::Error),
-    Json(serde_json::Error),
+    #[error("{error}")]
+    IoError { error: io::Error },
+    #[error("{error}")]
+    Json { error: serde_json::Error },
+    #[error("SegDense JSON: Root Node note found!")]
     JsonMissingRoot,
+    #[error("SegDense JSON: Object note found!")]
     JsonMissingObject,
+    #[error("SegDense JSON: Array Node note found!")]
     JsonMissingArray,
+    #[error("SegDense JSON: Array size not as expected!")]
     JsonArraySize,
+    #[error("SegDense JSON: Missing input feature!")]
     JsonMissingInputFeature,
 }
 
-impl Display for SegDenseError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            SegDenseError::IoError(io_error) => write!(f, "{}", io_error),
-            SegDenseError::Json(serde_json) => write!(f, "{}", serde_json),
-            SegDenseError::JsonMissingRoot => {
-                write!(f, "{}", "SegDense JSON: Root Node note found!")
-            }
-            SegDenseError::JsonMissingObject => {
-                write!(f, "{}", "SegDense JSON: Object note found!")
-            }
-            SegDenseError::JsonMissingArray => {
-                write!(f, "{}", "SegDense JSON: Array Node note found!")
-            }
-            SegDenseError::JsonArraySize => {
-                write!(f, "{}", "SegDense JSON: Array size not as expected!")
-            }
-            SegDenseError::JsonMissingInputFeature => {
-                write!(f, "{}", "SegDense JSON: Missing input feature!")
-            }
-        }
-    }
-}
-
-impl std::error::Error for SegDenseError {}
-
-impl From<std::io::Error> for SegDenseError {
-    fn from(err: std::io::Error) -> Self {
-        SegDenseError::IoError(err)
+impl From<io::Error> for SegDenseError {
+    fn from(error: io::Error) -> Self {
+        SegDenseError::IoError { error }
     }
 }
 
 impl From<serde_json::Error> for SegDenseError {
-    fn from(err: serde_json::Error) -> Self {
-        SegDenseError::Json(err)
+    fn from(error: serde_json::Error) -> Self {
+        SegDenseError::Json { error }
     }
 }
