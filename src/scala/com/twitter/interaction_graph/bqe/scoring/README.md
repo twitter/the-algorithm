@@ -4,7 +4,7 @@ This folder contains the sql files that we'll use for scoring the real graph edg
 - check to make sure that our models are in place. the feature importance query should return 20 rows in total: 10 rows per model, 1 for each feature.
 - follow graph feature generation. this is to ensure that we have features for all users regardless if they have had any recent activity.
 - candidate generation. this query combines the candidates from the follow graph and the activity graph, and the features from both.
-- scoring. this query scores with 2 of our prod models and saves the scores to a table, with an additional field that distinguishes if an edge in in/out of network.
+- scoring. this query scores with 2 of our prod models and saves the scores to a table, with an additional field that distinguishes if an edge is in/out of network.
 
 ## Instructions
 

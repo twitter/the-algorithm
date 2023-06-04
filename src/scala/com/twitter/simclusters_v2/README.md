@@ -68,7 +68,7 @@ Since tweet embeddings are updated each time a tweet is favorited, they change o
 
 Tweet embeddings are critical for our tweet recommendation tasks. We can calculate tweet similarity and recommend similar tweets to users based on their tweet engagement history.
 
-We have a online Heron job that updates the tweet embeddings in realtime, check out [here](summingbird/README.md) for more. 
+We have an online Heron job that updates the tweet embeddings in realtime, check out [here](summingbird/README.md) for more. 
 
 #### Topic embeddings
 Topic embeddings (**R**) are determined by taking the cosine similarity between consumers who are interested in a community and the number of aggregated favorites each consumer has taken on a tweet that has a topic annotation (with some time decay).
