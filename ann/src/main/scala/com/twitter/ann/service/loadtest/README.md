@@ -1,7 +1,7 @@
 # Loadtest ANN query service with random embeddings
 
 An ANN query service can be load-tested with random embeddings as queries, generated automatically by loadtest tool.
-Example script to load test a ANN query service with random embeddings:
+Example script to load test an ANN query service with random embeddings:
 
 ```bash
 $ aurora job create smf1/<role>/staging/ann-loadtest-service ann/src/main/aurora/loadtest/loadtest.aurora \
@@ -38,7 +38,7 @@ An ANN query service can be load-tested with sample queries drawn from the embed
 For creating sample queries i.e `query_set` refer this [section](#query-set-generator).
 
 Test is run with `live` version of loadtest binary that is already available in packer.
-Example script to load test a ANN query service:
+Example script to load test an ANN query service:
 
 ```bash
 $ aurora job create smf1/<role>/staging/ann-loadtest-service ann/src/main/aurora/loadtest/loadtest.aurora \
