@@ -54,7 +54,7 @@ object FeatureGate {
 }
 
 /**
- * A [[Gate]] that is actuated based upon the value of the provided feature
+ * A [[Gate]] that is actuated based upon the value of the provided feature 
  */
 case class FeatureGate[Value](
   gateIdentifier: GateIdentifier,
