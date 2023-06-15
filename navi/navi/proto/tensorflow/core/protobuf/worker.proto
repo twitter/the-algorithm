@@ -188,7 +188,7 @@ message DeregisterGraphRequest {
 }
 
 message DeregisterGraphResponse {
-  // TODO: Optionally add summary stats for the graph.
+  // TODO(mrry): Optionally add summary stats for the graph.
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -294,7 +294,7 @@ message RunGraphResponse {
 
   // If the request asked for execution stats, the cost graph, or the partition
   // graphs, these are returned here.
-  // TODO: Package these in a RunMetadata instead.
+  // TODO(suharshs): Package these in a RunMetadata instead.
   StepStats step_stats = 2;
   CostGraphDef cost_graph = 3;
   repeated GraphDef partition_graph = 4;

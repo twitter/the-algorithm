@@ -160,7 +160,7 @@ object HomeTweetTypePredicates {
     ("has_gte_1k_favs", _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 1000))),
     (
       "has_gte_10k_favs",
-      _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 1000))),
+      _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 10000))),
     (
       "has_gte_100k_favs",
       _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 100000))),

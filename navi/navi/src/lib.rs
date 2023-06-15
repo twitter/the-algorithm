@@ -146,6 +146,7 @@ pub enum PredictResult {
     Ok(Vec<TensorScores>, i64),
     DropDueToOverload,
     ModelNotFound(usize),
+    ModelNotReady(usize),
     ModelVersionNotFound(usize, i64),
 }
 

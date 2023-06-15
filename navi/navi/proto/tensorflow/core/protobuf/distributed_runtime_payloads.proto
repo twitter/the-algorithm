@@ -7,7 +7,7 @@ option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobu
 
 // Used to serialize and transmit tensorflow::Status payloads through
 // grpc::Status `error_details` since grpc::Status lacks payload API.
-// TODO: Use GRPC API once supported.
+// TODO(b/204231601): Use GRPC API once supported.
 message GrpcPayloadContainer {
   map<string, bytes> payloads = 1;
 }

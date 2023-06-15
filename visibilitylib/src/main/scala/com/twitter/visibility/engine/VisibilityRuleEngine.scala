@@ -143,7 +143,7 @@ class VisibilityRuleEngine private[VisibilityRuleEngine] (
               builder.withRuleResult(rule, RuleResult(builder.verdict, ShortCircuited))
             } else {
 
-              if (rule.fallbackActionBuilder.nonEmpty) {
+              if (failedFeatureDependencies.nonEmpty && rule.fallbackActionBuilder.nonEmpty) {
                 metricsRecorder.recordRuleFallbackAction(rule.name)
               }
 

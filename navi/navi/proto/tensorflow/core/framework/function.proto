@@ -23,7 +23,7 @@ message FunctionDefLibrary {
 // with a value. When a GraphDef has a call to a function, it must
 // have binding for every attr defined in the signature.
 //
-// TODO:
+// TODO(zhifengc):
 //   * device spec, etc.
 message FunctionDef {
   // The definition of the function's name, arguments, return values,
