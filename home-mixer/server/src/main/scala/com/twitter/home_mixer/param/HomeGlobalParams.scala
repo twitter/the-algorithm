@@ -16,7 +16,7 @@ object HomeGlobalParams {
    * and should NOT be used for other purposes.
    */
   object AdsDisableInjectionBasedOnUserRoleParam
-      extends FSParam("home_mixer_ads_disable_injection_based_on_user_role", false)
+      extends FSParam("home_mixer_ads_disable_injection_based_on_user_role", true)
 
   object EnableSendScoresToClient
       extends FSParam[Boolean](

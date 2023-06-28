@@ -3,8 +3,6 @@ package com.twitter.home_mixer.functional_component.scorer
 import com.twitter.home_mixer.model.HomeFeatures.AuthorIsBlueVerifiedFeature
 import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
 import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.param.HomeGlobalParams.BlueVerifiedAuthorInNetworkMultiplierParam
-import com.twitter.home_mixer.param.HomeGlobalParams.BlueVerifiedAuthorOutOfNetworkMultiplierParam
 import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
 import com.twitter.product_mixer.core.feature.Feature
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -49,13 +47,7 @@ object VerifiedAuthorScalingScorer extends Scorer[PipelineQuery, TweetCandidate]
     val isAuthorBlueVerified = candidate.features.getOrElse(AuthorIsBlueVerifiedFeature, false)
 
     if (isAuthorBlueVerified) {
-      val isCandidateInNetwork = candidate.features.getOrElse(InNetworkFeature, false)
-
-      val scaleFactor =
-        if (isCandidateInNetwork) query.params(BlueVerifiedAuthorInNetworkMultiplierParam)
-        else query.params(BlueVerifiedAuthorOutOfNetworkMultiplierParam)
-
-      score.map(_ * scaleFactor)
+      score.map(_ * 0)
     } else score
   }
 }
