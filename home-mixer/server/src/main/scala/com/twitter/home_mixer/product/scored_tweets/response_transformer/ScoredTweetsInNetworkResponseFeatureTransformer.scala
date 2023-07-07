@@ -26,7 +26,7 @@ object ScoredTweetsInNetworkResponseFeatureTransformer
     val features = FeatureMapBuilder()
       .add(CandidateSourceIdFeature, Some(cts.CandidateTweetSourceId.RecycledTweet))
       .add(FromInNetworkSourceFeature, true)
-      .add(SuggestTypeFeature, Some(st.SuggestType.RecycledTweetInline))
+      .add(SuggestTypeFeature, Some(st.SuggestType.RankedTimelineTweet))
       .build()
 
     baseFeatures ++ features

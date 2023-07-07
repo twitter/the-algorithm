@@ -12,12 +12,12 @@ import javax.inject.Singleton
 
 @Singleton
 class CachedScoredTweetsCandidateSource @Inject() ()
-    extends CandidateSource[PipelineQuery, hmt.CachedScoredTweet] {
+    extends CandidateSource[PipelineQuery, hmt.ScoredTweet] {
 
   override val identifier: CandidateSourceIdentifier =
     CandidateSourceIdentifier("CachedScoredTweets")
 
-  override def apply(request: PipelineQuery): Stitch[Seq[hmt.CachedScoredTweet]] = {
+  override def apply(request: PipelineQuery): Stitch[Seq[hmt.ScoredTweet]] = {
     Stitch.value(
       request.features.map(CachedScoredTweetsHelper.unseenCachedScoredTweets).getOrElse(Seq.empty))
   }

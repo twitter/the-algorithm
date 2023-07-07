@@ -13,8 +13,5 @@ scala_library(
         "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service/debug_query",
         "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service/urt",
         "snowflake/src/main/scala/com/twitter/snowflake/id",
-        "src/thrift/com/twitter/context:twitter-context-scala",
-        "src/thrift/com/twitter/timelines/render:thrift-scala",
-        "twitter-context/src/main/scala",
     ],
 )

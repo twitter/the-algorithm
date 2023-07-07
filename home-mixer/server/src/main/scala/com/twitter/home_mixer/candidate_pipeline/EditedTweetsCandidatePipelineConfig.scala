@@ -1,7 +1,7 @@
 package com.twitter.home_mixer.candidate_pipeline
 
 import com.twitter.home_mixer.functional_component.candidate_source.StaleTweetsCacheCandidateSource
-import com.twitter.home_mixer.functional_component.decorator.HomeFeedbackActionInfoBuilder
+import com.twitter.home_mixer.functional_component.decorator.urt.builder.HomeFeedbackActionInfoBuilder
 import com.twitter.home_mixer.functional_component.feature_hydrator.NamesFeatureHydrator
 import com.twitter.home_mixer.functional_component.query_transformer.EditedTweetsCandidatePipelineQueryTransformer
 import com.twitter.home_mixer.service.HomeMixerAlertConfig

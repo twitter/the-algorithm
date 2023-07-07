@@ -2,7 +2,7 @@ package com.twitter.home_mixer
 
 import com.twitter.finatra.http.routing.HttpWarmup
 import com.twitter.finatra.httpclient.RequestBuilder._
-import com.twitter.inject.Logging
+import com.twitter.util.logging.Logging
 import com.twitter.inject.utils.Handler
 import com.twitter.util.Try
 import javax.inject.Inject

@@ -32,11 +32,15 @@ case class RealGraphInNetworkScoresQueryFeatureHydrator @Inject() (
       val realGraphScoresFeatures = realGraphFollowedUsers
         .getOrElse(Seq.empty)
         .sortBy(-_.score)
-        .map(candidate => candidate.userId -> candidate.score)
+        .map(candidate => candidate.userId -> scaleScore(candidate.score))
         .take(RealGraphCandidateCount)
         .toMap
 
       FeatureMapBuilder().add(RealGraphInNetworkScoresFeature, realGraphScoresFeatures).build()
     }
   }
+
+  // Rescale Real Graph v2 scores from [0,1] to the v1 scores distribution [1,2.97]
+  private def scaleScore(score: Double): Double =
+    if (score >= 0.0 && score <= 1.0) score * 1.97 + 1.0 else score
 }

@@ -2,10 +2,10 @@ package com.twitter.home_mixer.product.following
 
 import com.twitter.finagle.thrift.ClientId
 import com.twitter.finagle.tracing.Trace
-import com.twitter.home_mixer.functional_component.feature_hydrator.SGSFollowedUsersFeature
 import com.twitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
 import com.twitter.home_mixer.product.following.model.FollowingQuery
 import com.twitter.home_mixer.product.following.param.FollowingParam.ServerMaxResultsParam
+import com.twitter.product_mixer.component_library.feature_hydrator.query.social_graph.SGSFollowedUsersFeature
 import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
 import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
 import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
@@ -30,7 +30,7 @@ case class FollowingEarlybirdQueryTransformer @Inject() (clientId: ClientId)
     val realGraphInNetworkFollowedUserIds =
       query.features.map(_.get(RealGraphInNetworkScoresFeature)).getOrElse(Map.empty).keySet
     val userId = query.getRequiredUserId
-    val combinedUserIds = userId +: (followedUserIds ++ realGraphInNetworkFollowedUserIds).toSeq
+    val combinedUserIds = userId +: followedUserIds.toSeq
 
     val baseFollowedUsersSearchOperator = new SearchOperator.Builder()
       .setType(SearchOperator.Type.FEATURE_VALUE_IN_ACCEPT_LIST_OR_UNSET)

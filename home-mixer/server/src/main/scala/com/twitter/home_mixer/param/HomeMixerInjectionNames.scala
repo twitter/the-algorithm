@@ -32,18 +32,15 @@ object HomeMixerInjectionNames {
   final val TweetEngagementCache = "TweetEngagementCache"
   final val TweetypieContentRepository = "TweetypieContentRepository"
   final val TweetypieStaticEntitiesCache = "TweetypieStaticEntitiesCache"
-  final val TwhinAuthorFollow20200101FeatureCacheClient =
-    "TwhinAuthorFollow20200101FeatureCacheClient"
-  final val TwhinAuthorFollow20200101FeatureRepository =
-    "TwhinAuthorFollow20200101FeatureRepository"
+  final val TwhinAuthorFollowFeatureCacheClient = "TwhinAuthorFollowFeatureCacheClient"
+  final val TwhinAuthorFollowFeatureRepository = "TwhinAuthorFollowFeatureRepository"
   final val TwhinUserEngagementFeatureRepository = "TwhinUserEngagementFeatureRepository"
   final val TwhinUserFollowFeatureRepository = "TwhinUserFollowFeatureRepository"
   final val TwitterListEngagementCache = "TwitterListEngagementCache"
   final val UserAuthorEngagementCache = "UserAuthorEngagementCache"
   final val UserEngagementCache = "UserEngagementCache"
   final val UserFollowedTopicIdsRepository = "UserFollowedTopicIdsRepository"
-  final val UserLanguagesStore = "UserLanguagesStore"
-  final val UserMetadataManhattanEndpoint = "UserMetadataManhattanEndpoint"
+  final val UserLanguagesRepository = "UserLanguagesRepository"
   final val UserTopicEngagementForNewUserCache = "UserTopicEngagementForNewUserCache"
   final val UtegSocialProofRepository = "UtegSocialProofRepository"
 }

@@ -3,16 +3,14 @@ scala_library(
     compiler_option_sets = ["fatal_warnings"],
     strict_deps = True,
     dependencies = [
-        "cr-mixer/thrift/src/main/thrift:thrift-scala",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/feature_hydrator",
+        "explore/explore-ranker/thrift/src/main/thrift:thrift-scala",
         "home-mixer/server/src/main/scala/com/twitter/home_mixer/marshaller/timelines",
         "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
         "home-mixer/server/src/main/scala/com/twitter/home_mixer/util/tweetypie/content",
         "home-mixer/thrift/src/main/thrift:thrift-scala",
         "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/transformer",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product",
         "src/thrift/com/twitter/timelineranker:thrift-scala",
         "topic-social-proof/server/src/main/thrift:thrift-scala",
+        "tweet-mixer/thrift/src/main/thrift:thrift-scala",
     ],
 )

@@ -63,4 +63,25 @@ class HomeMixerExternalStrings @Inject() (
     externalStringRegistryProvider.get().createProdString("SocialContext.extendedReply")
   val socialContextReceivedReply =
     externalStringRegistryProvider.get().createProdString("SocialContext.receivedReply")
+
+  val socialContextPopularVideoString =
+    externalStringRegistryProvider.get().createProdString("SocialContext.popularVideo")
+
+  val socialContextPopularInYourAreaString =
+    externalStringRegistryProvider.get().createProdString("PopgeoTweet.socialProof")
+
+  val listToFollowModuleHeaderString =
+    externalStringRegistryProvider.get().createProdString("ListToFollowModule.header")
+  val listToFollowModuleFooterString =
+    externalStringRegistryProvider.get().createProdString("ListToFollowModule.footer")
+  val pinnedListsModuleHeaderString =
+    externalStringRegistryProvider.get().createProdString("PinnedListModule.header")
+  val pinnedListsModuleEmptyStateMessageString =
+    externalStringRegistryProvider.get().createProdString("PinnedListModule.emptyStateMessage")
+
+  val ownedSubscribedListsModuleHeaderString =
+    externalStringRegistryProvider.get().createProdString("OwnedSubscribedListModule.header")
+  val ownedSubscribedListsModuleEmptyStateMessageString =
+    externalStringRegistryProvider
+      .get().createProdString("OwnedSubscribedListModule.emptyStateMessage")
 }

@@ -14,7 +14,6 @@ scala_library(
         "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/gate",
         "src/thrift/com/twitter/gizmoduck:thrift-scala",
         "stitch/stitch-socialgraph",
-        "timelinemixer/common/src/main/scala/com/twitter/timelinemixer/clients/manhattan",
         "timelinemixer/server/src/main/scala/com/twitter/timelinemixer/injection/store/persistence",
         "timelineservice/common/src/main/scala/com/twitter/timelineservice/model",
     ],

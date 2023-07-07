@@ -32,6 +32,7 @@ object CachedScoredTweetsHelper {
     untilTime: Time
   ): Seq[Long] =
     tweetImpressionsAndCachedScoredTweets(features, candidatePipelineIdentifier)
+      .filter { tweetId => SnowflakeId.isSnowflakeId(tweetId) }
       .filter { tweetId =>
         val creationTime = SnowflakeId.timeFromId(tweetId)
         sinceTime <= creationTime && untilTime >= creationTime
@@ -39,7 +40,7 @@ object CachedScoredTweetsHelper {
 
   def unseenCachedScoredTweets(
     features: FeatureMap
-  ): Seq[hmt.CachedScoredTweet] = {
+  ): Seq[hmt.ScoredTweet] = {
     val seenTweetIds = TweetImpressionsHelper.tweetImpressions(features)
 
     features

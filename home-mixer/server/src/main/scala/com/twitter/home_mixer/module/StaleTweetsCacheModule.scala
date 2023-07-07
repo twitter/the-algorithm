@@ -24,6 +24,7 @@ object StaleTweetsCacheModule extends TwitterModule {
     MemcachedClientBuilder.buildMemcachedClient(
       destName = "/srv#/prod/local/cache/staletweetscache:twemcaches",
       numTries = 3,
+      numConnections = 1,
       requestTimeout = 200.milliseconds,
       globalTimeout = 500.milliseconds,
       connectTimeout = 200.milliseconds,

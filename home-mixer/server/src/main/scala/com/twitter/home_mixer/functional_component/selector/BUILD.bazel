@@ -5,6 +5,7 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/decorator",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/decorator/builder",
         "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
         "home-mixer/server/src/main/scala/com/twitter/home_mixer/model/request",
         "home-mixer/server/src/main/scala/com/twitter/home_mixer/param",

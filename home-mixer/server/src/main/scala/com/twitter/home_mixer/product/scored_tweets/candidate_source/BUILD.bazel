@@ -4,9 +4,10 @@ scala_library(
     strict_deps = True,
     tags = ["bazel-compatible"],
     dependencies = [
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
         "home-mixer/server/src/main/scala/com/twitter/home_mixer/util",
         "home-mixer/thrift/src/main/thrift:thrift-scala",
         "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product",
+        "src/thrift/com/twitter/timelineservice:thrift-scala",
+        "stitch/stitch-timelineservice",
     ],
 )

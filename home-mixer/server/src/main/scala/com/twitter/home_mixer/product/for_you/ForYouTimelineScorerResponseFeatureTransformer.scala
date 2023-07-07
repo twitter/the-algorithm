@@ -30,7 +30,11 @@ object ForYouTimelineScorerResponseFeatureTransformer
     AncestorsFeature,
     AudioSpaceMetaDataFeature,
     AuthorIdFeature,
-    AuthorIsEligibleForConnectBoostFeature,
+    AuthorIsBlueVerifiedFeature,
+    AuthorIsCreatorFeature,
+    AuthorIsGoldVerifiedFeature,
+    AuthorIsGrayVerifiedFeature,
+    AuthorIsLegacyVerifiedFeature,
     AuthoredByContextualUserFeature,
     CandidateSourceIdFeature,
     ConversationFeature,
@@ -47,6 +51,7 @@ object ForYouTimelineScorerResponseFeatureTransformer
     FromInNetworkSourceFeature,
     FullScoringSucceededFeature,
     HasDisplayedTextFeature,
+    InNetworkFeature,
     InReplyToTweetIdFeature,
     IsAncestorCandidateFeature,
     IsExtendedReplyFeature,
@@ -105,8 +110,7 @@ object ForYouTimelineScorerResponseFeatureTransformer
       val tcoLengthsPlusSpaces = 23 * numMedia + (if (numMedia > 0) numMedia - 1 else 0)
       length > tcoLengthsPlusSpaces
     }))
-    val suggestType = Some(
-      candidate.overrideSuggestType.getOrElse(tls.SuggestType.RankedTimelineTweet))
+    val suggestType = candidate.overrideSuggestType.orElse(Some(tls.SuggestType.Undefined))
 
     val topicSocialProofMetadataOpt = candidate.entityData.flatMap(_.topicSocialProofMetadata)
     val topicIdSocialContextOpt = topicSocialProofMetadataOpt.map(_.topicId)
@@ -129,9 +133,14 @@ object ForYouTimelineScorerResponseFeatureTransformer
         AudioSpaceMetaDataFeature,
         candidate.audioSpaceMetaDatalist.map(_.head).map(AudioSpaceMetaData.fromThrift))
       .add(AuthorIdFeature, Some(candidate.authorId))
+      .add(AuthorIsBlueVerifiedFeature, candidate.authorIsBlueVerified.getOrElse(false))
       .add(
-        AuthorIsEligibleForConnectBoostFeature,
-        candidate.authorIsEligibleForConnectBoost.getOrElse(false))
+        AuthorIsCreatorFeature,
+        candidate.authorIsCreator.getOrElse(false)
+      )
+      .add(AuthorIsGoldVerifiedFeature, candidate.authorIsGoldVerified.getOrElse(false))
+      .add(AuthorIsGrayVerifiedFeature, candidate.authorIsGrayVerified.getOrElse(false))
+      .add(AuthorIsLegacyVerifiedFeature, candidate.authorIsLegacyVerified.getOrElse(false))
       .add(
         AuthoredByContextualUserFeature,
         candidate.viewerId.contains(candidate.authorId) ||
@@ -151,6 +160,7 @@ object ForYouTimelineScorerResponseFeatureTransformer
       .add(TopicContextFunctionalityTypeFeature, topicContextFunctionalityTypeOpt)
       .add(FullScoringSucceededFeature, candidate.fullScoringSucceeded.getOrElse(false))
       .add(HasDisplayedTextFeature, hasDisplayedText)
+      .add(InNetworkFeature, candidate.isInNetwork.getOrElse(true))
       .add(InReplyToTweetIdFeature, candidate.inReplyToTweetId)
       .add(IsAncestorCandidateFeature, candidate.isAncestorCandidate.getOrElse(false))
       .add(

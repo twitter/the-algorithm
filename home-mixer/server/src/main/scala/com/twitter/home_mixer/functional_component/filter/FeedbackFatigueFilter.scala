@@ -72,7 +72,7 @@ object FeedbackFatigueFilter
 
       originalAuthorId.exists(authorsToFilter.contains) ||
       (likers.nonEmpty && eligibleLikers.isEmpty) ||
-      (followers.nonEmpty && eligibleFollowers.isEmpty) ||
+      (followers.nonEmpty && eligibleFollowers.isEmpty && likers.isEmpty) ||
       (candidate.features.getOrElse(IsRetweetFeature, false) &&
       authorId.exists(retweetersToFilter.contains))
     }
