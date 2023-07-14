@@ -231,11 +231,10 @@ object TypeaheadEventCandidate {
 /**
  * Canonical TweetAnnotationQueryCandidate model. Always prefer this version over all other variants.
  *
- * TODO Remove score from the candidate and use a Feature instead
  */
 final class TweetAnnotationQueryCandidate private (
   override val id: String,
-  val score: Option[Double])
+  val features: FeatureMap)
     extends BaseQuerySuggestionCandidate[String] {
 
   /**
@@ -261,7 +260,8 @@ final class TweetAnnotationQueryCandidate private (
         (
           (this eq candidate)
             || ((hashCode == candidate.hashCode)
-              && (id == candidate.id && score == candidate.score))
+              && (id == candidate.id))
+              && (features == candidate.features)
         )
       case _ =>
         false
@@ -287,10 +287,10 @@ final class TweetAnnotationQueryCandidate private (
   override val hashCode: Int =
     31 * (
       id.##
-    ) + score.##
+    ) + features.##
 }
 
 object TweetAnnotationQueryCandidate {
-  def apply(id: String, score: Option[Double]): TweetAnnotationQueryCandidate =
-    new TweetAnnotationQueryCandidate(id, score)
+  def apply(id: String, features: FeatureMap = FeatureMap.empty): TweetAnnotationQueryCandidate =
+    new TweetAnnotationQueryCandidate(id, features)
 }
