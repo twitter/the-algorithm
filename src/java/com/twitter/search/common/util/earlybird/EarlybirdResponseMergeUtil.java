@@ -96,14 +96,13 @@ public final class EarlybirdResponseMergeUtil {
                                          List<ThriftSearchResult> resultsToAdd,
                                          ThriftTweetSource tweetSource) {
     Preconditions.checkNotNull(results);
-    if ((resultsToAdd == null) || resultsToAdd.isEmpty()) {
+    if ((resultsToAdd == null)) {
       return false;
     }
 
     markWithTweetSource(resultsToAdd, tweetSource);
 
-    results.addAll(resultsToAdd);
-    return true;
+    return results.addAll(resultsToAdd);
   }
 
   /**
