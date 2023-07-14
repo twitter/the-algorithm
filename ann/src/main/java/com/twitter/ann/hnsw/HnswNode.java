@@ -1,8 +1,5 @@
 package com.twitter.ann.hnsw;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-
 public class HnswNode<T> {
   public final int level;
   public final T item;
