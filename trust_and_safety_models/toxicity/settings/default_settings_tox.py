@@ -1,20 +1,19 @@
 import os
 
-
 TEAM_PROJECT = "twttr-toxicity-prod"
 try:
-  from google.cloud import bigquery
+    from google.cloud import bigquery
 except (ModuleNotFoundError, ImportError):
-  print("No Google packages")
-  CLIENT = None
-else:
-  from google.auth.exceptions import DefaultCredentialsError
-
-  try:
-    CLIENT = bigquery.Client(project=TEAM_PROJECT)
-  except DefaultCredentialsError as e:
+    print("No Google packages")
     CLIENT = None
-    print("Issue at logging time", e)
+else:
+    from google.auth.exceptions import DefaultCredentialsError
+
+    try:
+        CLIENT = bigquery.Client(project=TEAM_PROJECT)
+    except DefaultCredentialsError as e:
+        CLIENT = None
+        print("Issue at logging time", e)
 
 TRAINING_DATA_LOCATION = f"..."
 GCS_ADDRESS = "..."
