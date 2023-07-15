@@ -94,7 +94,7 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
   }
 
   /**
-   * Dequeue all the elements from queueu with ordering mantained
+   * Dequeue all the elements from queue with ordering mantained
    *
    * @return remove all the elements in the order of the queue i.e min/max queue.
    */
