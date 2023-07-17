@@ -112,9 +112,9 @@ object Reason {
   case object FirstPageSearchResult extends Reason
 
   case object MisinfoCivic extends Reason
-  case object MisinfoCrisis extends Reason
   case object MisinfoGeneric extends Reason
   case object MisinfoMedical extends Reason
+  case object MisinfoWar extends Reason
   case object Misleading extends Reason
   case object ExclusiveTweet extends Reason
   case object CommunityNotAMember extends Reason
