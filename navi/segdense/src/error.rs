@@ -15,26 +15,15 @@ pub enum SegDenseError {
 }
 
 impl Display for SegDenseError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            SegDenseError::IoError(io_error) => write!(f, "{}", io_error),
-            SegDenseError::Json(serde_json) => write!(f, "{}", serde_json),
-            SegDenseError::JsonMissingRoot => {
-                write!(f, "{}", "SegDense JSON: Root Node note found!")
-            }
-            SegDenseError::JsonMissingObject => {
-                write!(f, "{}", "SegDense JSON: Object note found!")
-            }
-            SegDenseError::JsonMissingArray => {
-                write!(f, "{}", "SegDense JSON: Array Node note found!")
-            }
-            SegDenseError::JsonArraySize => {
-                write!(f, "{}", "SegDense JSON: Array size not as expected!")
-            }
-            SegDenseError::JsonMissingInputFeature => {
-                write!(f, "{}", "SegDense JSON: Missing input feature!")
-            }
-        }
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    match self {
+      SegDenseError::IoError(io_error) => write!(f, "{}", io_error),
+      SegDenseError::Json(serde_json) => write!(f, "{}", serde_json),
+      SegDenseError::JsonMissingRoot => write!(f, "SegDense JSON: Root Node note found!"),
+      SegDenseError::JsonMissingObject => write!(f, "SegDense JSON: Object note found!"),
+      SegDenseError::JsonMissingArray => write!(f, "SegDense JSON: Array Node note found!"),
+      SegDenseError::JsonArraySize => write!(f, "SegDense JSON: Array size not as expected!"),
+      SegDenseError::JsonMissingInputFeature => write!(f, "SegDense JSON: Missing input feature!"),
     }
 }
 
