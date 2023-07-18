@@ -157,7 +157,7 @@ public class AntiGamingFilter {
     fromUserIDs =
         reader.getNumericDocValues(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName());
 
-    // fill the id whitelist for the current segment.  initialize lazily.
+    // fill the id whitelist for the current segment. initialize lazily.
     segmentUserIDWhitelist = null;
 
     SortedSet<Integer> sortedFromUserDocIds = new TreeSet<>();
