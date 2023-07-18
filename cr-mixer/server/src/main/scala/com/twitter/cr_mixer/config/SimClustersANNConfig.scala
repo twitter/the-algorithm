@@ -41,12 +41,11 @@ object SimClustersANNConfig {
     annAlgorithm = ScoringAlgorithm.CosineSimilarity,
   )
 
-  /*
-  SimClustersANNConfigId: String
-  Format: Prod - “EmbeddingType_ModelVersion_Default”
-  Format: Experiment - “EmbeddingType_ModelVersion_Date_Two-Digit-Serial-Number”. Date : YYYYMMDD
+  /**
+   * SimClustersANNConfigId: String
+   * Format: Prod - “EmbeddingType_ModelVersion_Default”
+   * Format: Experiment - “EmbeddingType_ModelVersion_Date_Two-Digit-Serial-Number”. Date : YYYYMMDD
    */
-
   private val FavBasedProducer_Model20m145k2020_Default = DefaultConfig.copy()
 
   // Chunnan's exp on maxTweetCandidateAgeDays 2
@@ -142,12 +141,14 @@ object SimClustersANNConfig {
       candidateEmbeddingType = EmbeddingType.LogFavBasedRealTimeTweet,
       maxTweetCandidateAge = 1.hours
     )
+
   // SANN-4 config
   private val LogFavLongestL2EmbeddingTweet_Model20m145k2020_20221220 =
     LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default.copy(
       candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
       maxTweetCandidateAge = 48.hours
     )
+
   private val UnfilteredUserInterestedIn_Model20m145k2020_Default = DefaultConfig.copy()
 
   // Chunnan's exp on maxTweetCandidateAgeDays 2
@@ -199,6 +200,7 @@ object SimClustersANNConfig {
       candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
       maxTweetCandidateAge = 48.hours
     )
+
   private val LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default = DefaultConfig.copy()
 
   // Chunnan's exp on maxTweetCandidateAgeDays 2
@@ -302,6 +304,7 @@ object SimClustersANNConfig {
       candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
       maxTweetCandidateAge = 48.hours
     )
+
   private val UserNextInterestedIn_Model20m145k2020_Default = DefaultConfig.copy()
 
   // Chunnan's exp on maxTweetCandidateAgeDays 2
@@ -353,7 +356,8 @@ object SimClustersANNConfig {
       candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
       maxTweetCandidateAge = 48.hours
     )
-  // Vincent's experiment on using FollowBasedProducer as query embedding type for UserFollow
+
+  // Vincent's experiment on using FollowBasedProducer as query embedding type for UserFollow.
   private val FollowBasedProducer_Model20m145k2020_Default =
     FavBasedProducer_Model20m145k2020_Default.copy()
 
@@ -400,6 +404,7 @@ object SimClustersANNConfig {
       candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
       maxTweetCandidateAge = 48.hours
     )
+    
   val DefaultConfigMappings: Map[String, SimClustersANNConfig] = Map(
     "FavBasedProducer_Model20m145k2020_Default" -> FavBasedProducer_Model20m145k2020_Default,
     "FavBasedProducer_Model20m145k2020_20220617_06" -> FavBasedProducer_Model20m145k2020_20220617_06,

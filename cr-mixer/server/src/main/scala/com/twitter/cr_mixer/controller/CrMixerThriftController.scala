@@ -101,7 +101,7 @@ class CrMixerThriftController @Inject() (
       ExceptionUtils.getStackTrace(e)
     ).mkString("\n")
 
-    /** *
+    /**
      * We chose logger.info() here to print message instead of logger.error since that
      * logger.error sometimes suppresses detailed stacktrace.
      */
@@ -109,8 +109,7 @@ class CrMixerThriftController @Inject() (
   }
 
   private def generateRequestUUID(): Long = {
-
-    /** *
+    /**
      * We generate unique UUID via bitwise operations. See the below link for more:
      * https://stackoverflow.com/questions/15184820/how-to-generate-unique-positive-long-using-uuid
      */
@@ -119,7 +118,6 @@ class CrMixerThriftController @Inject() (
 
   handle(t.CrMixer.GetTweetRecommendations) { args: t.CrMixer.GetTweetRecommendations.Args =>
     val endpointName = "getTweetRecommendations"
-
     val requestUUID = generateRequestUUID()
     val startTime = Time.now.inMilliseconds
     val userId = args.request.clientContext.userId.getOrElse(
@@ -168,10 +166,9 @@ class CrMixerThriftController @Inject() (
           Future(CrMixerTweetResponse(Seq.empty))
       }
     }
-
   }
 
-  /** *
+  /**
    * GetRelatedTweetsForQueryTweet and GetRelatedTweetsForQueryAuthor are essentially
    * doing very similar things, except that one passes in TweetId which calls TweetBased engine,
    * and the other passes in AuthorId which calls ProducerBased engine.
@@ -221,7 +218,6 @@ class CrMixerThriftController @Inject() (
           Future(RelatedTweetResponse(Seq.empty))
       }
     }
-
   }
 
   private def getRelatedVideoTweets(
@@ -330,7 +326,6 @@ class CrMixerThriftController @Inject() (
           Future(AdsResponse(Seq.empty))
       }
     }
-
   }
 
   private def buildCrCandidateGeneratorQuery(
@@ -338,7 +333,6 @@ class CrMixerThriftController @Inject() (
     requestUUID: Long,
     userId: Long
   ): Future[CrCandidateGeneratorQuery] = {
-
     val product = thriftRequest.product
     val productContext = thriftRequest.productContext
     val scopedStats = statsReceiver
@@ -357,7 +351,7 @@ class CrMixerThriftController @Inject() (
             userState
           )
 
-        // Specify product-specific behavior mapping here
+        // Specify product-specific behavior mapping here.
         val maxNumResults = (product, productContext) match {
           case (t.Product.Home, Some(t.ProductContext.HomeContext(homeContext))) =>
             homeContext.maxResults.getOrElse(9999)
@@ -392,7 +386,6 @@ class CrMixerThriftController @Inject() (
     thriftRequest: RelatedTweetRequest,
     requestUUID: Long
   ): Future[RelatedTweetCandidateGeneratorQuery] = {
-
     val product = thriftRequest.product
     val scopedStats = statsReceiver
       .scope(product.toString).scope("RelatedTweetRequest")
@@ -409,8 +402,8 @@ class CrMixerThriftController @Inject() (
           thriftRequest.product,
           userState)
 
-      // Specify product-specific behavior mapping here
-      // Currently, Home takes 10, and RUX takes 100
+      // Specify product-specific behavior mapping here.
+      // Currently, Home takes 10, and RUX takes 100.
       val maxNumResults = params(RelatedTweetGlobalParams.MaxCandidatesPerRequestParam)
 
       RelatedTweetCandidateGeneratorQuery(
@@ -458,7 +451,6 @@ class CrMixerThriftController @Inject() (
     thriftRequest: RelatedVideoTweetRequest,
     requestUUID: Long
   ): Future[RelatedVideoTweetCandidateGeneratorQuery] = {
-
     val product = thriftRequest.product
     val scopedStats = statsReceiver
       .scope(product.toString).scope("RelatedVideoTweetRequest")
@@ -487,14 +479,12 @@ class CrMixerThriftController @Inject() (
         requestUUID = requestUUID
       )
     }
-
   }
 
   private def buildUtegTweetQuery(
     thriftRequest: UtegTweetRequest,
     requestUUID: Long
   ): Future[UtegTweetCandidateGeneratorQuery] = {
-
     val userId = thriftRequest.clientContext.userId.getOrElse(
       throw new IllegalArgumentException("userId must be present in the Thrift clientContext")
     )
@@ -536,7 +526,6 @@ class CrMixerThriftController @Inject() (
           requestUUID = requestUUID
         )
       }
-
   }
 
   private def buildTopicTweetQuery(
@@ -550,7 +539,7 @@ class CrMixerThriftController @Inject() (
     val product = thriftRequest.product
     val productContext = thriftRequest.productContext
 
-    // Specify product-specific behavior mapping here
+    // Specify product-specific behavior mapping here.
     val isVideoOnly = (product, productContext) match {
       case (t.Product.ExploreTopics, Some(t.ProductContext.ExploreContext(context))) =>
         context.isVideoOnly
@@ -646,7 +635,6 @@ class CrMixerThriftController @Inject() (
   private def buildThriftResponse(
     candidates: Seq[RankedCandidate]
   ): CrMixerTweetResponse = {
-
     val tweets = candidates.map { candidate =>
       TweetRecommendation(
         tweetId = candidate.tweetId,
@@ -663,7 +651,7 @@ class CrMixerThriftController @Inject() (
   private def scribeTweetScoreFunnelSeries(
     candidates: Seq[RankedCandidate]
   ): Seq[RankedCandidate] = {
-    // 202210210901 is a random number for code search of Lensview
+    // 202210210901 is a random number for code search of Lensview.
     tweetScoreFunnelSeries.startNewSpan(
       name = "GetTweetRecommendationsTopLevelTweetSimilarityEngineType",
       codePtr = 202210210901L) {
@@ -734,7 +722,6 @@ class CrMixerThriftController @Inject() (
     request: CrMixerTweetRequest,
     response: Future[CrMixerTweetResponse]
   ): Unit = {
-
     val userId = request.clientContext.userId.getOrElse(
       throw new IllegalArgumentException(
         "userId must be present in getTweetRecommendations() Thrift clientContext"))

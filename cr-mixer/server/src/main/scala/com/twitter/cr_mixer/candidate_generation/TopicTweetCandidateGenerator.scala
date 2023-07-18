@@ -116,7 +116,7 @@ class TopicTweetCandidateGenerator @Inject() (
         val tweetIds = candidates.map(_.tweetId).toSet
         val numTweetsPreFilter = tweetIds.size
         Future.collect(tweetInfoStore.multiGet(tweetIds)).map { tweetInfos =>
-          /** *
+          /**
            * If tweetInfo does not exist, we will filter out this tweet candidate.
            */
           val tweetyPieFilteredInitialCandidates = candidates.collect {
@@ -142,7 +142,6 @@ class TopicTweetCandidateGenerator @Inject() (
           topicId -> tweetyPieFilteredInitialCandidates
         }
     }
-
     Future.collect(initialCandidates.toSeq).map(_.toMap)
   }
 
@@ -152,7 +151,6 @@ class TopicTweetCandidateGenerator @Inject() (
     isVideoOnly: Boolean,
     excludeTweetIds: Set[TweetId]
   ): Future[Map[TopicId, Seq[InitialCandidate]]] = {
-
     val earliestTweetId = SnowflakeId.firstIdFor(Time.now - maxTweetAge)
 
     val filteredResults = topicTweetMap.map {

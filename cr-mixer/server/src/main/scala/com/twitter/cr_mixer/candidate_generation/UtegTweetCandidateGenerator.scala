@@ -46,18 +46,16 @@ class UtegTweetCandidateGenerator @Inject() (
   def get(
     query: UtegTweetCandidateGeneratorQuery
   ): Future[Seq[TweetWithScoreAndSocialProof]] = {
-
     val allStats = stats.scope("all")
     val perProductStats = stats.scope("perProduct", query.product.toString)
     StatsUtil.trackItemsStats(allStats) {
       StatsUtil.trackItemsStats(perProductStats) {
-
         /**
          * The candidate we return in the end needs a social proof field, which isn't
          * supported by the any existing Candidate type, so we created TweetWithScoreAndSocialProof
          * instead.
          *
-         * However, filters and light ranker expect Candidate-typed param to work. In order to minimise the
+         * However, filters and light ranker expect Candidate-typed param to work. In order to minimize the
          * changes to them, we are doing conversions from/to TweetWithScoreAndSocialProof to/from Candidate
          * in this method.
          */
@@ -111,7 +109,6 @@ class UtegTweetCandidateGenerator @Inject() (
         candidate.toRankedCandidate(score)
       }
     )
-
   }
 
   def fetchCandidates(
@@ -136,7 +133,7 @@ class UtegTweetCandidateGenerator @Inject() (
   ): Future[Seq[InitialCandidate]] = {
     val tweetIds = candidates.map(_.tweetId).toSet
     Future.collect(tweetInfoStore.multiGet(tweetIds)).map { tweetInfos =>
-      /** *
+      /**
        * If tweetInfo does not exist, we will filter out this tweet candidate.
        */
       candidates.collect {
@@ -172,7 +169,7 @@ class UtegTweetCandidateGenerator @Inject() (
             candidate.predictionScore,
             tweet.socialProofByType
           )
-        // The exception should never be thrown
+        // The exception should never be thrown.
         }.getOrElse(throw new Exception("Cannot find ranked candidate in original UTEG tweets"))
     }
   }
