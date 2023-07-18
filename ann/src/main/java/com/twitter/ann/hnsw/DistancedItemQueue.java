@@ -18,7 +18,7 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
   private final PriorityQueue<DistancedItem<T>> queue;
   private final boolean minQueue;
   /**
-   * Creates ontainer for items with their distances.
+   * Creates Container for items with their distances.
    *
    * @param origin Origin (reference) point
    * @param initial Initial list of elements to add in the structure

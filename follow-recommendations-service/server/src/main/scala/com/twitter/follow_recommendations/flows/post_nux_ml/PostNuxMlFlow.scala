@@ -175,7 +175,7 @@ class PostNuxMlFlow @Inject() (
 
   override protected val postRankerTransform: Transform[PostNuxMlRequest, CandidateUser] = {
     new DedupTransform[PostNuxMlRequest, CandidateUser]
-      .observe(statsReceiver.scope("dedupping"))
+      .observe(statsReceiver.scope("deduping"))
       .andThen(
         samplingTransform
           .gated(PostNuxMlParams.SamplingTransformEnabled)

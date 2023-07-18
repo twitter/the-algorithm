@@ -87,7 +87,7 @@ trait RecommendationFlow[Target, Candidate <: UniversalNoun[Long]]
   protected def selectRanker(target: Target): Ranker[Target, Candidate]
 
   /**
-   * transform the candidates after ranking (e.g. dedupping, grouping and etc)
+   * transform the candidates after ranking (e.g. deduping, grouping and etc)
    */
   protected def postRankerTransform: Transform[Target, Candidate]
 
