@@ -11,7 +11,7 @@ public final class RecentTweetRestriction {
   private static final String QUERY_CACHE_UNTIL_TIME = "query_cache_until_time";
 
   @VisibleForTesting
-  public static final int DEFAULT_RECENT_TWEET_SECONDS = 15;
+  private static final int DEFAULT_RECENT_TWEET_SECONDS = 15;
 
   private RecentTweetRestriction() {
   }
