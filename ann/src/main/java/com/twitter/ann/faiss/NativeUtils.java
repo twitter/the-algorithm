@@ -45,6 +45,9 @@ public final class NativeUtils {
     } catch (NullPointerException e) {
       temp.delete();
       throw new FileNotFoundException("File " + path + " was not found inside JAR.");
+    } catch (Exception e) {
+      file.delete();
+      throw e;
     }
 
     return temp;
@@ -90,24 +93,26 @@ public final class NativeUtils {
    * @throws FileNotFoundException    If the file could not be found inside the
    *                                  JAR.
    */
-  public static void loadLibraryFromJar(String path) throws IOException {
-    File temp = unpackLibraryFromJarInternal(path);
-
-    try (InputStream is = NativeUtils.class.getResourceAsStream(path)) {
-      Files.copy(is, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
-    } catch (IOException e) {
-      temp.delete();
-      throw e;
-    } catch (NullPointerException e) {
-      temp.delete();
-      throw new FileNotFoundException("File " + path + " was not found inside JAR.");
+      public static void loadLibraryFromJar(String path) throws IOException {
+        File tempFile = unpackLibraryFromJarInternal(path);
+        copyResourceToFile(path, tempFile);
+        try {
+            System.load(tempFile.getAbsolutePath());
+        } finally {
+            tempFile.deleteOnExit();
+        }
     }
 
-    try {
-      System.load(temp.getAbsolutePath());
-    } finally {
-      temp.deleteOnExit();
-    }
+  private static void copyResourceToFile(String resourcePath, File file) throws IOException {
+      try ( InputStream inputStream = NativeUtils.class.getResourceAsStream(resourcePath)) {
+          Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+      } catch (IOException e) {
+          file.delete();
+          throw e;
+      } catch (NullPointerException e) {
+          file.delete();
+          throw new FileNotFoundException("File " + resourcePath + " was not found inside JAR.");
+      }
   }
 
   private static File createTempDirectory(String prefix) throws IOException {
