@@ -1,4 +1,5 @@
 #pragma once
+#include <fstream>
 #include <twml/defines.h>
 #include <cstdlib>
 #include <cstdio>
@@ -27,19 +28,18 @@ namespace twml {
     class BlockFormatWriter {
     private:
         const char *file_name_;
-        FILE *outputfile_;
+        std::fstream outputfile_;
         char temp_file_name_[PATH_MAX];
         int record_index_;
         int records_per_block_;
 
-        int pack_tag_and_wiretype(FILE *file, uint32_t tag, uint32_t wiretype);
-        int pack_varint_i32(FILE *file, int value);
-        int pack_string(FILE *file, const char *in, size_t in_len);
-        int write_int(FILE *file, int value);
+        int pack_tag_and_wiretype(std::fstream& fs, std::uint32_t tag, std::uint32_t wiretype);
+        int pack_varint_i32(std::fstream& fs, int value);
+        int pack_string(std::fstream& fs, const char *in, size_t in_len);
+        int write_int(std::fstream& fs, int value);
 
     public:
         BlockFormatWriter(const char *file_name, int record_per_block);
-        ~BlockFormatWriter();
         int write(const char *class_name, const char *record, int record_len) ;
         int flush();
         block_format_writer getHandle();
