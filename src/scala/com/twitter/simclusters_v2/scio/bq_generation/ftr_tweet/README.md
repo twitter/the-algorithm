@@ -1,10 +1,10 @@
 # FTR Tweet embeddings 
 
-export GCP_PROJECT_NAME='twttr-recos-ml-prod'
-
 ## Running Adhoc jobs
 ### Base ftrat5 
 ```
+export GCP_PROJECT_NAME='twttr-recos-ml-prod'
+
 rm dist/ftr-tweet-adhoc-job-bundle/ftr-tweet-adhoc-job.jar
 ./bazel bundle  src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:ftr-tweet-adhoc-job && \
 bin/d6w create \
