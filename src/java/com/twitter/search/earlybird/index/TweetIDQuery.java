@@ -3,6 +3,7 @@ package com.twitter.search.earlybird.index;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
 
@@ -20,11 +21,11 @@ import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader
 import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
 
 public class TweetIDQuery extends Query {
-  private final Set<Long> tweetIDs = Sets.newHashSet();
+  private final Set<Long> distinctTweetIDs = Sets.newHashSet();
 
   public TweetIDQuery(long... tweetIDs) {
     for (long tweetID : tweetIDs) {
-      this.tweetIDs.add(tweetID);
+      this.distinctTweetIDs.add(tweetID);
     }
   }
 
@@ -37,32 +38,23 @@ public class TweetIDQuery extends Query {
             ((EarlybirdIndexSegmentAtomicReader) context.reader()).getSegmentData();
         DocIDToTweetIDMapper docIdToTweetIdMapper = segmentData.getDocIDToTweetIDMapper();
 
-        Set<Integer> set = Sets.newHashSet();
-        for (long tweetID : tweetIDs) {
-          int docID = docIdToTweetIdMapper.getDocID(tweetID);
-          if (docID != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-            set.add(docID);
-          }
-        }
+        int[] distinctSortedDocIDs = distinctTweetIDs.stream()
+          .map(tweetID -> docIdToTweetIdMapper.getDocID(tweetID))
+          .filter(docID -> docID != DocIDToTweetIDMapper.ID_NOT_FOUND)
+          .sorted()
+          .mapToInt(Integer::intValue)
+          .toArray();
 
-        if (set.isEmpty()) {
-          return DocIdSetIterator.empty();
-        }
-
-        int[] docIDs = new int[set.size()];
-        int i = 0;
-        for (int docID : set) {
-          docIDs[i++] = docID;
-        }
-        Arrays.sort(docIDs);
-        return new IntArrayDocIdSetIterator(docIDs);
+        return distinctSortedDocIDs.length == 0 ?
+          DocIdSetIterator.empty() : 
+          new IntArrayDocIdSetIterator(distinctSortedDocIDs);
       }
     };
   }
 
   @Override
   public int hashCode() {
-    return tweetIDs.hashCode();
+    return distinctTweetIDs.hashCode();
   }
 
   @Override
@@ -71,11 +63,11 @@ public class TweetIDQuery extends Query {
       return false;
     }
 
-    return tweetIDs.equals(TweetIDQuery.class.cast(obj).tweetIDs);
+    return distinctTweetIDs.equals(TweetIDQuery.class.cast(obj).distinctTweetIDs);
   }
 
   @Override
   public String toString(String field) {
-    return "TWEET_ID_QUERY: " + tweetIDs;
+    return "TWEET_ID_QUERY: " + distinctTweetIDs;
   }
 }
