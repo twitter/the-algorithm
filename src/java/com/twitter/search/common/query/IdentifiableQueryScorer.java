@@ -25,36 +25,33 @@ public class IdentifiableQueryScorer extends FilteredScorer {
 
   @Override
   public DocIdSetIterator iterator() {
-    final DocIdSetIterator superDISI = super.iterator();
+    DocIdSetIterator superIterator = super.iterator();
 
     return new DocIdSetIterator() {
       @Override
       public int docID() {
-        return superDISI.docID();
+        return superIterator.docID();
       }
 
       @Override
       public int nextDoc() throws IOException {
-        int docid = superDISI.nextDoc();
-        if (docid != NO_MORE_DOCS) {
-          attrCollector.collectScorerAttribution(docid, queryId);
-        }
-        return docid;
+        return collectAndReturn(superIterator.nextDoc());
       }
 
       @Override
       public int advance(int target) throws IOException {
-        int docid = superDISI.advance(target);
-        if (docid != NO_MORE_DOCS) {
-          attrCollector.collectScorerAttribution(docid, queryId);
-        }
-        return docid;
+        return collectAndReturn(superIterator.advance(target));
       }
 
       @Override
       public long cost() {
-        return superDISI.cost();
+        return superIterator.cost();
       }
+      
+      private int collectAndReturn(int docId) {
+        if (docId != NO_MORE_DOCS) {
+          attrCollector.collectScorerAttribution(docId, queryId);
+        }
     };
   }
 }
