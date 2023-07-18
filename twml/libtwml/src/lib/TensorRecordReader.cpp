@@ -178,7 +178,7 @@ RawTensor TensorRecordReader::readStringTensor() {
         CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "data_type");
         length = readInt32();
         // Store the current location of the byte stream.
-        // Use this at to "deocde strings" at a later point.
+        // Use this at to "decode strings" at a later point.
         data = getBuffer();
         for (int32_t i = 0; i < length; i++) {
           // Skip reading the strings
