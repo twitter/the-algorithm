@@ -1,7 +1,8 @@
-from .hashing_utils import make_feature_id
+import numpy as np
 
 from twml.contrib.layers.hashing_discretizer import HashingDiscretizer
-import numpy as np
+
+from .hashing_utils import make_feature_id
 
 
 class TFModelDiscretizerBuilder(object):

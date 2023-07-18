@@ -1,14 +1,16 @@
-from collections import defaultdict
 import os
+from collections import defaultdict
 
-from toxicity_ml_pipeline.settings.default_settings_tox import REMOTE_LOGDIR
-from toxicity_ml_pipeline.settings.default_settings_abs import LABEL_NAMES
-from toxicity_ml_pipeline.utils.absv_utils import parse_labeled_data
-from toxicity_ml_pipeline.utils.helpers import compute_precision_fixed_recall, execute_command
-
-from sklearn.metrics import average_precision_score, roc_auc_score
 import tensorflow as tf
 import wandb
+from sklearn.metrics import average_precision_score, roc_auc_score
+from toxicity_ml_pipeline.settings.default_settings_abs import LABEL_NAMES
+from toxicity_ml_pipeline.settings.default_settings_tox import REMOTE_LOGDIR
+from toxicity_ml_pipeline.utils.absv_utils import parse_labeled_data
+from toxicity_ml_pipeline.utils.helpers import (
+  compute_precision_fixed_recall,
+  execute_command,
+)
 
 
 class NothingCallback(tf.keras.callbacks.Callback):

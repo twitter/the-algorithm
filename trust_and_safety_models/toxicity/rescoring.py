@@ -1,8 +1,7 @@
-from toxicity_ml_pipeline.load_model import reload_model_weights
-from toxicity_ml_pipeline.utils.helpers import load_inference_func, upload_model
-
 import numpy as np
 import tensorflow as tf
+from toxicity_ml_pipeline.load_model import reload_model_weights
+from toxicity_ml_pipeline.utils.helpers import load_inference_func, upload_model
 
 
 def score(language, df, gcs_model_path, batch_size=64, text_col="text", kw="", **kwargs):

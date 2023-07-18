@@ -1,10 +1,8 @@
-from abc import ABC
 import re
-
-from toxicity_ml_pipeline.settings.hcomp_settings import TOXIC_35
+from abc import ABC
 
 import numpy as np
-
+from toxicity_ml_pipeline.settings.hcomp_settings import TOXIC_35
 
 TOXIC_35_set = set(TOXIC_35)
 
@@ -84,7 +82,7 @@ class DefaultENNoPreprocessor(DataframeCleaner):
       else:
         raise NotImplementedError
 
-    if "filter_low_agreements" in kwargs and kwargs["filter_low_agreements"] == True:
+    if "filter_low_agreements" in kwargs and kwargs["filter_low_agreements"] is True:
       df.drop(df[(df.agreement_rate <= 0.6)].index, axis=0, inplace=True)
       raise NotImplementedError
 
