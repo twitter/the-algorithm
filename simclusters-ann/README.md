@@ -12,7 +12,7 @@ The cosine similarity between two Tweet SimClusters Embedding presents the relev
 
 SimClusters from the Linear Algebra Perspective discussed the difference between the dot-product and cosine similarity in SimCluster space. We believe the cosine similarity approach is better because it avoids the bias of tweet popularity.
 
- However, calculating the cosine similarity between two Tweets is pretty expensive in Tweet candidate generation. In TWISTLY, we scan at most 15,000 (6 source tweets * 25 clusters * 100 tweets per clusters) tweet candidates for every Home Timeline request. The traditional algorithm needs to make API calls to fetch 15,000 tweet SimCluster embeddings. Consider that we need to process over 6,000 RPS, it’s hard to support by the existing infrastructure.  
+ However, calculating the cosine similarity between two Tweets is pretty expensive in Tweet candidate generation. In TWISTLY, we scan at most 15,000 (6 source tweets * 25 clusters * 100 tweets per clusters) tweet candidates for every Home Timeline request. The traditional algorithm needs to make API calls to fetch 15,000 tweet SimCluster embeddings. Considering that we need to process over 6,000 RPS, it’s hard to support with the existing infrastructure.  
 
 
 ## SimClusters Approximate Cosine Similarity Core Algorithm
