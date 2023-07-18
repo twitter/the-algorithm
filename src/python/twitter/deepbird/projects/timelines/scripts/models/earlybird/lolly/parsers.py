@@ -123,7 +123,8 @@ class DBv2DataExampleParser(Parser):
 
     for feature_name in list(self.features["binary"].keys()) + list(self.features["discretized"].keys()):
       self.feature_name_by_dbv2_id[str(_get_feature_id(feature_name))] = feature_name
-
+  
+  @staticmethod
   def pattern(self):
     '''
     :return: a RegEx that extracts dbv2 logit, logged lolly logit, feature ids and feature values.
