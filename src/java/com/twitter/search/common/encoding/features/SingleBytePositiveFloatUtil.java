@@ -77,7 +77,7 @@ public final class SingleBytePositiveFloatUtil {
 
   // Table used for converting mantissa into a significant
   private static float[] mantissaToFractionTable = {
-    //   Decimal        Matisa value
+    //   Decimal        Mantissa value
       STEP_SIZE * 0,   // 0000
       STEP_SIZE * 1,   // 0001
       STEP_SIZE * 1,   // 0010

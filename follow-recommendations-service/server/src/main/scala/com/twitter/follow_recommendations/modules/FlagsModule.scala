@@ -8,7 +8,7 @@ object FlagsModule extends TwitterModule {
   )
   flag[Boolean](
     name = "interests_opt_out_prod_enabled",
-    help = "Whether to fetch intersts opt out data from the prod strato column or not"
+    help = "Whether to fetch interests opt out data from the prod strato column or not"
   )
   flag[Boolean](
     name = "log_results",

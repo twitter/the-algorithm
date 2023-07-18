@@ -13,7 +13,7 @@ import com.twitter.timelines.configapi.FSParam
 /**
  * Include a clear cache timeline instruction when we satisfy these criteria:
  * - Request Provenance is "pull to refresh"
- * - Atleast N non-ad tweet entries in the response
+ * - At least N non-ad tweet entries in the response
  *
  * This is to ensure that we have sufficient new content to justify jumping users to the
  * top of the new timelines response and don't add unnecessary load to backend systems

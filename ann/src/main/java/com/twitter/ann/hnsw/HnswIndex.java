@@ -379,7 +379,7 @@ public class HnswIndex<T, Q> {
    * This will reduce the recall.
    * <p>
    * For a full explanation of locking see this document: http://go/hnsw-locking
-   * The method returns the closest nearest neighbor (can be used as an enter point)
+   * The method returns the closest nearest neighbours (can be used as an enter point)
    */
   private T mutuallyConnectNewElement(
       final T item,
@@ -532,7 +532,7 @@ public class HnswIndex<T, Q> {
    * @param numOfNeighbours Number of neighbours to search for.
    * @param ef              This param controls the accuracy of the search.
    *                        Bigger the ef better the accuracy on the expense of latency.
-   *                        Keep it atleast number of neighbours to find.
+   *                        Keep it at least number of neighbours to find.
    * @return Neighbours
    */
   public List<DistancedItem<T>> searchKnn(final Q query, final int numOfNeighbours, final int ef) {

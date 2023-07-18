@@ -229,7 +229,7 @@ object ANNIndexBuilderBeamJob extends ScioBeamJob[ANNOptions] {
 
     // Generate Index
     processedCollection.saveAsCustomOutput(
-      "Serialise to Disk",
+      "Serialize to Disk",
       OutputSink(
         out,
         opts.getAlgo.equals("faiss"),

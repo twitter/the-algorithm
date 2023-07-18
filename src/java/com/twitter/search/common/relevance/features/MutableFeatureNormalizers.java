@@ -13,7 +13,7 @@ public abstract class MutableFeatureNormalizers {
   // value (255, if using a byte).
   private static final int MAX_COUNTER_VALUE_SUPPORTED = 50000000;
 
-  // Avoid using this normalizer for procesing any new data, always use SmartIntegerNormalizer
+  // Avoid using this normalizer for processing any new data, always use SmartIntegerNormalizer
   // below.
   public static final SingleBytePositiveFloatNormalizer BYTE_NORMALIZER =
       new SingleBytePositiveFloatNormalizer();

@@ -4,7 +4,7 @@ import com.twitter.search.common.encoding.features.EncodedFeatures;
 
 /**
  * Holds engagement features for a particular tweet and encodes them as a single int.
- * The features are: retweet count, favorite count, itweet score, reply count.
+ * The features are: retweet count, favorite count, tweet score, reply count.
  */
 public class TweetEngagementFeatures extends EncodedFeatures {
   private static final int RETWEET_COUNT_BIT_SHIFT = 0;

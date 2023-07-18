@@ -481,8 +481,8 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
 
   /**
    * Trim results based on search range. The search range [x, y] is determined by:
-   *   x is the maximun of the minimun search IDs;
-   *   y is the minimun of the maximum search IDs.
+   *   x is the maximum of the minimum search IDs;
+   *   y is the minimum of the maximum search IDs.
    *
    * Ids out side of this range are removed.
    * If we do not get enough results after the removal, we add IDs back until we get enough results.

@@ -32,7 +32,7 @@ public class TerminationTracker {
   private final int postTerminationOverheadMillis;
 
   // We don't check for early termination often enough. Some times requests timeout in between
-  // early termination checks. This buffer time is also substracted from deadline.
+  // early termination checks. This buffer time is also subtracted from deadline.
   // To illustrate how this is used, let's use a simple example:
   // If we spent 750ms searching 5 segments, a rough estimate is that we need 150ms to search
   // one segment. If the timeout is set to 800ms, we should not starting searching the next segment.
