@@ -24,7 +24,7 @@ object Reputation {
     }
   }
 
-  // these constants are take from repo reputations, config/production.conf
+  // these constants are taken from repo reputations, config/production.conf
   private val threshAbsNumFriendsReps = 2500
   private val constantDivisionFactorGt_threshFriendsToFollowersRatioReps = 3.0
   private val threshFriendsToFollowersRatioUMass = 0.6
