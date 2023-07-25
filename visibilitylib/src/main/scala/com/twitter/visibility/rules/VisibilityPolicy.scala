@@ -776,7 +776,10 @@ case object MagicRecsPolicy
       tweetRules = MagicRecsPolicyOverrides.union(
         RecommendationsPolicy.tweetRules.filterNot(_ == SafetyCrisisLevel3DropRule),
         NotificationsIbisPolicy.tweetRules,
-        Seq(NsfaHighRecallTweetLabelRule, NsfwHighRecallTweetLabelRule),
+        Seq(
+          NsfaHighRecallTweetLabelRule,
+          NsfwHighRecallTweetLabelRule,
+          NsfwTextHighPrecisionTweetLabelDropRule),
         Seq(
           AuthorBlocksViewerDropRule,
           ViewerBlocksAuthorRule,
@@ -1171,7 +1174,7 @@ case object ReturningUserExperiencePolicy
         NsfwHighRecallTweetLabelRule,
         NsfwVideoTweetLabelDropRule,
         NsfwTextTweetLabelDropRule,
-        NsfwTextTweetLabelTopicsDropRule,
+        NsfwTextHighPrecisionTweetLabelDropRule,
         SpamHighRecallTweetLabelDropRule,
         DuplicateContentTweetLabelDropRule,
         GoreAndViolenceTweetLabelRule,
@@ -1785,6 +1788,14 @@ case object TimelineListsPolicy
             NsfwReportedHeuristicsAllUsersTweetLabelRule,
             GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
             NsfwCardImageAllUsersTweetLabelRule,
+            NsfwHighPrecisionTweetLabelAvoidRule,
+            NsfwHighRecallTweetLabelAvoidRule,
+            GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
+            NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
+            GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
+            NsfwCardImageAvoidAllUsersTweetLabelRule,
+            DoNotAmplifyTweetLabelAvoidRule,
+            NsfaHighPrecisionTweetLabelAvoidRule,
           ) ++ LimitedEngagementBaseRules.tweetRules
     )
 
@@ -2132,7 +2143,13 @@ case object TimelineHomePolicy
       userRules = Seq(
         ViewerMutesAuthorRule,
         ViewerBlocksAuthorRule,
-        DeciderableAuthorBlocksViewerDropRule
+        DeciderableAuthorBlocksViewerDropRule,
+        ProtectedAuthorDropRule,
+        SuspendedAuthorRule,
+        DeactivatedAuthorRule,
+        ErasedAuthorRule,
+        OffboardedAuthorRule,
+        DropTakendownUserRule
       ),
       policyRuleParams = SensitiveMediaSettingsTimelineHomeBaseRules.policyRuleParams
     )
@@ -2171,7 +2188,13 @@ case object BaseTimelineHomePolicy
       userRules = Seq(
         ViewerMutesAuthorRule,
         ViewerBlocksAuthorRule,
-        DeciderableAuthorBlocksViewerDropRule
+        DeciderableAuthorBlocksViewerDropRule,
+        ProtectedAuthorDropRule,
+        SuspendedAuthorRule,
+        DeactivatedAuthorRule,
+        ErasedAuthorRule,
+        OffboardedAuthorRule,
+        DropTakendownUserRule
       )
     )
 
@@ -2255,7 +2278,13 @@ case object TimelineHomeLatestPolicy
       userRules = Seq(
         ViewerMutesAuthorRule,
         ViewerBlocksAuthorRule,
-        DeciderableAuthorBlocksViewerDropRule
+        DeciderableAuthorBlocksViewerDropRule,
+        ProtectedAuthorDropRule,
+        SuspendedAuthorRule,
+        DeactivatedAuthorRule,
+        ErasedAuthorRule,
+        OffboardedAuthorRule,
+        DropTakendownUserRule
       ),
       policyRuleParams = SensitiveMediaSettingsTimelineHomeBaseRules.policyRuleParams
     )
@@ -3283,7 +3312,7 @@ case object TopicRecommendationsPolicy
       tweetRules =
         Seq(
           NsfwHighRecallTweetLabelRule,
-          NsfwTextTweetLabelTopicsDropRule
+          NsfwTextHighPrecisionTweetLabelDropRule
         )
           ++ RecommendationsPolicy.tweetRules,
       userRules = RecommendationsPolicy.userRules
@@ -3534,6 +3563,17 @@ case object TrustedFriendsUserListPolicy
       userRules = Seq(
         ViewerBlocksAuthorRule
       )
+    )
+
+case object TwitterDelegateUserListPolicy
+    extends VisibilityPolicy(
+      userRules = Seq(
+        ViewerBlocksAuthorRule,
+        ViewerIsAuthorDropRule,
+        DeactivatedAuthorRule,
+        AuthorBlocksViewerDropRule
+      ),
+      tweetRules = Seq(DropAllRule)
     )
 
 case object QuickPromoteTweetEligibilityPolicy

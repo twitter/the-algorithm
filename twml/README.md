@@ -1,7 +1,7 @@
 # TWML
 
 ---
-Note: `twml` is no longer under development. Much of the code here is not out of date and unused.
+Note: `twml` is no longer under development. Much of the code here is out of date and unused.
 It is included here for completeness, because `twml` is still used to train the light ranker models
 (see `src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/README.md`)
 ---

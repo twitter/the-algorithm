@@ -16,9 +16,15 @@ object HomeMixerFlagsModule extends TwitterModule {
   )
 
   flag[Boolean](
-    name = ScribeServedEntriesFlag,
+    name = ScribeServedCandidatesFlag,
     default = false,
-    help = "Toggles logging served entries to Scribe"
+    help = "Toggles logging served candidates to Scribe"
+  )
+
+  flag[Boolean](
+    name = ScribeScoredCandidatesFlag,
+    default = false,
+    help = "Toggles logging scored candidates to Scribe"
   )
 
   flag[Boolean](

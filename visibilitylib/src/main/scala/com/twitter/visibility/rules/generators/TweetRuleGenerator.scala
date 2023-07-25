@@ -100,30 +100,6 @@ object TweetRuleGenerator {
           FreedomOfSpeechNotReachActions.SoftInterventionAvoidLimitedEngagementsAction(
             limitedActionStrings = Some(level3LimitedActions))
         )
-        .addSafetyLevelRule(
-          SafetyLevel.TimelineMedia,
-          FreedomOfSpeechNotReachActions
-            .SoftInterventionAvoidLimitedEngagementsAction(limitedActionStrings =
-              Some(level3LimitedActions))
-        )
-        .addSafetyLevelRule(
-          SafetyLevel.ProfileMixerMedia,
-          FreedomOfSpeechNotReachActions
-            .SoftInterventionAvoidLimitedEngagementsAction(limitedActionStrings =
-              Some(level3LimitedActions))
-        )
-        .addSafetyLevelRule(
-          SafetyLevel.TimelineFavorites,
-          FreedomOfSpeechNotReachActions
-            .SoftInterventionAvoidLimitedEngagementsAction(limitedActionStrings =
-              Some(level3LimitedActions))
-        )
-        .addSafetyLevelRule(
-          SafetyLevel.ProfileMixerFavorites,
-          FreedomOfSpeechNotReachActions
-            .SoftInterventionAvoidLimitedEngagementsAction(limitedActionStrings =
-              Some(level3LimitedActions))
-        )
         .build,
       UserType.Author -> TweetVisibilityPolicy
         .builder()
@@ -155,30 +131,6 @@ object TweetRuleGenerator {
         )
         .addSafetyLevelRule(
           SafetyLevel.ConversationFocalTweet,
-          FreedomOfSpeechNotReachActions
-            .InterstitialLimitedEngagementsAvoidAction(limitedActionStrings =
-              Some(level3LimitedActions))
-        )
-        .addSafetyLevelRule(
-          SafetyLevel.TimelineMedia,
-          FreedomOfSpeechNotReachActions
-            .InterstitialLimitedEngagementsAvoidAction(limitedActionStrings =
-              Some(level3LimitedActions))
-        )
-        .addSafetyLevelRule(
-          SafetyLevel.ProfileMixerMedia,
-          FreedomOfSpeechNotReachActions
-            .InterstitialLimitedEngagementsAvoidAction(limitedActionStrings =
-              Some(level3LimitedActions))
-        )
-        .addSafetyLevelRule(
-          SafetyLevel.TimelineFavorites,
-          FreedomOfSpeechNotReachActions
-            .InterstitialLimitedEngagementsAvoidAction(limitedActionStrings =
-              Some(level3LimitedActions))
-        )
-        .addSafetyLevelRule(
-          SafetyLevel.ProfileMixerFavorites,
           FreedomOfSpeechNotReachActions
             .InterstitialLimitedEngagementsAvoidAction(limitedActionStrings =
               Some(level3LimitedActions))

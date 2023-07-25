@@ -18,7 +18,8 @@ case class ListRecommendedUsersQuery(
   override val debugOptions: Option[DebugOptions],
   override val features: Option[FeatureMap],
   selectedUserIds: Option[Seq[Long]],
-  excludedUserIds: Option[Seq[Long]])
+  excludedUserIds: Option[Seq[Long]],
+  listName: Option[String])
     extends PipelineQuery
     with HasPipelineCursor[UrtUnorderedExcludeIdsCursor]
     with HasListId {

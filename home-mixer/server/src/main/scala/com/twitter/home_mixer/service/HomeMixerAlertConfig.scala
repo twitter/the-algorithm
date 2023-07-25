@@ -26,7 +26,8 @@ object HomeMixerAlertConfig {
   object BusinessHours {
     val DefaultNotificationGroup: NotificationGroup = NotificationGroup(
       warn = Destination(emails = Seq("")),
-      critical = Destination(emails = Seq(""))
+      critical = Destination(emails =
+        Seq(""))
     )
 
     def defaultEmptyResponseRateAlert(warnThreshold: Double = 50, criticalThreshold: Double = 80) =

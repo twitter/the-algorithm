@@ -9,7 +9,7 @@ import "tensorflow_serving/config/logging_config.proto";
 option cc_enable_arenas = true;
 
 // The type of model.
-// TODO: DEPRECATED.
+// TODO(b/31336131): DEPRECATED.
 enum ModelType {
   MODEL_TYPE_UNSPECIFIED = 0 [deprecated = true];
   TENSORFLOW = 1 [deprecated = true];
@@ -31,7 +31,7 @@ message ModelConfig {
   string base_path = 2;
 
   // Type of model.
-  // TODO: DEPRECATED. Please use 'model_platform' instead.
+  // TODO(b/31336131): DEPRECATED. Please use 'model_platform' instead.
   ModelType model_type = 3 [deprecated = true];
 
   // Type of model (e.g. "tensorflow").

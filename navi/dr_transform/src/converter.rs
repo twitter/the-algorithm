@@ -2,6 +2,9 @@ use std::collections::BTreeSet;
 use std::fmt::{self, Debug, Display};
 use std::fs;
 
+use crate::all_config;
+use crate::all_config::AllConfig;
+use anyhow::{bail, Context};
 use bpr_thrift::data::DataRecord;
 use bpr_thrift::prediction_service::BatchPredictionRequest;
 use bpr_thrift::tensor::GeneralTensor;
@@ -16,9 +19,6 @@ use segdense::util;
 use thrift::protocol::{TBinaryInputProtocol, TSerializable};
 use thrift::transport::TBufferChannel;
 
-use crate::{all_config};
-use crate::all_config::AllConfig;
-
 pub fn log_feature_match(
     dr: &DataRecord,
     seg_dense_config: &DensificationTransformSpec,
@@ -27,7 +27,7 @@ pub fn log_feature_match(
     // Note the following algorithm matches features from config using linear search.
     // Also the record source is MinDataRecord. This includes only binary and continous features for now.
 
-    for (feature_id, feature_value) in dr.continuous_features.as_ref().unwrap().into_iter() {
+    for (feature_id, feature_value) in dr.continuous_features.as_ref().unwrap() {
         debug!(
             "{} - Continous Datarecord => Feature ID: {}, Feature value: {}",
             dr_type, feature_id, feature_value
@@ -39,7 +39,7 @@ pub fn log_feature_match(
         }
     }
 
-    for feature_id in dr.binary_features.as_ref().unwrap().into_iter() {
+    for feature_id in dr.binary_features.as_ref().unwrap() {
         debug!(
             "{} - Binary Datarecord => Feature ID: {}",
             dr_type, feature_id
@@ -95,20 +95,19 @@ impl BatchPredictionRequestToTorchTensorConverter {
         model_version: &str,
         reporting_feature_ids: Vec<(i64, &str)>,
         register_metric_fn: Option<impl Fn(&HistogramVec)>,
-    ) -> BatchPredictionRequestToTorchTensorConverter {
+    ) -> anyhow::Result<BatchPredictionRequestToTorchTensorConverter> {
         let all_config_path = format!("{}/{}/all_config.json", model_dir, model_version);
         let seg_dense_config_path = format!(
             "{}/{}/segdense_transform_spec_home_recap_2022.json",
             model_dir, model_version
         );
-        let seg_dense_config = util::load_config(&seg_dense_config_path);
+        let seg_dense_config = util::load_config(&seg_dense_config_path)?;
         let all_config = all_config::parse(
             &fs::read_to_string(&all_config_path)
-                .unwrap_or_else(|error| panic!("error loading all_config.json - {}", error)),
-        )
-        .unwrap();
+                .with_context(|| "error loading all_config.json - ")?,
+        )?;
 
-        let feature_mapper = util::load_from_parsed_config_ref(&seg_dense_config);
+        let feature_mapper = util::load_from_parsed_config(seg_dense_config.clone())?;
 
         let user_embedding_feature_id = Self::get_feature_id(
             &all_config
@@ -173,14 +172,14 @@ impl BatchPredictionRequestToTorchTensorConverter {
             match *feature_type {
                 "discrete" => discrete_features_to_report.insert(feature_id.clone()),
                 "continuous" => continuous_features_to_report.insert(feature_id.clone()),
-                _ => panic!(
+                _ => bail!(
                     "Invalid feature type {} for reporting metrics!",
                     feature_type
                 ),
             };
         }
 
-        return BatchPredictionRequestToTorchTensorConverter {
+        Ok(BatchPredictionRequestToTorchTensorConverter {
             all_config,
             seg_dense_config,
             all_config_path,
@@ -193,7 +192,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
             continuous_features_to_report,
             discrete_feature_metrics,
             continuous_feature_metrics,
-        };
+        })
     }
 
     fn get_feature_id(feature_name: &str, seg_dense_config: &Root) -> i64 {
@@ -203,7 +202,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
                 return feature.feature_id;
             }
         }
-        return -1;
+        -1
     }
 
     fn parse_batch_prediction_request(bytes: Vec<u8>) -> BatchPredictionRequest {
@@ -211,7 +210,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
         let mut bc = TBufferChannel::with_capacity(bytes.len(), 0);
         bc.set_readable_bytes(&bytes);
         let mut protocol = TBinaryInputProtocol::new(bc, true);
-        return BatchPredictionRequest::read_from_in_protocol(&mut protocol).unwrap();
+        BatchPredictionRequest::read_from_in_protocol(&mut protocol).unwrap()
     }
 
     fn get_embedding_tensors(
@@ -300,7 +299,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
             }
             bpr_start = bpr_end;
         }
-        return Array2::<f32>::from_shape_vec([rows, cols], working_set).unwrap();
+        Array2::<f32>::from_shape_vec([rows, cols], working_set).unwrap()
     }
 
     // Todo : Refactor, create a generic version with different type and field accessors
@@ -312,7 +311,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
         // These need to be part of model schema
         let rows: usize = batch_ends[batch_ends.len() - 1];
         let cols: usize = 5293;
-        let full_size: usize = (rows * cols).try_into().unwrap();
+        let full_size: usize = rows * cols;
         let default_val = f32::NAN;
 
         let mut tensor = vec![default_val; full_size];
@@ -343,7 +342,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
                             if idx < cols {
                                 // Set value in each row
                                 for r in bpr_start..bpr_end {
-                                    let flat_index: usize = (r * cols + idx).try_into().unwrap();
+                                    let flat_index: usize = r * cols + idx;
                                     tensor[flat_index] = feature.1.into_inner() as f32;
                                 }
                             }
@@ -353,11 +352,11 @@ impl BatchPredictionRequestToTorchTensorConverter {
                     if self.continuous_features_to_report.contains(feature.0) {
                         self.continuous_feature_metrics
                             .with_label_values(&[feature.0.to_string().as_str()])
-                            .observe(feature.1.into_inner() as f64)
+                            .observe(feature.1.into_inner())
                     } else if self.discrete_features_to_report.contains(feature.0) {
                         self.discrete_feature_metrics
                             .with_label_values(&[feature.0.to_string().as_str()])
-                            .observe(feature.1.into_inner() as f64)
+                            .observe(feature.1.into_inner())
                     }
                 }
             }
@@ -371,7 +370,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
                         match self.feature_mapper.get(&feature.0) {
                             Some(f_info) => {
                                 let idx = f_info.index_within_tensor as usize;
-                                let flat_index: usize = (r * cols + idx).try_into().unwrap();
+                                let flat_index: usize = r * cols + idx;
                                 if flat_index < tensor.len() && idx < cols {
                                     tensor[flat_index] = feature.1.into_inner() as f32;
                                 }
@@ -393,21 +392,18 @@ impl BatchPredictionRequestToTorchTensorConverter {
             bpr_start = bpr_end;
         }
 
-        return InputTensor::FloatTensor(
-            Array2::<f32>::from_shape_vec(
-                [rows.try_into().unwrap(), cols.try_into().unwrap()],
-                tensor,
-            )
-            .unwrap()
-            .into_dyn(),
-        );
+        InputTensor::FloatTensor(
+            Array2::<f32>::from_shape_vec([rows, cols], tensor)
+                .unwrap()
+                .into_dyn(),
+        )
     }
 
     fn get_binary(&self, bprs: &[BatchPredictionRequest], batch_ends: &[usize]) -> InputTensor {
         // These need to be part of model schema
         let rows: usize = batch_ends[batch_ends.len() - 1];
         let cols: usize = 149;
-        let full_size: usize = (rows * cols).try_into().unwrap();
+        let full_size: usize = rows * cols;
         let default_val: i64 = 0;
 
         let mut v = vec![default_val; full_size];
@@ -438,7 +434,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
                             if idx < cols {
                                 // Set value in each row
                                 for r in bpr_start..bpr_end {
-                                    let flat_index: usize = (r * cols + idx).try_into().unwrap();
+                                    let flat_index: usize = r * cols + idx;
                                     v[flat_index] = 1;
                                 }
                             }
@@ -450,14 +446,13 @@ impl BatchPredictionRequestToTorchTensorConverter {
 
             // Process the batch of datarecords
             for r in bpr_start..bpr_end {
-                let dr: &DataRecord =
-                    &bpr.individual_features_list[usize::try_from(r - bpr_start).unwrap()];
+                let dr: &DataRecord = &bpr.individual_features_list[r - bpr_start];
                 if dr.binary_features.is_some() {
                     for feature in dr.binary_features.as_ref().unwrap() {
                         match self.feature_mapper.get(&feature) {
                             Some(f_info) => {
                                 let idx = f_info.index_within_tensor as usize;
-                                let flat_index: usize = (r * cols + idx).try_into().unwrap();
+                                let flat_index: usize = r * cols + idx;
                                 v[flat_index] = 1;
                             }
                             None => (),
@@ -467,11 +462,11 @@ impl BatchPredictionRequestToTorchTensorConverter {
             }
             bpr_start = bpr_end;
         }
-        return InputTensor::Int64Tensor(
-            Array2::<i64>::from_shape_vec([rows.try_into().unwrap(), cols.try_into().unwrap()], v)
+        InputTensor::Int64Tensor(
+            Array2::<i64>::from_shape_vec([rows, cols], v)
                 .unwrap()
                 .into_dyn(),
-        );
+        )
     }
 
     #[allow(dead_code)]
@@ -479,7 +474,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
         // These need to be part of model schema
         let rows: usize = batch_ends[batch_ends.len() - 1];
         let cols: usize = 320;
-        let full_size: usize = (rows * cols).try_into().unwrap();
+        let full_size: usize = rows * cols;
         let default_val: i64 = 0;
 
         let mut v = vec![default_val; full_size];
@@ -510,7 +505,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
                             if idx < cols {
                                 // Set value in each row
                                 for r in bpr_start..bpr_end {
-                                    let flat_index: usize = (r * cols + idx).try_into().unwrap();
+                                    let flat_index: usize = r * cols + idx;
                                     v[flat_index] = *feature.1;
                                 }
                             }
@@ -533,7 +528,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
                         match self.feature_mapper.get(&feature.0) {
                             Some(f_info) => {
                                 let idx = f_info.index_within_tensor as usize;
-                                let flat_index: usize = (r * cols + idx).try_into().unwrap();
+                                let flat_index: usize = r * cols + idx;
                                 if flat_index < v.len() && idx < cols {
                                     v[flat_index] = *feature.1;
                                 }
@@ -550,11 +545,11 @@ impl BatchPredictionRequestToTorchTensorConverter {
             }
             bpr_start = bpr_end;
         }
-        return InputTensor::Int64Tensor(
-            Array2::<i64>::from_shape_vec([rows.try_into().unwrap(), cols.try_into().unwrap()], v)
+        InputTensor::Int64Tensor(
+            Array2::<i64>::from_shape_vec([rows, cols], v)
                 .unwrap()
                 .into_dyn(),
-        );
+        )
     }
 
     fn get_user_embedding(

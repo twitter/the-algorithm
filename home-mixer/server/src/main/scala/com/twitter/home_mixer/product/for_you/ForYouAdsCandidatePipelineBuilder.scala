@@ -2,7 +2,7 @@ package com.twitter.home_mixer.product.for_you
 
 import com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated.ParamGatedCandidateFeatureHydrator
 import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.home_mixer.functional_component.decorator.HomeAdsClientEventDetailsBuilder
+import com.twitter.home_mixer.functional_component.decorator.builder.HomeAdsClientEventDetailsBuilder
 import com.twitter.home_mixer.functional_component.gate.ExcludeSoftUserGate
 import com.twitter.home_mixer.param.HomeGlobalParams
 import com.twitter.home_mixer.param.HomeGlobalParams.EnableAdvertiserBrandSafetySettingsFeatureHydratorParam

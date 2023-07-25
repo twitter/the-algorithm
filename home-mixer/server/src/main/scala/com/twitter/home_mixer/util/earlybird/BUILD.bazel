@@ -14,5 +14,10 @@ scala_library(
         "src/thrift/com/twitter/search/common:constants-scala",
         "src/thrift/com/twitter/search/common:query-scala",
         "src/thrift/com/twitter/search/common:ranking-scala",
+        "timelines/src/main/scala/com/twitter/timelines/clients/relevance_search",
+        "timelines/src/main/scala/com/twitter/timelines/earlybird/common/options",
+        "timelines/src/main/scala/com/twitter/timelines/earlybird/common/utils",
+        "timelines/src/main/scala/com/twitter/timelines/model/types",
+        "timelines/src/main/scala/com/twitter/timelines/util/stats",
     ],
 )

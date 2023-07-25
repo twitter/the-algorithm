@@ -1,5 +1,6 @@
 use anyhow::Result;
 use log::{info, warn};
+use x509_parser::{prelude::{parse_x509_pem}, parse_x509_certificate};
 use std::collections::HashMap;
 use tokio::time::Instant;
 use tonic::{
@@ -27,6 +28,7 @@ use crate::cli_args::{ARGS, INPUTS, OUTPUTS};
 use crate::metrics::{
     NAVI_VERSION, NUM_PREDICTIONS, NUM_REQUESTS_FAILED, NUM_REQUESTS_FAILED_BY_MODEL,
     NUM_REQUESTS_RECEIVED, NUM_REQUESTS_RECEIVED_BY_MODEL, RESPONSE_TIME_COLLECTOR,
+    CERT_EXPIRY_EPOCH
 };
 use crate::predict_service::{Model, PredictService};
 use crate::tf_proto::tensorflow_serving::model_spec::VersionChoice::Version;
@@ -207,6 +209,9 @@ impl<T: Model> PredictionService for PredictService<T> {
                         PredictResult::DropDueToOverload => Err(Status::resource_exhausted("")),
                         PredictResult::ModelNotFound(idx) => {
                             Err(Status::not_found(format!("model index {}", idx)))
+                        },
+                        PredictResult::ModelNotReady(idx) => {
+                            Err(Status::unavailable(format!("model index {}", idx)))
                         }
                         PredictResult::ModelVersionNotFound(idx, version) => Err(
                             Status::not_found(format!("model index:{}, version {}", idx, version)),
@@ -230,6 +235,12 @@ impl<T: Model> PredictionService for PredictService<T> {
     }
 }
 
+// A function that takes a timestamp as input and returns a ticker stream
+fn report_expiry(expiry_time: i64) {
+    info!("Certificate expires at epoch: {:?}", expiry_time);
+    CERT_EXPIRY_EPOCH.set(expiry_time as i64);
+}
+
 pub fn bootstrap<T: Model>(model_factory: ModelFactory<T>) -> Result<()> {
     info!("package: {}, version: {}, args: {:?}", NAME, VERSION, *ARGS);
     //we follow SemVer. So here we assume MAJOR.MINOR.PATCH
@@ -246,6 +257,7 @@ pub fn bootstrap<T: Model>(model_factory: ModelFactory<T>) -> Result<()> {
         );
     }
 
+    
     tokio::runtime::Builder::new_multi_thread()
         .thread_name("async worker")
         .worker_threads(ARGS.num_worker_threads)
@@ -263,6 +275,21 @@ pub fn bootstrap<T: Model>(model_factory: ModelFactory<T>) -> Result<()> {
             let mut builder = if ARGS.ssl_dir.is_empty() {
                 Server::builder()
             } else {
+                // Read the pem file as a string
+                let pem_str = std::fs::read_to_string(format!("{}/server.crt", ARGS.ssl_dir)).unwrap();
+                let res = parse_x509_pem(&pem_str.as_bytes());
+                match res {
+                    Ok((rem, pem_2)) => {
+                        assert!(rem.is_empty());
+                        assert_eq!(pem_2.label, String::from("CERTIFICATE"));
+                        let res_x509 = parse_x509_certificate(&pem_2.contents);
+                        info!("Certificate label: {}", pem_2.label);
+                        assert!(res_x509.is_ok());
+                        report_expiry(res_x509.unwrap().1.validity().not_after.timestamp());
+                    },
+                    _ => panic!("PEM parsing failed: {:?}", res),
+                }
+
                 let key = tokio::fs::read(format!("{}/server.key", ARGS.ssl_dir))
                     .await
                     .expect("can't find key file");
@@ -278,7 +305,7 @@ pub fn bootstrap<T: Model>(model_factory: ModelFactory<T>) -> Result<()> {
                 let identity = Identity::from_pem(pem.clone(), key);
                 let client_ca_cert = Certificate::from_pem(pem.clone());
                 let tls = ServerTlsConfig::new()
-                    .identity(identity)
+                    .identity(identity) 
                     .client_ca_root(client_ca_cert);
                 Server::builder()
                     .tls_config(tls)

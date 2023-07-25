@@ -1,6 +1,6 @@
 package com.twitter.home_mixer.functional_component.selector
 
-import com.twitter.home_mixer.functional_component.decorator.HomeClientEventDetailsBuilder
+import com.twitter.home_mixer.functional_component.decorator.builder.HomeClientEventDetailsBuilder
 import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
 import com.twitter.home_mixer.model.HomeFeatures.ConversationModule2DisplayedTweetsFeature
 import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleHasGapFeature

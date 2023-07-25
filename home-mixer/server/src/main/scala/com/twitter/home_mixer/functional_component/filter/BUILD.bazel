@@ -4,6 +4,7 @@ scala_library(
     strict_deps = True,
     tags = ["bazel-compatible"],
     dependencies = [
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/feature_hydrator",
         "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
         "home-mixer/server/src/main/scala/com/twitter/home_mixer/model/request",
         "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/scored_tweets/param",
@@ -16,9 +17,11 @@ scala_library(
         "src/thrift/com/twitter/tweetypie:service-scala",
         "src/thrift/com/twitter/tweetypie:tweet-scala",
         "stitch/stitch-core",
+        "stitch/stitch-socialgraph",
         "stitch/stitch-tweetypie",
         "timelinemixer/server/src/main/scala/com/twitter/timelinemixer/injection/store/persistence",
         "timelineservice/common/src/main/scala/com/twitter/timelineservice/model",
+        "util/util-slf4j-api/src/main/scala",
     ],
     exports = [
         "timelinemixer/server/src/main/scala/com/twitter/timelinemixer/injection/store/persistence",

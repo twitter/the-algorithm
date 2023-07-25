@@ -2,7 +2,7 @@ package com.twitter.home_mixer.module
 
 import com.twitter.finatra.thrift.exceptions.ExceptionMapper
 import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.inject.Logging
+import com.twitter.util.logging.Logging
 import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
 import com.twitter.product_mixer.core.pipeline.pipeline_failure.ProductDisabled
 import com.twitter.scrooge.ThriftException

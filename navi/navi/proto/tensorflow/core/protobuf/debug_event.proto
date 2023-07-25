@@ -12,7 +12,7 @@ option java_package = "org.tensorflow.util";
 option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
 // Available modes for extracting debugging information from a Tensor.
-// TODO: Document the detailed column names and semantics in a separate
+// TODO(cais): Document the detailed column names and semantics in a separate
 // markdown file once the implementation settles.
 enum TensorDebugMode {
   UNSPECIFIED = 0;
@@ -223,7 +223,7 @@ message DebuggedDevice {
   // A debugger-generated ID for the device. Guaranteed to be unique within
   // the scope of the debugged TensorFlow program, including single-host and
   // multi-host settings.
-  // TODO: Test the uniqueness guarantee in multi-host settings.
+  // TODO(cais): Test the uniqueness guarantee in multi-host settings.
   int32 device_id = 2;
 }
 
@@ -264,7 +264,7 @@ message Execution {
   // field with the DebuggedDevice messages.
   repeated int32 output_tensor_device_ids = 9;
 
-  // TODO support, add more fields
+  // TODO(cais): When backporting to V1 Session.run() support, add more fields
   // such as fetches and feeds.
 }
 

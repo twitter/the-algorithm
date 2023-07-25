@@ -33,3 +33,8 @@ case object ListRecommendedUsersProduct extends Product {
   override val identifier: ProductIdentifier = ProductIdentifier("ListRecommendedUsers")
   override val stringCenterProject: Option[String] = Some("timelinemixer")
 }
+
+case object SubscribedProduct extends Product {
+  override val identifier: ProductIdentifier = ProductIdentifier("Subscribed")
+  override val stringCenterProject: Option[String] = Some("timelinemixer")
+}
